@@ -1,0 +1,145 @@
+# ========================================
+# Node.js
+# ========================================
+# Dependencias
+node_modules/
+jspm_packages/
+bower_components/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cache
+.cache/
+.npm/
+.yarn/
+.pnp.*
+.pnp.js
+
+# Compilados
+dist/
+build/
+out/
+
+# Configuración local
+.env
+.env.*.local
+.npmrc
+.yarnrc
+.idea/
+.vscode/
+.DS_Store
+
+# Testing
+coverage/
+.nyc_output/
+
+# ========================================
+# Python
+# ========================================
+# Archivos compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+
+# Archivos de distribución/paquetes
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Cache de test
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# Configuración local
+*.env
+.env.local
+settings_local.py
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb~
+
+# IDEs
+.spyderproject
+.spyproject
+.pydevproject
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+
+# ========================================
+# Go
+# ========================================
+# Binarios compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Carpeta bin
+bin/
+build/
+
+# Dependencias
+vendor/
+*.mod
+*.sum
+
+# Cachés de compilación
+*.a
+*.o
+*.obj
+*.swp
+*.swo
+
+# IDEs y editoriales
+.idea/
+.vscode/
+.DS_Store
+
+# ========================================
+# General / OS
+# ========================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
