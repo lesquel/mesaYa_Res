@@ -17,7 +17,7 @@ import { UpdateSectionDto } from './dto/update-section.dto';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard.js';
-import { Roles } from '../auth/roles.decorator.js';
+import { Roles } from '../auth/decorator/roles.decorator.js';
 import { RolesGuard } from '../auth/guard/roles.guard.js';
 import { UserRole } from '../auth/entities/user.entity.js';
 

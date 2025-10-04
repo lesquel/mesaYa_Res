@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { AuthGuard } from '@nestjs/passport';
-import { Roles } from './roles.decorator.js';
+import { Roles } from './decorator/roles.decorator.js';
 import { RolesGuard } from './guard/roles.guard.js';
 import { UserRole } from './entities/user.entity.js';
 
