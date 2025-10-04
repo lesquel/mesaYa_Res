@@ -111,7 +111,10 @@ export class AuthController {
               name: { type: 'string' },
               permissions: {
                 type: 'array',
-                items: { type: 'object', properties: { name: { type: 'string' } } },
+                items: {
+                  type: 'object',
+                  properties: { name: { type: 'string' } },
+                },
               },
             },
           },
