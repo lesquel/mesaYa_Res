@@ -15,13 +15,13 @@ export class Restaurant {
   @Column({ type: 'varchar', length: 200, name: 'location', nullable: false })
   location: string;
 
-  @Column({ type: 'time', name: 'open_time', nullable: false })
+  @Column({ type: 'time', name: 'open_time', nullable: true })
   openTime: string; // HH:mm
 
-  @Column({ type: 'time', name: 'close_time', nullable: false })
+  @Column({ type: 'time', name: 'close_time', nullable: true })
   closeTime: string; // HH:mm
 
-  @Column({ type: 'varchar', name: 'days_open', array: true, nullable: false })
+  @Column({ type: 'varchar', name: 'days_open', array: true, nullable: true })
   daysOpen: string[]; // e.g., ['MONDAY','TUESDAY']
 
   @Column({ type: 'int', name: 'total_capacity', nullable: false })

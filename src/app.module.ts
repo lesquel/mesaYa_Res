@@ -5,6 +5,7 @@ import { envConfig } from './config/env.config';
 import { JoiValidationSchema } from './config/joi.validation';
 import { SeedModule } from './seed/seed.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
+import { SectionModule } from './section/section.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { RestaurantModule } from './restaurant/restaurant.module';
     }),
     SeedModule,
     RestaurantModule,
+    SectionModule,
   ],
 })
 export class AppModule {}
