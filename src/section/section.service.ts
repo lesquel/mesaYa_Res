@@ -1,26 +1,84 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Section } from './entities/section.entity';
+import { Restaurant } from '../restaurant/entities/restaurant.entity';
+import { Repository } from 'typeorm';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import {
+  PaginatedResult,
+  paginateQueryBuilder,
+} from '../common/pagination/paginate';
 
 @Injectable()
 export class SectionService {
-  create(createSectionDto: CreateSectionDto) {
-    return 'This action adds a new section';
+  constructor(
+    @InjectRepository(Section)
+    private readonly sectionRepository: Repository<Section>,
+    @InjectRepository(Restaurant)
+    private readonly restaurantRepository: Repository<Restaurant>,
+  ) {}
+
+  async create(createSectionDto: CreateSectionDto) {
+    const { restaurantId, ...rest } = createSectionDto;
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+    });
+    if (!restaurant)
+      throw new NotFoundException(`Restaurant ${restaurantId} not found`);
+
+    const section = this.sectionRepository.create({ ...rest, restaurant });
+    await this.sectionRepository.save(section);
+    return section;
   }
 
-  findAll() {
-    return `This action returns all section`;
+  async findAll(
+    pagination: PaginationDto,
+    route: string,
+  ): Promise<PaginatedResult<Section>> {
+    const alias = 'section';
+    const qb = this.sectionRepository
+      .createQueryBuilder(alias)
+      .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant');
+
+    const sortMap: Record<string, string> = {
+      name: `${alias}.name`,
+      restaurant: `restaurant.name`,
+    };
+
+    const sortByColumn =
+      pagination.sortBy && sortMap[pagination.sortBy]
+        ? sortMap[pagination.sortBy]
+        : undefined;
+
+    return paginateQueryBuilder(qb, {
+      ...pagination,
+      route,
+      sortBy: sortByColumn,
+      allowedSorts: Object.values(sortMap),
+      searchable: [`${alias}.name`, `${alias}.description`, `restaurant.name`],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} section`;
+  async findOne(id: string) {
+    const found = await this.sectionRepository.findOne({
+      where: { id },
+      relations: ['restaurant'],
+    });
+    if (!found) throw new NotFoundException(`Section ${id} not found`);
+    return found;
   }
 
-  update(id: number, updateSectionDto: UpdateSectionDto) {
-    return `This action updates a #${id} section`;
+  async update(id: string, updateSectionDto: UpdateSectionDto) {
+    const section = await this.findOne(id);
+    Object.assign(section, updateSectionDto);
+    return this.sectionRepository.save(section);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} section`;
+  async remove(id: string) {
+    const { affected } = await this.sectionRepository.delete({ id });
+    if (!affected) throw new NotFoundException(`Section ${id} not found`);
+    return { ok: true };
   }
 }
