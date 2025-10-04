@@ -6,6 +6,7 @@ import { JoiValidationSchema } from './config/joi.validation';
 import { SeedModule } from './seed/seed.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { SectionModule } from './section/section.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { SectionModule } from './section/section.module';
     SeedModule,
     RestaurantModule,
     SectionModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
