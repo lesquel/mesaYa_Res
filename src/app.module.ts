@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envConfig } from './config/env.config';
 import { JoiValidationSchema } from './config/joi.validation';
 import { SeedModule } from './seed/seed.module';
+import { RestaurantModule } from './restaurant/restaurant.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SeedModule } from './seed/seed.module';
       },
     }),
     SeedModule,
+    RestaurantModule,
   ],
 })
 export class AppModule {}
