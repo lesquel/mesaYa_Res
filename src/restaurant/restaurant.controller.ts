@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import type { Request } from 'express';
 
 @Controller('restaurant')
 export class RestaurantController {
@@ -13,22 +26,26 @@ export class RestaurantController {
   }
 
   @Get()
-  findAll() {
-    return this.restaurantService.findAll();
+  findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
+    const route = req.baseUrl || req.path || '/restaurant';
+    return this.restaurantService.findAll(pagination, route);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.restaurantService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.restaurantService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
-    return this.restaurantService.update(+id, updateRestaurantDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateRestaurantDto: UpdateRestaurantDto,
+  ) {
+    return this.restaurantService.update(id, updateRestaurantDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.restaurantService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.restaurantService.remove(id);
   }
 }

@@ -1,39 +1,40 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 
-@Entity({ name: 'restaurante' })
+@Entity({ name: 'restaurant' })
 export class Restaurant {
-  @PrimaryGeneratedColumn('uuid', { name: 'restaurante_id' })
-  restauranteId: string;
+  @PrimaryGeneratedColumn('uuid', { name: 'restaurant_id' })
+  id: string;
 
-  @Column({ type: 'varchar', length: 100, name: 'nombre', nullable: false })
+  @Column({ type: 'varchar', length: 100, name: 'name', nullable: false })
   @Index()
-  nombre: string;
+  name: string;
 
-  @Column({ type: 'text', name: 'descripcion', nullable: true })
-  descripcion?: string | null;
+  @Column({ type: 'text', name: 'description', nullable: true })
+  description?: string | null;
 
-  @Column({ type: 'varchar', length: 200, name: 'ubicacion', nullable: false })
-  ubicacion: string;
+  @Column({ type: 'varchar', length: 200, name: 'location', nullable: false })
+  location: string;
 
-  @Column({
-    type: 'varchar',
-    length: 100,
-    name: 'horarios_atencion',
-    nullable: false,
-  })
-  horariosAtencion: string;
+  @Column({ type: 'time', name: 'open_time', nullable: false })
+  openTime: string; // HH:mm
 
-  @Column({ type: 'int', name: 'capacidad_total', nullable: false })
-  capacidadTotal: number;
+  @Column({ type: 'time', name: 'close_time', nullable: false })
+  closeTime: string; // HH:mm
 
-  // FK a suscripción (relación se puede definir cuando exista la entidad Suscripcion)
-  @Column({ type: 'int', name: 'suscripcion_id', nullable: false })
-  suscripcionId: number;
+  @Column({ type: 'varchar', name: 'days_open', array: true, nullable: false })
+  daysOpen: string[]; // e.g., ['MONDAY','TUESDAY']
 
-  // FK a imagen (puede ser opcional según el diseño)
-  @Column({ type: 'int', name: 'imagen_id', nullable: true })
-  imagenId?: number | null;
+  @Column({ type: 'int', name: 'total_capacity', nullable: false })
+  totalCapacity: number;
 
-  @Column({ type: 'boolean', name: 'activo', nullable: false })
-  activo: boolean;
+  // FK to subscription (relation can be defined when Subscription entity exists)
+  @Column({ type: 'int', name: 'subscription_id', nullable: false })
+  subscriptionId: number;
+
+  // FK to image (optional depending on design)
+  @Column({ type: 'int', name: 'image_id', nullable: true })
+  imageId?: number | null;
+
+  @Column({ type: 'boolean', name: 'active', nullable: false })
+  active: boolean;
 }

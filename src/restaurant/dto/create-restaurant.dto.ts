@@ -3,9 +3,12 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsArray,
   IsString,
   MaxLength,
   Min,
+  ArrayNotEmpty,
+  IsIn,
 } from 'class-validator';
 
 // Utilidad para recortar strings entrantes
@@ -17,38 +20,60 @@ export class CreateRestaurantDto {
   @IsNotEmpty()
   @MaxLength(100)
   @trim()
-  nombre: string;
+  name: string;
 
   @IsOptional()
   @IsString()
   @trim()
-  descripcion?: string;
+  description?: string;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)
   @trim()
-  ubicacion: string;
+  location: string;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   @trim()
-  horariosAtencion: string;
+  openTime: string; // HH:mm
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  @trim()
+  closeTime: string; // HH:mm
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(
+    [
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
+    ],
+    { each: true },
+  )
+  daysOpen: string[];
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  capacidadTotal: number;
+  totalCapacity: number;
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  suscripcionId: number;
+  subscriptionId: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  imagenId?: number;
+  imageId?: number;
 }
