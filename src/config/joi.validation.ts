@@ -8,5 +8,7 @@ export const JoiValidationSchema = Joi.object({
   PGPASSWORD: Joi.string().required(),
   PGSSLMODE: Joi.string().required(),
   PGCHANNELBINDING: Joi.string().required(),
-  NODE_ENV: Joi.string().valid('development', 'test', 'production').default('development'),
+  NODE_ENV: Joi.string()
+    .valid('development', 'test', 'production')
+    .default('development'),
 });
