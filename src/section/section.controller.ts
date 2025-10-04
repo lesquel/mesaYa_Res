@@ -16,9 +16,9 @@ import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import type { Request } from 'express';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
-import { RolesGuard } from '../auth/roles.guard.js';
+import { RolesGuard } from '../auth/guard/roles.guard.js';
 import { UserRole } from '../auth/entities/user.entity.js';
 
 @Controller('section')
