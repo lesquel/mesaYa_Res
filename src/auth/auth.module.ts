@@ -11,6 +11,8 @@ import { JwtStrategy } from './strategy/jwt.strategy.js';
 import { RolesGuard } from './guard/roles.guard.js';
 import { PermissionsGuard } from './guard/permissions.guard.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RbacSeeder } from './rbac/rbac.seeder.js';
+import { RbacService } from './rbac/rbac.service.js';
 
 @Module({
   imports: [
@@ -29,7 +31,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, RolesGuard, PermissionsGuard],
-  exports: [JwtModule, PassportModule, RolesGuard, PermissionsGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    RolesGuard,
+    PermissionsGuard,
+    RbacSeeder,
+    RbacService,
+  ],
+  exports: [
+    JwtModule,
+    PassportModule,
+    RolesGuard,
+    PermissionsGuard,
+    RbacService,
+  ],
 })
 export class AuthModule {}
