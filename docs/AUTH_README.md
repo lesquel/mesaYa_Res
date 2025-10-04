@@ -1,199 +1,185 @@
-# Authentication and Authorization Guide
+# Guía de Autenticación y Autorización (JWT + RBAC)
 
-This document explains, end-to-end, how auth is implemented in this project: JWT login, password hashing, roles and guards, and how to use everything from controllers and clients.
+Este documento explica cómo está implementado el sistema de autenticación (JWT) y autorización (RBAC: Roles + Permisos) en este proyecto, cómo proteger rutas con guards, y cómo administrar roles y permisos desde endpoints de administración.
 
-The code uses NestJS with TypeScript in NodeNext/ESM mode. That means relative imports between your own files include the `.js` extension.
-
-## Table of contents
-
-- What you get (features)
-- Environment variables
-- Data model (User entity)
-- DTOs (SignUp, Login)
-- Module wiring (AuthModule)
-- JWT Strategy
-
-# Guía de Autenticación y Autorización
-
-Este documento explica, de principio a fin, cómo está implementada la autenticación en este proyecto: inicio de sesión con JWT, hash de contraseñas, roles y guards, y cómo usar todo esto desde controladores y clientes.
-
-El proyecto usa NestJS con TypeScript en modo NodeNext/ESM. Eso significa que los imports relativos entre tus propios archivos deben incluir la extensión `.js`.
+Nota ESM/NodeNext: los imports relativos entre archivos del proyecto deben incluir la extensión `.js`.
 
 ## Tabla de contenidos
 
 - Qué incluye (features)
 - Variables de entorno
-- Modelo de datos (Entidad User)
-- DTOs (SignUp, Login)
-- Cableado del módulo (AuthModule)
-- Estrategia JWT
-- Guards y decorador (JwtAuthGuard, Roles, RolesGuard)
-- Endpoints del controlador (AuthController)
-- Uso de roles y guards en módulos de negocio (Restaurant/Section)
-- Ejemplos de solicitudes (PowerShell y curl)
+- Modelo de datos (User, Role, Permission)
+- DTOs (SignUp, Login, UpdateUserRoles, UpdateRolePermissions)
+- Módulo y wiring (AuthModule)
+- Estrategia JWT y `req.user`
+- Decoradores y Guards (Roles, Permissions, JwtAuthGuard, RolesGuard, PermissionsGuard)
+- Seeding (RbacSeeder): cómo se crean roles y permisos por defecto
+- Endpoints de administración (cambiar roles y permisos, listar)
+- Proteger módulos de negocio con permisos (Restaurant/Section)
+- Ejemplos de solicitudes (PowerShell)
 - Errores comunes y soluciones
-- Notas y buenas prácticas
+- Buenas prácticas
 
 ---
 
 ## Qué incluye
 
 - Hash de contraseñas con bcrypt
-- Autenticación stateless basada en JWT (token Bearer)
-- Autorización basada en roles (USER, OWNER, ADMIN)
-- Guards de NestJS y decorador personalizado @Roles para proteger rutas
-- La paginación en endpoints de negocio permanece pública salvo que la protejas
+- Autenticación stateless con JWT (Bearer token)
+- Autorización fina basada en permisos (RBAC): Roles → Permisos
+- Guards de NestJS: autenticación (JWT) y autorización (roles/permisos)
+- Endpoints de administración para gestionar roles y permisos en caliente
 
 ---
 
 ## Variables de entorno
 
-Agrega lo siguiente a tu `.env` (ya validado por Joi):
+En `.env` (validadas con Joi):
 
-- `JWT_SECRET` (requerido, mín. 16 caracteres): secreto para firmar los JWT
-- `JWT_EXPIRES_IN` (opcional, por defecto `1d`): tiempo de vida del token, p. ej. `1h`, `7d`
+- `JWT_SECRET` (requerido, mín. 16 chars) → secreto de firma
+- `JWT_EXPIRES_IN` (opcional, por defecto `1d`) → ttl del token (ej. `1h`, `7d`)
 
-Ejemplo en `.env`:
+Ejemplo:
 
 ```
 JWT_SECRET='cambia-este-secreto-muy-largo-y-seguro'
 JWT_EXPIRES_IN='1d'
 ```
 
-Estos valores los carga `ConfigModule` (ver `src/config/env.config.ts`) y los valida `src/config/joi.validation.ts`.
-
 ---
 
-## Modelo de datos: Entidad User
+## Modelo de datos
 
-Archivo: `src/auth/entities/user.entity.ts`
+- `src/auth/entities/user.entity.ts`
+  - id (uuid), email único, name, phone, passwordHash
+  - roles: ManyToMany con `Role` (eager), JoinTable `user_roles`
+  - active: boolean
 
-Campos clave:
+- `src/auth/entities/role.entity.ts`
+  - name único (ADMIN, OWNER, USER, ...)
+  - permissions: ManyToMany con `Permission` (eager), JoinTable `role_permissions`
 
-- `id`: llave primaria uuid (columna: user_id)
-- `email`: único (varchar 100)
-- `name`: varchar 100
-- `phone`: varchar 15
-- `passwordHash`: hash con bcrypt (varchar 200)
-- `roles`: arreglo de strings con valores del enum `UserRole` (por defecto `['USER']`)
-- `active`: boolean, por defecto `true`
-
-Por qué: mantener PII mínima, contraseña hasheada y roles para autorización.
+- `src/auth/entities/permission.entity.ts`
+  - name único (string) con formato `entidad:acción` (ej. `restaurant:create`)
 
 ---
 
 ## DTOs
 
-Archivos:
+- `src/auth/dto/signup.dto.ts` → registro
+- `src/auth/dto/login.dto.ts` → login
+- `src/auth/dto/update-user-roles.dto.ts` → cambiar roles de usuario
+  - roles: string[] (nombres de rol)
+- `src/auth/dto/update-role-permissions.dto.ts` → cambiar permisos de un rol
+  - permissions: string[] (nombres de permiso)
 
-- `src/auth/dto/signup.dto.ts`
-- `src/auth/dto/login.dto.ts`
-
-Validación destacada:
-
-- SignUpDto: email (formato + longitud), name (requerido), phone (requerido), password (mín. 8; al menos una minúscula, una mayúscula y un dígito)
-- LoginDto: email y password requeridos
-
-Las strings entrantes se recortan con `class-transformer`.
+Barrel para imports ESM: `src/auth/dto/index.ts`.
 
 ---
 
-## Cableado del módulo (AuthModule)
+## Módulo y wiring (AuthModule)
 
 Archivo: `src/auth/auth.module.ts`
 
-- Imports
-  - `TypeOrmModule.forFeature([User])` para inyectar el repositorio de User
-  - `PassportModule.register({ defaultStrategy: 'jwt' })`
-  - `JwtModule.registerAsync(...)` usando `JWT_SECRET` y `JWT_EXPIRES_IN`
-- Providers
-  - `AuthService`, `JwtStrategy`, `RolesGuard`
-- Exports
-  - `JwtModule`, `PassportModule`, `RolesGuard` para que otros módulos los usen
-
-`AuthModule` se importa en `AppModule` y también en los módulos de negocio donde se usan guards (p. ej., Restaurant/Section) para que los providers estén disponibles.
+- Imports: TypeOrmModule([User, Role, Permission]), Passport(JWT), JwtModule (async, usa ConfigService)
+- Providers:
+  - `AuthService` (signup/login)
+  - `JwtStrategy` (valida token y adjunta usuario a `req.user`)
+  - `RolesGuard` y `PermissionsGuard`
+  - `RbacSeeder` (seeding en el arranque) y `RbacService` (gestión de RBAC)
+- Exports: JwtModule, PassportModule, RolesGuard, PermissionsGuard, RbacService
 
 ---
 
-## Estrategia JWT
+## Estrategia JWT y `req.user`
 
-Archivo: `src/auth/strategy/jwt.strategy.ts` (o `src/auth/jwt.strategy.ts` según tu árbol)
+Archivo: `src/auth/strategy/jwt.strategy.ts`
 
-- Extrae el token del header `Authorization: Bearer <token>`
-- Verifica la firma con `JWT_SECRET`
-- Adjunta un objeto `user` a `req.user` con forma `{ userId, email, roles }`
+- Extrae token desde `Authorization: Bearer <token>`
+- Verifica con `JWT_SECRET`
+- Carga el usuario desde BD y adjunta en `req.user` un objeto con:
+  - userId, email, roles (array de `Role` con `permissions` eager)
 
-Este objeto es el que leen los guards durante la autorización.
-
----
-
-## Guards y decorador
-
-Archivos:
-
-- `src/auth/guard/jwt-auth.guard.ts`: `export class JwtAuthGuard extends AuthGuard('jwt') {}`
-- `src/auth/decorator/roles.decorator.ts`: `@Roles(...roles)` → coloca roles requeridos en la metadata de la ruta
-- `src/auth/guard/roles.guard.ts`: lee los roles requeridos desde la metadata y los compara con `req.user.roles`
-
-Uso:
-
-- Agrega `@UseGuards(JwtAuthGuard)` para solo autenticación
-- Agrega `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles(UserRole.ADMIN)` para exigir un rol
+Esto permite que `PermissionsGuard` consulte permisos sin más consultas.
 
 ---
 
-## AuthService
+## Decoradores y Guards
 
-Archivo: `src/auth/auth.service.ts`
+- Decoradores:
+  - `src/auth/decorator/roles.decorator.ts` → `@Roles(...roles)`
+  - `src/auth/decorator/permissions.decorator.ts` → `@Permissions(...perms)`
 
-Métodos importantes:
+- Guards:
+  - `src/auth/guard/jwt-auth.guard.ts` → `AuthGuard('jwt')`
+  - `src/auth/guard/roles.guard.ts` → verifica `@Roles` contra `req.user.roles`
+  - `src/auth/guard/permissions.guard.ts` → verifica `@Permissions` contra `req.user.roles[].permissions[]`
 
-- `signup(dto: SignUpDto)`: verifica email único, hashea contraseña, crea usuario con roles `[USER]`, retorna `{ user, token }`
-- `login(dto: LoginDto)`: valida credenciales, retorna `{ user, token }`
-- Usa bcrypt con `saltRounds = 10`
-- Firma el JWT con payload `{ sub: user.id, email: user.email, roles: user.roles }`
+Uso típico:
 
----
-
-## Endpoints del controlador (AuthController)
-
-Rutas (prefijo: `/auth`):
-
-- `POST /auth/signup`
-  - body: `{ email, name, phone, password }`
-  - response: `{ user: { id, email, name, phone, roles }, token }`
-
-- `POST /auth/login`
-  - body: `{ email, password }`
-  - response: `{ user, token }`
-
-- `GET /auth/me` (JWT)
-  - header: `Authorization: Bearer <token>`
-  - response: `req.user` (desde la estrategia)
-
-- `GET /auth/admin/check` (JWT + RolesGuard + @Roles(ADMIN))
-  - verifica que el token pertenezca a un admin
+- Solo autenticación: `@UseGuards(JwtAuthGuard)`
+- Rol específico: `@UseGuards(JwtAuthGuard, RolesGuard) + @Roles(UserRole.ADMIN)`
+- Permiso específico: `@UseGuards(JwtAuthGuard, PermissionsGuard) + @Permissions('restaurant:create')`
 
 ---
 
-## Uso de roles y guards en módulos de negocio
+## Seeding (RbacSeeder)
 
-Ejemplo: `src/restaurant/restaurant.controller.ts`
+Archivo: `src/auth/rbac/rbac.seeder.ts`
 
-- Crear: solo `OWNER` o `ADMIN`
-- Actualizar: solo `OWNER` o `ADMIN`
-- Eliminar: solo `ADMIN`
-- Listado y detalle: públicos por ahora (puedes protegerlos si lo necesitas)
+- Corre en el arranque del módulo (`OnModuleInit`).
+- Crea permisos por defecto (si faltan), definidos en `src/auth/rbac/rbac.constants.ts`.
+- Crea roles por defecto (si faltan) y agrega permisos faltantes de forma aditiva (no borra personalizaciones).
 
-La misma idea se aplica en `src/section/section.controller.ts`.
-
-Para que los guards sean inyectables, `RestaurantModule` y `SectionModule` importan `AuthModule`.
+Puedes ampliar los permisos y roles por defecto editando `DEFAULT_PERMISSION_NAMES` y `DEFAULT_ROLES`.
 
 ---
 
-## Ejemplos de solicitudes
+## Endpoints de administración (ADMIN)
 
-Ejemplos en PowerShell (Windows):
+Archivo: `src/auth/auth.controller.ts`
+
+- `PATCH /auth/admin/users/:id/roles`
+  - Body: `{ "roles": ["ADMIN", "OWNER"] }`
+  - Cambia roles de un usuario.
+
+- `PATCH /auth/admin/roles/:name/permissions`
+  - Body: `{ "permissions": ["restaurant:create", "section:read"] }`
+  - Cambia permisos de un rol (crea el rol si no existe).
+
+- `GET /auth/admin/roles`
+  - Lista roles con sus permisos.
+
+- `GET /auth/admin/permissions`
+  - Lista todos los permisos disponibles.
+
+Todos requieren JWT + `RolesGuard` + `@Roles(UserRole.ADMIN)`.
+
+La lógica vive en `src/auth/rbac/rbac.service.ts`.
+
+---
+
+## Proteger módulos de negocio con permisos
+
+Ejemplos:
+
+- Restaurant (`src/restaurant/restaurant.controller.ts`):
+  - Crear: `@UseGuards(JwtAuthGuard, PermissionsGuard)` + `@Permissions('restaurant:create')`
+  - Actualizar: `@Permissions('restaurant:update')`
+  - Eliminar: `@Permissions('restaurant:delete')`
+  - Leer (opcional): `@Permissions('restaurant:read')`
+
+- Section (`src/section/section.controller.ts`):
+  - Crear: `@Permissions('section:create')`
+  - Actualizar: `@Permissions('section:update')`
+  - Eliminar: `@Permissions('section:delete')`
+  - Leer (opcional): `@Permissions('section:read')`
+
+Recuerda importar `AuthModule` en los módulos de negocio para que los guards sean inyectables.
+
+---
+
+## Ejemplos de solicitudes (PowerShell)
 
 Registro:
 
@@ -210,50 +196,66 @@ $login = Invoke-RestMethod -Method Post -Uri http://localhost:3000/auth/login -C
 $token = $login.token
 ```
 
-Endpoint protegido (me):
+Llamar endpoint protegido (me):
 
 ```powershell
 Invoke-RestMethod -Method Get -Uri http://localhost:3000/auth/me -Headers @{ Authorization = "Bearer $token" }
 ```
 
-Crear un restaurante (OWNER o ADMIN):
+Crear restaurante (requiere permiso restaurant:create):
 
 ```powershell
 $body = @{ name='My Resto'; location='Center'; openTime='09:00'; closeTime='18:00'; daysOpen=@('MONDAY','TUESDAY'); totalCapacity=50; subscriptionId=1 } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri http://localhost:3000/restaurant -ContentType 'application/json' -Headers @{ Authorization = "Bearer $token" } -Body $body
 ```
 
+Cambiar roles de un usuario (ADMIN):
+
+```powershell
+$body = @{ roles=@('ADMIN','OWNER') } | ConvertTo-Json
+Invoke-RestMethod -Method Patch -Uri http://localhost:3000/auth/admin/users/<userId>/roles -ContentType 'application/json' -Headers @{ Authorization = "Bearer $token" } -Body $body
+```
+
+Cambiar permisos de un rol (ADMIN):
+
+```powershell
+$body = @{ permissions=@('restaurant:create','section:read') } | ConvertTo-Json
+Invoke-RestMethod -Method Patch -Uri http://localhost:3000/auth/admin/roles/OWNER/permissions -ContentType 'application/json' -Headers @{ Authorization = "Bearer $token" } -Body $body
+```
+
 ---
 
 ## Errores comunes y soluciones
 
-- Imports en ESM/NodeNext: usa la extensión `.js` en imports relativos (p. ej., `../auth/roles.guard.js`).
-- 401 Unauthorized: token faltante/expirado/inválido en el header `Authorization`.
-- 403 Forbidden: token válido pero rol insuficiente → revisa `@Roles(...)` en la ruta.
-- Email ya en uso: `ConflictException` al registrar (cambia el email o elimina el usuario existente).
-- Cambios de esquema en BD: si modificaste columnas (p. ej., horarios en Restaurant), considera migraciones para producción.
+- ESM/NodeNext: usa `.js` en imports relativos (p. ej. `../auth/guard/permissions.guard.js`).
+- 401 Unauthorized: token faltante/expirado/inválido → revisa el header `Authorization`.
+- 403 Forbidden: token válido pero sin permiso/rol → revisa `@Roles(...)` o `@Permissions(...)`.
+- Email en uso: `ConflictException` en registro.
+- Producción: desactiva `synchronize` y usa migraciones.
 
 ---
 
-## Notas y buenas prácticas
+## Buenas prácticas
 
-- Nunca guardes contraseñas en texto plano (ya usamos bcrypt).
-- Cambia y protege `JWT_SECRET` en producción.
-- Usa `NODE_ENV=production` para desactivar `synchronize` y migrar con scripts.
-- Define política de expiración/rotación si manejas sesiones largas (tokens de refresco, opcional).
-- Para tests e2e, crea utilidades que registren, inicien sesión y reutilicen el token automáticamente.
+- No guardes contraseñas en texto plano (usa bcrypt; ya implementado).
+- Protege `JWT_SECRET` y rota secretos en producción.
+- Diseña permisos por entidad y acción (`entidad:acción`), ej. `order:refund`.
+- Añade tests e2e para flujos de permisos críticos (403 esperados).
+- Usa `RbacService` para operaciones admin y mantén `AuthService` solo para auth.
 
 ---
 
-## Apéndice: dónde mirar en el repo
+## Dónde mirar en el repo
 
-- Entidad: `src/auth/entities/user.entity.ts`
-- DTOs: `src/auth/dto/*.ts`
-- Servicio: `src/auth/auth.service.ts`
+- Entidades: `src/auth/entities/*.ts`
+- DTOs: `src/auth/dto/*.ts` y `src/auth/dto/index.ts`
+- Servicio Auth: `src/auth/auth.service.ts`
+- Servicio RBAC: `src/auth/rbac/rbac.service.ts`
+- Seeder RBAC: `src/auth/rbac/rbac.seeder.ts`
+- Constantes RBAC: `src/auth/rbac/rbac.constants.ts`
 - Módulo: `src/auth/auth.module.ts`
-- Estrategia: `src/auth/strategy/jwt.strategy.ts` (o `src/auth/jwt.strategy.ts` si aún no moviste el archivo)
+- Estrategia: `src/auth/strategy/jwt.strategy.ts`
 - Guards: `src/auth/guard/*.ts`
-- Decorador: `src/auth/decorator/roles.decorator.ts`
-- Módulos de negocio: `src/restaurant/*`, `src/section/*`
-
-Si reorganizas carpetas (por ejemplo, mover guards a `auth/guard`), recuerda actualizar los imports relativos (con `.js`).
+- Decoradores: `src/auth/decorator/*.ts`
+  Si reorganizas carpetas, recuerda actualizar imports relativos con `.js` por estar en modo NodeNext/ESM.
+- Guards: `src/auth/guard/*.ts`
