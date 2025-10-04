@@ -66,7 +66,9 @@ export class RestaurantController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:update')
-  @ApiOperation({ summary: 'Actualizar restaurante (permiso restaurant:update)' })
+  @ApiOperation({
+    summary: 'Actualizar restaurante (permiso restaurant:update)',
+  })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiBody({ type: UpdateRestaurantDto })
