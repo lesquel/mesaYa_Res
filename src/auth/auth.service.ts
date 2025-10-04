@@ -1,26 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User, UserRole } from './entities/user.entity';
+import { SignUpDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectRepository(User)
+    private readonly users: Repository<User>,
+    private readonly jwt: JwtService,
+  ) {}
+
+  private async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  private signToken(user: User) {
+    const payload = { sub: user.id, email: user.email, roles: user.roles };
+    return this.jwt.sign(payload);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async signup(dto: SignUpDto) {
+    const exists = await this.users.findOne({ where: { email: dto.email } });
+    if (exists) throw new ConflictException('Email already in use');
+    const passwordHash = await this.hashPassword(dto.password);
+    const user = this.users.create({
+      email: dto.email,
+      name: dto.name,
+      phone: dto.phone,
+      passwordHash,
+      roles: [UserRole.USER],
+      active: true,
+    });
+    await this.users.save(user);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        roles: user.roles,
+      },
+      token: this.signToken(user),
+    };
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
+  async validateUser(email: string, password: string): Promise<User> {
+    const user = await this.users.findOne({ where: { email } });
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) throw new UnauthorizedException('Invalid credentials');
+    return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async login(dto: LoginDto) {
+    const user = await this.validateUser(dto.email, dto.password);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        roles: user.roles,
+      },
+      token: this.signToken(user),
+    };
   }
 }

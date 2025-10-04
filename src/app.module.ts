@@ -40,6 +40,7 @@ import { AuthModule } from './auth/auth.module';
           ssl: useSSL ? { rejectUnauthorized: false } : false,
           // Pass through pg-specific options
           extra: {
+            AuthModule,
             channelBinding: config.get<string>('PGCHANNELBINDING') ?? 'require',
           },
         };

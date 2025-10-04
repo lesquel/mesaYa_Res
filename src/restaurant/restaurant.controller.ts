@@ -9,11 +9,16 @@ import {
   ParseUUIDPipe,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
-import { PaginationDto } from '../common/dto/pagination.dto';
+import { PaginationDto } from '../common/dto/pagination.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
+import { Roles } from '../auth/roles.decorator.js';
+import { RolesGuard } from '../auth/roles.guard.js';
+import { UserRole } from '../auth/entities/user.entity.js';
 import type { Request } from 'express';
 
 @Controller('restaurant')
@@ -21,6 +26,8 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
   create(@Body() createRestaurantDto: CreateRestaurantDto) {
     return this.restaurantService.create(createRestaurantDto);
   }
@@ -37,6 +44,8 @@ export class RestaurantController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
@@ -45,6 +54,8 @@ export class RestaurantController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.restaurantService.remove(id);
   }
