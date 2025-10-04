@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as fs from 'fs';
+import * as YAML from 'yaml';
 
 export function setupSwagger(app: INestApplication): void {
   const config = new DocumentBuilder()
@@ -12,6 +14,18 @@ export function setupSwagger(app: INestApplication): void {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
+  const yamlDocument = YAML.stringify(document);
+
+  const outputDir = './docs/swagger';
+  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+
+  fs.writeFileSync(`${outputDir}/swagger.yml`, yamlDocument);
+  fs.writeFileSync(
+    `${outputDir}/swagger.json`,
+    JSON.stringify(document, null, 2),
+  );
+
   SwaggerModule.setup('docs', app, document, {
     swaggerOptions: { persistAuthorization: true },
   });
