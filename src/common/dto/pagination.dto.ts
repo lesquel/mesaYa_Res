@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsIn,
@@ -12,6 +13,11 @@ import {
 
 export class PaginationDto {
   // Página basada en 1 (si no se envía, usa 1 cuando no se envía offset)
+  @ApiPropertyOptional({
+    example: 1,
+    minimum: 1,
+    description: 'Página (1-based)',
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -21,6 +27,11 @@ export class PaginationDto {
   )
   page?: number;
 
+  @ApiPropertyOptional({
+    example: 0,
+    minimum: 0,
+    description: 'Desplazamiento',
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -28,6 +39,7 @@ export class PaginationDto {
   offset?: number;
 
   // Límite con valores por defecto/techo
+  @ApiPropertyOptional({ example: 10, minimum: 1, maximum: 100 })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -40,12 +52,17 @@ export class PaginationDto {
   limit?: number;
 
   // Ordenación segura (se validará contra columnas permitidas en el helper)
+  @ApiPropertyOptional({
+    example: 'name',
+    description: 'Campo por el cual ordenar',
+  })
   @IsOptional()
   @IsString()
   // solo letras, números y guiones bajos para prevenir inyección
   @Matches(/^\w+$/)
   sortBy?: string;
 
+  @ApiPropertyOptional({ example: 'ASC', enum: ['ASC', 'DESC'] })
   @IsOptional()
   @IsIn(['ASC', 'DESC', 'asc', 'desc'])
   @Transform(({ value }) =>
@@ -54,6 +71,7 @@ export class PaginationDto {
   sortOrder?: 'ASC' | 'DESC';
 
   // Búsqueda libre (el helper aplica ILIKE %q% en columnas configuradas)
+  @ApiPropertyOptional({ example: 'pizza', description: 'Texto de búsqueda' })
   @IsOptional()
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
