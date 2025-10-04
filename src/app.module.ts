@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envConfig } from './config/env.config';
 import { JoiValidationSchema } from './config/joi.validation';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { JoiValidationSchema } from './config/joi.validation';
         };
       },
     }),
+    SeedModule,
   ],
 })
 export class AppModule {}
