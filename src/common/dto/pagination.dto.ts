@@ -13,7 +13,11 @@ import {
 
 export class PaginationDto {
   // Página basada en 1 (si no se envía, usa 1 cuando no se envía offset)
-  @ApiPropertyOptional({ example: 1, minimum: 1, description: 'Página (1-based)' })
+  @ApiPropertyOptional({
+    example: 1,
+    minimum: 1,
+    description: 'Página (1-based)',
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -23,7 +27,11 @@ export class PaginationDto {
   )
   page?: number;
 
-  @ApiPropertyOptional({ example: 0, minimum: 0, description: 'Desplazamiento' })
+  @ApiPropertyOptional({
+    example: 0,
+    minimum: 0,
+    description: 'Desplazamiento',
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -44,7 +52,10 @@ export class PaginationDto {
   limit?: number;
 
   // Ordenación segura (se validará contra columnas permitidas en el helper)
-  @ApiPropertyOptional({ example: 'name', description: 'Campo por el cual ordenar' })
+  @ApiPropertyOptional({
+    example: 'name',
+    description: 'Campo por el cual ordenar',
+  })
   @IsOptional()
   @IsString()
   // solo letras, números y guiones bajos para prevenir inyección
