@@ -1,4 +1,12 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Role } from './role.entity.js';
 
 export enum UserRole {
   USER = 'USER',
@@ -29,8 +37,9 @@ export class User {
   })
   passwordHash: string;
 
-  @Column({ type: 'varchar', array: true, name: 'roles', default: ['USER'] })
-  roles: UserRole[];
+  @ManyToMany(() => Role, { eager: true })
+  @JoinTable({ name: 'user_roles' })
+  roles: Role[];
 
   @Column({ type: 'boolean', name: 'active', default: true })
   active: boolean;

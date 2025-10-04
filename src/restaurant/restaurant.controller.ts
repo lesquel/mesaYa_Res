@@ -16,9 +16,8 @@ import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard.js';
-import { Roles } from '../auth/decorator/roles.decorator.js';
-import { RolesGuard } from '../auth/guard/roles.guard.js';
-import { UserRole } from '../auth/entities/user.entity.js';
+import { Permissions } from '../auth/decorator/permissions.decorator.js';
+import { PermissionsGuard } from '../auth/guard/permissions.guard.js';
 import type { Request } from 'express';
 
 @Controller('restaurant')
@@ -26,8 +25,8 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('restaurant:create')
   create(@Body() createRestaurantDto: CreateRestaurantDto) {
     return this.restaurantService.create(createRestaurantDto);
   }
@@ -44,8 +43,8 @@ export class RestaurantController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('restaurant:update')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
@@ -54,8 +53,8 @@ export class RestaurantController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('restaurant:delete')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.restaurantService.remove(id);
   }

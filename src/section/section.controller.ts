@@ -17,17 +17,16 @@ import { UpdateSectionDto } from './dto/update-section.dto';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard.js';
-import { Roles } from '../auth/decorator/roles.decorator.js';
-import { RolesGuard } from '../auth/guard/roles.guard.js';
-import { UserRole } from '../auth/entities/user.entity.js';
+import { Permissions } from '../auth/decorator/permissions.decorator.js';
+import { PermissionsGuard } from '../auth/guard/permissions.guard.js';
 
 @Controller('section')
 export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('section:create')
   create(@Body() createSectionDto: CreateSectionDto) {
     return this.sectionService.create(createSectionDto);
   }
@@ -44,8 +43,8 @@ export class SectionController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('section:update')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSectionDto: UpdateSectionDto,
@@ -54,8 +53,8 @@ export class SectionController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('section:delete')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.sectionService.remove(id);
   }
