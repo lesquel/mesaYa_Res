@@ -1,3 +1,4 @@
+import type { Request } from 'express';
 import {
   BadRequestException,
   Body,
@@ -30,27 +31,28 @@ import { PaginationDto } from '../../../../common/dto/pagination.dto.js';
 import {
   CreateReviewCommand,
   CreateReviewDto,
-} from '../../application/dto/input/create-review.dto.js';
-import {
   UpdateReviewCommand,
   UpdateReviewDto,
-} from '../../application/dto/input/update-review.dto.js';
-import { ListReviewsQuery } from '../../application/dto/input/list-reviews.query.js';
-import { ListRestaurantReviewsQuery } from '../../application/dto/input/list-restaurant-reviews.query.js';
-import { FindReviewQuery } from '../../application/dto/input/find-review.query.js';
-import { DeleteReviewCommand } from '../../application/dto/input/delete-review.command.js';
-import { CreateReviewUseCase } from '../../application/use-cases/create-review.use-case.js';
-import { ListReviewsUseCase } from '../../application/use-cases/list-reviews.use-case.js';
-import { ListRestaurantReviewsUseCase } from '../../application/use-cases/list-restaurant-reviews.use-case.js';
-import { FindReviewUseCase } from '../../application/use-cases/find-review.use-case.js';
-import { UpdateReviewUseCase } from '../../application/use-cases/update-review.use-case.js';
-import { DeleteReviewUseCase } from '../../application/use-cases/delete-review.use-case.js';
-import { ReviewNotFoundError } from '../../domain/errors/review-not-found.error.js';
-import { ReviewOwnershipError } from '../../domain/errors/review-ownership.error.js';
-import { ReviewRestaurantNotFoundError } from '../../domain/errors/review-restaurant-not-found.error.js';
-import { ReviewUserNotFoundError } from '../../domain/errors/review-user-not-found.error.js';
-import { InvalidReviewDataError } from '../../domain/errors/invalid-review-data.error.js';
-import type { Request } from 'express';
+  ListReviewsQuery,
+  ListRestaurantReviewsQuery,
+  FindReviewQuery,
+  DeleteReviewCommand,
+} from '../../application/dto/input';
+import {
+  CreateReviewUseCase,
+  ListReviewsUseCase,
+  ListRestaurantReviewsUseCase,
+  FindReviewUseCase,
+  UpdateReviewUseCase,
+  DeleteReviewUseCase,
+} from '../../application/use-cases';
+import {
+  ReviewNotFoundError,
+  ReviewOwnershipError,
+  ReviewRestaurantNotFoundError,
+  ReviewUserNotFoundError,
+  InvalidReviewDataError,
+} from '../../domain/errors';
 
 @ApiTags('Reviews')
 @Controller('review')

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/orm/restaurant.orm-entity.js';
-import { type RestaurantReviewReaderPort } from '../../application/ports/restaurant-reader.port.js';
+import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/orm';
+import { type RestaurantReviewReaderPort } from '../../application/ports';
 
 @Injectable()
 export class RestaurantTypeOrmReviewProvider

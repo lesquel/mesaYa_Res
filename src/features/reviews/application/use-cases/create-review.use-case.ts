@@ -11,15 +11,11 @@ import { CreateReviewCommand } from '../dto/input';
 import {
   REVIEW_REPOSITORY,
   type ReviewRepositoryPort,
-} from '../ports/review-repository.port.js';
-import {
   RESTAURANT_REVIEW_READER,
   type RestaurantReviewReaderPort,
-} from '../ports/restaurant-reader.port.js';
-import {
   USER_REVIEW_READER,
   type UserReviewReaderPort,
-} from '../ports/user-reader.port.js';
+} from '../ports';
 
 @Injectable()
 export class CreateReviewUseCase

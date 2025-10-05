@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../../auth/entities/user.entity.js';
-import { type UserReviewReaderPort } from '../../application/ports/user-reader.port.js';
+import { type UserReviewReaderPort } from '../../application/ports';
 
 @Injectable()
 export class UserTypeOrmReviewProvider implements UserReviewReaderPort {

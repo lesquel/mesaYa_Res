@@ -5,18 +5,24 @@ import { ReviewsController } from './interface/controllers/reviews.controller.js
 import { ReviewOrmEntity } from './infrastructure/orm/review.orm-entity.js';
 import { RestaurantOrmEntity } from '../restaurants/infrastructure/orm/restaurant.orm-entity.js';
 import { User } from '../../auth/entities/user.entity.js';
-import { ReviewTypeOrmRepository } from './infrastructure/repositories/review-typeorm.repository.js';
-import { RestaurantTypeOrmReviewProvider } from './infrastructure/providers/restaurant-typeorm.provider.js';
-import { UserTypeOrmReviewProvider } from './infrastructure/providers/user-typeorm.provider.js';
-import { CreateReviewUseCase } from './application/use-cases/create-review.use-case.js';
-import { ListReviewsUseCase } from './application/use-cases/list-reviews.use-case.js';
-import { ListRestaurantReviewsUseCase } from './application/use-cases/list-restaurant-reviews.use-case.js';
-import { FindReviewUseCase } from './application/use-cases/find-review.use-case.js';
-import { UpdateReviewUseCase } from './application/use-cases/update-review.use-case.js';
-import { DeleteReviewUseCase } from './application/use-cases/delete-review.use-case.js';
-import { REVIEW_REPOSITORY } from './application/ports/review-repository.port.js';
-import { RESTAURANT_REVIEW_READER } from './application/ports/restaurant-reader.port.js';
-import { USER_REVIEW_READER } from './application/ports/user-reader.port.js';
+import { ReviewTypeOrmRepository } from './infrastructure/repositories';
+import {
+  RestaurantTypeOrmReviewProvider,
+  UserTypeOrmReviewProvider,
+} from './infrastructure/providers';
+import {
+  CreateReviewUseCase,
+  ListReviewsUseCase,
+  ListRestaurantReviewsUseCase,
+  FindReviewUseCase,
+  DeleteReviewUseCase,
+  UpdateReviewUseCase,
+} from './application/use-cases';
+import {
+  REVIEW_REPOSITORY,
+  RESTAURANT_REVIEW_READER,
+  USER_REVIEW_READER,
+} from './application/ports';
 
 @Module({
   imports: [

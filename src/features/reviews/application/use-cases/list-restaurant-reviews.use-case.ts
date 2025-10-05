@@ -1,12 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '../../../../shared/core/use-case.js';
-import { ListRestaurantReviewsQuery } from '../dto/input/list-restaurant-reviews.query.js';
-import { PaginatedReviewResponse } from '../dto/output/review.response.dto.js';
-import { ReviewMapper } from '../mappers/review.mapper.js';
-import {
-  REVIEW_REPOSITORY,
-  type ReviewRepositoryPort,
-} from '../ports/review-repository.port.js';
+import { UseCase } from '@shared/core/use-case.js';
+import { ListRestaurantReviewsQuery } from '../dto/input';
+import { PaginatedReviewResponse } from '../dto/output';
+import { ReviewMapper } from '../mappers';
+import { REVIEW_REPOSITORY, type ReviewRepositoryPort } from '../ports';
 
 @Injectable()
 export class ListRestaurantReviewsUseCase

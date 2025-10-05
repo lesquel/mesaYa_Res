@@ -1,19 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { ReviewOrmEntity } from '../orm/review.orm-entity.js';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/orm/restaurant.orm-entity.js';
+import { ReviewOrmEntity } from '../orm';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/orm';
 import { User } from '../../../../auth/entities/user.entity.js';
-import { Review } from '../../domain/entities/review.entity.js';
-import { ReviewOrmMapper } from '../mappers/review.orm-mapper.js';
-import { ReviewNotFoundError } from '../../domain/errors/review-not-found.error.js';
-import { ReviewRestaurantNotFoundError } from '../../domain/errors/review-restaurant-not-found.error.js';
-import { ReviewUserNotFoundError } from '../../domain/errors/review-user-not-found.error.js';
-import { ListReviewsQuery } from '../../application/dto/input/list-reviews.query.js';
-import { ListRestaurantReviewsQuery } from '../../application/dto/input/list-restaurant-reviews.query.js';
+import { Review } from '../../domain/entities';
+import { ReviewOrmMapper } from '../mappers';
+import {
+  ReviewNotFoundError,
+  ReviewRestaurantNotFoundError,
+  ReviewUserNotFoundError,
+} from '../../domain/errors';
+import {
+  ListReviewsQuery,
+  ListRestaurantReviewsQuery,
+} from '../../application/dto/input';
 import { PaginatedResult } from '../../../../shared/core/pagination.js';
 import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
-import { type ReviewRepositoryPort } from '../../application/ports/review-repository.port.js';
+import { type ReviewRepositoryPort } from '../../application/ports';
 
 @Injectable()
 export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
