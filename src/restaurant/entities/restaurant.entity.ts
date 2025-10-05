@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../../auth/entities/user.entity.js';
 
 @Entity({ name: 'restaurant' })
 export class Restaurant {
@@ -37,4 +47,15 @@ export class Restaurant {
 
   @Column({ type: 'boolean', name: 'active', nullable: false })
   active: boolean;
+
+  // Owner of the restaurant (creator)
+  @ManyToOne(() => User, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'owner_id', referencedColumnName: 'id' })
+  owner: User;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

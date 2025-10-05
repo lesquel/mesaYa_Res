@@ -14,7 +14,9 @@ async function bootstrap() {
 
   // CORS desde variables de entorno (ver CORS_* en Joi)
   const configService = app.get(ConfigService);
+
   const corsOptions = buildCorsOptions(configService);
+
   app.enableCors(corsOptions);
 
   app.useGlobalPipes(
