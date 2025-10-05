@@ -145,3 +145,6 @@ $RECYCLE.BIN/
 *.swo
 
 .env
+/docs/swagger/
+swagger.json
+swagger.yml
