@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../../auth/entities/user.entity.js';
-import { type OwnerReaderPort } from '../../application/ports/owner-reader.port.js';
+import { type OwnerReaderPort } from '../../application/ports/index.js';
 
 @Injectable()
 export class OwnerTypeOrmProvider implements OwnerReaderPort {

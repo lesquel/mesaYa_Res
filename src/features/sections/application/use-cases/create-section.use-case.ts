@@ -1,18 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '../../../../shared/core/use-case.js';
-import { Section } from '../../domain/entities/section.entity.js';
-import { SectionMapper } from '../mappers/section.mapper.js';
-import { SectionResponseDto } from '../dto/output/section.response.dto.js';
-import { CreateSectionCommand } from '../dto/input/create-section.dto.js';
-import {
-  SECTION_REPOSITORY,
-  type SectionRepositoryPort,
-} from '../ports/section-repository.port.js';
+import { Section, SectionRestaurantNotFoundError } from '../../domain/index.js';
+import { SectionMapper } from '../mappers/index.js';
+import { SectionResponseDto, CreateSectionCommand } from '../dto/index.js';
 import {
   RESTAURANT_SECTION_READER,
+  SECTION_REPOSITORY,
   type RestaurantSectionReaderPort,
-} from '../ports/restaurant-reader.port.js';
-import { SectionRestaurantNotFoundError } from '../../domain/errors/section-restaurant-not-found.error.js';
+  type SectionRepositoryPort,
+} from '../ports/index.js';
 
 @Injectable()
 export class CreateSectionUseCase

@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { RestaurantDay } from '../../../domain/entities/restaurant.entity.js';
+import { RestaurantDay } from '../../../domain/index.js';
 
 const trim = () =>
   Transform(({ value }) => (typeof value === 'string' ? value.trim() : value));

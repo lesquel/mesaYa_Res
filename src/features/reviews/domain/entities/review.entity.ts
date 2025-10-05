@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { InvalidReviewDataError } from '../errors';
+import { InvalidReviewDataError } from '../errors/index.js';
 
 export interface ReviewProps {
   restaurantId: string;

@@ -1,5 +1,5 @@
-import { Restaurant } from '../../domain/entities/restaurant.entity.js';
-import { ListRestaurantsQuery } from '../dto/input/list-restaurants.query.js';
+import { Restaurant } from '../../domain/index.js';
+import { ListRestaurantsQuery } from '../dto/index.js';
 import { PaginatedResult } from '../../../../shared/core/pagination.js';
 
 export const RESTAURANT_REPOSITORY = Symbol('RESTAURANT_REPOSITORY');

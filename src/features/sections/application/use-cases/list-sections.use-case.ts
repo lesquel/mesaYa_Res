@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '../../../../shared/core/use-case.js';
-import { ListSectionsQuery } from '../dto/input/list-sections.query.js';
-import { PaginatedSectionResponse } from '../dto/output/section.response.dto.js';
-import { SectionMapper } from '../mappers/section.mapper.js';
+import { ListSectionsQuery, PaginatedSectionResponse } from '../dto/index.js';
+import { SectionMapper } from '../mappers/index.js';
 import {
   SECTION_REPOSITORY,
   type SectionRepositoryPort,
-} from '../ports/section-repository.port.js';
+} from '../ports/index.js';
 
 @Injectable()
 export class ListSectionsUseCase

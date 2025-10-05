@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { SectionOrmEntity } from '../orm/section.orm-entity.js';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/orm/restaurant.orm-entity.js';
-import { Section } from '../../domain/entities/section.entity.js';
-import { SectionOrmMapper } from '../mappers/section.orm-mapper.js';
-import { SectionRestaurantNotFoundError } from '../../domain/errors/section-restaurant-not-found.error.js';
-import { SectionNotFoundError } from '../../domain/errors/section-not-found.error.js';
-import { ListSectionsQuery } from '../../application/dto/input/list-sections.query.js';
+import {
+  Section,
+  SectionNotFoundError,
+  SectionRestaurantNotFoundError,
+} from '../../domain/index.js';
+import { SectionOrmEntity } from '../orm/index.js';
+import { SectionOrmMapper } from '../mappers/index.js';
+import { RestaurantOrmEntity } from '../../../restaurants/index.js';
+import { ListSectionsQuery } from '../../application/dto/index.js';
 import { PaginatedResult } from '../../../../shared/core/pagination.js';
 import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
-import { type SectionRepositoryPort } from '../../application/ports/section-repository.port.js';
+import { type SectionRepositoryPort } from '../../application/ports/index.js';
 
 @Injectable()
 export class SectionTypeOrmRepository implements SectionRepositoryPort {

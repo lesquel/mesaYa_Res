@@ -1,9 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/core/use-case.js';
-import { ReviewNotFoundError, ReviewOwnershipError } from '../../domain/errors';
-import { DeleteReviewCommand } from '../dto/input';
-import { DeleteReviewResponseDto } from '../dto/output';
-import { REVIEW_REPOSITORY, type ReviewRepositoryPort } from '../ports';
+import {
+  ReviewNotFoundError,
+  ReviewOwnershipError,
+} from '../../domain/index.js';
+import { DeleteReviewCommand, DeleteReviewResponseDto } from '../dto/index.js';
+import {
+  REVIEW_REPOSITORY,
+  type ReviewRepositoryPort,
+} from '../ports/index.js';
 
 @Injectable()
 export class DeleteReviewUseCase

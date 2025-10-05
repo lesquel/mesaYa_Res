@@ -37,22 +37,20 @@ import {
   ListRestaurantReviewsQuery,
   FindReviewQuery,
   DeleteReviewCommand,
-} from '../../application/dto/input';
-import {
   CreateReviewUseCase,
   ListReviewsUseCase,
   ListRestaurantReviewsUseCase,
   FindReviewUseCase,
   UpdateReviewUseCase,
   DeleteReviewUseCase,
-} from '../../application/use-cases';
+} from '../../application/index.js';
 import {
+  InvalidReviewDataError,
   ReviewNotFoundError,
   ReviewOwnershipError,
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
-  InvalidReviewDataError,
-} from '../../domain/errors';
+} from '../../domain/index.js';
 
 @ApiTags('Reviews')
 @Controller('review')

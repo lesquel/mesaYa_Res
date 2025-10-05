@@ -29,22 +29,22 @@ import type { Request } from 'express';
 import {
   CreateSectionCommand,
   CreateSectionDto,
-} from '../../application/dto/input/create-section.dto.js';
-import { ListSectionsQuery } from '../../application/dto/input/list-sections.query.js';
-import { FindSectionQuery } from '../../application/dto/input/find-section.query.js';
-import {
+  ListSectionsQuery,
+  FindSectionQuery,
   UpdateSectionCommand,
   UpdateSectionDto,
-} from '../../application/dto/input/update-section.dto.js';
-import { DeleteSectionCommand } from '../../application/dto/input/delete-section.command.js';
-import { CreateSectionUseCase } from '../../application/use-cases/create-section.use-case.js';
-import { ListSectionsUseCase } from '../../application/use-cases/list-sections.use-case.js';
-import { FindSectionUseCase } from '../../application/use-cases/find-section.use-case.js';
-import { UpdateSectionUseCase } from '../../application/use-cases/update-section.use-case.js';
-import { DeleteSectionUseCase } from '../../application/use-cases/delete-section.use-case.js';
-import { SectionNotFoundError } from '../../domain/errors/section-not-found.error.js';
-import { SectionRestaurantNotFoundError } from '../../domain/errors/section-restaurant-not-found.error.js';
-import { InvalidSectionDataError } from '../../domain/errors/invalid-section-data.error.js';
+  DeleteSectionCommand,
+  CreateSectionUseCase,
+  ListSectionsUseCase,
+  FindSectionUseCase,
+  UpdateSectionUseCase,
+  DeleteSectionUseCase,
+} from '../../application/index.js';
+import {
+  InvalidSectionDataError,
+  SectionNotFoundError,
+  SectionRestaurantNotFoundError,
+} from '../../domain/index.js';
 
 @ApiTags('Sections')
 @Controller('section')

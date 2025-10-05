@@ -1,13 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/core/use-case.js';
-import { Review } from '../../domain/entities';
 import {
+  Review,
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
-} from '../../domain/errors';
-import { ReviewMapper } from '../mappers';
-import { ReviewResponseDto } from '../dto/output';
-import { CreateReviewCommand } from '../dto/input';
+} from '../../domain/index.js';
+import { ReviewMapper } from '../mappers/index.js';
+import { ReviewResponseDto, CreateReviewCommand } from '../dto/index.js';
 import {
   REVIEW_REPOSITORY,
   type ReviewRepositoryPort,
@@ -15,7 +14,7 @@ import {
   type RestaurantReviewReaderPort,
   USER_REVIEW_READER,
   type UserReviewReaderPort,
-} from '../ports';
+} from '../ports/index.js';
 
 @Injectable()
 export class CreateReviewUseCase

@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '../../../../shared/core/use-case.js';
-import { ListOwnerRestaurantsQuery } from '../dto/input/list-owner-restaurants.query.js';
-import { PaginatedRestaurantResponse } from '../dto/output/restaurant.response.dto.js';
-import { RestaurantMapper } from '../mappers/restaurant.mapper.js';
+import {
+  ListOwnerRestaurantsQuery,
+  PaginatedRestaurantResponse,
+} from '../dto/index.js';
+import { RestaurantMapper } from '../mappers/index.js';
 import {
   RESTAURANT_REPOSITORY,
   type RestaurantRepositoryPort,
-} from '../ports/restaurant-repository.port.js';
+} from '../ports/index.js';
 
 @Injectable()
 export class ListOwnerRestaurantsUseCase

@@ -1,8 +1,5 @@
-import {
-  Restaurant,
-  type RestaurantDay,
-} from '../../domain/entities/restaurant.entity.js';
-import { RestaurantOrmEntity } from '../orm/restaurant.orm-entity.js';
+import { Restaurant, type RestaurantDay } from '../../domain/index.js';
+import { RestaurantOrmEntity } from '../orm/index.js';
 import { User } from '../../../../auth/entities/user.entity.js';
 
 export class RestaurantOrmMapper {

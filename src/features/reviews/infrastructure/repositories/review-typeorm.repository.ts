@@ -1,23 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { ReviewOrmEntity } from '../orm';
-import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/orm';
 import { User } from '../../../../auth/entities/user.entity.js';
-import { Review } from '../../domain/entities';
-import { ReviewOrmMapper } from '../mappers';
 import {
+  Review,
   ReviewNotFoundError,
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
-} from '../../domain/errors';
+} from '../../domain/index.js';
 import {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
-} from '../../application/dto/input';
+} from '../../application/dto/index.js';
 import { PaginatedResult } from '../../../../shared/core/pagination.js';
 import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
-import { type ReviewRepositoryPort } from '../../application/ports';
+import { type ReviewRepositoryPort } from '../../application/ports/index.js';
+import { ReviewOrmEntity } from '../orm/index.js';
+import { ReviewOrmMapper } from '../mappers/index.js';
+import { RestaurantOrmEntity } from '../../../restaurants/index.js';
 
 @Injectable()
 export class ReviewTypeOrmRepository implements ReviewRepositoryPort {

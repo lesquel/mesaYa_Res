@@ -1,14 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Restaurant } from '../../domain/entities/restaurant.entity.js';
-import { RestaurantOwnerNotFoundError } from '../../domain/errors/restaurant-owner-not-found.error.js';
-import { RestaurantNotFoundError } from '../../domain/errors/restaurant-not-found.error.js';
-import { ListRestaurantsQuery } from '../../application/dto/input/list-restaurants.query.js';
+import {
+  Restaurant,
+  RestaurantOwnerNotFoundError,
+  RestaurantNotFoundError,
+} from '../../domain/index.js';
+import { ListRestaurantsQuery } from '../../application/dto/index.js';
 import { PaginatedResult } from '../../../../shared/core/pagination.js';
-import { type RestaurantRepositoryPort } from '../../application/ports/restaurant-repository.port.js';
-import { RestaurantOrmEntity } from '../orm/restaurant.orm-entity.js';
-import { RestaurantOrmMapper } from '../mappers/restaurant.orm-mapper.js';
+import { type RestaurantRepositoryPort } from '../../application/ports/index.js';
+import { RestaurantOrmEntity } from '../orm/index.js';
+import { RestaurantOrmMapper } from '../mappers/index.js';
 import { User } from '../../../../auth/entities/user.entity.js';
 import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
 

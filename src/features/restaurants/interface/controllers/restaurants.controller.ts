@@ -27,28 +27,28 @@ import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
 import { CurrentUser } from '../../../../auth/decorator/current-user.decorator.js';
 import { PaginationDto } from '../../../../common/dto/pagination.dto.js';
-import { DeleteRestaurantUseCase } from '../../application/use-cases/delete-restaurant.use-case.js';
-import { CreateRestaurantUseCase } from '../../application/use-cases/create-restaurant.use-case.js';
-import { ListRestaurantsUseCase } from '../../application/use-cases/list-restaurants.use-case.js';
-import { ListOwnerRestaurantsUseCase } from '../../application/use-cases/list-owner-restaurants.use-case.js';
-import { FindRestaurantUseCase } from '../../application/use-cases/find-restaurant.use-case.js';
-import { UpdateRestaurantUseCase } from '../../application/use-cases/update-restaurant.use-case.js';
 import {
+  CreateRestaurantUseCase,
+  DeleteRestaurantUseCase,
+  FindRestaurantUseCase,
+  ListOwnerRestaurantsUseCase,
+  ListRestaurantsUseCase,
+  UpdateRestaurantUseCase,
   CreateRestaurantCommand,
   CreateRestaurantDto,
-} from '../../application/dto/input/create-restaurant.dto.js';
-import {
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
-} from '../../application/dto/input/update-restaurant.dto.js';
-import { DeleteRestaurantCommand } from '../../application/dto/input/delete-restaurant.command.js';
-import { RestaurantNotFoundError } from '../../domain/errors/restaurant-not-found.error.js';
-import { RestaurantOwnerNotFoundError } from '../../domain/errors/restaurant-owner-not-found.error.js';
-import { RestaurantOwnershipError } from '../../domain/errors/restaurant-ownership.error.js';
-import { InvalidRestaurantDataError } from '../../domain/errors/invalid-restaurant-data.error.js';
-import { ListRestaurantsQuery } from '../../application/dto/input/list-restaurants.query.js';
-import { ListOwnerRestaurantsQuery } from '../../application/dto/input/list-owner-restaurants.query.js';
-import { FindRestaurantQuery } from '../../application/dto/input/find-restaurant.query.js';
+  DeleteRestaurantCommand,
+  ListRestaurantsQuery,
+  ListOwnerRestaurantsQuery,
+  FindRestaurantQuery,
+} from '../../application/index.js';
+import {
+  InvalidRestaurantDataError,
+  RestaurantNotFoundError,
+  RestaurantOwnerNotFoundError,
+  RestaurantOwnershipError,
+} from '../../domain/index.js';
 import type { Request } from 'express';
 
 @ApiTags('Restaurants')

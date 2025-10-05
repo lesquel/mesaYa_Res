@@ -1,13 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '../../../../shared/core/use-case.js';
-import { RestaurantNotFoundError } from '../../domain/errors/restaurant-not-found.error.js';
-import { RestaurantOwnershipError } from '../../domain/errors/restaurant-ownership.error.js';
-import { DeleteRestaurantCommand } from '../dto/input/delete-restaurant.command.js';
-import { DeleteRestaurantResponseDto } from '../dto/output/delete-restaurant.response.dto.js';
+import {
+  RestaurantNotFoundError,
+  RestaurantOwnershipError,
+} from '../../domain/index.js';
+import {
+  DeleteRestaurantCommand,
+  DeleteRestaurantResponseDto,
+} from '../dto/index.js';
 import {
   RESTAURANT_REPOSITORY,
   type RestaurantRepositoryPort,
-} from '../ports/restaurant-repository.port.js';
+} from '../ports/index.js';
 
 @Injectable()
 export class DeleteRestaurantUseCase

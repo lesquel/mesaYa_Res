@@ -1,6 +1,6 @@
-import { Section } from '../../domain/entities/section.entity.js';
+import { Section } from '../../domain/index.js';
 import { PaginatedResult } from '../../../../shared/core/pagination.js';
-import { ListSectionsQuery } from '../dto/input/list-sections.query.js';
+import { ListSectionsQuery } from '../dto/index.js';
 
 export const SECTION_REPOSITORY = Symbol('SECTION_REPOSITORY');
 
