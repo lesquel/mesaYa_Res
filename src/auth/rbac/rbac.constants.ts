@@ -7,6 +7,11 @@ export const DEFAULT_PERMISSION_NAMES = [
   'section:update',
   'section:delete',
   'section:read',
+  // Reviews
+  'review:create',
+  'review:update',
+  'review:delete',
+  'review:read',
 ] as const;
 
 export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
@@ -20,7 +25,20 @@ export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
       'section:create',
       'section:update',
       'section:read',
+      'review:create',
+      'review:update',
+      'review:read',
     ],
   },
-  { name: 'USER', permNames: ['restaurant:read', 'section:read'] },
+  {
+    name: 'USER',
+    permNames: [
+      'restaurant:read',
+      'section:read',
+      'review:create',
+      'review:update',
+      'review:delete',
+      'review:read',
+    ],
+  },
 ];

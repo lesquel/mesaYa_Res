@@ -18,6 +18,7 @@ import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard.js';
 import { Permissions } from '../auth/decorator/permissions.decorator.js';
 import { PermissionsGuard } from '../auth/guard/permissions.guard.js';
+import { CurrentUser } from '../auth/decorator/current-user.decorator.js';
 import type { Request } from 'express';
 import {
   ApiBearerAuth,
@@ -39,8 +40,11 @@ export class RestaurantController {
   @ApiOperation({ summary: 'Crear restaurante (permiso restaurant:create)' })
   @ApiBearerAuth()
   @ApiBody({ type: CreateRestaurantDto })
-  create(@Body() createRestaurantDto: CreateRestaurantDto) {
-    return this.restaurantService.create(createRestaurantDto);
+  create(
+    @Body() createRestaurantDto: CreateRestaurantDto,
+    @CurrentUser() user,
+  ) {
+    return this.restaurantService.create(createRestaurantDto, user.userId);
   }
 
   @Get()
@@ -75,8 +79,9 @@ export class RestaurantController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
+    @CurrentUser() user,
   ) {
-    return this.restaurantService.update(id, updateRestaurantDto);
+    return this.restaurantService.update(id, updateRestaurantDto, user.userId);
   }
 
   @Delete(':id')
@@ -85,7 +90,7 @@ export class RestaurantController {
   @ApiOperation({ summary: 'Eliminar restaurante (permiso restaurant:delete)' })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.restaurantService.remove(id);
+  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user) {
+    return this.restaurantService.remove(id, user.userId);
   }
 }
