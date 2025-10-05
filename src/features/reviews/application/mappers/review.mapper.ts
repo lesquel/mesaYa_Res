@@ -1,5 +1,5 @@
-import { Review } from '../../domain/entities/review.entity.js';
-import { ReviewResponseDto } from '../dto/output/review.response.dto.js';
+import { Review } from '../../domain/entities';
+import { ReviewResponseDto } from '../dto/output';
 
 export class ReviewMapper {
   static toResponse(review: Review): ReviewResponseDto {

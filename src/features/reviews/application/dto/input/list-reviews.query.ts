@@ -1,4 +1,4 @@
-import { PaginationQuery } from '../../../../../shared/core/pagination.js';
+import { PaginationQuery } from '@shared/core/pagination.js';
 
 export interface ListReviewsQuery {
   pagination: PaginationQuery;

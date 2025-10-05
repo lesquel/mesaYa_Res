@@ -1,4 +1,4 @@
-import { PaginatedResult } from '../../../../../shared/core/pagination.js';
+import { PaginatedResult } from '@shared/core/pagination.js';
 
 export interface ReviewResponseDto {
   id: string;

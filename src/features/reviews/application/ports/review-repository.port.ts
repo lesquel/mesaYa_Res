@@ -1,7 +1,6 @@
-import { Review } from '../../domain/entities/review.entity.js';
-import { ListReviewsQuery } from '../dto/input/list-reviews.query.js';
-import { ListRestaurantReviewsQuery } from '../dto/input/list-restaurant-reviews.query.js';
-import { PaginatedResult } from '../../../../shared/core/pagination.js';
+import { Review } from '../../domain/entities';
+import { ListReviewsQuery, ListRestaurantReviewsQuery } from '../dto/input';
+import { PaginatedResult } from '@shared/core/pagination.js';
 
 export const REVIEW_REPOSITORY = Symbol('REVIEW_REPOSITORY');
 
