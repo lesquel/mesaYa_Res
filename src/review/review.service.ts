@@ -3,25 +3,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto.js';
+import { UpdateReviewDto } from './dto/update-review.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity.js';
-import { Restaurant } from '../restaurant/entities/restaurant.entity.js';
+import { RestaurantOrmEntity } from '../restaurants/infrastructure/orm/restaurant.orm-entity.js';
 import { User } from '../auth/entities/user.entity.js';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
-import {
-  PaginatedResult,
-  paginateQueryBuilder,
-} from '../common/pagination/paginate.js';
+import { paginateQueryBuilder } from '../common/pagination/paginate.js';
+import { PaginatedResult } from '../shared/core/pagination.js';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review) private readonly reviews: Repository<Review>,
-    @InjectRepository(Restaurant)
-    private readonly restaurants: Repository<Restaurant>,
+    @InjectRepository(RestaurantOrmEntity)
+    private readonly restaurants: Repository<RestaurantOrmEntity>,
     @InjectRepository(User) private readonly users: Repository<User>,
   ) {}
 

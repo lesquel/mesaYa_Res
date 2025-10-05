@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../auth/entities/user.entity.js';
-import { Restaurant } from '../../restaurant/entities/restaurant.entity.js';
+import { RestaurantOrmEntity } from '../../restaurants/infrastructure/orm/restaurant.orm-entity.js';
 
 @Entity({ name: 'review' })
 export class Review {
@@ -19,9 +19,12 @@ export class Review {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
-  @ManyToOne(() => Restaurant, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => RestaurantOrmEntity, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'restaurant_id', referencedColumnName: 'id' })
-  restaurant: Restaurant;
+  restaurant: RestaurantOrmEntity;
 
   @Column({ type: 'int', name: 'rating', nullable: false })
   rating: number; // 1..5

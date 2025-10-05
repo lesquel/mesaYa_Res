@@ -1,17 +1,17 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  Index,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../auth/entities/user.entity.js';
+import { User } from '../../../auth/entities/user.entity.js';
 
 @Entity({ name: 'restaurant' })
-export class Restaurant {
+export class RestaurantOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'restaurant_id' })
   id: string;
 
@@ -26,32 +26,32 @@ export class Restaurant {
   location: string;
 
   @Column({ type: 'time', name: 'open_time', nullable: true })
-  openTime: string; // HH:mm
+  openTime: string;
 
   @Column({ type: 'time', name: 'close_time', nullable: true })
-  closeTime: string; // HH:mm
+  closeTime: string;
 
   @Column({ type: 'varchar', name: 'days_open', array: true, nullable: true })
-  daysOpen: string[]; // e.g., ['MONDAY','TUESDAY']
+  daysOpen: string[];
 
   @Column({ type: 'int', name: 'total_capacity', nullable: false })
   totalCapacity: number;
 
-  // FK to subscription (relation can be defined when Subscription entity exists)
   @Column({ type: 'int', name: 'subscription_id', nullable: false })
   subscriptionId: number;
 
-  // FK to image (optional depending on design)
   @Column({ type: 'int', name: 'image_id', nullable: true })
   imageId?: number | null;
 
   @Column({ type: 'boolean', name: 'active', nullable: false })
   active: boolean;
 
-  // Owner of the restaurant (creator)
-  @ManyToOne(() => User, { nullable: false, onDelete: 'RESTRICT' })
+  @Column({ type: 'uuid', name: 'owner_id', nullable: true })
+  ownerId: string | null;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'owner_id', referencedColumnName: 'id' })
-  owner: User;
+  owner: User | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

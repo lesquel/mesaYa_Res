@@ -1,23 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSectionDto } from './dto/create-section.dto';
-import { UpdateSectionDto } from './dto/update-section.dto';
+import { CreateSectionDto } from './dto/create-section.dto.js';
+import { UpdateSectionDto } from './dto/update-section.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Section } from './entities/section.entity';
-import { Restaurant } from '../restaurant/entities/restaurant.entity';
+import { Section } from './entities/section.entity.js';
+import { RestaurantOrmEntity } from '../restaurants/infrastructure/orm/restaurant.orm-entity.js';
 import { Repository } from 'typeorm';
-import { PaginationDto } from '../common/dto/pagination.dto';
-import {
-  PaginatedResult,
-  paginateQueryBuilder,
-} from '../common/pagination/paginate';
+import { PaginationDto } from '../common/dto/pagination.dto.js';
+import { paginateQueryBuilder } from '../common/pagination/paginate.js';
+import { PaginatedResult } from '../shared/core/pagination.js';
 
 @Injectable()
 export class SectionService {
   constructor(
     @InjectRepository(Section)
     private readonly sectionRepository: Repository<Section>,
-    @InjectRepository(Restaurant)
-    private readonly restaurantRepository: Repository<Restaurant>,
+    @InjectRepository(RestaurantOrmEntity)
+    private readonly restaurantRepository: Repository<RestaurantOrmEntity>,
   ) {}
 
   async create(createSectionDto: CreateSectionDto) {

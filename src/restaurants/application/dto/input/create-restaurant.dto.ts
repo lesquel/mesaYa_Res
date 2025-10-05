@@ -1,18 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
+  IsArray,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
-  IsArray,
   IsString,
   MaxLength,
   Min,
-  ArrayNotEmpty,
-  IsIn,
 } from 'class-validator';
+import { RestaurantDay } from '../../../domain/entities/restaurant.entity.js';
 
-// Utilidad para recortar strings entrantes
 const trim = () =>
   Transform(({ value }) => (typeof value === 'string' ? value.trim() : value));
 
@@ -42,14 +42,14 @@ export class CreateRestaurantDto {
   @IsNotEmpty()
   @MaxLength(100)
   @trim()
-  openTime: string; // HH:mm
+  openTime: string;
 
   @ApiProperty({ example: '18:00', description: 'Formato HH:mm' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
   @trim()
-  closeTime: string; // HH:mm
+  closeTime: string;
 
   @ApiProperty({
     type: [String],
@@ -70,7 +70,7 @@ export class CreateRestaurantDto {
     ],
     { each: true },
   )
-  daysOpen: string[];
+  daysOpen: RestaurantDay[];
 
   @ApiProperty({ example: 50, minimum: 1 })
   @Type(() => Number)
@@ -91,3 +91,7 @@ export class CreateRestaurantDto {
   @Min(1)
   imageId?: number;
 }
+
+export type CreateRestaurantCommand = CreateRestaurantDto & {
+  ownerId: string;
+};

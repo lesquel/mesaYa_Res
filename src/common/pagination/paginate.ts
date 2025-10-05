@@ -4,24 +4,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-
-export interface PaginatedResult<T> {
-  results: T[];
-  total: number;
-  page: number;
-  limit: number;
-  offset: number;
-  pages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-  links?: {
-    self: string;
-    next?: string;
-    prev?: string;
-    first: string;
-    last: string;
-  };
-}
+import { PaginatedResult } from '../../shared/core/pagination.js';
 
 export interface PaginateOptions {
   page?: number; // 1-based

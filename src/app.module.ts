@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envConfig } from './common/config/env.config';
 import { JoiValidationSchema } from './common/config/joi.validation';
-import { SeedModule } from './seed/seed.module';
-import { RestaurantModule } from './restaurant/restaurant.module';
-import { SectionModule } from './section/section.module';
-import { AuthModule } from './auth/auth.module';
-import { ReviewModule } from './review/review.module';
+import { SeedModule } from './seed/seed.module.js';
+import { RestaurantsModule } from './restaurants/restaurants.module.js';
+import { SectionModule } from './section/section.module.js';
+import { AuthModule } from './auth/auth.module.js';
+import { ReviewModule } from './review/review.module.js';
 
 @Module({
   imports: [
@@ -48,7 +48,7 @@ import { ReviewModule } from './review/review.module';
       },
     }),
     SeedModule,
-    RestaurantModule,
+    RestaurantsModule,
     SectionModule,
     AuthModule,
     ReviewModule,
