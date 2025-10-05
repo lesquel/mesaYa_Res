@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { setupSwagger } from './common/config/swagger.config';
+import { ConfigService } from '@nestjs/config';
+import { buildCorsOptions } from './common/config/cors.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,6 +11,11 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   setupSwagger(app);
+
+  // CORS desde variables de entorno (ver CORS_* en Joi)
+  const configService = app.get(ConfigService);
+  const corsOptions = buildCorsOptions(configService);
+  app.enableCors(corsOptions);
 
   app.useGlobalPipes(
     new ValidationPipe({
