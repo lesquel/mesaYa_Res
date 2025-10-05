@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { RestaurantOrmEntity } from '../../restaurants/infrastructure/orm/restaurant.orm-entity.js';
+import { RestaurantOrmEntity } from '../../features/restaurants/infrastructure/orm/restaurant.orm-entity.js';
 
 @Entity({ name: 'section' })
 export class Section {

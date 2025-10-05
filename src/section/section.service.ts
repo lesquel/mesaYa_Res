@@ -3,7 +3,7 @@ import { CreateSectionDto } from './dto/create-section.dto.js';
 import { UpdateSectionDto } from './dto/update-section.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Section } from './entities/section.entity.js';
-import { RestaurantOrmEntity } from '../restaurants/infrastructure/orm/restaurant.orm-entity.js';
+import { RestaurantOrmEntity } from '../features/restaurants/infrastructure/orm/restaurant.orm-entity.js';
 import { Repository } from 'typeorm';
 import { PaginationDto } from '../common/dto/pagination.dto.js';
 import { paginateQueryBuilder } from '../common/pagination/paginate.js';

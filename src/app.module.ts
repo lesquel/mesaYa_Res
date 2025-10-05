@@ -4,10 +4,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envConfig } from './common/config/env.config';
 import { JoiValidationSchema } from './common/config/joi.validation';
 import { SeedModule } from './seed/seed.module.js';
-import { RestaurantsModule } from './restaurants/restaurants.module.js';
+import { RestaurantsModule } from './features/restaurants/restaurants.module.js';
 import { SectionModule } from './section/section.module.js';
 import { AuthModule } from './auth/auth.module.js';
-import { ReviewModule } from './review/review.module.js';
+import { ReviewsModule } from './features/reviews/reviews.module.js';
 
 @Module({
   imports: [
@@ -51,7 +51,7 @@ import { ReviewModule } from './review/review.module.js';
     RestaurantsModule,
     SectionModule,
     AuthModule,
-    ReviewModule,
+    ReviewsModule,
   ],
 })
 export class AppModule {}
