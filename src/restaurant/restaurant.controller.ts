@@ -60,6 +60,26 @@ export class RestaurantController {
     return this.restaurantService.findAll(pagination, route);
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('restaurant:read')
+  @ApiOperation({ summary: 'Listar mis restaurantes (owner actual)' })
+  @ApiBearerAuth()
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'offset', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'sortBy', required: false, type: String })
+  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
+  @ApiQuery({ name: 'q', required: false, type: String })
+  findMine(
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+    @CurrentUser() user,
+  ) {
+    const route = req.baseUrl || req.path || '/restaurant/me';
+    return this.restaurantService.findMine(user.userId, pagination, route);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un restaurante por ID' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })

@@ -72,6 +72,44 @@ export class RestaurantService {
     });
   }
 
+  async findMine(
+    ownerId: string,
+    pagination: PaginationDto,
+    route: string,
+  ): Promise<PaginatedResult<Restaurant>> {
+    const alias = 'restaurant';
+    const qb = this.restaurantRepository
+      .createQueryBuilder(alias)
+      .leftJoin(`${alias}.owner`, 'owner')
+      .where('owner.id = :ownerId', { ownerId });
+
+    const sortMap: Record<string, string> = {
+      name: `${alias}.name`,
+      location: `${alias}.location`,
+      totalCapacity: `${alias}.total_capacity`,
+      openTime: `${alias}.open_time`,
+      closeTime: `${alias}.close_time`,
+      createdAt: `${alias}.created_at`,
+    };
+
+    const sortByColumn =
+      pagination.sortBy && sortMap[pagination.sortBy]
+        ? sortMap[pagination.sortBy]
+        : undefined;
+
+    return paginateQueryBuilder(qb, {
+      ...pagination,
+      route,
+      sortBy: sortByColumn,
+      allowedSorts: Object.values(sortMap),
+      searchable: [
+        `${alias}.name`,
+        `${alias}.description`,
+        `${alias}.location`,
+      ],
+    });
+  }
+
   async findOne(id: string) {
     const found = await this.restaurantRepository.findOne({
       where: { id },
