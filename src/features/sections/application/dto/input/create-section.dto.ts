@@ -12,23 +12,22 @@ const trim = () =>
   Transform(({ value }) => (typeof value === 'string' ? value.trim() : value));
 
 export class CreateSectionDto {
-  @ApiProperty({
-    example: '8c0e8e7d-4e0c-4c3a-9a3f-1a7b6a1b2c3d',
-    format: 'uuid',
-  })
+  @ApiProperty({ description: 'Restaurant identifier', format: 'uuid' })
   @IsUUID()
   restaurantId: string;
 
-  @ApiProperty({ example: 'Patio', maxLength: 50 })
+  @ApiProperty({ description: 'Section name', maxLength: 50 })
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
   @trim()
   name: string;
 
-  @ApiPropertyOptional({ example: 'Mesas al aire libre' })
+  @ApiPropertyOptional({ description: 'Optional section description' })
   @IsOptional()
   @IsString()
   @trim()
   description?: string;
 }
+
+export type CreateSectionCommand = CreateSectionDto;

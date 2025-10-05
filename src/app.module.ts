@@ -5,7 +5,7 @@ import { envConfig } from './common/config/env.config';
 import { JoiValidationSchema } from './common/config/joi.validation';
 import { SeedModule } from './seed/seed.module.js';
 import { RestaurantsModule } from './features/restaurants/restaurants.module.js';
-import { SectionModule } from './section/section.module.js';
+import { SectionsModule } from './features/sections/sections.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ReviewsModule } from './features/reviews/reviews.module.js';
 
@@ -49,7 +49,7 @@ import { ReviewsModule } from './features/reviews/reviews.module.js';
     }),
     SeedModule,
     RestaurantsModule,
-    SectionModule,
+    SectionsModule,
     AuthModule,
     ReviewsModule,
   ],
