@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { envConfig } from './config/env.config';
-import { JoiValidationSchema } from './config/joi.validation';
+import { envConfig } from './common/config/env.config';
+import { JoiValidationSchema } from './common/config/joi.validation';
 import { SeedModule } from './seed/seed.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { SectionModule } from './section/section.module';

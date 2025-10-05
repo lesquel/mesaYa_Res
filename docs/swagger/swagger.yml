@@ -1,0 +1,613 @@
+openapi: 3.0.0
+paths:
+  /api/seed:
+    get:
+      operationId: SeedController_execute
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags:
+        - Seed
+  /api/restaurant:
+    post:
+      operationId: RestaurantController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRestaurantDto"
+      responses:
+        "201":
+          description: ""
+      security:
+        - bearer: []
+      summary: Crear restaurante (permiso restaurant:create)
+      tags: &a1
+        - Restaurants
+    get:
+      operationId: RestaurantController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Página (1-based)
+          schema:
+            minimum: 1
+            example: 1
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Desplazamiento
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          schema:
+            minimum: 1
+            maximum: 100
+            example: 10
+            type: number
+        - name: sortBy
+          required: false
+          in: query
+          description: Campo por el cual ordenar
+          schema:
+            example: name
+            type: string
+        - name: sortOrder
+          required: false
+          in: query
+          schema:
+            enum:
+              - ASC
+              - DESC
+            type: string
+        - name: q
+          required: false
+          in: query
+          description: Texto de búsqueda
+          schema:
+            example: pizza
+            type: string
+      responses:
+        "200":
+          description: ""
+      summary: Listar restaurantes (paginado)
+      tags: *a1
+  /api/restaurant/{id}:
+    get:
+      operationId: RestaurantController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID del restaurante
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      summary: Obtener un restaurante por ID
+      tags: *a1
+    patch:
+      operationId: RestaurantController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID del restaurante
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRestaurantDto"
+      responses:
+        "200":
+          description: ""
+      security:
+        - bearer: []
+      summary: Actualizar restaurante (permiso restaurant:update)
+      tags: *a1
+    delete:
+      operationId: RestaurantController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID del restaurante
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      security:
+        - bearer: []
+      summary: Eliminar restaurante (permiso restaurant:delete)
+      tags: *a1
+  /api/auth/signup:
+    post:
+      operationId: AuthController_signup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpDto"
+      responses:
+        "201":
+          description: Usuario registrado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      phone:
+                        type: string
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                  token:
+                    type: string
+      summary: Registro de usuario
+      tags: &a2
+        - Auth
+  /api/auth/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        "200":
+          description: Inicio de sesión correcto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      phone:
+                        type: string
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                  token:
+                    type: string
+      summary: Inicio de sesión
+      tags: *a2
+  /api/auth/me:
+    get:
+      operationId: AuthController_me
+      parameters: []
+      responses:
+        "200":
+          description: Usuario autenticado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                  roles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        permissions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+      security:
+        - bearer: []
+      summary: Perfil del usuario autenticado
+      tags: *a2
+  /api/auth/admin/check:
+    get:
+      operationId: AuthController_adminCheck
+      parameters: []
+      responses:
+        "200":
+          description: Usuario con rol ADMIN
+      security:
+        - bearer: []
+      summary: Verifica que el usuario sea ADMIN
+      tags: *a2
+  /api/auth/admin/users/{id}/roles:
+    patch:
+      operationId: AuthController_updateUserRoles
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID del usuario
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRolesDto"
+      responses:
+        "200":
+          description: Roles del usuario actualizados
+        "403":
+          description: Requiere rol ADMIN
+      security:
+        - bearer: []
+      summary: Cambiar roles de un usuario (ADMIN)
+      tags: *a2
+  /api/auth/admin/roles/{name}/permissions:
+    patch:
+      operationId: AuthController_updateRolePermissions
+      parameters:
+        - name: name
+          required: true
+          in: path
+          description: Nombre del rol
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRolePermissionsDto"
+      responses:
+        "200":
+          description: Permisos del rol actualizados
+        "403":
+          description: Requiere rol ADMIN
+      security:
+        - bearer: []
+      summary: Cambiar permisos de un rol (ADMIN)
+      tags: *a2
+  /api/auth/admin/roles:
+    get:
+      operationId: AuthController_listRoles
+      parameters: []
+      responses:
+        "200":
+          description: Listado de roles con permisos
+      security:
+        - bearer: []
+      summary: Listar roles (ADMIN)
+      tags: *a2
+  /api/auth/admin/permissions:
+    get:
+      operationId: AuthController_listPermissions
+      parameters: []
+      responses:
+        "200":
+          description: Listado de permisos
+      security:
+        - bearer: []
+      summary: Listar permisos (ADMIN)
+      tags: *a2
+  /api/section:
+    post:
+      operationId: SectionController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSectionDto"
+      responses:
+        "201":
+          description: ""
+      security:
+        - bearer: []
+      summary: Crear sección (permiso section:create)
+      tags: &a3
+        - Sections
+    get:
+      operationId: SectionController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Página (1-based)
+          schema:
+            minimum: 1
+            example: 1
+            type: number
+        - name: offset
+          required: false
+          in: query
+          description: Desplazamiento
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          schema:
+            minimum: 1
+            maximum: 100
+            example: 10
+            type: number
+        - name: sortBy
+          required: false
+          in: query
+          description: Campo por el cual ordenar
+          schema:
+            example: name
+            type: string
+        - name: sortOrder
+          required: false
+          in: query
+          schema:
+            enum:
+              - ASC
+              - DESC
+            type: string
+        - name: q
+          required: false
+          in: query
+          description: Texto de búsqueda
+          schema:
+            example: pizza
+            type: string
+      responses:
+        "200":
+          description: ""
+      summary: Listar secciones (paginado)
+      tags: *a3
+  /api/section/{id}:
+    get:
+      operationId: SectionController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID de la sección
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      summary: Obtener una sección por ID
+      tags: *a3
+    patch:
+      operationId: SectionController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID de la sección
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSectionDto"
+      responses:
+        "200":
+          description: ""
+      security:
+        - bearer: []
+      summary: Actualizar sección (permiso section:update)
+      tags: *a3
+    delete:
+      operationId: SectionController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: UUID de la sección
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      security:
+        - bearer: []
+      summary: Eliminar sección (permiso section:delete)
+      tags: *a3
+info:
+  title: MesaYa API
+  description: API para la gestión de reservas y restaurantes
+  version: 1.0.0
+  contact: {}
+tags:
+  - name: Users
+    description: Operaciones relacionadas con usuarios
+  - name: Restaurants
+    description: Gestión de restaurantes
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    CreateRestaurantDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My Resto
+          maxLength: 100
+        description:
+          type: string
+          example: Casual dining with local flavors
+        location:
+          type: string
+          example: Downtown - Main St 123
+          maxLength: 200
+        openTime:
+          type: string
+          example: 09:00
+          description: Formato HH:mm
+        closeTime:
+          type: string
+          example: 18:00
+          description: Formato HH:mm
+        daysOpen:
+          example:
+            - MONDAY
+            - TUESDAY
+            - WEDNESDAY
+          description: Días de apertura
+          type: array
+          items:
+            type: string
+        totalCapacity:
+          type: number
+          example: 50
+          minimum: 1
+        subscriptionId:
+          type: number
+          example: 1
+          minimum: 1
+        imageId:
+          type: number
+          example: 10
+          minimum: 1
+      required:
+        - name
+        - location
+        - openTime
+        - closeTime
+        - daysOpen
+        - totalCapacity
+        - subscriptionId
+    UpdateRestaurantDto:
+      type: object
+      properties: {}
+    SignUpDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user@example.com
+          maxLength: 100
+        name:
+          type: string
+          example: John Doe
+          maxLength: 100
+        phone:
+          type: string
+          example: "0999999999"
+          maxLength: 15
+        password:
+          type: string
+          example: StrongP4ss
+          minLength: 8
+          description: Al menos 1 mayúscula, 1 minúscula y 1 número
+      required:
+        - email
+        - name
+        - phone
+        - password
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user@example.com
+          maxLength: 100
+        password:
+          type: string
+          example: StrongP4ss
+          maxLength: 100
+      required:
+        - email
+        - password
+    UpdateUserRolesDto:
+      type: object
+      properties:
+        roles:
+          example:
+            - ADMIN
+            - OWNER
+          description: Nombres de roles a asignar al usuario
+          type: array
+          items:
+            type: string
+      required:
+        - roles
+    UpdateRolePermissionsDto:
+      type: object
+      properties:
+        permissions:
+          example:
+            - restaurant:create
+            - section:read
+          description: Permisos en formato entidad:acción
+          type: array
+          items:
+            type: string
+      required:
+        - permissions
+    CreateSectionDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          example: 8c0e8e7d-4e0c-4c3a-9a3f-1a7b6a1b2c3d
+          format: uuid
+        name:
+          type: string
+          example: Patio
+          maxLength: 50
+        description:
+          type: string
+          example: Mesas al aire libre
+      required:
+        - restaurantId
+        - name
+    UpdateSectionDto:
+      type: object
+      properties: {}
