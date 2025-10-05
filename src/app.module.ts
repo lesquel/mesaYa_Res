@@ -7,6 +7,7 @@ import { SeedModule } from './seed/seed.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { SectionModule } from './section/section.module';
 import { AuthModule } from './auth/auth.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AuthModule } from './auth/auth.module';
     RestaurantModule,
     SectionModule,
     AuthModule,
+    ReviewModule,
   ],
 })
 export class AppModule {}
