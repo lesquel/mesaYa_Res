@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/application/interfaces/pagination.js';
 
 export interface SectionResponseDto {
   id: string;

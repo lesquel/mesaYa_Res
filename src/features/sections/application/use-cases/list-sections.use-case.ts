@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/interfaces/use-case.js';
+import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { ListSectionsQuery, PaginatedSectionResponse } from '../dto/index.js';
 import { SectionMapper } from '../mappers/index.js';
 import {

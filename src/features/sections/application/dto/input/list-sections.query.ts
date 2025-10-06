@@ -1,4 +1,4 @@
-import { PaginationQuery } from '@shared/interfaces/pagination.js';
+import { PaginationQuery } from '@shared/application/interfaces/pagination.js';
 
 export interface ListSectionsQuery {
   pagination: PaginationQuery;

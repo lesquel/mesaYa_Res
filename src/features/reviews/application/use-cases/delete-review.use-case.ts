@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/interfaces/use-case.js';
+import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
   ReviewNotFoundError,
   ReviewOwnershipError,

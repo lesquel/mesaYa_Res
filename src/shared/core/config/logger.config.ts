@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { ILoggerPort } from '@shared/application/ports/logger/logger.port';
+import { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 
 export function configureLogger(app: INestApplication) {
