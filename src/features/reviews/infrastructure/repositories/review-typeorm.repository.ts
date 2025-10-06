@@ -12,7 +12,7 @@ import {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
 } from '../../application/dto/index.js';
-import { PaginatedResult } from '../../../../shared/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/interfaces/pagination.js';
 import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
 import { type ReviewRepositoryPort } from '../../application/ports/index.js';
 import { ReviewOrmEntity } from '../orm/index.js';

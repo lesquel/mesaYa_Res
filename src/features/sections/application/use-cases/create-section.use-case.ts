@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '../../../../shared/interfaces/use-case.js';
+import { UseCase } from '@shared/interfaces/use-case.js';
 import { Section, SectionRestaurantNotFoundError } from '../../domain/index.js';
 import { SectionMapper } from '../mappers/index.js';
 import { SectionResponseDto, CreateSectionCommand } from '../dto/index.js';

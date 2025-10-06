@@ -7,7 +7,7 @@ import {
   RestaurantNotFoundError,
 } from '../../domain/index.js';
 import { ListRestaurantsQuery } from '../../application/dto/index.js';
-import { PaginatedResult } from '../../../../shared/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/interfaces/pagination.js';
 import { type RestaurantRepositoryPort } from '../../application/ports/index.js';
 import { RestaurantOrmEntity } from '../orm/index.js';
 import { RestaurantOrmMapper } from '../mappers/index.js';
