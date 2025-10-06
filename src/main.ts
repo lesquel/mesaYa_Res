@@ -2,9 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { configureApp } from './app.bootstrap';
 import { ConfigService } from '@nestjs/config';
+import { WinstonLoggerAdapter } from '@shared/infrastructure/adapters/logger/wiston/winstonLogger.adapter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new WinstonLoggerAdapter(),
+  });
   configureApp(app);
 
   const configService = app.get(ConfigService);

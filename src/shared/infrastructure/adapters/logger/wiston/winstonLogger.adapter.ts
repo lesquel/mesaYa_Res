@@ -12,19 +12,9 @@ interface LogMeta {
 
 @Injectable()
 export class WinstonLoggerAdapter implements ILoggerPort {
-  private static readonly TIMESTAMP_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
+  private static readonly TIMESTAMP_FORMAT = 'YYYY-MM-DD HH:mm:ss.SS';
 
   private static readonly LEVEL_SYMBOL = Symbol.for('level');
-
-  private static readonly LEVEL_ICONS: Record<string, string> = {
-    error: '⛔',
-    warn: '⚠️',
-    info: 'ℹ️',
-    http: '🌐',
-    verbose: '🔊',
-    debug: '🐞',
-    silly: '🎉',
-  };
 
   private readonly logger: Logger;
 
@@ -74,46 +64,42 @@ export class WinstonLoggerAdapter implements ILoggerPort {
   }
 
   private static createConsoleFormat(): Format {
-    const colorizer = format.colorize({ all: true }) as unknown as {
-      colorize: (level: string, message: string) => string;
-    };
+    const colorizer = format.colorize();
 
     return format.combine(
       format.timestamp({ format: this.TIMESTAMP_FORMAT }),
       format.errors({ stack: true }),
       format.printf(
         (info: TransformableInfo & LogMeta & { stack?: string }) => {
-          const rawLevel =
-            (info[this.LEVEL_SYMBOL] as string) ?? info.level ?? 'info';
-          const icon = this.LEVEL_ICONS[rawLevel] ?? '•';
+          const rawLevel = (info[this.LEVEL_SYMBOL] as string) ?? info.level;
           const contextPart = info.context ? `[${info.context}]` : '';
-          const primaryLine = [
-            String(info.timestamp),
-            icon,
-            rawLevel.toUpperCase().padEnd(7),
-            contextPart,
-            String(info.message),
-          ]
-            .filter((part) => part && part !== '')
-            .join(' ')
-            .replace(/\s+/g, ' ')
-            .trim();
 
+          // Colorear solo el nivel
+          const levelColored = colorizer.colorize(
+            rawLevel,
+            rawLevel.toUpperCase(),
+          );
+
+          // Opcional: colorear el contexto (cyan)
+          const contextColored = info.context
+            ? `[\x1b[36m${info.context}\x1b[0m]`
+            : '';
+
+          // Construir la línea principal
+          const primaryLine =
+            `${info.timestamp} [${levelColored}] ${contextColored} - ${info.message}`.trim();
+
+          // Secciones meta y trace
           const metaSection = this.formatSection(
             'meta',
             this.stringifyMeta(this.collectMeta(info)),
           );
-
           const traceSource = info.trace ?? info.stack;
           const traceSection = this.formatSection('trace', traceSource ?? null);
 
-          const segments = [
-            colorizer.colorize(rawLevel, primaryLine),
-            metaSection,
-            traceSection,
-          ].filter((segment): segment is string => Boolean(segment));
-
-          return segments.join('\n');
+          return [primaryLine, metaSection, traceSection]
+            .filter(Boolean)
+            .join('\n');
         },
       ),
     );

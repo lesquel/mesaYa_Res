@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { LOGGER } from './logger.constants';
-import { WinstonLoggerAdapter } from './winstonLogger.adapter';
+import { WinstonLoggerAdapter } from './wiston/winstonLogger.adapter';
 
 @Module({
   providers: [
