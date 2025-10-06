@@ -1,4 +1,4 @@
-import { PaymentDto } from './paymentDto';
+import { PaymentDto } from './payment.dto';
 
 export interface PaymentListResponseDto {
   success: boolean;

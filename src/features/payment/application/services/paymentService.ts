@@ -1,11 +1,10 @@
-import { IPaymentRepository } from '../../domain/repositories/paymentRepository';
 import {
   CreatePaymentUseCase,
   GetPaymentByIdUseCase,
   GetAllPaymentsUseCase,
   UpdatePaymentStatusUseCase,
   DeletePaymentUseCase,
-} from '../useCases';
+} from '../use-cases';
 import {
   CreatePaymentDto,
   UpdatePaymentStatusDto,
@@ -17,6 +16,7 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
+import { IPaymentRepository } from '../ports/repositories';
 
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;

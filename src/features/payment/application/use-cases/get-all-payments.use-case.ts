@@ -1,6 +1,6 @@
-import { IPaymentRepository } from '../../domain/repositories/paymentRepository';
-import { PaymentListResponseDto } from '../dtos/output/paymentListResponseDto';
-import { PaymentMapper } from '../mappers/paymentMapper';
+import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { PaymentListResponseDto } from '../dtos/output/payment-list-response.dto';
+import { PaymentMapper } from '../mappers/payment.mapper';
 
 export class GetAllPaymentsUseCase {
   constructor(private readonly paymentRepository: IPaymentRepository) {}

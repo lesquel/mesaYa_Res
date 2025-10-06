@@ -1,5 +1,8 @@
-import { PaymentEntity } from '../entities/paymentEntity';
-import { PaymentUpdate, PaymentCreate } from '../types';
+import {
+  PaymentCreate,
+  PaymentEntity,
+  PaymentUpdate,
+} from '@features/payment/domain';
 
 export abstract class IPaymentRepository {
   abstract createPayment(

@@ -1,13 +1,13 @@
-import { IPaymentRepository } from '../../domain/repositories/paymentRepository';
+import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
 import { PaymentEntity } from '../../domain/entities/paymentEntity';
 import {
   Money,
   PaymentStatus,
   PaymentType,
 } from '../../domain/entities/values';
-import { CreatePaymentDto } from '../dtos/input/createPaymentDto';
-import { PaymentResponseDto } from '../dtos/output/paymentResponseDto';
-import { PaymentMapper } from '../mappers/paymentMapper';
+import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
+import { PaymentResponseDto } from '../dtos/output/payment-response.dto';
+import { PaymentMapper } from '../mappers/payment.mapper';
 
 export class CreatePaymentUseCase {
   constructor(private readonly paymentRepository: IPaymentRepository) {}

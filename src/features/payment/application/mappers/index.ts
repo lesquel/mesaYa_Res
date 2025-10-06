@@ -1,1 +1,1 @@
-export * from './paymentMapper';
+export * from './payment.mapper';

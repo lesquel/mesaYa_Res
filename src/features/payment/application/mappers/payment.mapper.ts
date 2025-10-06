@@ -1,5 +1,5 @@
 import { PaymentEntity } from '../../domain/entities/paymentEntity';
-import { PaymentDto } from '../dtos/output/paymentDto';
+import { PaymentDto } from '../dtos/output/payment.dto';
 
 export class PaymentMapper {
   static toDto(entity: PaymentEntity): PaymentDto {

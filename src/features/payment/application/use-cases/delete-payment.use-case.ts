@@ -1,6 +1,6 @@
-import { IPaymentRepository } from '../../domain/repositories/paymentRepository';
-import { DeletePaymentDto } from '../dtos/input/deletePaymentDto';
-import { DeletePaymentResponseDto } from '../dtos/output/deletePaymentResponseDto';
+import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { DeletePaymentDto } from '../dtos/input/delete-payment.dto';
+import { DeletePaymentResponseDto } from '../dtos/output/delete-payment-response.dto';
 
 export class DeletePaymentUseCase {
   constructor(private readonly paymentRepository: IPaymentRepository) {}
