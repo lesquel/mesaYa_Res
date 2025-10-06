@@ -11,7 +11,7 @@ import { SectionOrmMapper } from '../mappers/index.js';
 import { RestaurantOrmEntity } from '../../../restaurants/index.js';
 import { ListSectionsQuery } from '../../application/dto/index.js';
 import { PaginatedResult } from '@shared/interfaces/pagination.js';
-import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
+import { paginateQueryBuilder } from '../../../../shared/pagination/paginate.js';
 import { type SectionRepositoryPort } from '../../application/ports/index.js';
 
 @Injectable()

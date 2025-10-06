@@ -12,7 +12,7 @@ import { type RestaurantRepositoryPort } from '../../application/ports/index.js'
 import { RestaurantOrmEntity } from '../orm/index.js';
 import { RestaurantOrmMapper } from '../mappers/index.js';
 import { User } from '../../../../auth/entities/user.entity.js';
-import { paginateQueryBuilder } from '../../../../common/pagination/paginate.js';
+import { paginateQueryBuilder } from '../../../../shared/pagination/paginate.js';
 
 @Injectable()
 export class RestaurantTypeOrmRepository implements RestaurantRepositoryPort {

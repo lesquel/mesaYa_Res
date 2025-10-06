@@ -4,7 +4,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { PaginatedResult } from '../../shared/interfaces/pagination.js';
+import { PaginatedResult } from '../interfaces/pagination.js';
 
 export interface PaginateOptions {
   page?: number; // 1-based
