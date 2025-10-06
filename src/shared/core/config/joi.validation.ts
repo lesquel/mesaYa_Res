@@ -23,6 +23,6 @@ export const JoiValidationSchema = Joi.object({
   CORS_METHODS: Joi.string().default('GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'),
   CORS_CREDENTIALS: Joi.boolean().default(true),
   CORS_ALLOWED_HEADERS: Joi.string().default('Content-Type,Authorization'),
-  CORS_EXPOSE_HEADERS: Joi.string().optional(),
+  CORS_EXPOSE_HEADERS: Joi.string().optional().allow(''),
   CORS_MAX_AGE: Joi.number().integer().min(0).default(86400),
 });
