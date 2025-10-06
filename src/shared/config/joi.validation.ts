@@ -1,6 +1,9 @@
 import * as Joi from 'joi';
 
 export const JoiValidationSchema = Joi.object({
+  APP_HOST: Joi.string().hostname(),
+  APP_PORT: Joi.number().port().default(3000),
+
   PGHOST: Joi.string().required(),
   PGPORT: Joi.number().port().required(),
   PGDATABASE: Joi.string().required(),
@@ -8,9 +11,18 @@ export const JoiValidationSchema = Joi.object({
   PGPASSWORD: Joi.string().required(),
   PGSSLMODE: Joi.string().required(),
   PGCHANNELBINDING: Joi.string().required(),
+
   NODE_ENV: Joi.string()
     .valid('development', 'test', 'production')
     .default('development'),
   JWT_SECRET: Joi.string().min(16).required(),
   JWT_EXPIRES_IN: Joi.string().default('1d'),
+
+  CORS_ENABLED: Joi.boolean().default(true),
+  CORS_ORIGINS: Joi.string().default('*'),
+  CORS_METHODS: Joi.string().default('GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'),
+  CORS_CREDENTIALS: Joi.boolean().default(true),
+  CORS_ALLOWED_HEADERS: Joi.string().default('Content-Type,Authorization'),
+  CORS_EXPOSE_HEADERS: Joi.string().optional(),
+  CORS_MAX_AGE: Joi.number().integer().min(0).default(86400),
 });

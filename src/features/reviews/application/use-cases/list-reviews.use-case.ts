@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/core/use-case.js';
+import { UseCase } from '@shared/interfaces/use-case.js';
 import { ListReviewsQuery, PaginatedReviewResponse } from '../dto/index.js';
 import { ReviewMapper } from '../mappers/index.js';
 import {

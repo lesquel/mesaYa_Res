@@ -8,11 +8,11 @@ async function bootstrap() {
   configureApp(app);
 
   const configService = app.get(ConfigService);
-  const host = configService.get<string>('HOST', 'localhost');
-  const port = configService.get<number>('PORT', 3000);
+  const HOST = configService.get<string>('APP_HOST');
+  const PORT = configService.get<number>('APP_PORT', 3000);
 
-  await app.listen(port);
-  console.log(`Application running on: http://${host}:${port}`);
+  await app.listen(PORT);
+  console.log(`Application running on: http://${HOST}:${PORT}`);
 }
 
 bootstrap().catch((err) => {
