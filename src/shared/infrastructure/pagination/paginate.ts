@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/interfaces/pagination';
+import { PaginatedResult } from '@shared/application/interfaces/pagination';
 import {
   FindManyOptions,
   ObjectLiteral,

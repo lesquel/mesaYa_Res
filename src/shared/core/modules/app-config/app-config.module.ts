@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { envConfig } from '@shared/config/env.config';
-import { JoiValidationSchema } from '@shared/config/joi.validation';
+import { envConfig } from '@shared/core/config/env.config';
+import { JoiValidationSchema } from '@shared/core/config/joi.validation';
 
 @Module({
   imports: [

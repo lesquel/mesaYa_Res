@@ -10,7 +10,7 @@ import { SectionOrmEntity } from '../orm/index.js';
 import { SectionOrmMapper } from '../mappers/index.js';
 import { RestaurantOrmEntity } from '../../../restaurants/index.js';
 import { ListSectionsQuery } from '../../application/dto/index.js';
-import { PaginatedResult } from '@shared/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/application/interfaces/pagination.js';
 import { paginateQueryBuilder } from '../../../../shared/infrastructure/pagination/paginate.js';
 import { type SectionRepositoryPort } from '../../application/ports/index.js';
 

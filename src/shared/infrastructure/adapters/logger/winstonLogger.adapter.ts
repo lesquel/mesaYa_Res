@@ -1,6 +1,6 @@
 import { TransformableInfo } from 'logform';
 import { Injectable } from '@nestjs/common';
-import { ILoggerPort } from '@shared/application/ports/logger/logger.port';
+import { ILoggerPort } from '@shared/application/ports/logger.port';
 import { createLogger, format, transports, Logger } from 'winston';
 
 interface LogMeta {

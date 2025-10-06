@@ -5,7 +5,7 @@ import {
   configureCors,
   configureGlobalPipes,
   configureLogger,
-} from '@shared/config';
+} from '@shared/core/config';
 
 export function configureApp(app: INestApplication) {
   const configService = app.get(ConfigService);
