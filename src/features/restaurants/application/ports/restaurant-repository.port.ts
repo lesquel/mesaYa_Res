@@ -1,6 +1,6 @@
 import { Restaurant } from '../../domain/index.js';
 import { ListRestaurantsQuery } from '../dto/index.js';
-import { PaginatedResult } from '@shared/application/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/application/types/pagination.js';
 
 export const RESTAURANT_REPOSITORY = Symbol('RESTAURANT_REPOSITORY');
 

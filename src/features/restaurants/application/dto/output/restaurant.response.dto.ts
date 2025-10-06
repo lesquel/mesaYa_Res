@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/application/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/application/types/pagination.js';
 
 export interface RestaurantResponseDto {
   id: string;
