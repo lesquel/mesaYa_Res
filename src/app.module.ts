@@ -4,6 +4,7 @@ import { AppConfigModule } from '@shared/infrastructure/adapters/app-config/app-
 import { DatabaseModule } from '@shared/infrastructure/adapters/database/database.module';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { FeaturesModule } from '@features/features.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -13,5 +14,6 @@ import { FeaturesModule } from '@features/features.module';
     SeedModule,
     FeaturesModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

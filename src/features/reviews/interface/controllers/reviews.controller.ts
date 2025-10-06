@@ -53,7 +53,7 @@ import {
 } from '../../domain/index.js';
 
 @ApiTags('Reviews')
-@Controller('review')
+@Controller({ path: 'review', version: '1' })
 export class ReviewsController {
   constructor(
     private readonly createReviewUseCase: CreateReviewUseCase,

@@ -52,7 +52,7 @@ import {
 import type { Request } from 'express';
 
 @ApiTags('Restaurants')
-@Controller('restaurant')
+@Controller({ path: 'restaurant', version: '1' })
 export class RestaurantsController {
   constructor(
     private readonly createRestaurantUseCase: CreateRestaurantUseCase,

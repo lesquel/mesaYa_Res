@@ -1,4 +1,8 @@
-import { INestApplication } from '@nestjs/common';
+import {
+  INestApplication,
+  RequestMethod,
+  VersioningType,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   setupSwagger,
@@ -10,7 +14,13 @@ import {
 export function configureApp(app: INestApplication) {
   const configService = app.get(ConfigService);
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [{ path: '/', method: RequestMethod.GET }],
+  });
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
 
   setupSwagger(app);
   configureCors(app, configService);
