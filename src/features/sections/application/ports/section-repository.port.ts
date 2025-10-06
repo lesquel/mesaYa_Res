@@ -1,5 +1,5 @@
 import { Section } from '../../domain/index.js';
-import { PaginatedResult } from '@shared/application/interfaces/pagination.js';
+import { PaginatedResult } from '@shared/application/types/pagination.js';
 import { ListSectionsQuery } from '../dto/index.js';
 
 export const SECTION_REPOSITORY = Symbol('SECTION_REPOSITORY');

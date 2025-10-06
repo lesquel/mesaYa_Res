@@ -1,4 +1,4 @@
-import { PaginationQuery } from '@shared/application/interfaces/pagination.js';
+import { PaginationQuery } from '@shared/application/types/pagination.js';
 
 export interface ListRestaurantsQuery {
   pagination: PaginationQuery;
