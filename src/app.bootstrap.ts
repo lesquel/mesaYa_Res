@@ -4,6 +4,7 @@ import {
   setupSwagger,
   configureCors,
   configureGlobalPipes,
+  configureLogger,
 } from '@shared/config';
 
 export function configureApp(app: INestApplication) {
@@ -14,6 +15,7 @@ export function configureApp(app: INestApplication) {
   setupSwagger(app);
   configureCors(app, configService);
   configureGlobalPipes(app);
+  configureLogger(app);
 
   return app;
 }

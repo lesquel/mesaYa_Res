@@ -50,14 +50,14 @@ src/
 │   ├── infrastructure/
 │   │   ├── repositories/
 │   │   └── orm/
-│   └── interface/
+│   └── presentation/
 │       ├── controllers/
 │       └── graphql/
 ├── orders/
 │   ├── domain/
 │   ├── application/
 │   ├── infrastructure/
-│   └── interface/
+│   └── presentation/
 └── shared/
     ├── core/
     └── utils/

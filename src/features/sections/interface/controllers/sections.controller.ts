@@ -24,7 +24,7 @@ import {
 import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
 import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
-import { PaginationDto } from '../../../../shared/dto/pagination.dto.js';
+import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import type { Request } from 'express';
 import {
   CreateSectionCommand,

@@ -1,10 +1,10 @@
+import { PaginatedResult } from '@shared/interfaces/pagination';
 import {
   FindManyOptions,
   ObjectLiteral,
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { PaginatedResult } from '../interfaces/pagination.js';
 
 export interface PaginateOptions {
   page?: number; // 1-based
