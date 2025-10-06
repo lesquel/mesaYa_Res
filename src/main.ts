@@ -1,32 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { setupSwagger } from './common/config/swagger.config';
+import { configureApp } from './app.bootstrap';
 import { ConfigService } from '@nestjs/config';
-import { buildCorsOptions } from './common/config/cors.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  configureApp(app);
 
-  app.setGlobalPrefix('api');
-
-  setupSwagger(app);
-
-  // CORS desde variables de entorno (ver CORS_* en Joi)
   const configService = app.get(ConfigService);
+  const host = configService.get<string>('HOST', 'localhost');
+  const port = configService.get<number>('PORT', 3000);
 
-  const corsOptions = buildCorsOptions(configService);
-
-  app.enableCors(corsOptions);
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(port);
+  console.log(`Application running on: http://${host}:${port}`);
 }
-bootstrap();
+
+bootstrap().catch((err) => {
+  console.error('Error during application bootstrap:', err);
+  process.exit(1);
+});
