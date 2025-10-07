@@ -32,7 +32,7 @@ export class GetPaymentByIdUseCase {
       return {
         success: true,
         message: 'Pago encontrado exitosamente',
-        data: PaymentMapper.toDto(payment),
+        data: PaymentMapper.toDTO(payment),
       };
     } catch (error) {
       return {

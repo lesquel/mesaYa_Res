@@ -68,7 +68,7 @@ export class CreatePaymentUseCase {
       return {
         success: true,
         message: 'Pago creado exitosamente',
-        data: PaymentMapper.toDto(newPayment),
+        data: PaymentMapper.toDTO(newPayment),
       };
     } catch (error) {
       return {

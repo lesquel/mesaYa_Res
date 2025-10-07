@@ -54,7 +54,7 @@ export class UpdatePaymentStatusUseCase {
       return {
         success: true,
         message: 'Estado del pago actualizado exitosamente',
-        data: PaymentMapper.toDto(updatedPayment),
+        data: PaymentMapper.toDTO(updatedPayment),
       };
     } catch (error) {
       return {
