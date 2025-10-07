@@ -5,6 +5,7 @@ import { DatabaseModule } from '@shared/infrastructure/adapters/database/databas
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { FeaturesModule } from '@features/features.module';
 import { AppController } from './app.controller';
+import { PaymentModule } from './features/payment/payment.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AppController } from './app.controller';
     LoggerModule,
     SeedModule,
     FeaturesModule,
+    PaymentModule,
   ],
   controllers: [AppController],
 })

@@ -1,80 +1,79 @@
+import { Inject } from '@nestjs/common';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentEntity } from '../../domain/entities/paymentEntity';
-import {
-  Money,
-  PaymentStatus,
-  PaymentType,
-} from '../../domain/entities/values';
+import { PaymentCreationFailedError } from '../../domain/errors';
 import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
 import { PaymentResponseDto } from '../dtos/output/payment-response.dto';
 import { PaymentMapper } from '../mappers/payment.mapper';
 
 export class CreatePaymentUseCase {
-  constructor(private readonly paymentRepository: IPaymentRepository) {}
+  constructor(
+    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly paymentRepository: IPaymentRepository,
+    private readonly paymentMapper: PaymentMapper,
+  ) {}
 
   async execute(dto: CreatePaymentDto): Promise<PaymentResponseDto> {
-    try {
-      // Validaciones de entrada
-      if (!dto.payerId || dto.payerId.trim() === '') {
-        return {
-          success: false,
-          message: 'El ID del pagador es requerido',
-        };
-      }
+    this.logger.log(
+      `Creating payment for payerId: ${dto.payerId}, amount: ${dto.amount}, type: ${dto.paymentType}`,
+      'CreatePaymentUseCase',
+    );
 
-      if (!dto.targetId || dto.targetId.trim() === '') {
-        return {
-          success: false,
-          message: 'El ID objetivo es requerido',
-        };
-      }
+    // Generar ID único del pago
+    const paymentId = this.generatePaymentId();
 
-      if (dto.amount <= 0) {
-        return {
-          success: false,
-          message: 'El monto debe ser mayor a 0',
-        };
-      }
+    // Usar mapper para transformar DTO a Entidad de dominio
+    const paymentEntity = this.paymentMapper.toDomain({
+      paymentId,
+      payerId: dto.payerId,
+      paymentType: dto.paymentType,
+      targetId: dto.targetId,
+      amount: dto.amount,
+      date: new Date().toISOString(),
+      paymentStatus: 'PENDING',
+    });
 
-      // Crear value objects
-      const money = new Money(dto.amount);
-      const paymentType = new PaymentType(dto.paymentType);
-      const paymentStatus = new PaymentStatus('PENDING');
-      const paymentId = `PAY-${Date.now()}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
+    this.logger.log(
+      `Persisting payment with ID: ${paymentId}`,
+      'CreatePaymentUseCase',
+    );
 
-      // Crear datos para el repositorio
-      const paymentData = {
+    // Persistir en el repositorio
+    const createdPayment = await this.paymentRepository.createPayment(
+      paymentEntity,
+      (error: Error | null) => {
+        if (error) {
+          this.logger.error(
+            `Repository callback error: ${error.message}`,
+            error.stack,
+            'CreatePaymentUseCase',
+          );
+        }
+      },
+    );
+
+    if (!createdPayment) {
+      throw new PaymentCreationFailedError('Repository returned null', {
         paymentId,
         payerId: dto.payerId,
-        paymentType,
-        targetId: dto.targetId,
-        amount: money,
-        date: new Date(),
-        paymentStatus,
-      };
-
-      // Crear el pago usando el repositorio
-      const newPayment = await this.paymentRepository.createPayment(
-        paymentData,
-        (error: Error | null, result: PaymentEntity | null) => {
-          if (error) {
-            console.error('Error en callback:', error);
-          }
-        },
-      );
-
-      return {
-        success: true,
-        message: 'Pago creado exitosamente',
-        data: PaymentMapper.toDTO(newPayment),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Error al crear el pago: ${(error as Error).message}`,
-      };
+      });
     }
+
+    this.logger.log(
+      `Payment created successfully with ID: ${createdPayment.paymentId}`,
+      'CreatePaymentUseCase',
+    );
+
+    // Transformar a DTO de salida usando mapper
+    return {
+      success: true,
+      message: 'Pago creado exitosamente',
+      data: this.paymentMapper.toDTO(createdPayment),
+    };
+  }
+
+  private generatePaymentId(): string {
+    return `PAY-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }

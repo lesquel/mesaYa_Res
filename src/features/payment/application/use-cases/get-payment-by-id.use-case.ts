@@ -1,44 +1,49 @@
+import { Inject } from '@nestjs/common';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentEntity } from '../../domain/entities/paymentEntity';
+import { PaymentNotFoundError } from '../../domain/errors';
 import { GetPaymentByIdDto } from '../dtos/input/get-payment-by-id.dto';
 import { PaymentResponseDto } from '../dtos/output/payment-response.dto';
 import { PaymentMapper } from '../mappers/payment.mapper';
 
 export class GetPaymentByIdUseCase {
-  constructor(private readonly paymentRepository: IPaymentRepository) {}
+  constructor(
+    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly paymentRepository: IPaymentRepository,
+    private readonly paymentMapper: PaymentMapper,
+  ) {}
 
   async execute(dto: GetPaymentByIdDto): Promise<PaymentResponseDto> {
-    try {
-      // Validación de entrada
-      if (!dto.paymentId || dto.paymentId.trim() === '') {
-        return {
-          success: false,
-          message: 'El ID del pago es requerido',
-        };
-      }
+    this.logger.log(
+      `Fetching payment with ID: ${dto.paymentId}`,
+      'GetPaymentByIdUseCase',
+    );
 
-      // Buscar el pago
-      const payment = await this.paymentRepository.getPaymentById(
-        dto.paymentId,
+    // Buscar la entidad de dominio en el repositorio
+    const paymentEntity = await this.paymentRepository.getPaymentById(
+      dto.paymentId,
+    );
+
+    // Si no existe, lanzar error de dominio
+    if (!paymentEntity) {
+      this.logger.warn(
+        `Payment not found with ID: ${dto.paymentId}`,
+        'GetPaymentByIdUseCase',
       );
-
-      if (!payment) {
-        return {
-          success: false,
-          message: 'Pago no encontrado',
-        };
-      }
-
-      return {
-        success: true,
-        message: 'Pago encontrado exitosamente',
-        data: PaymentMapper.toDTO(payment),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Error al buscar el pago: ${(error as Error).message}`,
-      };
+      throw new PaymentNotFoundError(dto.paymentId);
     }
+
+    this.logger.log(
+      `Successfully fetched payment with ID: ${dto.paymentId}`,
+      'GetPaymentByIdUseCase',
+    );
+
+    // Transformar entidad a DTO usando mapper
+    return {
+      success: true,
+      message: 'Pago encontrado exitosamente',
+      data: this.paymentMapper.toDTO(paymentEntity),
+    };
   }
 }
