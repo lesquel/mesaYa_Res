@@ -2,15 +2,22 @@ import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as YAML from 'yaml';
 import * as fs from 'fs';
+import { ConfigService } from '@nestjs/config';
 
-export function setupSwagger(app: INestApplication) {
+export function setupSwagger(
+  app: INestApplication,
+  configService: ConfigService,
+) {
+  const API_TITLE = configService.get<string>('APP_TITLE') ?? 'API';
+  const API_DESCRIPTION =
+    configService.get<string>('APP_DESCRIPTION') ?? 'API documentation';
+  const API_VERSION = configService.get<string>('APP_VERSION') ?? '1.0.0';
+
   const config = new DocumentBuilder()
-    .setTitle('MesaYa API REST')
-    .setDescription('API para la gestión de reservas y restaurantes')
-    .setVersion('1.0')
+    .setTitle(API_TITLE)
+    .setDescription(API_DESCRIPTION)
+    .setVersion(API_VERSION)
     .addBearerAuth()
-    .addTag('Users', 'Operaciones relacionadas con usuarios')
-    .addTag('Restaurants', 'Gestión de restaurantes')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

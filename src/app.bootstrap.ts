@@ -22,7 +22,7 @@ export function configureApp(app: INestApplication) {
     type: VersioningType.URI,
   });
 
-  setupSwagger(app);
+  setupSwagger(app, configService);
   configureCors(app, configService);
   configureGlobalPipes(app);
   configureLogger(app);

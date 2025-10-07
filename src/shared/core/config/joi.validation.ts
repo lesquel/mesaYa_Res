@@ -4,6 +4,10 @@ export const JoiValidationSchema = Joi.object({
   APP_HOST: Joi.string().hostname(),
   APP_PORT: Joi.number().port().default(3000),
 
+  APP_TITLE: Joi.string().required(),
+  APP_DESCRIPTION: Joi.string().required(),
+  APP_VERSION: Joi.string().required(),
+
   PGHOST: Joi.string().required(),
   PGPORT: Joi.number().port().required(),
   PGDATABASE: Joi.string().required(),

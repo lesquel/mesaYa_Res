@@ -19,20 +19,19 @@ export function buildCorsOptions(config: ConfigService): CorsOptions | boolean {
     .map((s) => s.trim())
     .filter(Boolean);
 
+  const CORS_METHODS = config.get<string>('CORS_METHODS');
+  const CORS_CREDENTIALS = config.get<string>('CORS_CREDENTIALS');
+  const CORS_ALLOWED_HEADERS = config.get<string>('CORS_ALLOWED_HEADERS');
+  const CORS_EXPOSE_HEADERS = config.get<string>('CORS_EXPOSE_HEADERS');
+  const CORS_MAX_AGE = config.get<string>('CORS_MAX_AGE');
+
   return {
     origin: origins.length ? origins : true,
-    methods:
-      config.get<string>('CORS_METHODS') ??
-      'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: parseBool(config.get('CORS_CREDENTIALS'), true),
-    allowedHeaders:
-      config.get<string>('CORS_ALLOWED_HEADERS') ??
-      'Content-Type,Authorization',
-    exposedHeaders: config
-      .get<string>('CORS_EXPOSE_HEADERS')
-      ?.split(',')
-      .map((s) => s.trim()),
-    maxAge: Number(config.get('CORS_MAX_AGE') ?? 86400),
+    methods: CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: parseBool(CORS_CREDENTIALS, true),
+    allowedHeaders: CORS_ALLOWED_HEADERS ?? 'Content-Type,Authorization',
+    exposedHeaders: CORS_EXPOSE_HEADERS?.split(',').map((s) => s.trim()),
+    maxAge: Number(CORS_MAX_AGE ?? 86400),
   };
 }
 

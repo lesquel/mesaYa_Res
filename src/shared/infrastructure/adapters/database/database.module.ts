@@ -8,9 +8,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const isProd = config.get<string>('NODE_ENV') === 'production';
-        const sslMode = config.get<string>('PGSSLMODE');
-        const useSSL = sslMode === 'require';
+        const IS_PROD = config.get<string>('NODE_ENV') === 'production';
+        const SSL_MODE = config.get<string>('PGSSLMODE');
+        const USE_SSL = SSL_MODE === 'require';
 
         return {
           type: 'postgres',
@@ -20,8 +20,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           password: config.get<string>('PGPASSWORD'),
           database: config.get<string>('PGDATABASE'),
           autoLoadEntities: true,
-          synchronize: !isProd,
-          ssl: useSSL ? { rejectUnauthorized: false } : false,
+          synchronize: !IS_PROD,
+          ssl: USE_SSL ? { rejectUnauthorized: false } : false,
           extra: {
             channelBinding: config.get<string>('PGCHANNELBINDING') ?? 'require',
           },
