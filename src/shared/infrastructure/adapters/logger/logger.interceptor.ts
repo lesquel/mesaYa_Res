@@ -54,24 +54,9 @@ export class LoggingInterceptor implements NestInterceptor {
           `${controllerClass.name}.${handlerName.name}`,
         );
       }),
-      catchError((err) => {
-        const diff = process.hrtime(now);
-        const ms = diff[0] * 1000 + diff[1] / 1e6;
-        const status = (err?.status as number) ?? 500;
-        // Log de error con trace
-        this.logger.error(
-          err.message ?? 'Unhandled error',
-          err.stack,
-          'exception',
-          {
-            method,
-            url,
-            status,
-            durationMs: ms,
-            body,
-          },
-        );
-        return throwError(() => err);
+      catchError((err: unknown) => {
+        const error = err instanceof Error ? err : new Error(String(err));
+        return throwError(() => error);
       }),
     );
   }
