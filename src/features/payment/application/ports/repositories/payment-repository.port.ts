@@ -5,10 +5,7 @@ import {
 } from '@features/payment/domain';
 
 export abstract class IPaymentRepository {
-  abstract createPayment(
-    data: PaymentCreate,
-    callback: CallableFunction,
-  ): Promise<PaymentEntity>;
+  abstract createPayment(data: PaymentCreate): Promise<PaymentEntity>;
 
   abstract updatePayment(data: PaymentUpdate): Promise<PaymentEntity | null>;
 

@@ -2,17 +2,16 @@ import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentListResponseDto } from '../dtos/output/payment-list-response.dto';
-import { PaymentMapper } from '../mappers/payment.mapper';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaymentEntity } from '@features/payment/domain';
 
-export class GetAllPaymentsUseCase {
+export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
   constructor(
     @Inject('ILogger') private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepository,
-    private readonly paymentMapper: PaymentMapper,
   ) {}
 
-  async execute(): Promise<PaymentListResponseDto> {
+  async execute(): Promise<PaymentEntity[]> {
     this.logger.log(
       'Fetching all payments from repository',
       'GetAllPaymentsUseCase',
@@ -26,16 +25,6 @@ export class GetAllPaymentsUseCase {
       'GetAllPaymentsUseCase',
     );
 
-    // Transformar entidades a DTOs usando mapper
-    const paymentDtos = this.paymentMapper.toDTOList(paymentEntities);
-
-    return {
-      success: true,
-      message:
-        paymentEntities.length > 0
-          ? 'Pagos obtenidos exitosamente'
-          : 'No se encontraron pagos',
-      data: paymentDtos,
-    };
+    return paymentEntities;
   }
 }

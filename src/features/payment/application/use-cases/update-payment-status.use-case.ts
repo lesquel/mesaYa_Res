@@ -2,23 +2,25 @@ import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentStatus } from '../../domain/entities/values';
 import {
   PaymentNotFoundError,
   PaymentUpdateFailedError,
 } from '../../domain/errors';
 import { UpdatePaymentStatusDto } from '../dtos/input/update-payment-status-dto';
-import { PaymentResponseDto } from '../dtos/output/payment-response.dto';
 import { PaymentMapper } from '../mappers/payment.mapper';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaymentEntity } from '@features/payment/domain';
 
-export class UpdatePaymentStatusUseCase {
+export class UpdatePaymentStatusUseCase
+  implements UseCase<UpdatePaymentStatusDto, PaymentEntity>
+{
   constructor(
     @Inject('ILogger') private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepository,
     private readonly paymentMapper: PaymentMapper,
   ) {}
 
-  async execute(dto: UpdatePaymentStatusDto): Promise<PaymentResponseDto> {
+  async execute(dto: UpdatePaymentStatusDto): Promise<PaymentEntity> {
     this.logger.log(
       `Updating payment status for ID: ${dto.paymentId} to status: ${dto.status}`,
       'UpdatePaymentStatusUseCase',
@@ -42,14 +44,13 @@ export class UpdatePaymentStatusUseCase {
       'UpdatePaymentStatusUseCase',
     );
 
-    // Crear el nuevo Value Object de estado
-    const newStatus = new PaymentStatus(dto.status);
+    // Usar mapper para transformar DTO a tipo de dominio
+    const paymentUpdate =
+      this.paymentMapper.fromUpdatePaymentStatusDTOtoPaymentUpdate(dto);
 
     // Actualizar el pago en el repositorio
-    const updatedPayment = await this.paymentRepository.updatePayment({
-      paymentId: dto.paymentId,
-      status: newStatus,
-    });
+    const updatedPayment =
+      await this.paymentRepository.updatePayment(paymentUpdate);
 
     if (!updatedPayment) {
       this.logger.error(
@@ -64,15 +65,10 @@ export class UpdatePaymentStatusUseCase {
     }
 
     this.logger.log(
-      `Payment status updated successfully. New status: ${newStatus.status}`,
+      `Payment status updated successfully. New status: ${updatedPayment.paymentStatus.status}`,
       'UpdatePaymentStatusUseCase',
     );
 
-    // Transformar entidad a DTO usando mapper
-    return {
-      success: true,
-      message: 'Estado del pago actualizado exitosamente',
-      data: this.paymentMapper.toDTO(updatedPayment),
-    };
+    return updatedPayment;
   }
 }

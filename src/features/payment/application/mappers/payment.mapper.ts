@@ -3,12 +3,13 @@ import {
   PaymentStatus,
   PaymentType,
 } from '@features/payment/domain/entities/values';
-import { PaymentEntity } from '../../domain/entities/paymentEntity';
 import { PaymentDto } from '../dtos/output/payment.dto';
-import { DomainDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
+import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
+import { CreatePaymentDto } from '../dtos';
+import { PaymentCreate, PaymentEntity } from '@features/payment/domain';
 
-export class PaymentMapper extends DomainDTOMapper<PaymentEntity, PaymentDto> {
-  toDTO(entity: PaymentEntity): PaymentDto {
+export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
+  fromEntitytoDTO(entity: PaymentEntity): PaymentDto {
     return {
       paymentId: entity.paymentId,
       payerId: entity.payerId,
@@ -20,14 +21,14 @@ export class PaymentMapper extends DomainDTOMapper<PaymentEntity, PaymentDto> {
     };
   }
 
-  toDomain(dto: PaymentDto): PaymentEntity {
+  fromDTOtoEntity(dto: PaymentDto): PaymentEntity {
     const paymentType = new PaymentType(dto.paymentType);
     const amount = new Money(dto.amount);
     const date = new Date(dto.date);
     const status = new PaymentStatus(dto.paymentStatus);
 
     return new PaymentEntity(
-      dto.paymentId,
+      dto.paymentId ?? '',
       dto.payerId,
       paymentType,
       dto.targetId,
@@ -35,5 +36,31 @@ export class PaymentMapper extends DomainDTOMapper<PaymentEntity, PaymentDto> {
       date,
       status,
     );
+  }
+
+  fromCreatePaymentDTOtoPaymentCreate(dto: CreatePaymentDto): PaymentCreate {
+    const paymentType = new PaymentType(dto.paymentType);
+    const amount = new Money(dto.amount);
+    const status = new PaymentStatus('PENDING');
+
+    return {
+      payerId: dto.payerId,
+      paymentType,
+      targetId: dto.targetId,
+      amount,
+      paymentStatus: status,
+    };
+  }
+
+  fromUpdatePaymentStatusDTOtoPaymentUpdate(dto: {
+    paymentId: string;
+    status: string;
+  }) {
+    const status = new PaymentStatus(dto.status);
+
+    return {
+      paymentId: dto.paymentId,
+      status,
+    };
   }
 }

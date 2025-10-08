@@ -7,15 +7,17 @@ import {
   PaymentDeletionFailedError,
 } from '../../domain/errors';
 import { DeletePaymentDto } from '../dtos/input/delete-payment.dto';
-import { DeletePaymentResponseDto } from '../dtos/output/delete-payment-response.dto';
+import { UseCase } from '@shared/application/ports/use-case.port';
 
-export class DeletePaymentUseCase {
+export class DeletePaymentUseCase
+  implements UseCase<DeletePaymentDto, boolean>
+{
   constructor(
     @Inject('ILogger') private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepository,
   ) {}
 
-  async execute(dto: DeletePaymentDto): Promise<DeletePaymentResponseDto> {
+  async execute(dto: DeletePaymentDto): Promise<boolean> {
     this.logger.log(
       `Attempting to delete payment with ID: ${dto.paymentId}`,
       'DeletePaymentUseCase',
@@ -59,9 +61,6 @@ export class DeletePaymentUseCase {
       'DeletePaymentUseCase',
     );
 
-    return {
-      success: true,
-      message: 'Pago eliminado exitosamente',
-    };
+    return true;
   }
 }

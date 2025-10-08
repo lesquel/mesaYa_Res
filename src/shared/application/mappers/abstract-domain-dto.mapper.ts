@@ -1,12 +1,12 @@
-export abstract class DomainDTOMapper<Entity, DTO> {
-  abstract toDTO(entity: Entity): DTO;
-  abstract toDomain(dto: DTO): Entity;
+export abstract class EntityDTOMapper<Entity, DTO> {
+  abstract fromEntitytoDTO(entity: Entity): DTO;
+  abstract fromDTOtoEntity(dto: DTO): Entity;
 
-  toDTOList(entities: Entity[]): DTO[] {
-    return entities.map((entity) => this.toDTO(entity));
+  fromEntitytoDTOList(entities: Entity[]): DTO[] {
+    return entities.map((entity) => this.fromEntitytoDTO(entity));
   }
 
-  toDomainList(dtos: DTO[]): Entity[] {
-    return dtos.map((dto) => this.toDomain(dto));
+  fromDTOtoEntityList(dtos: DTO[]): Entity[] {
+    return dtos.map((dto) => this.fromDTOtoEntity(dto));
   }
 }

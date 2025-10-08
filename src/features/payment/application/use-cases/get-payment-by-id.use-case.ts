@@ -4,17 +4,18 @@ import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
 import { PaymentNotFoundError } from '../../domain/errors';
 import { GetPaymentByIdDto } from '../dtos/input/get-payment-by-id.dto';
-import { PaymentResponseDto } from '../dtos/output/payment-response.dto';
-import { PaymentMapper } from '../mappers/payment.mapper';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaymentEntity } from '@features/payment/domain';
 
-export class GetPaymentByIdUseCase {
+export class GetPaymentByIdUseCase
+  implements UseCase<GetPaymentByIdDto, PaymentEntity>
+{
   constructor(
     @Inject('ILogger') private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepository,
-    private readonly paymentMapper: PaymentMapper,
   ) {}
 
-  async execute(dto: GetPaymentByIdDto): Promise<PaymentResponseDto> {
+  async execute(dto: GetPaymentByIdDto): Promise<PaymentEntity> {
     this.logger.log(
       `Fetching payment with ID: ${dto.paymentId}`,
       'GetPaymentByIdUseCase',
@@ -39,11 +40,6 @@ export class GetPaymentByIdUseCase {
       'GetPaymentByIdUseCase',
     );
 
-    // Transformar entidad a DTO usando mapper
-    return {
-      success: true,
-      message: 'Pago encontrado exitosamente',
-      data: this.paymentMapper.toDTO(paymentEntity),
-    };
+    return paymentEntity;
   }
 }
