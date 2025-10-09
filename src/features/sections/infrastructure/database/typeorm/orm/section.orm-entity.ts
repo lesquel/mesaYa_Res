@@ -30,4 +30,10 @@ export class SectionOrmEntity {
 
   @Column({ type: 'text', name: 'description', nullable: true })
   description?: string | null;
+
+  @Column({ type: 'int', name: 'width', nullable: false })
+  width: number;
+
+  @Column({ type: 'int', name: 'height', nullable: false })
+  height: number;
 }

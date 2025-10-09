@@ -9,6 +9,8 @@ export class SectionMapper {
       restaurantId: snapshot.restaurantId,
       name: snapshot.name,
       description: snapshot.description,
+      width: snapshot.width,
+      height: snapshot.height,
     };
   }
 }

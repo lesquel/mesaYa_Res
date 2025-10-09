@@ -1,8 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import {
   SectionDescription,
+  SectionHeight,
   SectionName,
   SectionRestaurantId,
+  SectionWidth,
 } from './values/index.js';
 import {
   type SectionCreate,
@@ -14,6 +16,8 @@ interface SectionProps {
   restaurantId: SectionRestaurantId;
   name: SectionName;
   description: SectionDescription;
+  width: SectionWidth;
+  height: SectionHeight;
 }
 
 export class Section {
@@ -27,6 +31,8 @@ export class Section {
       restaurantId: new SectionRestaurantId(props.restaurantId),
       name: new SectionName(props.name),
       description: SectionDescription.create(props.description ?? null),
+      width: new SectionWidth(props.width),
+      height: new SectionHeight(props.height),
     };
 
     return new Section(aggregated, id);
@@ -37,6 +43,8 @@ export class Section {
       restaurantId: new SectionRestaurantId(snapshot.restaurantId),
       name: new SectionName(snapshot.name),
       description: SectionDescription.create(snapshot.description),
+      width: new SectionWidth(snapshot.width),
+      height: new SectionHeight(snapshot.height),
     };
 
     return new Section(aggregated, snapshot.id);
@@ -58,6 +66,14 @@ export class Section {
     return this.props.description.value;
   }
 
+  get width(): number {
+    return this.props.width.value;
+  }
+
+  get height(): number {
+    return this.props.height.value;
+  }
+
   update(data: SectionUpdate): void {
     const next: SectionProps = {
       restaurantId:
@@ -70,6 +86,14 @@ export class Section {
         data.description !== undefined
           ? SectionDescription.create(data.description)
           : this.props.description,
+      width:
+        data.width !== undefined
+          ? new SectionWidth(data.width)
+          : this.props.width,
+      height:
+        data.height !== undefined
+          ? new SectionHeight(data.height)
+          : this.props.height,
     };
 
     this.props = next;
@@ -81,6 +105,8 @@ export class Section {
       restaurantId: this.props.restaurantId.value,
       name: this.props.name.value,
       description: this.props.description.value,
+      width: this.props.width.value,
+      height: this.props.height.value,
     };
   }
 }

@@ -53,6 +53,12 @@ export class UpdateSectionUseCase
     if (command.restaurantId !== undefined) {
       updateData.restaurantId = command.restaurantId;
     }
+    if (command.width !== undefined) {
+      updateData.width = command.width;
+    }
+    if (command.height !== undefined) {
+      updateData.height = command.height;
+    }
 
     section.update(updateData);
 

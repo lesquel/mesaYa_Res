@@ -9,7 +9,10 @@ import {
 import { SectionOrmEntity } from '../orm/index.js';
 import { SectionOrmMapper } from '../mappers/index.js';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index.js';
-import { ListSectionsQuery } from '../../../../application/dto/index.js';
+import {
+  ListRestaurantSectionsQuery,
+  ListSectionsQuery,
+} from '../../../../application/dto/index.js';
 import { PaginatedResult } from '../../../../../../shared/application/types/pagination.js';
 import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
 import { type SectionRepositoryPort } from '../../../../application/ports/index.js';
@@ -66,6 +69,15 @@ export class SectionTypeOrmRepository implements SectionRepositoryPort {
     return this.executePagination(qb, query);
   }
 
+  async paginateByRestaurant(
+    query: ListRestaurantSectionsQuery,
+  ): Promise<PaginatedResult<Section>> {
+    const qb = this.buildBaseQuery().where('restaurant.id = :restaurantId', {
+      restaurantId: query.restaurantId,
+    });
+    return this.executePagination(qb, query);
+  }
+
   async delete(id: string): Promise<void> {
     const result = await this.sections.delete({ id });
     if (!result.affected) {
@@ -89,6 +101,8 @@ export class SectionTypeOrmRepository implements SectionRepositoryPort {
     const sortMap: Record<string, string> = {
       name: `${alias}.name`,
       restaurant: `restaurant.name`,
+      width: `${alias}.width`,
+      height: `${alias}.height`,
     };
 
     const sortByColumn =
