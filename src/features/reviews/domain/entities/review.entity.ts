@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import {
   ReviewComment,
   ReviewRating,
@@ -26,7 +25,7 @@ export class Review {
     private readonly internalId: string,
   ) {}
 
-  static create(props: ReviewCreate, id: string = randomUUID()): Review {
+  static create(props: ReviewCreate, id: string): Review {
     const now = new Date();
 
     const aggregated: ReviewProps = {
