@@ -8,7 +8,7 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../../../auth/entities/user.entity.js';
+import { User } from '../../../../../../auth/entities/user.entity.js';
 import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/orm';
 
 @Entity({ name: 'review' })

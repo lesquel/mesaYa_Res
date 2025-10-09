@@ -5,14 +5,14 @@ import {
   Section,
   SectionNotFoundError,
   SectionRestaurantNotFoundError,
-} from '../../domain/index.js';
+} from '@features/sections/domain/index.js';
 import { SectionOrmEntity } from '../orm/index.js';
 import { SectionOrmMapper } from '../mappers/index.js';
-import { RestaurantOrmEntity } from '../../../restaurants/index.js';
-import { ListSectionsQuery } from '../../application/dto/index.js';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/orm/index.js';
+import { ListSectionsQuery } from '@features/sections/application/dto/index.js';
 import { PaginatedResult } from '@shared/application/types/pagination.js';
-import { paginateQueryBuilder } from '../../../../shared/infrastructure/pagination/paginate.js';
-import { type SectionRepositoryPort } from '../../application/ports/index.js';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate.js';
+import { type SectionRepositoryPort } from '@features/sections/application/ports/index.js';
 
 @Injectable()
 export class SectionTypeOrmRepository implements SectionRepositoryPort {

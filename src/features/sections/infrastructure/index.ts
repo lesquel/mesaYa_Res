@@ -1,4 +1,5 @@
-export * from './orm/index.js';
-export * from './mappers/index.js';
-export * from './providers/index.js';
-export * from './repositories/index.js';
+export * from './database/typeorm/mappers/index.js';
+export * from './database/typeorm/orm/index.js';
+export * from './database/typeorm/providers/index.js';
+export * from './database/typeorm/repositories/index.js';
+
