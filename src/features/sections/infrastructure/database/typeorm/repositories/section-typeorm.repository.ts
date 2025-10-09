@@ -8,7 +8,7 @@ import {
 } from '@features/sections/domain/index.js';
 import { SectionOrmEntity } from '../orm/index.js';
 import { SectionOrmMapper } from '../mappers/index.js';
-import { RestaurantOrmEntity } from '@features/restaurants/index.js';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index.js';
 import { ListSectionsQuery } from '@features/sections/application/dto/index.js';
 import { PaginatedResult } from '@shared/application/types/pagination.js';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate.js';

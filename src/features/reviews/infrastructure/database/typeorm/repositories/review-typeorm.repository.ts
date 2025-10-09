@@ -12,12 +12,12 @@ import {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
 } from '../../../../application/dto/index.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate.js';
+import { PaginatedResult } from '../../../../../../shared/application/types/pagination.js';
+import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
 import { type ReviewRepositoryPort } from '../../../../application/ports/index.js';
 import { ReviewOrmEntity } from '../orm/index.js';
 import { ReviewOrmMapper } from '../mappers/index.js';
-import { RestaurantOrmEntity } from '@features/restaurants/index.js';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index.js';
 
 @Injectable()
 export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
