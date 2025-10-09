@@ -29,8 +29,8 @@ export class SectionOrmMapper {
     entity.id = snapshot.id;
     entity.name = snapshot.name;
     entity.description = snapshot.description ?? null;
-  entity.width = snapshot.width;
-  entity.height = snapshot.height;
+    entity.width = snapshot.width;
+    entity.height = snapshot.height;
     const restaurant = options.restaurant ?? entity.restaurant;
     if (restaurant) {
       entity.restaurant = restaurant;
