@@ -129,7 +129,7 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
     const alias = qb.alias;
 
     const sortMap: Record<string, string> = {
-      createdAt: `${alias}.created_at`,
+      createdAt: `${alias}.createdAt`,
       rating: `${alias}.rating`,
       restaurant: `restaurant.name`,
       user: `user.name`,

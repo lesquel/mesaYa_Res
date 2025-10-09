@@ -91,10 +91,10 @@ export class RestaurantTypeOrmRepository implements RestaurantRepositoryPort {
     const sortMap: Record<string, string> = {
       name: `${alias}.name`,
       location: `${alias}.location`,
-      totalCapacity: `${alias}.total_capacity`,
-      openTime: `${alias}.open_time`,
-      closeTime: `${alias}.close_time`,
-      createdAt: `${alias}.created_at`,
+      totalCapacity: `${alias}.totalCapacity`,
+      openTime: `${alias}.openTime`,
+      closeTime: `${alias}.closeTime`,
+      createdAt: `${alias}.createdAt`,
     };
 
     const sortByColumn =
