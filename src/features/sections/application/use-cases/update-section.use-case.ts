@@ -42,7 +42,7 @@ export class UpdateSectionUseCase
       }
     }
 
-  const updateData: SectionUpdate = {};
+    const updateData: SectionUpdate = {};
 
     if (command.name !== undefined) {
       updateData.name = command.name;
