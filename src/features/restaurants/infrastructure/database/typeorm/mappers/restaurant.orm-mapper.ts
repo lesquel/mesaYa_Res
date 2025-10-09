@@ -4,13 +4,29 @@ import { User } from '../../../../../../auth/entities/user.entity.js';
 
 export class RestaurantOrmMapper {
   static toDomain(entity: RestaurantOrmEntity): Restaurant {
+    const normalizeTime = (value: string | null | undefined): string => {
+      if (!value) {
+        return '00:00';
+      }
+
+      if (/^\d{2}:\d{2}$/.test(value)) {
+        return value;
+      }
+
+      if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
+        return value.slice(0, 5);
+      }
+
+      return value;
+    };
+
     return Restaurant.rehydrate({
       id: entity.id,
       name: entity.name,
       description: entity.description ?? null,
       location: entity.location,
-      openTime: entity.openTime,
-      closeTime: entity.closeTime,
+      openTime: normalizeTime(entity.openTime),
+      closeTime: normalizeTime(entity.closeTime),
       daysOpen: (entity.daysOpen ?? []) as RestaurantDay[],
       totalCapacity: entity.totalCapacity,
       subscriptionId: entity.subscriptionId,
