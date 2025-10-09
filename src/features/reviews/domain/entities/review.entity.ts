@@ -1,79 +1,77 @@
-import { randomUUID } from 'crypto';
-import { InvalidReviewDataError } from '../errors/index.js';
+import { randomUUID } from 'node:crypto';
+import {
+  ReviewComment,
+  ReviewRating,
+  ReviewRestaurantId,
+  ReviewUserId,
+} from './values/index.js';
+import {
+  type ReviewCreate,
+  type ReviewSnapshot,
+  type ReviewUpdate,
+} from '../types/index.js';
 
-export interface ReviewProps {
-  restaurantId: string;
-  userId: string;
-  rating: number;
-  comment: string | null;
+interface ReviewProps {
+  restaurantId: ReviewRestaurantId;
+  userId: ReviewUserId;
+  rating: ReviewRating;
+  comment: ReviewComment;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export type CreateReviewProps = Omit<
-  ReviewProps,
-  'comment' | 'createdAt' | 'updatedAt'
-> & {
-  comment?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
-
-export type UpdateReviewProps = Partial<
-  Pick<ReviewProps, 'rating' | 'comment'>
->;
-
-export interface ReviewSnapshot extends ReviewProps {
-  id: string;
 }
 
 export class Review {
   private constructor(
     private props: ReviewProps,
-    private readonly _id: string,
+    private readonly internalId: string,
   ) {}
 
-  static create(props: CreateReviewProps, id: string = randomUUID()): Review {
+  static create(props: ReviewCreate, id: string = randomUUID()): Review {
     const now = new Date();
-    const normalizedComment = Review.normalizeComment(props.comment);
 
-    const reviewProps: ReviewProps = {
-      restaurantId: Review.normalizeId(props.restaurantId, 'Restaurant'),
-      userId: Review.normalizeId(props.userId, 'User'),
-      rating: props.rating,
-      comment: normalizedComment,
+    const aggregated: ReviewProps = {
+      restaurantId: new ReviewRestaurantId(props.restaurantId),
+      userId: new ReviewUserId(props.userId),
+      rating: new ReviewRating(props.rating),
+      comment: ReviewComment.create(props.comment ?? null),
       createdAt: props.createdAt ?? now,
       updatedAt: props.updatedAt ?? now,
     };
 
-    this.validate(reviewProps);
-
-    return new Review(reviewProps, id);
+    return new Review(aggregated, id);
   }
 
   static rehydrate(snapshot: ReviewSnapshot): Review {
-    this.validate(snapshot);
-    return new Review({ ...snapshot }, snapshot.id);
+    const aggregated: ReviewProps = {
+      restaurantId: new ReviewRestaurantId(snapshot.restaurantId),
+      userId: new ReviewUserId(snapshot.userId),
+      rating: new ReviewRating(snapshot.rating),
+      comment: ReviewComment.create(snapshot.comment),
+      createdAt: snapshot.createdAt,
+      updatedAt: snapshot.updatedAt,
+    };
+
+    return new Review(aggregated, snapshot.id);
   }
 
   get id(): string {
-    return this._id;
+    return this.internalId;
   }
 
   get restaurantId(): string {
-    return this.props.restaurantId;
+    return this.props.restaurantId.value;
   }
 
   get userId(): string {
-    return this.props.userId;
+    return this.props.userId.value;
   }
 
   get rating(): number {
-    return this.props.rating;
+    return this.props.rating.value;
   }
 
   get comment(): string | null {
-    return this.props.comment;
+    return this.props.comment.value;
   }
 
   get createdAt(): Date {
@@ -84,67 +82,32 @@ export class Review {
     return this.props.updatedAt;
   }
 
-  update(data: UpdateReviewProps): void {
+  update(data: ReviewUpdate): void {
     const nextProps: ReviewProps = {
       ...this.props,
-      rating: data.rating ?? this.props.rating,
+      rating:
+        data.rating !== undefined
+          ? new ReviewRating(data.rating)
+          : this.props.rating,
       comment:
         data.comment !== undefined
-          ? Review.normalizeComment(data.comment)
+          ? ReviewComment.create(data.comment)
           : this.props.comment,
       updatedAt: new Date(),
     };
-
-    Review.validate(nextProps);
 
     this.props = nextProps;
   }
 
   snapshot(): ReviewSnapshot {
     return {
-      id: this._id,
-      ...this.props,
+      id: this.internalId,
+      restaurantId: this.props.restaurantId.value,
+      userId: this.props.userId.value,
+      rating: this.props.rating.value,
+      comment: this.props.comment.value,
+      createdAt: this.props.createdAt,
+      updatedAt: this.props.updatedAt,
     };
-  }
-
-  private static normalizeId(value: string, label: string): string {
-    if (!value || value.trim().length === 0) {
-      throw new InvalidReviewDataError(`${label} id is required`);
-    }
-    return value.trim();
-  }
-
-  private static normalizeComment(value?: string | null): string | null {
-    if (value === null || value === undefined) {
-      return null;
-    }
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }
-
-  private static validate(props: ReviewProps | ReviewSnapshot): void {
-    if (
-      !Number.isInteger(props.rating) ||
-      props.rating < 1 ||
-      props.rating > 5
-    ) {
-      throw new InvalidReviewDataError(
-        'Rating must be an integer between 1 and 5',
-      );
-    }
-
-    if (!props.restaurantId || props.restaurantId.trim().length === 0) {
-      throw new InvalidReviewDataError('Restaurant id is required');
-    }
-
-    if (!props.userId || props.userId.trim().length === 0) {
-      throw new InvalidReviewDataError('User id is required');
-    }
-
-    if (props.comment && props.comment.length > 1000) {
-      throw new InvalidReviewDataError(
-        'Comment must be at most 1000 characters',
-      );
-    }
   }
 }
