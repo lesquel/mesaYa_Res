@@ -19,7 +19,6 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
@@ -27,6 +26,7 @@ import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
 import { CurrentUser } from '../../../../auth/decorator/current-user.decorator.js';
 import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
+import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import {
   CreateRestaurantUseCase,
   DeleteRestaurantUseCase,
@@ -86,12 +86,7 @@ export class RestaurantsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar restaurantes (paginado)' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
       const route = req.baseUrl || req.path || '/restaurant';
@@ -117,12 +112,7 @@ export class RestaurantsController {
   @Permissions('restaurant:read')
   @ApiOperation({ summary: 'Listar mis restaurantes (owner actual)' })
   @ApiBearerAuth()
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findMine(
     @Query() pagination: PaginationDto,
     @Req() req: Request,

@@ -5,6 +5,9 @@ import { DatabaseModule } from '@shared/infrastructure/adapters/database/databas
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { AppController } from './app.controller';
 import { BookingModule } from './features/booking/booking.module';
+import { RestaurantsModule } from './features/restaurants/restaurants.module';
+import { SectionsModule } from './features/sections/sections.module';
+import { ReviewsModule } from './features/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import { BookingModule } from './features/booking/booking.module';
     LoggerModule,
     SeedModule,
     BookingModule,
+    RestaurantsModule,
+    SectionsModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
 })
