@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   RestaurantCapacity,
   RestaurantDaysOpen,
@@ -37,7 +38,7 @@ export class Restaurant {
     private readonly internalId: string,
   ) {}
 
-  static create(props: RestaurantCreate, id: string): Restaurant {
+  static create(props: RestaurantCreate, id: string = randomUUID()): Restaurant {
     const now = new Date();
 
     const aggregated: RestaurantProps = {

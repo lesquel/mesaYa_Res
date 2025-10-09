@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   SectionDescription,
   SectionName,
@@ -21,7 +22,7 @@ export class Section {
     private readonly internalId: string,
   ) {}
 
-  static create(props: SectionCreate, id: string): Section {
+  static create(props: SectionCreate, id: string = randomUUID()): Section {
     const aggregated: SectionProps = {
       restaurantId: new SectionRestaurantId(props.restaurantId),
       name: new SectionName(props.name),
