@@ -11,7 +11,7 @@ import {
 import {
   SectionNotFoundError,
   SectionRestaurantNotFoundError,
-  type UpdateSectionProps,
+  type SectionUpdate,
 } from '../../domain/index.js';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class UpdateSectionUseCase
       }
     }
 
-    const updateData: UpdateSectionProps = {};
+    const updateData: SectionUpdate = {};
 
     if (command.name !== undefined) {
       updateData.name = command.name;
@@ -52,6 +52,12 @@ export class UpdateSectionUseCase
     }
     if (command.restaurantId !== undefined) {
       updateData.restaurantId = command.restaurantId;
+    }
+    if (command.width !== undefined) {
+      updateData.width = command.width;
+    }
+    if (command.height !== undefined) {
+      updateData.height = command.height;
     }
 
     section.update(updateData);

@@ -8,7 +8,10 @@ import {
   BookingRestaurantNotFoundError,
   BookingUserNotFoundError,
 } from '../../domain/index.js';
-import { ListBookingsQuery, ListRestaurantBookingsQuery } from '../../application/dto/index.js';
+import {
+  ListBookingsQuery,
+  ListRestaurantBookingsQuery,
+} from '../../application/dto/index.js';
 import { PaginatedResult } from '@shared/application/types/pagination.js';
 import { paginateQueryBuilder } from '../../../../shared/infrastructure/pagination/paginate.js';
 import { type BookingRepositoryPort } from '../../application/ports/index.js';
@@ -111,8 +114,8 @@ export class BookingTypeOrmRepository implements BookingRepositoryPort {
     const alias = qb.alias;
 
     const sortMap: Record<string, string> = {
-      createdAt: `${alias}.created_at`,
-      reservationDate: `${alias}.reservation_date`,
+      createdAt: `${alias}.createdAt`,
+      reservationDate: `${alias}.reservationDate`,
       restaurant: `restaurant.name`,
       user: `user.name`,
     };

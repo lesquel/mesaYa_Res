@@ -1,11 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  IsPositive,
 } from 'class-validator';
 
 const trim = () =>
@@ -28,6 +30,18 @@ export class CreateSectionDto {
   @IsString()
   @trim()
   description?: string;
+
+  @ApiProperty({ description: 'Section width', minimum: 1, type: Number })
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  width: number;
+
+  @ApiProperty({ description: 'Section height', minimum: 1, type: Number })
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  height: number;
 }
 
 export type CreateSectionCommand = CreateSectionDto;

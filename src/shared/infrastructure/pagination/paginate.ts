@@ -69,7 +69,11 @@ export async function paginateQueryBuilder<T extends ObjectLiteral>(
   }
 
   // Apply sorting if allowed
-  if (sortBy && (allowedSorts.length === 0 || allowedSorts.includes(sortBy))) {
+  if (
+    sortBy &&
+    (allowedSorts.length === 0 || allowedSorts.includes(sortBy)) &&
+    canSortByColumn(qb, sortBy)
+  ) {
     qb.addOrderBy(sortBy, sortOrder);
   }
 
@@ -109,6 +113,24 @@ export async function paginateQueryBuilder<T extends ObjectLiteral>(
     hasPrev,
     links,
   };
+}
+
+function canSortByColumn<T extends ObjectLiteral>(
+  qb: SelectQueryBuilder<T>,
+  column: string,
+): boolean {
+  const [alias] = column.split('.');
+
+  if (!alias || alias === qb.alias) {
+    return true;
+  }
+
+  try {
+    const joinedAlias = qb.expressionMap.findAliasByName(alias);
+    return Boolean(joinedAlias?.metadata);
+  } catch {
+    return false;
+  }
 }
 
 export async function paginateRepository<T extends ObjectLiteral>(

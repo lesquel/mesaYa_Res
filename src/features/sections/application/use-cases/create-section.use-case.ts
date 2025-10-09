@@ -34,6 +34,8 @@ export class CreateSectionUseCase
       restaurantId: command.restaurantId,
       name: command.name,
       description: command.description ?? null,
+      width: command.width,
+      height: command.height,
     });
 
     const saved = await this.sectionRepository.save(section);

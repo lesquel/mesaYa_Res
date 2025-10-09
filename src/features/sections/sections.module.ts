@@ -11,6 +11,7 @@ import {
 import {
   CreateSectionUseCase,
   ListSectionsUseCase,
+  ListRestaurantSectionsUseCase,
   FindSectionUseCase,
   UpdateSectionUseCase,
   DeleteSectionUseCase,
@@ -35,6 +36,7 @@ import {
     },
     CreateSectionUseCase,
     ListSectionsUseCase,
+    ListRestaurantSectionsUseCase,
     FindSectionUseCase,
     UpdateSectionUseCase,
     DeleteSectionUseCase,
@@ -42,6 +44,7 @@ import {
   exports: [
     CreateSectionUseCase,
     ListSectionsUseCase,
+    ListRestaurantSectionsUseCase,
     FindSectionUseCase,
     UpdateSectionUseCase,
     DeleteSectionUseCase,
