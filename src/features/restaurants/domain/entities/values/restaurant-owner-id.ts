@@ -13,7 +13,9 @@ export class RestaurantOwnerId {
     return new RestaurantOwnerId(normalized);
   }
 
-  static fromNullable(value: string | null | undefined): RestaurantOwnerId | null {
+  static fromNullable(
+    value: string | null | undefined,
+  ): RestaurantOwnerId | null {
     if (value === undefined || value === null) {
       return null;
     }
@@ -21,7 +23,9 @@ export class RestaurantOwnerId {
     const normalized = value.trim();
 
     if (normalized.length === 0) {
-      throw new InvalidRestaurantDataError('OwnerId must be a non-empty string');
+      throw new InvalidRestaurantDataError(
+        'OwnerId must be a non-empty string',
+      );
     }
 
     return new RestaurantOwnerId(normalized);

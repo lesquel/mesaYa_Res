@@ -12,7 +12,9 @@ export const RESTAURANT_DAYS = [
 
 export type RestaurantDay = (typeof RESTAURANT_DAYS)[number];
 
-export function assertRestaurantDay(value: string): asserts value is RestaurantDay {
+export function assertRestaurantDay(
+  value: string,
+): asserts value is RestaurantDay {
   if (!RESTAURANT_DAYS.includes(value as RestaurantDay)) {
     throw new InvalidRestaurantDataError('Invalid day provided in daysOpen');
   }

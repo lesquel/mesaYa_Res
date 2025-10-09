@@ -38,7 +38,7 @@ export class UpdateRestaurantUseCase
       throw new RestaurantOwnershipError();
     }
 
-  restaurant.update(partial as RestaurantUpdate);
+    restaurant.update(partial as RestaurantUpdate);
     const saved = await this.restaurantRepository.save(restaurant);
 
     return RestaurantMapper.toResponse(saved);

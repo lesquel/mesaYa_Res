@@ -15,9 +15,7 @@ export class SectionName {
     }
 
     if (normalized.length > 50) {
-      throw new InvalidSectionDataError(
-        'Name must be at most 50 characters',
-      );
+      throw new InvalidSectionDataError('Name must be at most 50 characters');
     }
 
     this.internal = normalized;

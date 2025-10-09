@@ -65,9 +65,7 @@ export class Section {
           ? new SectionRestaurantId(data.restaurantId)
           : this.props.restaurantId,
       name:
-        data.name !== undefined
-          ? new SectionName(data.name)
-          : this.props.name,
+        data.name !== undefined ? new SectionName(data.name) : this.props.name,
       description:
         data.description !== undefined
           ? SectionDescription.create(data.description)

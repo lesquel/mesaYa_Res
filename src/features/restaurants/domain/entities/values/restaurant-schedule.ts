@@ -24,9 +24,7 @@ export class RestaurantSchedule {
 
   private static assertTime(value: string, label: string): void {
     if (!TIME_REGEX.test(value)) {
-      throw new InvalidRestaurantDataError(
-        `${label} must be in HH:mm format`,
-      );
+      throw new InvalidRestaurantDataError(`${label} must be in HH:mm format`);
     }
   }
 }
