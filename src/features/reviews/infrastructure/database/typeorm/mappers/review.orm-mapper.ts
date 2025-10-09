@@ -1,6 +1,6 @@
 import { Review } from '../../../../domain/index.js';
 import { ReviewOrmEntity } from '../orm/index.js';
-import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/orm';
+import { RestaurantOrmEntity } from '@features/restaurants/index.js';
 import { User } from '../../../../../../auth/entities/user.entity.js';
 
 export class ReviewOrmMapper {
