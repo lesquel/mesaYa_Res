@@ -19,8 +19,11 @@ import {
 	BOOKING_REPOSITORY,
 	RESTAURANT_BOOKING_READER,
 	USER_BOOKING_READER,
+		BOOKING_EVENT_PUBLISHER,
 } from './application/index.js';
 import { RestaurantOrmEntity } from '../restaurants/index.js';
+import { BookingsService } from './application/index.js';
+import { BookingEventNoopProvider } from './infrastructure/index.js';
 
 @Module({
 	imports: [
@@ -41,6 +44,11 @@ import { RestaurantOrmEntity } from '../restaurants/index.js';
 			provide: USER_BOOKING_READER,
 			useClass: UserTypeOrmBookingProvider,
 		},
+			{
+				provide: BOOKING_EVENT_PUBLISHER,
+				useClass: BookingEventNoopProvider,
+			},
+		BookingsService,
 		CreateBookingUseCase,
 		ListBookingsUseCase,
 		ListRestaurantBookingsUseCase,

@@ -5,6 +5,8 @@ import { DeleteBookingCommand, DeleteBookingResponseDto } from '../dto/index.js'
 import {
   BOOKING_REPOSITORY,
   type BookingRepositoryPort,
+  BOOKING_EVENT_PUBLISHER,
+  type BookingEventPublisherPort,
 } from '../ports/index.js';
 
 @Injectable()
@@ -12,6 +14,8 @@ export class DeleteBookingUseCase implements UseCase<DeleteBookingCommand, Delet
   constructor(
     @Inject(BOOKING_REPOSITORY)
     private readonly bookingRepository: BookingRepositoryPort,
+    @Inject(BOOKING_EVENT_PUBLISHER)
+    private readonly eventPublisher: BookingEventPublisherPort,
   ) {}
 
   async execute(command: DeleteBookingCommand): Promise<DeleteBookingResponseDto> {
@@ -26,6 +30,13 @@ export class DeleteBookingUseCase implements UseCase<DeleteBookingCommand, Delet
     }
 
     await this.bookingRepository.delete(command.bookingId);
+    await this.eventPublisher.publish({
+      type: 'booking.deleted',
+      bookingId: command.bookingId,
+      restaurantId: booking.restaurantId,
+      userId: booking.userId,
+      occurredAt: new Date(),
+    });
     return { ok: true };
   }
 }

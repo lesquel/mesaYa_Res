@@ -6,6 +6,8 @@ import { BookingMapper } from '../mappers/index.js';
 import {
   BOOKING_REPOSITORY,
   type BookingRepositoryPort,
+  BOOKING_EVENT_PUBLISHER,
+  type BookingEventPublisherPort,
 } from '../ports/index.js';
 
 @Injectable()
@@ -13,6 +15,8 @@ export class UpdateBookingUseCase implements UseCase<UpdateBookingCommand, Booki
   constructor(
     @Inject(BOOKING_REPOSITORY)
     private readonly bookingRepository: BookingRepositoryPort,
+    @Inject(BOOKING_EVENT_PUBLISHER)
+    private readonly eventPublisher: BookingEventPublisherPort,
   ) {}
 
   async execute(command: UpdateBookingCommand): Promise<BookingResponseDto> {
@@ -45,6 +49,14 @@ export class UpdateBookingUseCase implements UseCase<UpdateBookingCommand, Booki
 
     booking.update(updateData);
     const saved = await this.bookingRepository.save(booking);
+    await this.eventPublisher.publish({
+      type: 'booking.updated',
+      bookingId: saved.id,
+      restaurantId: saved.restaurantId,
+      userId: saved.userId,
+      occurredAt: new Date(),
+      data: { numberOfGuests: saved.numberOfGuests },
+    });
     return BookingMapper.toResponse(saved);
   }
 }

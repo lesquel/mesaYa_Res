@@ -20,7 +20,6 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
@@ -28,6 +27,7 @@ import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
 import { CurrentUser } from '../../../../auth/decorator/current-user.decorator.js';
 import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
+import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import {
   CreateBookingDto,
   CreateBookingCommand,
@@ -38,14 +38,7 @@ import {
   FindBookingQuery,
   DeleteBookingCommand,
 } from '../../application/dto/index.js';
-import {
-  CreateBookingUseCase,
-  ListBookingsUseCase,
-  ListRestaurantBookingsUseCase,
-  FindBookingUseCase,
-  UpdateBookingUseCase,
-  DeleteBookingUseCase,
-} from '../../application/use-cases/index.js';
+import { BookingsService } from '../../application/services/index.js';
 import {
   BookingNotFoundError,
   BookingOwnershipError,
@@ -57,14 +50,7 @@ import {
 @ApiTags('Bookings')
 @Controller({ path: 'booking', version: '1' })
 export class BookingsController {
-  constructor(
-    private readonly createBookingUseCase: CreateBookingUseCase,
-    private readonly listBookingsUseCase: ListBookingsUseCase,
-    private readonly listRestaurantBookingsUseCase: ListRestaurantBookingsUseCase,
-    private readonly findBookingUseCase: FindBookingUseCase,
-    private readonly updateBookingUseCase: UpdateBookingUseCase,
-    private readonly deleteBookingUseCase: DeleteBookingUseCase,
-  ) {}
+  constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -81,7 +67,7 @@ export class BookingsController {
         ...dto,
         userId: user.userId,
       };
-      return await this.createBookingUseCase.execute(command);
+  return await this.bookingsService.create(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -89,12 +75,7 @@ export class BookingsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar reservas (paginado)' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
       const route = req.baseUrl || req.path || '/booking';
@@ -109,7 +90,7 @@ export class BookingsController {
         search: pagination.q,
         route,
       };
-      return await this.listBookingsUseCase.execute(query);
+  return await this.bookingsService.list(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -118,12 +99,7 @@ export class BookingsController {
   @Get('restaurant/:restaurantId')
   @ApiOperation({ summary: 'Listar reservas por restaurante' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @Query() pagination: PaginationDto,
@@ -143,7 +119,7 @@ export class BookingsController {
         search: pagination.q,
         route,
       };
-      return await this.listRestaurantBookingsUseCase.execute(query);
+  return await this.bookingsService.listByRestaurant(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -155,7 +131,7 @@ export class BookingsController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const query: FindBookingQuery = { bookingId: id };
-      return await this.findBookingUseCase.execute(query);
+  return await this.bookingsService.findOne(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -179,7 +155,7 @@ export class BookingsController {
         bookingId: id,
         userId: user.userId,
       };
-      return await this.updateBookingUseCase.execute(command);
+  return await this.bookingsService.update(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -200,7 +176,7 @@ export class BookingsController {
         bookingId: id,
         userId: user.userId,
       };
-      return await this.deleteBookingUseCase.execute(command);
+  return await this.bookingsService.delete(command);
     } catch (error) {
       this.handleError(error);
     }

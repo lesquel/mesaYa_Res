@@ -15,6 +15,8 @@ import {
   type RestaurantBookingReaderPort,
   USER_BOOKING_READER,
   type UserBookingReaderPort,
+  BOOKING_EVENT_PUBLISHER,
+  type BookingEventPublisherPort,
 } from '../ports/index.js';
 
 @Injectable()
@@ -28,6 +30,8 @@ export class CreateBookingUseCase
     private readonly restaurantReader: RestaurantBookingReaderPort,
     @Inject(USER_BOOKING_READER)
     private readonly userReader: UserBookingReaderPort,
+    @Inject(BOOKING_EVENT_PUBLISHER)
+    private readonly eventPublisher: BookingEventPublisherPort,
   ) {}
 
   async execute(command: CreateBookingCommand): Promise<BookingResponseDto> {
@@ -56,6 +60,14 @@ export class CreateBookingUseCase
     });
 
     const saved = await this.bookingRepository.save(booking);
+    await this.eventPublisher.publish({
+      type: 'booking.created',
+      bookingId: saved.id,
+      restaurantId: saved.restaurantId,
+      userId: saved.userId,
+      occurredAt: new Date(),
+      data: { numberOfGuests: saved.numberOfGuests },
+    });
     return BookingMapper.toResponse(saved);
   }
 }
