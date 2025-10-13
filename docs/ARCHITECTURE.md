@@ -125,6 +125,12 @@ src/
 > expone métodos `paginate` / `paginateByRestaurant`, manteniendo la lógica de
 > query dentro de infra.
 
+> **Nuevo:** `shared/infrastructure/kafka` contiene un `KafkaModule` global que
+> centraliza la conexión utilizando `@nestjs/microservices`, expone
+> `KafkaService` como _gateway_ (`send`/`emit`) y provee los decoradores
+> `@KafkaProducer()` y `@KafkaConsumer()` para registrar productores y
+> consumidores sin acoplar la capa de dominio.
+
 ### Interface
 
 - Controladores REST, resolvers GraphQL, handlers de eventos.
