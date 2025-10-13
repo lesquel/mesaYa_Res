@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
+  KafkaEmit,
+  KafkaProducer,
+  KafkaService,
+  KAFKA_TOPICS,
+} from '../../../../shared/infrastructure/kafka/index.js';
+import type {
   CreateSectionCommand,
   DeleteSectionCommand,
   DeleteSectionResponseDto,
@@ -28,8 +34,16 @@ export class SectionsService {
     private readonly findSectionUseCase: FindSectionUseCase,
     private readonly updateSectionUseCase: UpdateSectionUseCase,
     private readonly deleteSectionUseCase: DeleteSectionUseCase,
+    @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SECTION_CREATED,
+    payload: ({ result, toPlain }) => ({
+      action: 'section.created',
+      entity: toPlain(result),
+    }),
+  })
   async create(command: CreateSectionCommand): Promise<SectionResponseDto> {
     return this.createSectionUseCase.execute(command);
   }
@@ -48,10 +62,28 @@ export class SectionsService {
     return this.findSectionUseCase.execute(query);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SECTION_UPDATED,
+    payload: ({ result, toPlain }) => ({
+      action: 'section.updated',
+      entity: toPlain(result),
+    }),
+  })
   async update(command: UpdateSectionCommand): Promise<SectionResponseDto> {
     return this.updateSectionUseCase.execute(command);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SECTION_DELETED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [DeleteSectionCommand];
+      return {
+        action: 'section.deleted',
+        entityId: command.sectionId,
+        result: toPlain(result),
+      };
+    },
+  })
   async delete(
     command: DeleteSectionCommand,
   ): Promise<DeleteSectionResponseDto> {

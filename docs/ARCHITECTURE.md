@@ -131,6 +131,74 @@ src/
 > `@KafkaProducer()` y `@KafkaConsumer()` para registrar productores y
 > consumidores sin acoplar la capa de dominio.
 
+### Integración con Kafka (productores y consumidores)
+
+- **Tópicos normalizados:** Los nombres viven en
+  `shared/infrastructure/kafka/kafka.topics.ts` y siguen el prefijo
+  `mesa-ya.<aggregate>.<evento>`.
+
+  | Feature     | Evento                      | Tópico Kafka            |
+  | ----------- | --------------------------- | ----------------------- |
+  | reviews     | created / updated / deleted | `mesa-ya.reviews.*`     |
+  | restaurants | created / updated / deleted | `mesa-ya.restaurants.*` |
+  | sections    | created / updated / deleted | `mesa-ya.sections.*`    |
+
+- **Inyección desacoplada:** Los servicios de aplicación reciben el gateway con
+  `@KafkaProducer()` para mantener las capas limpias:
+
+  ```ts
+  constructor(
+    private readonly createReviewUseCase: CreateReviewUseCase,
+    @KafkaProducer() private readonly kafkaService: KafkaService,
+  ) {}
+  ```
+
+- **Producción declarativa:** Usa `@KafkaEmit` en métodos de servicio para
+  publicar automáticamente después de un caso de uso exitoso. El decorador
+  recibe el tópico y un _payload builder_ con acceso a los argumentos, el
+  resultado y un helper `toPlain`:
+
+  ```ts
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.REVIEW_CREATED,
+    payload: ({ args, result, toPlain }) => {
+      const [command] = args as [CreateReviewCommand];
+      return {
+        action: 'review.created',
+        entity: toPlain(result),
+        performedBy: command.userId,
+      };
+    },
+  })
+  async create(command: CreateReviewCommand) {
+    return this.createReviewUseCase.execute(command);
+  }
+  ```
+
+- **Serialización limpia:** Antes de emitir se sanitiza el payload con
+  `JSON.parse(JSON.stringify(dto))` para producir JSON plano sin referencias ni
+  objetos `Date`.
+- **Resiliencia:** Un fallo al publicar registra el error con `Logger` pero no
+  bloquea la respuesta HTTP; los endpoints de create/update/delete continúan
+  funcionando.
+- **Eventos publicados:** Cada comando exitoso emite su evento correspondiente
+  con metadatos mínimos (`action`, `entity`/`entityId`, `performedBy` cuando
+  aplica y `timestamp` ISO8601). El payload final que llega a Kafka mantiene un
+  formato consistente:
+
+  ```json
+  {
+    "action": "review.created",
+    "entity": { "id": "...", "rating": 5 },
+    "performedBy": "user-uuid",
+    "timestamp": "2025-10-12T23:59:59.000Z"
+  }
+  ```
+
+- **Consumo automático:** Para escuchar un tópico basta anotar el método con
+  `@KafkaConsumer('mesa-ya.reviews.created')`; el `KafkaConsumerExplorer`
+  descubre la metadata en el arranque y registra el handler.
+
 ### Interface
 
 - Controladores REST, resolvers GraphQL, handlers de eventos.
