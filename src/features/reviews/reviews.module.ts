@@ -16,6 +16,7 @@ import {
   FindReviewUseCase,
   DeleteReviewUseCase,
   UpdateReviewUseCase,
+  ReviewsService,
   REVIEW_REPOSITORY,
   RESTAURANT_REVIEW_READER,
   USER_REVIEW_READER,
@@ -47,6 +48,7 @@ import { RestaurantOrmEntity } from '../restaurants/index.js';
     FindReviewUseCase,
     UpdateReviewUseCase,
     DeleteReviewUseCase,
+    ReviewsService,
   ],
   exports: [
     CreateReviewUseCase,
@@ -55,6 +57,7 @@ import { RestaurantOrmEntity } from '../restaurants/index.js';
     FindReviewUseCase,
     UpdateReviewUseCase,
     DeleteReviewUseCase,
+    ReviewsService,
   ],
 })
 export class ReviewsModule {}

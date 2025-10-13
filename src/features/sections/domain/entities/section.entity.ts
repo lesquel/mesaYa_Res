@@ -1,133 +1,112 @@
-import { randomUUID } from 'crypto';
-import { InvalidSectionDataError } from '../errors/invalid-section-data.error.js';
+import { randomUUID } from 'node:crypto';
+import {
+  SectionDescription,
+  SectionHeight,
+  SectionName,
+  SectionRestaurantId,
+  SectionWidth,
+} from './values/index.js';
+import {
+  type SectionCreate,
+  type SectionSnapshot,
+  type SectionUpdate,
+} from '../types/index.js';
 
-export interface SectionProps {
-  restaurantId: string;
-  name: string;
-  description: string | null;
-}
-
-export type CreateSectionProps = {
-  restaurantId: string;
-  name: string;
-  description?: string | null;
-};
-
-export type UpdateSectionProps = Partial<SectionProps>;
-
-export interface SectionSnapshot extends SectionProps {
-  id: string;
+interface SectionProps {
+  restaurantId: SectionRestaurantId;
+  name: SectionName;
+  description: SectionDescription;
+  width: SectionWidth;
+  height: SectionHeight;
 }
 
 export class Section {
   private constructor(
     private props: SectionProps,
-    private readonly _id: string,
+    private readonly internalId: string,
   ) {}
 
-  static create(props: CreateSectionProps, id: string = randomUUID()): Section {
-    const normalized: SectionProps = {
-      restaurantId: this.normalizeId(props.restaurantId, 'Restaurant'),
-      name: this.normalizeName(props.name),
-      description: this.normalizeDescription(props.description),
+  static create(props: SectionCreate, id: string = randomUUID()): Section {
+    const aggregated: SectionProps = {
+      restaurantId: new SectionRestaurantId(props.restaurantId),
+      name: new SectionName(props.name),
+      description: SectionDescription.create(props.description ?? null),
+      width: new SectionWidth(props.width),
+      height: new SectionHeight(props.height),
     };
 
-    this.validate(normalized);
-
-    return new Section(normalized, id);
+    return new Section(aggregated, id);
   }
 
   static rehydrate(snapshot: SectionSnapshot): Section {
-    const normalized: SectionProps = {
-      restaurantId: this.normalizeId(snapshot.restaurantId, 'Restaurant'),
-      name: this.normalizeName(snapshot.name),
-      description: this.normalizeDescription(snapshot.description),
+    const aggregated: SectionProps = {
+      restaurantId: new SectionRestaurantId(snapshot.restaurantId),
+      name: new SectionName(snapshot.name),
+      description: SectionDescription.create(snapshot.description),
+      width: new SectionWidth(snapshot.width),
+      height: new SectionHeight(snapshot.height),
     };
 
-    this.validate(normalized);
-
-    return new Section(normalized, snapshot.id);
+    return new Section(aggregated, snapshot.id);
   }
 
   get id(): string {
-    return this._id;
+    return this.internalId;
   }
 
   get restaurantId(): string {
-    return this.props.restaurantId;
+    return this.props.restaurantId.value;
   }
 
   get name(): string {
-    return this.props.name;
+    return this.props.name.value;
   }
 
   get description(): string | null {
-    return this.props.description;
+    return this.props.description.value;
   }
 
-  update(data: UpdateSectionProps): void {
+  get width(): number {
+    return this.props.width.value;
+  }
+
+  get height(): number {
+    return this.props.height.value;
+  }
+
+  update(data: SectionUpdate): void {
     const next: SectionProps = {
       restaurantId:
         data.restaurantId !== undefined
-          ? Section.normalizeId(data.restaurantId, 'Restaurant')
+          ? new SectionRestaurantId(data.restaurantId)
           : this.props.restaurantId,
       name:
-        data.name !== undefined
-          ? Section.normalizeName(data.name)
-          : this.props.name,
+        data.name !== undefined ? new SectionName(data.name) : this.props.name,
       description:
         data.description !== undefined
-          ? Section.normalizeDescription(data.description)
+          ? SectionDescription.create(data.description)
           : this.props.description,
+      width:
+        data.width !== undefined
+          ? new SectionWidth(data.width)
+          : this.props.width,
+      height:
+        data.height !== undefined
+          ? new SectionHeight(data.height)
+          : this.props.height,
     };
-
-    Section.validate(next);
 
     this.props = next;
   }
 
   snapshot(): SectionSnapshot {
     return {
-      id: this._id,
-      ...this.props,
+      id: this.internalId,
+      restaurantId: this.props.restaurantId.value,
+      name: this.props.name.value,
+      description: this.props.description.value,
+      width: this.props.width.value,
+      height: this.props.height.value,
     };
-  }
-
-  private static normalizeId(value: string, label: string): string {
-    if (!value || value.trim().length === 0) {
-      throw new InvalidSectionDataError(`${label} id is required`);
-    }
-    return value.trim();
-  }
-
-  private static normalizeName(value: string): string {
-    if (typeof value !== 'string') {
-      throw new InvalidSectionDataError('Name is required');
-    }
-    const trimmed = value.trim();
-    if (trimmed.length === 0) {
-      throw new InvalidSectionDataError('Name is required');
-    }
-    return trimmed;
-  }
-
-  private static normalizeDescription(value?: string | null): string | null {
-    if (value === null || value === undefined) {
-      return null;
-    }
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }
-
-  private static validate(props: SectionProps): void {
-    if (props.name.length > 50) {
-      throw new InvalidSectionDataError('Name must be at most 50 characters');
-    }
-
-    if (props.description && props.description.length > 1000) {
-      throw new InvalidSectionDataError(
-        'Description must be at most 1000 characters',
-      );
-    }
   }
 }

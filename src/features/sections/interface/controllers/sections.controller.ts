@@ -18,27 +18,24 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
 import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
 import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
+import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import type { Request } from 'express';
 import {
   CreateSectionCommand,
   CreateSectionDto,
   ListSectionsQuery,
+  ListRestaurantSectionsQuery,
   FindSectionQuery,
   UpdateSectionCommand,
   UpdateSectionDto,
   DeleteSectionCommand,
-  CreateSectionUseCase,
-  ListSectionsUseCase,
-  FindSectionUseCase,
-  UpdateSectionUseCase,
-  DeleteSectionUseCase,
+  SectionsService,
 } from '../../application/index.js';
 import {
   InvalidSectionDataError,
@@ -49,13 +46,7 @@ import {
 @ApiTags('Sections')
 @Controller('section')
 export class SectionsController {
-  constructor(
-    private readonly createSectionUseCase: CreateSectionUseCase,
-    private readonly listSectionsUseCase: ListSectionsUseCase,
-    private readonly findSectionUseCase: FindSectionUseCase,
-    private readonly updateSectionUseCase: UpdateSectionUseCase,
-    private readonly deleteSectionUseCase: DeleteSectionUseCase,
-  ) {}
+  constructor(private readonly sectionsService: SectionsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -66,7 +57,36 @@ export class SectionsController {
   async create(@Body() dto: CreateSectionDto) {
     try {
       const command: CreateSectionCommand = { ...dto };
-      return await this.createSectionUseCase.execute(command);
+      return await this.sectionsService.create(command);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  @Get('restaurant/:restaurantId')
+  @ApiOperation({ summary: 'Listar secciones por restaurante' })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiPaginationQuery()
+  async findByRestaurant(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+  ) {
+    try {
+      const route = req.baseUrl || req.path || '/section/restaurant';
+      const query: ListRestaurantSectionsQuery = {
+        restaurantId,
+        pagination: {
+          page: pagination.page,
+          limit: pagination.limit,
+          offset: pagination.offset,
+        },
+        sortBy: pagination.sortBy,
+        sortOrder: pagination.sortOrder,
+        search: pagination.q,
+        route,
+      };
+      return await this.sectionsService.listByRestaurant(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -74,12 +94,7 @@ export class SectionsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar secciones (paginado)' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
       const route = req.baseUrl || req.path || '/section';
@@ -94,7 +109,7 @@ export class SectionsController {
         search: pagination.q,
         route,
       };
-      return await this.listSectionsUseCase.execute(query);
+      return await this.sectionsService.list(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -106,7 +121,7 @@ export class SectionsController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const query: FindSectionQuery = { sectionId: id };
-      return await this.findSectionUseCase.execute(query);
+      return await this.sectionsService.findOne(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -128,7 +143,7 @@ export class SectionsController {
         sectionId: id,
         ...dto,
       };
-      return await this.updateSectionUseCase.execute(command);
+      return await this.sectionsService.update(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -143,7 +158,7 @@ export class SectionsController {
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const command: DeleteSectionCommand = { sectionId: id };
-      return await this.deleteSectionUseCase.execute(command);
+      return await this.sectionsService.delete(command);
     } catch (error) {
       this.handleError(error);
     }

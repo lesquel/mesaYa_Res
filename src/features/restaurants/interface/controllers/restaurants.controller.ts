@@ -19,7 +19,6 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
@@ -27,21 +26,17 @@ import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
 import { CurrentUser } from '../../../../auth/decorator/current-user.decorator.js';
 import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
+import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import {
-  CreateRestaurantUseCase,
-  DeleteRestaurantUseCase,
-  FindRestaurantUseCase,
-  ListOwnerRestaurantsUseCase,
-  ListRestaurantsUseCase,
-  UpdateRestaurantUseCase,
   CreateRestaurantCommand,
   CreateRestaurantDto,
+  DeleteRestaurantCommand,
+  FindRestaurantQuery,
+  ListOwnerRestaurantsQuery,
+  ListRestaurantsQuery,
+  RestaurantsService,
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
-  DeleteRestaurantCommand,
-  ListRestaurantsQuery,
-  ListOwnerRestaurantsQuery,
-  FindRestaurantQuery,
 } from '../../application/index.js';
 import {
   InvalidRestaurantDataError,
@@ -54,14 +49,7 @@ import type { Request } from 'express';
 @ApiTags('Restaurants')
 @Controller({ path: 'restaurant', version: '1' })
 export class RestaurantsController {
-  constructor(
-    private readonly createRestaurantUseCase: CreateRestaurantUseCase,
-    private readonly listRestaurantsUseCase: ListRestaurantsUseCase,
-    private readonly listOwnerRestaurantsUseCase: ListOwnerRestaurantsUseCase,
-    private readonly findRestaurantUseCase: FindRestaurantUseCase,
-    private readonly updateRestaurantUseCase: UpdateRestaurantUseCase,
-    private readonly deleteRestaurantUseCase: DeleteRestaurantUseCase,
-  ) {}
+  constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -78,7 +66,7 @@ export class RestaurantsController {
         ...dto,
         ownerId: user.userId,
       };
-      return await this.createRestaurantUseCase.execute(command);
+      return await this.restaurantsService.create(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -86,12 +74,7 @@ export class RestaurantsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar restaurantes (paginado)' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
       const route = req.baseUrl || req.path || '/restaurant';
@@ -106,7 +89,7 @@ export class RestaurantsController {
         search: pagination.q,
         route,
       };
-      return await this.listRestaurantsUseCase.execute(query);
+      return await this.restaurantsService.list(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -117,12 +100,7 @@ export class RestaurantsController {
   @Permissions('restaurant:read')
   @ApiOperation({ summary: 'Listar mis restaurantes (owner actual)' })
   @ApiBearerAuth()
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findMine(
     @Query() pagination: PaginationDto,
     @Req() req: Request,
@@ -142,7 +120,7 @@ export class RestaurantsController {
         search: pagination.q,
         route,
       };
-      return await this.listOwnerRestaurantsUseCase.execute(query);
+      return await this.restaurantsService.listByOwner(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -154,7 +132,7 @@ export class RestaurantsController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const query: FindRestaurantQuery = { restaurantId: id };
-      return await this.findRestaurantUseCase.execute(query);
+      return await this.restaurantsService.findOne(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -180,7 +158,7 @@ export class RestaurantsController {
         ownerId: user.userId,
         ...dto,
       };
-      return await this.updateRestaurantUseCase.execute(command);
+      return await this.restaurantsService.update(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -201,7 +179,7 @@ export class RestaurantsController {
         restaurantId: id,
         ownerId: user.userId,
       };
-      return await this.deleteRestaurantUseCase.execute(command);
+      return await this.restaurantsService.delete(command);
     } catch (error) {
       this.handleError(error);
     }

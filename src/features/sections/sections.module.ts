@@ -11,9 +11,11 @@ import {
 import {
   CreateSectionUseCase,
   ListSectionsUseCase,
+  ListRestaurantSectionsUseCase,
   FindSectionUseCase,
   UpdateSectionUseCase,
   DeleteSectionUseCase,
+  SectionsService,
   SECTION_REPOSITORY,
   RESTAURANT_SECTION_READER,
 } from './application/index.js';
@@ -35,16 +37,20 @@ import {
     },
     CreateSectionUseCase,
     ListSectionsUseCase,
+    ListRestaurantSectionsUseCase,
     FindSectionUseCase,
     UpdateSectionUseCase,
     DeleteSectionUseCase,
+    SectionsService,
   ],
   exports: [
     CreateSectionUseCase,
     ListSectionsUseCase,
+    ListRestaurantSectionsUseCase,
     FindSectionUseCase,
     UpdateSectionUseCase,
     DeleteSectionUseCase,
+    SectionsService,
   ],
 })
 export class SectionsModule {}

@@ -2,12 +2,15 @@
 
 ## Objetivo
 
-Este documento define la estructura base y las reglas de arquitectura para MesaYa
-aplicando principios de Clean Architecture, diseño orientado a dominios (DDD) y
-organización por _feature_. El objetivo es poder cambiar proveedores externos
-(base de datos, colas, gateways) sin reescribir el dominio ni la lógica de
-negocio, mantener un código fácil de probar y escalar, y ofrecer una guía clara
-para la incorporación de nuevos módulos.
+Este documento define la estructura base y las reglas de arquitectura para
+MesaYa aplicando principios de Clean Architecture, diseño orientado a dominios
+(DDD) y organización por _feature_. El objetivo es poder cambiar proveedores
+externos (base de datos, colas, gateways) sin reescribir el dominio ni la lógica
+de negocio, mantener un código fácil de probar y escalar, y ofrecer una guía
+clara para la incorporación de nuevos módulos. Además, se registran iniciativas
+recientes (por ejemplo, normalización de paginación Swagger, endpoints
+parametrizados por restaurante y enriquecimiento de los _value objects_ de
+`sections`) y un backlog de mejoras futuras.
 
 ## Macrovisión de capas
 
@@ -78,6 +81,11 @@ src/
 > ejemplo, `auth` y `users` se pueden fusionar en un nuevo módulo `users` con
 > subcarpetas Domain/Application/Infrastructure/Interface.
 
+> **Implementado recientemente:** los módulos `restaurants`, `sections` y
+> `reviews` ya siguen el patrón con _value objects_ y repositorios aislados;
+> además, se introdujo un decorador compartido `ApiPaginationQuery` para evitar
+> duplicar metadatos Swagger en controladores REST.
+
 ## Convenciones por capa
 
 ### Domain
@@ -89,6 +97,10 @@ src/
 - Servicios de dominio orquestan reglas complejas entre entidades.
 - Exponer interfaces (`IUserRole`, `PaymentStatus`) en `/types` cuando sea útil.
 
+> **Ejemplo:** `Section` utiliza _value objects_ como `SectionWidth` y
+> `SectionHeight` para garantizar dimensiones válidas sin depender de la capa
+> de infraestructura.
+
 ### Application
 
 - Cada caso de uso implementa `UseCase<InputDTO, OutputDTO>`.
@@ -98,6 +110,10 @@ src/
 - Controla transacciones y consistencia, pero no ejecuta queries directas.
 - Puede usar _Result/Either_ para comunicar éxito/fracaso sin lanzar excepciones.
 
+> **Ejemplo:** `ListRestaurantSectionsUseCase` recibe un `ListRestaurantSectionsQuery`
+> y delega el filtrado al `SectionRepositoryPort` manteniendo la paginación
+> alineada con la infraestructura.
+
 ### Infrastructure
 
 - Implementaciones concretas de los `ports` (TypeORM, HTTP, Redis, S3…).
@@ -105,12 +121,19 @@ src/
 - Adaptadores externos se registran como `providers` en el módulo Nest
   (`users.module.ts`).
 
+> **Ejemplo:** `SectionTypeOrmRepository` reusa un helper global de paginación y
+> expone métodos `paginate` / `paginateByRestaurant`, manteniendo la lógica de
+> query dentro de infra.
+
 ### Interface
 
 - Controladores REST, resolvers GraphQL, handlers de eventos.
 - Validan y transforman entrada usando DTOs y `class-validator`.
 - Delegan toda la lógica al caso de uso correspondiente.
 - No realizan llamadas directas a infraestructura.
+
+> **Implementado:** controladores emplean `ApiPaginationQuery` para documentar
+> parámetros comunes y exponen rutas versionadas (`/api/v1/...`).
 
 ### Shared
 
@@ -178,11 +201,19 @@ Reglas para módulos:
 9. **Testing:** Asegúrate de que los tests unitarios trabajen contra _ports_ y
    usen _mocks_ (test doubles) de infraestructura.
 
+> **Checklist aplicada:** Se agregaron módulos `SectionsModule` y `RestaurantsModule`
+> al `AppModule` para que sus controladores se expongan en Swagger y la versión
+> `dist` cargue sin `MODULE_NOT_FOUND`.
+
 ## DTOs y validaciones
 
 - Input DTOs viven en `application/dto/input`. Se anotan con `class-validator`.
 - Output DTOs en `application/dto/output`. Pueden mapear desde `domain`.
 - Validaciones complejas deben moverse a _value objects_ para reutilizarse.
+
+> **Ejemplo:** `CreateSectionDto` valida `width` y `height` como enteros positivos,
+> mientras que el `SectionWidth`/`SectionHeight` refuerzan la misma regla en el
+> dominio.
 
 ## Pruebas recomendadas
 
@@ -211,6 +242,10 @@ feature (`src/users/tests/...`). Usa `shared/testing` para builders y factories.
 - Si necesitas compartir entidades, hazlo vía `shared/core` o interfaces de
   dominio, no usando clases concretas de otra feature.
 
+> **Pendiente:** evaluar un mecanismo de eventos de dominio o integración (ej. a
+> través de `@nestjs/cqrs`) para sincronizar reservas y disponibilidad de
+> secciones en tiempo real.
+
 ## Guía para nuevos features
 
 1. Crea la carpeta `src/<feature>/` con la estructura base.
@@ -221,6 +256,9 @@ feature (`src/users/tests/...`). Usa `shared/testing` para builders y factories.
    con reemplazar el adaptador.
 5. Exponer controladores/resolvers en `interface` que llamen a los casos de uso.
 6. Registra el módulo en `app.module.ts`.
+
+> **Sugerencia:** agrega pruebas mínimas (unitarias para value objects y E2E para
+> endpoints críticos) antes de exponer un nuevo módulo en producción.
 
 ## Configuración de rutas y permisos
 
@@ -246,6 +284,25 @@ feature (`src/users/tests/...`). Usa `shared/testing` para builders y factories.
    que defina el negocio.
 5. Añadir pruebas unitarias al dominio antes de mover a producción.
 6. Documentar en README los comandos para ejecutar casos de uso y tests.
+
+### Backlog de mejoras adicionales
+
+- Instrumentar migraciones automatizadas (TypeORM CLI o `@nestjs/typeorm`
+  factories) para nuevos campos (`width`, `height`, etc.).
+- Centralizar configuración de variables obligatorias con defaults y perfiles
+  (`.env.development`, `.env.test`) para evitar fallos en `ConfigModule`.
+- Añadir _health checks_ y métricas (p. ej. `@nestjs/terminus`) en `shared` para
+  monitoreo.
+- Incluir _fixtures_ de semillas por feature (extendiendo `seed` actual) y
+  automatizar su ejecución en pipelines.
+- Expandir la documentación de estándares de Swagger (naming de tags, ejemplos
+  por respuesta, políticas de error).
+- Implementar pruebas contractuales para módulos que consumen `paginateQueryBuilder`
+  asegurando alias válidos al ordenar.
+- Analizar la introducción de un _event bus_ o _outbox pattern_ para futuras
+  integraciones (pagos, notificaciones) sin acoplar casos de uso entre sí.
+- Incorporar un _linter_ para convenciones de importación (evitar `../..` largos)
+  y un _formatter_ consistente (`eslint + prettier`) ya configurado en scripts.
 
 ## Glosario rápido
 

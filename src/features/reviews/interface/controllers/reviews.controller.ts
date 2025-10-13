@@ -20,7 +20,6 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
@@ -28,21 +27,17 @@ import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
 import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
 import { CurrentUser } from '../../../../auth/decorator/current-user.decorator.js';
 import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
+import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import {
   CreateReviewCommand,
   CreateReviewDto,
-  UpdateReviewCommand,
-  UpdateReviewDto,
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
   FindReviewQuery,
   DeleteReviewCommand,
-  CreateReviewUseCase,
-  ListReviewsUseCase,
-  ListRestaurantReviewsUseCase,
-  FindReviewUseCase,
-  UpdateReviewUseCase,
-  DeleteReviewUseCase,
+  ReviewsService,
+  UpdateReviewCommand,
+  UpdateReviewDto,
 } from '../../application/index.js';
 import {
   InvalidReviewDataError,
@@ -55,14 +50,7 @@ import {
 @ApiTags('Reviews')
 @Controller({ path: 'review', version: '1' })
 export class ReviewsController {
-  constructor(
-    private readonly createReviewUseCase: CreateReviewUseCase,
-    private readonly listReviewsUseCase: ListReviewsUseCase,
-    private readonly listRestaurantReviewsUseCase: ListRestaurantReviewsUseCase,
-    private readonly findReviewUseCase: FindReviewUseCase,
-    private readonly updateReviewUseCase: UpdateReviewUseCase,
-    private readonly deleteReviewUseCase: DeleteReviewUseCase,
-  ) {}
+  constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -79,7 +67,7 @@ export class ReviewsController {
         ...dto,
         userId: user.userId,
       };
-      return await this.createReviewUseCase.execute(command);
+      return await this.reviewsService.create(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -87,12 +75,7 @@ export class ReviewsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar reseñas (paginado)' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
       const route = req.baseUrl || req.path || '/review';
@@ -107,7 +90,7 @@ export class ReviewsController {
         search: pagination.q,
         route,
       };
-      return await this.listReviewsUseCase.execute(query);
+      return await this.reviewsService.list(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -116,12 +99,7 @@ export class ReviewsController {
   @Get('restaurant/:restaurantId')
   @ApiOperation({ summary: 'Listar reseñas por restaurante' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
-  @ApiQuery({ name: 'q', required: false, type: String })
+  @ApiPaginationQuery()
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @Query() pagination: PaginationDto,
@@ -141,7 +119,7 @@ export class ReviewsController {
         search: pagination.q,
         route,
       };
-      return await this.listRestaurantReviewsUseCase.execute(query);
+      return await this.reviewsService.listByRestaurant(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -153,7 +131,7 @@ export class ReviewsController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const query: FindReviewQuery = { reviewId: id };
-      return await this.findReviewUseCase.execute(query);
+      return await this.reviewsService.findOne(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -177,7 +155,7 @@ export class ReviewsController {
         reviewId: id,
         userId: user.userId,
       };
-      return await this.updateReviewUseCase.execute(command);
+      return await this.reviewsService.update(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -198,7 +176,7 @@ export class ReviewsController {
         reviewId: id,
         userId: user.userId,
       };
-      return await this.deleteReviewUseCase.execute(command);
+      return await this.reviewsService.delete(command);
     } catch (error) {
       this.handleError(error);
     }

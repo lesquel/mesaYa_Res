@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
-  type UpdateRestaurantProps,
+  type RestaurantUpdate,
   RestaurantNotFoundError,
   RestaurantOwnershipError,
 } from '../../domain/index.js';
@@ -38,7 +38,7 @@ export class UpdateRestaurantUseCase
       throw new RestaurantOwnershipError();
     }
 
-    restaurant.update(partial as UpdateRestaurantProps);
+    restaurant.update(partial as RestaurantUpdate);
     const saved = await this.restaurantRepository.save(restaurant);
 
     return RestaurantMapper.toResponse(saved);
