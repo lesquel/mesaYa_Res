@@ -12,6 +12,16 @@ export const DEFAULT_PERMISSION_NAMES = [
   'review:update',
   'review:delete',
   'review:read',
+  // Booking
+  'booking:create',
+  'booking:update',
+  'booking:delete',
+  'booking:read',
+  // Tables
+  'table:create',
+  'table:update',
+  'table:delete',
+  'table:read',
 ] as const;
 
 export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
@@ -28,6 +38,12 @@ export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
       'review:create',
       'review:update',
       'review:read',
+      'booking:create',
+      'booking:update',
+      'booking:read',
+      'table:create',
+      'table:update',
+      'table:read',
     ],
   },
   {
@@ -39,6 +55,11 @@ export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
       'review:update',
       'review:delete',
       'review:read',
+      'booking:create',
+      'booking:update',
+      'booking:delete',
+      'booking:read',
+      'table:read',
     ],
   },
 ];
