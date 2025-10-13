@@ -35,12 +35,7 @@ import {
   UpdateSectionCommand,
   UpdateSectionDto,
   DeleteSectionCommand,
-  CreateSectionUseCase,
-  ListSectionsUseCase,
-  ListRestaurantSectionsUseCase,
-  FindSectionUseCase,
-  UpdateSectionUseCase,
-  DeleteSectionUseCase,
+  SectionsService,
 } from '../../application/index.js';
 import {
   InvalidSectionDataError,
@@ -51,14 +46,7 @@ import {
 @ApiTags('Sections')
 @Controller('section')
 export class SectionsController {
-  constructor(
-    private readonly createSectionUseCase: CreateSectionUseCase,
-    private readonly listSectionsUseCase: ListSectionsUseCase,
-    private readonly listRestaurantSectionsUseCase: ListRestaurantSectionsUseCase,
-    private readonly findSectionUseCase: FindSectionUseCase,
-    private readonly updateSectionUseCase: UpdateSectionUseCase,
-    private readonly deleteSectionUseCase: DeleteSectionUseCase,
-  ) {}
+  constructor(private readonly sectionsService: SectionsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -69,7 +57,7 @@ export class SectionsController {
   async create(@Body() dto: CreateSectionDto) {
     try {
       const command: CreateSectionCommand = { ...dto };
-      return await this.createSectionUseCase.execute(command);
+      return await this.sectionsService.create(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -98,7 +86,7 @@ export class SectionsController {
         search: pagination.q,
         route,
       };
-      return await this.listRestaurantSectionsUseCase.execute(query);
+      return await this.sectionsService.listByRestaurant(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -121,7 +109,7 @@ export class SectionsController {
         search: pagination.q,
         route,
       };
-      return await this.listSectionsUseCase.execute(query);
+      return await this.sectionsService.list(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -133,7 +121,7 @@ export class SectionsController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const query: FindSectionQuery = { sectionId: id };
-      return await this.findSectionUseCase.execute(query);
+      return await this.sectionsService.findOne(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -155,7 +143,7 @@ export class SectionsController {
         sectionId: id,
         ...dto,
       };
-      return await this.updateSectionUseCase.execute(command);
+      return await this.sectionsService.update(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -170,7 +158,7 @@ export class SectionsController {
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const command: DeleteSectionCommand = { sectionId: id };
-      return await this.deleteSectionUseCase.execute(command);
+      return await this.sectionsService.delete(command);
     } catch (error) {
       this.handleError(error);
     }

@@ -15,6 +15,7 @@ import {
   FindRestaurantUseCase,
   UpdateRestaurantUseCase,
   DeleteRestaurantUseCase,
+  RestaurantsService,
   OWNER_READER,
   RESTAURANT_REPOSITORY,
 } from './application/index.js';
@@ -37,6 +38,7 @@ import {
     FindRestaurantUseCase,
     UpdateRestaurantUseCase,
     DeleteRestaurantUseCase,
+    RestaurantsService,
   ],
   exports: [
     CreateRestaurantUseCase,
@@ -45,6 +47,7 @@ import {
     FindRestaurantUseCase,
     UpdateRestaurantUseCase,
     DeleteRestaurantUseCase,
+    RestaurantsService,
   ],
 })
 export class RestaurantsModule {}

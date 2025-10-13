@@ -15,6 +15,7 @@ import {
   FindSectionUseCase,
   UpdateSectionUseCase,
   DeleteSectionUseCase,
+  SectionsService,
   SECTION_REPOSITORY,
   RESTAURANT_SECTION_READER,
 } from './application/index.js';
@@ -40,6 +41,7 @@ import {
     FindSectionUseCase,
     UpdateSectionUseCase,
     DeleteSectionUseCase,
+    SectionsService,
   ],
   exports: [
     CreateSectionUseCase,
@@ -48,6 +50,7 @@ import {
     FindSectionUseCase,
     UpdateSectionUseCase,
     DeleteSectionUseCase,
+    SectionsService,
   ],
 })
 export class SectionsModule {}

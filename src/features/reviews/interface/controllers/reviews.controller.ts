@@ -31,18 +31,13 @@ import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorat
 import {
   CreateReviewCommand,
   CreateReviewDto,
-  UpdateReviewCommand,
-  UpdateReviewDto,
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
   FindReviewQuery,
   DeleteReviewCommand,
-  CreateReviewUseCase,
-  ListReviewsUseCase,
-  ListRestaurantReviewsUseCase,
-  FindReviewUseCase,
-  UpdateReviewUseCase,
-  DeleteReviewUseCase,
+  ReviewsService,
+  UpdateReviewCommand,
+  UpdateReviewDto,
 } from '../../application/index.js';
 import {
   InvalidReviewDataError,
@@ -55,14 +50,7 @@ import {
 @ApiTags('Reviews')
 @Controller({ path: 'review', version: '1' })
 export class ReviewsController {
-  constructor(
-    private readonly createReviewUseCase: CreateReviewUseCase,
-    private readonly listReviewsUseCase: ListReviewsUseCase,
-    private readonly listRestaurantReviewsUseCase: ListRestaurantReviewsUseCase,
-    private readonly findReviewUseCase: FindReviewUseCase,
-    private readonly updateReviewUseCase: UpdateReviewUseCase,
-    private readonly deleteReviewUseCase: DeleteReviewUseCase,
-  ) {}
+  constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -79,7 +67,7 @@ export class ReviewsController {
         ...dto,
         userId: user.userId,
       };
-      return await this.createReviewUseCase.execute(command);
+      return await this.reviewsService.create(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -102,7 +90,7 @@ export class ReviewsController {
         search: pagination.q,
         route,
       };
-      return await this.listReviewsUseCase.execute(query);
+      return await this.reviewsService.list(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -131,7 +119,7 @@ export class ReviewsController {
         search: pagination.q,
         route,
       };
-      return await this.listRestaurantReviewsUseCase.execute(query);
+      return await this.reviewsService.listByRestaurant(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -143,7 +131,7 @@ export class ReviewsController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const query: FindReviewQuery = { reviewId: id };
-      return await this.findReviewUseCase.execute(query);
+      return await this.reviewsService.findOne(query);
     } catch (error) {
       this.handleError(error);
     }
@@ -167,7 +155,7 @@ export class ReviewsController {
         reviewId: id,
         userId: user.userId,
       };
-      return await this.updateReviewUseCase.execute(command);
+      return await this.reviewsService.update(command);
     } catch (error) {
       this.handleError(error);
     }
@@ -188,7 +176,7 @@ export class ReviewsController {
         reviewId: id,
         userId: user.userId,
       };
-      return await this.deleteReviewUseCase.execute(command);
+      return await this.reviewsService.delete(command);
     } catch (error) {
       this.handleError(error);
     }
