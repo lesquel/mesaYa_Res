@@ -1,28 +1,30 @@
+import { Inject } from '@nestjs/common';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentListResponseDto } from '../dtos/output/payment-list-response.dto';
-import { PaymentMapper } from '../mappers/payment.mapper';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaymentEntity } from '@features/payment/domain';
 
-export class GetAllPaymentsUseCase {
-  constructor(private readonly paymentRepository: IPaymentRepository) {}
+export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
+  constructor(
+    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly paymentRepository: IPaymentRepository,
+  ) {}
 
-  async execute(): Promise<PaymentListResponseDto> {
-    try {
-      // Obtener todos los pagos
-      const payments = await this.paymentRepository.getAllPayments();
+  async execute(): Promise<PaymentEntity[]> {
+    this.logger.log(
+      'Fetching all payments from repository',
+      'GetAllPaymentsUseCase',
+    );
 
-      return {
-        success: true,
-        message:
-          payments.length > 0
-            ? 'Pagos obtenidos exitosamente'
-            : 'No se encontraron pagos',
-        data: PaymentMapper.toDtoList(payments),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Error al obtener los pagos: ${(error as Error).message}`,
-      };
-    }
+    // Obtener todas las entidades de dominio del repositorio
+    const paymentEntities = await this.paymentRepository.getAllPayments();
+
+    this.logger.log(
+      `Successfully fetched ${paymentEntities.length} payment(s)`,
+      'GetAllPaymentsUseCase',
+    );
+
+    return paymentEntities;
   }
 }

@@ -1,5 +1,5 @@
 export interface PaymentDto {
-  paymentId: string;
+  paymentId?: string;
   payerId: string;
   paymentType: string;
   targetId: string;
