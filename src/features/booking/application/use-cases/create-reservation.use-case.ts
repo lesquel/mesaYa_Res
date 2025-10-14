@@ -1,53 +1,58 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
-  Booking,
-  BookingRestaurantNotFoundError,
-  BookingUserNotFoundError,
+  Reservation,
+  ReservationRestaurantNotFoundError,
+  ReservationUserNotFoundError,
 } from '../../domain';
 import { randomUUID } from 'crypto';
-import { BookingMapper } from '../mappers/index.js';
-import { BookingResponseDto, CreateBookingCommand } from '../dto/index.js';
+import { ReservationMapper } from '../mappers/index.js';
 import {
-  BOOKING_REPOSITORY,
-  type BookingRepositoryPort,
+  ReservationResponseDto,
+  CreateReservationCommand,
+} from '../dto/index.js';
+import {
+  RESERVATION_REPOSITORY,
+  type ReservationRepositoryPort,
   RESTAURANT_BOOKING_READER,
-  type RestaurantBookingReaderPort,
+  type RestaurantReservationReaderPort,
   USER_BOOKING_READER,
   type UserBookingReaderPort,
   BOOKING_EVENT_PUBLISHER,
-  type BookingEventPublisherPort,
+  type ReservationEventPublisherPort,
 } from '../ports/index.js';
 
 @Injectable()
-export class CreateBookingUseCase
-  implements UseCase<CreateBookingCommand, BookingResponseDto>
+export class CreateReservationUseCase
+  implements UseCase<CreateReservationCommand, ReservationResponseDto>
 {
   constructor(
-    @Inject(BOOKING_REPOSITORY)
-    private readonly bookingRepository: BookingRepositoryPort,
+    @Inject(RESERVATION_REPOSITORY)
+    private readonly bookingRepository: ReservationRepositoryPort,
     @Inject(RESTAURANT_BOOKING_READER)
-    private readonly restaurantReader: RestaurantBookingReaderPort,
+    private readonly restaurantReader: RestaurantReservationReaderPort,
     @Inject(USER_BOOKING_READER)
     private readonly userReader: UserBookingReaderPort,
     @Inject(BOOKING_EVENT_PUBLISHER)
-    private readonly eventPublisher: BookingEventPublisherPort,
+    private readonly eventPublisher: ReservationEventPublisherPort,
   ) {}
 
-  async execute(command: CreateBookingCommand): Promise<BookingResponseDto> {
+  async execute(
+    command: CreateReservationCommand,
+  ): Promise<ReservationResponseDto> {
     const restaurantExists = await this.restaurantReader.exists(
       command.restaurantId,
     );
     if (!restaurantExists) {
-      throw new BookingRestaurantNotFoundError(command.restaurantId);
+      throw new ReservationRestaurantNotFoundError(command.restaurantId);
     }
 
     const userExists = await this.userReader.exists(command.userId);
     if (!userExists) {
-      throw new BookingUserNotFoundError(command.userId);
+      throw new ReservationUserNotFoundError(command.userId);
     }
 
-    const booking = Booking.create(randomUUID(), {
+    const booking = Reservation.create(randomUUID(), {
       userId: command.userId,
       restaurantId: command.restaurantId,
       tableId: command.tableId,
@@ -68,6 +73,6 @@ export class CreateBookingUseCase
       occurredAt: new Date(),
       data: { numberOfGuests: saved.numberOfGuests },
     });
-    return BookingMapper.toResponse(saved);
+    return ReservationMapper.toResponse(saved);
   }
 }

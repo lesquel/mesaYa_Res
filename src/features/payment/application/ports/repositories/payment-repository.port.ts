@@ -3,15 +3,10 @@ import {
   PaymentEntity,
   PaymentUpdate,
 } from '@features/payment/domain';
+import { IBaseRepositoryPort } from '@shared/application/ports/base-repo-port';
 
-export abstract class IPaymentRepository {
-  abstract createPayment(data: PaymentCreate): Promise<PaymentEntity>;
-
-  abstract updatePayment(data: PaymentUpdate): Promise<PaymentEntity | null>;
-
-  abstract getPaymentById(paymentId: string): Promise<PaymentEntity | null>;
-
-  abstract getAllPayments(): Promise<PaymentEntity[]>;
-
-  abstract deletePayment(paymentId: string): Promise<boolean>;
-}
+export abstract class IPaymentRepositoryPort extends IBaseRepositoryPort<
+  PaymentEntity,
+  PaymentCreate,
+  PaymentUpdate
+> {}

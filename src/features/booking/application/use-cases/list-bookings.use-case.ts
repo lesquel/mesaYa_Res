@@ -1,24 +1,34 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { ListBookingsQuery, PaginatedBookingResponse } from '../dto/index.js';
-import { BookingMapper } from '../mappers/index.js';
-import { BOOKING_REPOSITORY, type BookingRepositoryPort } from '../ports/index.js';
+import {
+  ListReservationsQuery,
+  PaginatedBookingResponse,
+} from '../dto/index.js';
+import { ReservationMapper } from '../mappers/index.js';
+import {
+  RESERVATION_REPOSITORY,
+  type ReservationRepositoryPort,
+} from '../ports/index.js';
 
 @Injectable()
-export class ListBookingsUseCase
-  implements UseCase<ListBookingsQuery, PaginatedBookingResponse>
+export class ListReservationsUseCase
+  implements UseCase<ListReservationsQuery, PaginatedBookingResponse>
 {
   constructor(
-    @Inject(BOOKING_REPOSITORY)
-    private readonly bookingRepository: BookingRepositoryPort,
+    @Inject(RESERVATION_REPOSITORY)
+    private readonly bookingRepository: ReservationRepositoryPort,
   ) {}
 
-  async execute(query: ListBookingsQuery): Promise<PaginatedBookingResponse> {
+  async execute(
+    query: ListReservationsQuery,
+  ): Promise<PaginatedBookingResponse> {
     const result = await this.bookingRepository.paginate(query);
 
     return {
       ...result,
-      results: result.results.map((booking) => BookingMapper.toResponse(booking)),
+      results: result.results.map((booking) =>
+        ReservationMapper.toResponse(booking),
+      ),
     };
   }
 }

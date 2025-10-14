@@ -1,6 +1,6 @@
 import { Restaurant, type RestaurantDay } from '../../../../domain/index.js';
 import { RestaurantOrmEntity } from '../orm/index.js';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
 
 export class RestaurantOrmMapper {
   static toDomain(entity: RestaurantOrmEntity): Restaurant {
@@ -40,7 +40,7 @@ export class RestaurantOrmMapper {
 
   static toOrmEntity(
     restaurant: Restaurant,
-    owner?: User,
+    owner?: UserOrmEntity,
   ): RestaurantOrmEntity {
     const snapshot = restaurant.snapshot();
     const entity = new RestaurantOrmEntity();

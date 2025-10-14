@@ -1,33 +1,44 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { Booking, BookingNotFoundError, BookingOwnershipError } from '../../domain';
-import { UpdateBookingCommand, BookingResponseDto } from '../dto/index.js';
-import { BookingMapper } from '../mappers/index.js';
 import {
-  BOOKING_REPOSITORY,
-  type BookingRepositoryPort,
+  Reservation,
+  ReservationNotFoundError,
+  ReservationOwnershipError,
+} from '../../domain';
+import {
+  UpdateReservationCommand,
+  ReservationResponseDto,
+} from '../dto/index.js';
+import { ReservationMapper } from '../mappers/index.js';
+import {
+  RESERVATION_REPOSITORY,
+  type ReservationRepositoryPort,
   BOOKING_EVENT_PUBLISHER,
-  type BookingEventPublisherPort,
+  type ReservationEventPublisherPort,
 } from '../ports/index.js';
 
 @Injectable()
-export class UpdateBookingUseCase implements UseCase<UpdateBookingCommand, BookingResponseDto> {
+export class UpdateReservationUseCase
+  implements UseCase<UpdateReservationCommand, ReservationResponseDto>
+{
   constructor(
-    @Inject(BOOKING_REPOSITORY)
-    private readonly bookingRepository: BookingRepositoryPort,
+    @Inject(RESERVATION_REPOSITORY)
+    private readonly bookingRepository: ReservationRepositoryPort,
     @Inject(BOOKING_EVENT_PUBLISHER)
-    private readonly eventPublisher: BookingEventPublisherPort,
+    private readonly eventPublisher: ReservationEventPublisherPort,
   ) {}
 
-  async execute(command: UpdateBookingCommand): Promise<BookingResponseDto> {
+  async execute(
+    command: UpdateReservationCommand,
+  ): Promise<ReservationResponseDto> {
     const booking = await this.bookingRepository.findById(command.bookingId);
 
     if (!booking) {
-      throw new BookingNotFoundError(command.bookingId);
+      throw new ReservationNotFoundError(command.bookingId);
     }
 
     if (booking.userId !== command.userId) {
-      throw new BookingOwnershipError();
+      throw new ReservationOwnershipError();
     }
 
     const updateData = {
@@ -44,7 +55,7 @@ export class UpdateBookingUseCase implements UseCase<UpdateBookingCommand, Booki
       ...(command.numberOfGuests !== undefined && {
         numberOfGuests: command.numberOfGuests,
       }),
-  // status updates are not supported via this command
+      // status updates are not supported via this command
     };
 
     booking.update(updateData);
@@ -57,6 +68,6 @@ export class UpdateBookingUseCase implements UseCase<UpdateBookingCommand, Booki
       occurredAt: new Date(),
       data: { numberOfGuests: saved.numberOfGuests },
     });
-    return BookingMapper.toResponse(saved);
+    return ReservationMapper.toResponse(saved);
   }
 }

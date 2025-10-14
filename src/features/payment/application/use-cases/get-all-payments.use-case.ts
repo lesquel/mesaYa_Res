@@ -1,6 +1,6 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaymentEntity } from '@features/payment/domain';
 
@@ -8,7 +8,7 @@ export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
   constructor(
     private readonly logger: ILoggerPort,
 
-    private readonly paymentRepository: IPaymentRepository,
+    private readonly paymentRepository: IPaymentRepositoryPort,
   ) {}
 
   async execute(): Promise<PaymentEntity[]> {
@@ -18,7 +18,7 @@ export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
     );
 
     // Obtener todas las entidades de dominio del repositorio
-    const paymentEntities = await this.paymentRepository.getAllPayments();
+    const paymentEntities = await this.paymentRepository.findAll();
 
     this.logger.log(
       `Successfully fetched ${paymentEntities.length} payment(s)`,

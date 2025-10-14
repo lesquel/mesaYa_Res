@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity.js';
+import { UserOrmEntity } from './entities/user.entity.js';
 import { Role } from './entities/role.entity.js';
 import { Permission } from './entities/permission.entity.js';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,7 +17,7 @@ import { RbacService } from './rbac/rbac.service.js';
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Role, Permission]),
+    TypeOrmModule.forFeature([UserOrmEntity, Role, Permission]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

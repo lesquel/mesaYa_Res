@@ -15,7 +15,7 @@ export enum UserRole {
 }
 
 @Entity({ name: 'user' })
-export class User {
+export class UserOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
   id: string;
 

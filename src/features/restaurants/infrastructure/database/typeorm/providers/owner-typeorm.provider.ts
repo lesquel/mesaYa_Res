@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
 import { type OwnerReaderPort } from '../../../../application/ports/index.js';
 
 @Injectable()
 export class OwnerTypeOrmProvider implements OwnerReaderPort {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private readonly userRepository: Repository<UserOrmEntity>,
   ) {}
 
   async exists(ownerId: string): Promise<boolean> {

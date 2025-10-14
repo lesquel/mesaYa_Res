@@ -8,17 +8,17 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../auth/entities/user.entity.js';
 import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/index.js';
 
-@Entity({ name: 'booking' })
-export class BookingOrmEntity {
-  @PrimaryGeneratedColumn('uuid', { name: 'booking_id' })
+@Entity({ name: 'reservation' })
+export class ReservationOrmEntity {
+  @PrimaryGeneratedColumn('uuid', { name: 'reservation_id' })
   id: string;
 
-  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => UserOrmEntity, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: User;
+  user: UserOrmEntity;
 
   @ManyToOne(() => RestaurantOrmEntity, {
     nullable: false,
@@ -27,10 +27,10 @@ export class BookingOrmEntity {
   @JoinColumn({ name: 'restaurant_id', referencedColumnName: 'id' })
   restaurant: RestaurantOrmEntity;
 
-  @RelationId((booking: BookingOrmEntity) => booking.restaurant)
+  @RelationId((booking: ReservationOrmEntity) => booking.restaurant)
   restaurantId: string;
 
-  @RelationId((booking: BookingOrmEntity) => booking.user)
+  @RelationId((booking: ReservationOrmEntity) => booking.user)
   userId: string;
 
   @Column({ type: 'uuid', name: 'table_id', nullable: false })

@@ -1,7 +1,7 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { UseCase } from '@shared/application/ports/use-case.port';
 
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
 import { PaymentEntity, PaymentCreate } from '@features/payment/domain';
 import { PaymentCreationFailedError } from '../../domain/errors';
 import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
@@ -12,13 +12,13 @@ export class CreatePaymentUseCase
 {
   constructor(
     private readonly logger: ILoggerPort,
-    private readonly paymentRepository: IPaymentRepository,
+    private readonly paymentRepository: IPaymentRepositoryPort,
     private readonly paymentMapper: PaymentMapper,
   ) {}
 
   async execute(dto: CreatePaymentDto): Promise<PaymentEntity> {
     this.logger.log(
-      `Creating payment for payerId: ${dto.payerId}, amount: ${dto.amount}, type: ${dto.paymentType}`,
+      `Creating payment for targetId: ${dto.reservationId ? dto.reservationId : dto.subscriptionId}, amount: ${dto.amount}`,
       'CreatePaymentUseCase',
     );
 
@@ -27,8 +27,7 @@ export class CreatePaymentUseCase
       this.paymentMapper.fromCreatePaymentDTOtoPaymentCreate(dto);
 
     // Persistir en el repositorio
-    const createdPayment =
-      await this.paymentRepository.createPayment(paymentCreate);
+    const createdPayment = await this.paymentRepository.create(paymentCreate);
 
     this.logger.log(
       `Persisting payment with ID: ${createdPayment?.paymentId}`,
@@ -36,9 +35,9 @@ export class CreatePaymentUseCase
     );
     if (!createdPayment) {
       throw new PaymentCreationFailedError(
-        'Something went wrong with payment creation',
+        'Failed to create payment in the repository',
         {
-          payerId: dto.payerId,
+          targetId: dto.reservationId ? dto.reservationId : dto.subscriptionId,
         },
       );
     }

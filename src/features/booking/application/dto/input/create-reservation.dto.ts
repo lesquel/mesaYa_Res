@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsUUID, Min, IsDate } from 'class-validator';
 
-export class CreateBookingDto {
+export class CreateReservationDto {
   @ApiProperty({ description: 'Restaurant identifier', format: 'uuid' })
   @IsUUID()
   restaurantId: string;
@@ -26,6 +26,6 @@ export class CreateBookingDto {
   numberOfGuests: number;
 }
 
-export type CreateBookingCommand = CreateBookingDto & {
+export type CreateReservationCommand = CreateReservationDto & {
   userId: string;
 };
