@@ -1,4 +1,5 @@
 import { ReservationOrmEntity as ReservationOrmEntity } from '@features/reservation';
+import { SubscriptionOrmEntity } from '@features/subscription/infrastructure/database/orm/subscription.type-orm.entity';
 import {
   Entity,
   Column,
@@ -17,8 +18,9 @@ export class PaymentOrmEntity {
   @JoinColumn({ name: 'reservation_id', referencedColumnName: 'id' })
   reservation!: ReservationOrmEntity | null;
 
-  // @OneToOne(() => SubscriptionOrmEntity, { nullable: true })
-  // subscription!: SubscriptionOrmEntity | null;
+  @OneToOne(() => SubscriptionOrmEntity, { nullable: true })
+  @JoinColumn({ name: 'subscription_id', referencedColumnName: 'id' })
+  subscription!: SubscriptionOrmEntity | null;
 
   @Column({ type: 'decimal' })
   amount!: number;
