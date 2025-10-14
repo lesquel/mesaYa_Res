@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
-  Restaurant,
+  RestaurantEntity,
   RestaurantOwnerNotFoundError,
 } from '../../domain/index.js';
 import { RestaurantMapper } from '../mappers/index.js';
@@ -35,7 +35,7 @@ export class CreateRestaurantUseCase
       throw new RestaurantOwnerNotFoundError(command.ownerId);
     }
 
-    const restaurant = Restaurant.create({ ...command });
+    const restaurant = RestaurantEntity.create({ ...command });
     const saved = await this.restaurantRepository.save(restaurant);
 
     return RestaurantMapper.toResponse(saved);

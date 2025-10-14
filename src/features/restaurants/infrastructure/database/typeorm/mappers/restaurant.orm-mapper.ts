@@ -1,9 +1,12 @@
-import { Restaurant, type RestaurantDay } from '../../../../domain/index.js';
+import {
+  RestaurantEntity,
+  type RestaurantDay,
+} from '../../../../domain/index.js';
 import { RestaurantOrmEntity } from '../orm/index.js';
 import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
 
 export class RestaurantOrmMapper {
-  static toDomain(entity: RestaurantOrmEntity): Restaurant {
+  static toDomain(entity: RestaurantOrmEntity): RestaurantEntity {
     const normalizeTime = (value: string | null | undefined): string => {
       if (!value) {
         return '00:00';
@@ -20,7 +23,7 @@ export class RestaurantOrmMapper {
       return value;
     };
 
-    return Restaurant.rehydrate({
+    return RestaurantEntity.rehydrate({
       id: entity.id,
       name: entity.name,
       description: entity.description ?? null,
@@ -39,7 +42,7 @@ export class RestaurantOrmMapper {
   }
 
   static toOrmEntity(
-    restaurant: Restaurant,
+    restaurant: RestaurantEntity,
     owner?: UserOrmEntity,
   ): RestaurantOrmEntity {
     const snapshot = restaurant.snapshot();

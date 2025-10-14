@@ -1,4 +1,7 @@
-import { Money, PaymentStatus } from '@features/payment/domain/entities/values';
+import {
+  MoneyVO,
+  PaymentStatusVO,
+} from '@features/payment/domain/entities/values';
 import { PaymentDto } from '../dtos/output/payment.dto';
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
 import { CreatePaymentDto } from '../dtos';
@@ -17,9 +20,9 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
   }
 
   fromDTOtoEntity(dto: PaymentDto): PaymentEntity {
-    const amount = new Money(dto.amount);
+    const amount = new MoneyVO(dto.amount);
     const date = new Date(dto.date);
-    const status = new PaymentStatus(dto.paymentStatus);
+    const status = new PaymentStatusVO(dto.paymentStatus);
 
     return new PaymentEntity(
       dto.paymentId ?? '',
@@ -32,8 +35,8 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
   }
 
   fromCreatePaymentDTOtoPaymentCreate(dto: CreatePaymentDto): PaymentCreate {
-    const amount = new Money(dto.amount);
-    const status = new PaymentStatus('PENDING');
+    const amount = new MoneyVO(dto.amount);
+    const status = new PaymentStatusVO('PENDING');
 
     return {
       reservationId: dto.reservationId,
@@ -47,7 +50,7 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
     paymentId: string;
     status: string;
   }) {
-    const status = new PaymentStatus(dto.status);
+    const status = new PaymentStatusVO(dto.status);
 
     return {
       paymentId: dto.paymentId,

@@ -1,8 +1,8 @@
-import { Restaurant } from '../../domain/index.js';
+import { RestaurantEntity } from '../../domain/index.js';
 import { RestaurantResponseDto } from '../dto/index.js';
 
 export class RestaurantMapper {
-  static toResponse(restaurant: Restaurant): RestaurantResponseDto {
+  static toResponse(restaurant: RestaurantEntity): RestaurantResponseDto {
     const snapshot = restaurant.snapshot();
     return {
       id: snapshot.id,

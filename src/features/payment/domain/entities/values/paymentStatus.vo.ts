@@ -1,7 +1,7 @@
-export class PaymentStatus {
+export class PaymentStatusVO {
   private static readonly validStatuses = ['PENDING', 'COMPLETED', 'CANCELLED'];
   constructor(private value: string) {
-    if (!PaymentStatus.validStatuses.includes(value)) {
+    if (!PaymentStatusVO.validStatuses.includes(value)) {
       throw new Error(`Invalid status: ${value}`);
     }
   }
@@ -10,7 +10,7 @@ export class PaymentStatus {
   }
 
   changeStatus(newStatus: string): void {
-    if (!PaymentStatus.validStatuses.includes(newStatus)) {
+    if (!PaymentStatusVO.validStatuses.includes(newStatus)) {
       throw new Error(`Invalid status: ${newStatus}`);
     }
     this.value = newStatus;

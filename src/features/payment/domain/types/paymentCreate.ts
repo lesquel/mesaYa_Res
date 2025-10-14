@@ -1,8 +1,8 @@
-import { Money, PaymentStatus } from '../entities/values';
+import { MoneyVO, PaymentStatusVO } from '../entities/values';
 
 export interface PaymentCreate {
   reservationId?: string;
   subscriptionId?: string;
-  amount: Money;
-  paymentStatus: PaymentStatus;
+  amount: MoneyVO;
+  paymentStatus: PaymentStatusVO;
 }

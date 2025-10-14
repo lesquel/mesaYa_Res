@@ -1,3 +1,3 @@
-export * from './money';
-export * from './paymentStatus';
+export * from './money.vo';
+export * from './paymentStatus.vo';
 export * from './paymentType';

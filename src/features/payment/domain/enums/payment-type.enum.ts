@@ -1,0 +1,4 @@
+export enum PaymentTypeEnum {
+  RESERVATION = 'RESERVATION',
+  SUBSCRIPTION = 'SUBSCRIPTION',
+}
