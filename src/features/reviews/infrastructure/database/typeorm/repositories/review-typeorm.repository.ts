@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
 import {
   Review,
   ReviewNotFoundError,
@@ -26,8 +26,8 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
     private readonly reviews: Repository<ReviewOrmEntity>,
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
-    @InjectRepository(User)
-    private readonly users: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private readonly users: Repository<UserOrmEntity>,
   ) {}
 
   async save(review: Review): Promise<Review> {

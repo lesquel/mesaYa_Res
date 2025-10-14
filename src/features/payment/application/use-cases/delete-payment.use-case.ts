@@ -1,7 +1,6 @@
-import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
 import {
   PaymentNotFoundError,
   PaymentDeletionFailedError,
@@ -9,22 +8,20 @@ import {
 import { DeletePaymentDto } from '../dtos/input/delete-payment.dto';
 import { UseCase } from '@shared/application/ports/use-case.port';
 
-export class DeletePaymentUseCase
-  implements UseCase<DeletePaymentDto, boolean>
-{
+export class DeletePaymentUseCase implements UseCase<DeletePaymentDto, void> {
   constructor(
-    @Inject('ILogger') private readonly logger: ILoggerPort,
-    private readonly paymentRepository: IPaymentRepository,
+    private readonly logger: ILoggerPort,
+    private readonly paymentRepository: IPaymentRepositoryPort,
   ) {}
 
-  async execute(dto: DeletePaymentDto): Promise<boolean> {
+  async execute(dto: DeletePaymentDto): Promise<void> {
     this.logger.log(
       `Attempting to delete payment with ID: ${dto.paymentId}`,
       'DeletePaymentUseCase',
     );
 
     // Verificar que el pago existe
-    const existingPayment = await this.paymentRepository.getPaymentById(
+    const existingPayment = await this.paymentRepository.findById(
       dto.paymentId,
     );
 
@@ -42,7 +39,7 @@ export class DeletePaymentUseCase
     );
 
     // Eliminar el pago del repositorio
-    const deleted = await this.paymentRepository.deletePayment(dto.paymentId);
+    const deleted = await this.paymentRepository.delete(dto.paymentId);
 
     if (!deleted) {
       this.logger.error(
@@ -60,7 +57,5 @@ export class DeletePaymentUseCase
       `Payment successfully deleted with ID: ${dto.paymentId}`,
       'DeletePaymentUseCase',
     );
-
-    return true;
   }
 }

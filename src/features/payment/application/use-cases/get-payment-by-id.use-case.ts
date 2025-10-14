@@ -1,7 +1,6 @@
-import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
 import { PaymentNotFoundError } from '../../domain/errors';
 import { GetPaymentByIdDto } from '../dtos/input/get-payment-by-id.dto';
 import { UseCase } from '@shared/application/ports/use-case.port';
@@ -11,8 +10,9 @@ export class GetPaymentByIdUseCase
   implements UseCase<GetPaymentByIdDto, PaymentEntity>
 {
   constructor(
-    @Inject('ILogger') private readonly logger: ILoggerPort,
-    private readonly paymentRepository: IPaymentRepository,
+    private readonly logger: ILoggerPort,
+
+    private readonly paymentRepository: IPaymentRepositoryPort,
   ) {}
 
   async execute(dto: GetPaymentByIdDto): Promise<PaymentEntity> {
@@ -22,9 +22,7 @@ export class GetPaymentByIdUseCase
     );
 
     // Buscar la entidad de dominio en el repositorio
-    const paymentEntity = await this.paymentRepository.getPaymentById(
-      dto.paymentId,
-    );
+    const paymentEntity = await this.paymentRepository.findById(dto.paymentId);
 
     // Si no existe, lanzar error de dominio
     if (!paymentEntity) {

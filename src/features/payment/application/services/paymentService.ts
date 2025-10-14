@@ -16,7 +16,7 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
-import { IPaymentRepository } from '../ports/repositories';
+import { IPaymentRepositoryPort } from '../ports/repositories';
 
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
@@ -25,7 +25,7 @@ export class PaymentService {
   private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
   private deletePaymentUseCase: DeletePaymentUseCase;
 
-  constructor(paymentRepository: IPaymentRepository) {
+  constructor(paymentRepository: IPaymentRepositoryPort) {
     this.createPaymentUseCase = new CreatePaymentUseCase(paymentRepository);
     this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(paymentRepository);
     this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(paymentRepository);

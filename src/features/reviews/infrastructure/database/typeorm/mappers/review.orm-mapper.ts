@@ -1,7 +1,7 @@
 import { Review } from '../../../../domain/index.js';
 import { ReviewOrmEntity } from '../orm/index.js';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index.js';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
 
 export class ReviewOrmMapper {
   static toDomain(entity: ReviewOrmEntity): Review {
@@ -27,7 +27,7 @@ export class ReviewOrmMapper {
     review: Review,
     relations: {
       restaurant?: RestaurantOrmEntity;
-      user?: User;
+      user?: UserOrmEntity;
       existing?: ReviewOrmEntity;
     } = {},
   ): ReviewOrmEntity {

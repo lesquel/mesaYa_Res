@@ -19,7 +19,10 @@ export type CreateTableProps = TableProps;
 export type UpdateTableProps = Partial<TableProps>;
 
 export class Table {
-  private constructor(private readonly _id: string, private props: TableProps) {}
+  private constructor(
+    private readonly _id: string,
+    private props: TableProps,
+  ) {}
 
   static create(id: string, props: CreateTableProps): Table {
     const normalized: TableProps = {
@@ -81,7 +84,8 @@ export class Table {
   }
 
   private static validate(props: TableProps | TableSnapshot): void {
-    if (props.number <= 0) throw new InvalidTableDataError('number must be > 0');
+    if (props.number <= 0)
+      throw new InvalidTableDataError('number must be > 0');
     if (props.capacity <= 0)
       throw new InvalidTableDataError('capacity must be > 0');
     if (props.width <= 0) throw new InvalidTableDataError('width must be > 0');
@@ -105,7 +109,9 @@ export class Table {
   }
   private static nonNegativeInt(n: number, label: string): number {
     if (!Number.isInteger(n) || n < 0)
-      throw new InvalidTableDataError(`${label} must be a non-negative integer`);
+      throw new InvalidTableDataError(
+        `${label} must be a non-negative integer`,
+      );
     return n;
   }
 }
