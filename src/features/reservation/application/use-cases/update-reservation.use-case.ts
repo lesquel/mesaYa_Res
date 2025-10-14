@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
-  Reservation,
+  ReservationEntity,
   ReservationNotFoundError,
   ReservationOwnershipError,
 } from '../../domain';

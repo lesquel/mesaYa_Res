@@ -1,8 +1,8 @@
-import { Reservation } from '../../domain/index.js';
+import { ReservationEntity } from '../../domain/index.js';
 import { ReservationResponseDto as ReservationResponseDto } from '../dto/index.js';
 
 export class ReservationMapper {
-  static toResponse(reservation: Reservation): ReservationResponseDto {
+  static toResponse(reservation: ReservationEntity): ReservationResponseDto {
     const snapshot = reservation.snapshot();
     return {
       id: snapshot.id,

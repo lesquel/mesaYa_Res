@@ -25,12 +25,12 @@ export interface ReservationSnapshot extends ReservartionProps {
   id: string;
 }
 
-export class Reservation {
+export class ReservationEntity {
   private constructor(
     private readonly _id: string,
     private props: ReservartionProps,
   ) {}
-  static create(id: string, props: ReservartionProps): Reservation {
+  static create(id: string, props: ReservartionProps): ReservationEntity {
     const now = new Date();
 
     const reservationProps: ReservartionProps = {
@@ -47,12 +47,12 @@ export class Reservation {
 
     this.validate(reservationProps);
 
-    return new Reservation(id, reservationProps);
+    return new ReservationEntity(id, reservationProps);
   }
 
-  static rehydrate(snapshot: ReservationSnapshot): Reservation {
+  static rehydrate(snapshot: ReservationSnapshot): ReservationEntity {
     this.validate(snapshot);
-    return new Reservation(snapshot.id, { ...snapshot });
+    return new ReservationEntity(snapshot.id, { ...snapshot });
   }
 
   get id(): string {
@@ -92,7 +92,7 @@ export class Reservation {
       ...props,
       updatedAt: new Date(),
     };
-    Reservation.validate(updatedProps);
+    ReservationEntity.validate(updatedProps);
     this.props = updatedProps;
   }
 

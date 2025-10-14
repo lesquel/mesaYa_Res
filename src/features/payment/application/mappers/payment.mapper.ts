@@ -11,8 +11,8 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
   fromEntitytoDTO(entity: PaymentEntity): PaymentDto {
     return {
       paymentId: entity.paymentId,
-      reservationId: entity.reservationId as string | undefined,
-      subscriptionId: entity.subscriptionId as string | undefined,
+      reservationId: entity.reservation as string | undefined,
+      subscriptionId: entity.subscription as string | undefined,
       amount: entity.amount.amount,
       date: entity.date.toISOString(),
       paymentStatus: entity.paymentStatus.status,
@@ -39,8 +39,8 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
     const status = new PaymentStatusVO('PENDING');
 
     return {
-      reservationId: dto.reservationId,
-      subscriptionId: dto.subscriptionId,
+      reservation: dto.reservationId,
+      subscription: dto.subscriptionId,
       amount,
       paymentStatus: status,
     };

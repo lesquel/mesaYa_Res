@@ -1,10 +1,10 @@
-import { Reservation } from '../../domain/index.js';
+import { ReservationEntity } from '../../domain/index.js';
 import { ReservationOrmEntity } from '../orm/index.js';
 import { RestaurantOrmEntity } from '../../../restaurants/index.js';
 import { UserOrmEntity } from '../../../../auth/entities/user.entity.js';
 
 export class ReservationOrmMapper {
-  static toDomain(entity: ReservationOrmEntity): Reservation {
+  static toDomain(entity: ReservationOrmEntity): ReservationEntity {
     const restaurantId = entity.restaurantId ?? entity.restaurant?.id;
     const userId = entity.userId ?? entity.user?.id;
 
@@ -12,7 +12,7 @@ export class ReservationOrmMapper {
       throw new Error('Reservation entity is missing relation identifiers');
     }
 
-    return Reservation.rehydrate({
+    return ReservationEntity.rehydrate({
       id: entity.id,
       userId,
       restaurantId,
@@ -27,7 +27,7 @@ export class ReservationOrmMapper {
   }
 
   static toOrmEntity(
-    reservation: Reservation,
+    reservation: ReservationEntity,
     relations: {
       restaurant?: RestaurantOrmEntity;
       user?: UserOrmEntity;

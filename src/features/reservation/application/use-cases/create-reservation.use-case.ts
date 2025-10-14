@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
-  Reservation,
+  ReservationEntity,
   ReservationRestaurantNotFoundError,
   ReservationUserNotFoundError,
 } from '../../domain';
@@ -52,7 +52,7 @@ export class CreateReservationUseCase
       throw new ReservationUserNotFoundError(command.userId);
     }
 
-    const reservation = Reservation.create(randomUUID(), {
+    const reservation = ReservationEntity.create(randomUUID(), {
       userId: command.userId,
       restaurantId: command.restaurantId,
       tableId: command.tableId,

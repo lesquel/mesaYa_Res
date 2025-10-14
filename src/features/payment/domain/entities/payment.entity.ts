@@ -1,6 +1,9 @@
+import { ReservationEntity as ReservationEntity } from '@features/reservation';
 import { PaymentTypeEnum } from '../enums';
 import { PaymentMustBeAssociatedError } from '../errors/payment-must-be-associated.error';
-import { MoneyVO, PaymentStatusVO } from './values';
+import { PaymentStatusVO } from './values';
+import { SubscriptionEntity } from '@features/subscription/domain/entities';
+import { MoneyVO } from '@shared/domain/entities/values';
 
 export class PaymentEntity {
   constructor(
@@ -8,20 +11,20 @@ export class PaymentEntity {
     private readonly _amount: MoneyVO,
     private readonly _date: Date,
     private _paymentStatus: PaymentStatusVO,
-    private readonly _reservationId?: string,
-    private readonly _subscriptionId?: string,
+    private readonly _reservation?: ReservationEntity,
+    private readonly _subscription?: SubscriptionEntity,
   ) {}
 
   get paymentId(): string {
     return this._paymentId;
   }
 
-  get reservationId(): string | undefined {
-    return this._reservationId;
+  get reservation(): ReservationEntity | undefined {
+    return this._reservation;
   }
 
-  get subscriptionId(): string | undefined {
-    return this._subscriptionId;
+  get subscription(): SubscriptionEntity | undefined {
+    return this._subscription;
   }
 
   get amount(): MoneyVO {
@@ -41,8 +44,8 @@ export class PaymentEntity {
   }
 
   paymentType(): PaymentTypeEnum {
-    if (this._reservationId) return PaymentTypeEnum.RESERVATION;
-    if (this._subscriptionId) return PaymentTypeEnum.SUBSCRIPTION;
+    if (this._reservation) return PaymentTypeEnum.RESERVATION;
+    if (this._subscription) return PaymentTypeEnum.SUBSCRIPTION;
     throw new PaymentMustBeAssociatedError();
   }
 }
