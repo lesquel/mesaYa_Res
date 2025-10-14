@@ -6,6 +6,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { ReservationModule } from './reservation/reservation.module.js';
 import { TablesModule } from './tables/tables.module.js';
 import { ObjectsModule } from './objects/objects.module.js';
+import { SectionObjectsModule } from './section-objects/section-objects.module.js';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ObjectsModule } from './objects/objects.module.js';
     ReservationModule,
     TablesModule,
     ObjectsModule,
+    SectionObjectsModule,
   ],
   exports: [
     RestaurantsModule,
@@ -25,6 +27,7 @@ import { ObjectsModule } from './objects/objects.module.js';
     ReservationModule,
     TablesModule,
     ObjectsModule,
+    SectionObjectsModule,
   ],
 })
 export class FeaturesModule {}

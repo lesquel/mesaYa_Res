@@ -27,6 +27,11 @@ export const DEFAULT_PERMISSION_NAMES = [
   'object:update',
   'object:delete',
   'object:read',
+  // Section Objects
+  'section-object:create',
+  'section-object:update',
+  'section-object:delete',
+  'section-object:read',
 ] as const;
 
 export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
@@ -52,6 +57,9 @@ export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
       'object:create',
       'object:update',
       'object:read',
+      'section-object:create',
+      'section-object:update',
+      'section-object:read',
     ],
   },
   {
@@ -69,6 +77,7 @@ export const DEFAULT_ROLES: Array<{ name: string; permNames: string[] }> = [
       'reservation:read',
       'table:read',
       'object:read',
+      'section-object:read',
     ],
   },
 ];

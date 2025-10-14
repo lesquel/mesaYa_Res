@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GraphicObjectEventPayload } from '../../application/ports/graphic-object-event-publisher.port.js';
+import { type GraphicObjectEventPublisherPort, type GraphicObjectEventPayload } from '../../application/ports/index.js';
 
 @Injectable()
-export class GraphicObjectEventNoopProvider {
+export class GraphicObjectEventNoopProvider implements GraphicObjectEventPublisherPort {
   private readonly logger = new Logger(GraphicObjectEventNoopProvider.name);
-
   async publish(event: GraphicObjectEventPayload): Promise<void> {
-    this.logger.debug(`GraphicObject event: ${event.type} id=${event.objectId}`);
+    this.logger.log(`GraphicObject event: ${event.type} id=${event.objectId}`);
   }
 }
