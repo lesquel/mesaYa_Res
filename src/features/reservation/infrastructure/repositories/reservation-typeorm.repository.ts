@@ -23,7 +23,7 @@ import { RestaurantOrmEntity } from '../../../restaurants/index.js';
 export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
   constructor(
     @InjectRepository(ReservationOrmEntity)
-    private readonly bookings: Repository<ReservationOrmEntity>,
+    private readonly reservations: Repository<ReservationOrmEntity>,
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
     @InjectRepository(UserOrmEntity)
@@ -33,7 +33,7 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
   async save(reservation: Reservation): Promise<Reservation> {
     const snapshot = reservation.snapshot();
 
-    const existing = await this.bookings.findOne({
+    const existing = await this.reservations.findOne({
       where: { id: snapshot.id },
       relations: ['restaurant', 'user'],
     });
@@ -65,12 +65,12 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
       user,
     });
 
-    const saved = await this.bookings.save(entity);
+    const saved = await this.reservations.save(entity);
     return ReservationOrmMapper.toDomain(saved);
   }
 
   async findById(id: string): Promise<Reservation | null> {
-    const entity = await this.bookings.findOne({
+    const entity = await this.reservations.findOne({
       where: { id },
       relations: ['restaurant', 'user'],
     });
@@ -79,7 +79,7 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
   }
 
   async delete(id: string): Promise<void> {
-    const result = await this.bookings.delete({ id });
+    const result = await this.reservations.delete({ id });
     if (!result.affected) {
       throw new ReservationNotFoundError(id);
     }
@@ -102,8 +102,8 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
   }
 
   private buildBaseQuery(): SelectQueryBuilder<ReservationOrmEntity> {
-    const alias = 'booking';
-    return this.bookings
+    const alias = 'reservation';
+    return this.reservations
       .createQueryBuilder(alias)
       .leftJoinAndSelect(`${alias}.user`, 'user')
       .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant');
