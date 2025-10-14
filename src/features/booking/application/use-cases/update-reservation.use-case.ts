@@ -31,13 +31,13 @@ export class UpdateReservationUseCase
   async execute(
     command: UpdateReservationCommand,
   ): Promise<ReservationResponseDto> {
-    const booking = await this.bookingRepository.findById(command.bookingId);
+    const reservation = await this.bookingRepository.findById(command.bookingId);
 
-    if (!booking) {
+    if (!reservation) {
       throw new ReservationNotFoundError(command.bookingId);
     }
 
-    if (booking.userId !== command.userId) {
+    if (reservation.userId !== command.userId) {
       throw new ReservationOwnershipError();
     }
 
@@ -58,10 +58,10 @@ export class UpdateReservationUseCase
       // status updates are not supported via this command
     };
 
-    booking.update(updateData);
-    const saved = await this.bookingRepository.save(booking);
+    reservation.update(updateData);
+    const saved = await this.bookingRepository.save(reservation);
     await this.eventPublisher.publish({
-      type: 'booking.updated',
+      type: 'reservation.updated',
       bookingId: saved.id,
       restaurantId: saved.restaurantId,
       userId: saved.userId,

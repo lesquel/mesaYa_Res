@@ -66,7 +66,7 @@ export class CreateReservationUseCase
 
     const saved = await this.bookingRepository.save(booking);
     await this.eventPublisher.publish({
-      type: 'booking.created',
+      type: 'reservation.created',
       bookingId: saved.id,
       restaurantId: saved.restaurantId,
       userId: saved.userId,

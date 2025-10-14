@@ -2,8 +2,8 @@ import { Reservation } from '../../domain/index.js';
 import { ReservationResponseDto as ReservationResponseDto } from '../dto/index.js';
 
 export class ReservationMapper {
-  static toResponse(booking: Reservation): ReservationResponseDto {
-    const snapshot = booking.snapshot();
+  static toResponse(reservation: Reservation): ReservationResponseDto {
+    const snapshot = reservation.snapshot();
     return {
       id: snapshot.id,
       restaurantId: snapshot.restaurantId,

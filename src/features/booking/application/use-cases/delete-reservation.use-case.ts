@@ -29,22 +29,22 @@ export class DeleteReservatioUseCase
   async execute(
     command: DeleteReservationCommand,
   ): Promise<DeleteBookingResponseDto> {
-    const booking = await this.bookingRepository.findById(command.bookingId);
+    const reservation = await this.bookingRepository.findById(command.bookingId);
 
-    if (!booking) {
+    if (!reservation) {
       throw new ReservationNotFoundError(command.bookingId);
     }
 
-    if (booking.userId !== command.userId) {
+    if (reservation.userId !== command.userId) {
       throw new ReservationOwnershipError();
     }
 
     await this.bookingRepository.delete(command.bookingId);
     await this.eventPublisher.publish({
-      type: 'booking.deleted',
+      type: 'reservation.deleted',
       bookingId: command.bookingId,
-      restaurantId: booking.restaurantId,
-      userId: booking.userId,
+      restaurantId: reservation.restaurantId,
+      userId: reservation.userId,
       occurredAt: new Date(),
     });
     return { ok: true };
