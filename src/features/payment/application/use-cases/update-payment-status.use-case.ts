@@ -1,6 +1,6 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
 import {
   PaymentNotFoundError,
   PaymentUpdateFailedError,
@@ -16,7 +16,7 @@ export class UpdatePaymentStatusUseCase
   constructor(
     private readonly logger: ILoggerPort,
 
-    private readonly paymentRepository: IPaymentRepository,
+    private readonly paymentRepository: IPaymentRepositoryPort,
     private readonly paymentMapper: PaymentMapper,
   ) {}
 
@@ -27,7 +27,7 @@ export class UpdatePaymentStatusUseCase
     );
 
     // Verificar que el pago existe
-    const existingPayment = await this.paymentRepository.getPaymentById(
+    const existingPayment = await this.paymentRepository.findById(
       dto.paymentId,
     );
 
@@ -49,8 +49,7 @@ export class UpdatePaymentStatusUseCase
       this.paymentMapper.fromUpdatePaymentStatusDTOtoPaymentUpdate(dto);
 
     // Actualizar el pago en el repositorio
-    const updatedPayment =
-      await this.paymentRepository.updatePayment(paymentUpdate);
+    const updatedPayment = await this.paymentRepository.update(paymentUpdate);
 
     if (!updatedPayment) {
       this.logger.error(

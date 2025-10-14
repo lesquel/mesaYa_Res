@@ -1,6 +1,6 @@
 import { PaginatedResult } from '@shared/application/types/pagination.js';
 
-export interface BookingResponseDto {
+export interface ReservationResponseDto {
   id: string;
   restaurantId: string;
   userId: string;
@@ -13,4 +13,4 @@ export interface BookingResponseDto {
   updatedAt: Date;
 }
 
-export type PaginatedBookingResponse = PaginatedResult<BookingResponseDto>;
+export type PaginatedBookingResponse = PaginatedResult<ReservationResponseDto>;

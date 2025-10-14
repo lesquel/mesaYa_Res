@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity.js';
+import { UserOrmEntity } from './entities/user.entity.js';
 import { Role } from './entities/role.entity.js';
 import { Permission } from './entities/permission.entity.js';
 import { SignUpDto } from './dto/signup.dto';
@@ -16,8 +16,8 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly users: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private readonly users: Repository<UserOrmEntity>,
     @InjectRepository(Role)
     private readonly roles: Repository<Role>,
     @InjectRepository(Permission)
@@ -30,7 +30,7 @@ export class AuthService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  private signToken(user: User) {
+  private signToken(user: UserOrmEntity) {
     const roleNames = (user.roles ?? []).map((r) =>
       typeof r === 'string' ? r : r.name,
     );
@@ -69,7 +69,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUser(email: string, password: string): Promise<UserOrmEntity> {
     const user = await this.users.findOne({ where: { email } });
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const match = await bcrypt.compare(password, user.passwordHash);

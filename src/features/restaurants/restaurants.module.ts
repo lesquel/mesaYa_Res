@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../../auth/auth.module.js';
-import { User } from '../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../auth/entities/user.entity.js';
 import { RestaurantsController } from './interface/index.js';
 import {
   RestaurantOrmEntity,
@@ -21,7 +21,10 @@ import {
 } from './application/index.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RestaurantOrmEntity, User]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity]),
+    AuthModule,
+  ],
   controllers: [RestaurantsController],
   providers: [
     {

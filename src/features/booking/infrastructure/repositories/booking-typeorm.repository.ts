@@ -1,36 +1,36 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { User } from '../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../auth/entities/user.entity.js';
 import {
-  Booking,
-  BookingNotFoundError,
-  BookingRestaurantNotFoundError,
-  BookingUserNotFoundError,
+  Reservation,
+  ReservationNotFoundError,
+  ReservationRestaurantNotFoundError,
+  ReservationUserNotFoundError,
 } from '../../domain/index.js';
 import {
-  ListBookingsQuery,
-  ListRestaurantBookingsQuery,
+  ListReservationsQuery,
+  ListRestaurantReservationsQuery,
 } from '../../application/dto/index.js';
 import { PaginatedResult } from '@shared/application/types/pagination.js';
 import { paginateQueryBuilder } from '../../../../shared/infrastructure/pagination/paginate.js';
-import { type BookingRepositoryPort } from '../../application/ports/index.js';
-import { BookingOrmEntity } from '../orm/index.js';
-import { BookingOrmMapper } from '../mappers/index.js';
+import { type ReservationRepositoryPort } from '../../application/ports/index.js';
+import { ReservationOrmEntity } from '../orm/index.js';
+import { ReservationOrmMapper } from '../mappers/index.js';
 import { RestaurantOrmEntity } from '../../../restaurants/index.js';
 
 @Injectable()
-export class BookingTypeOrmRepository implements BookingRepositoryPort {
+export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
   constructor(
-    @InjectRepository(BookingOrmEntity)
-    private readonly bookings: Repository<BookingOrmEntity>,
+    @InjectRepository(ReservationOrmEntity)
+    private readonly bookings: Repository<ReservationOrmEntity>,
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
-    @InjectRepository(User)
-    private readonly users: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private readonly users: Repository<UserOrmEntity>,
   ) {}
 
-  async save(booking: Booking): Promise<Booking> {
+  async save(booking: Reservation): Promise<Reservation> {
     const snapshot = booking.snapshot();
 
     const existing = await this.bookings.findOne({
@@ -51,55 +51,57 @@ export class BookingTypeOrmRepository implements BookingRepositoryPort {
       user = foundUser ?? undefined;
 
       if (!restaurant) {
-        throw new BookingRestaurantNotFoundError(snapshot.restaurantId);
+        throw new ReservationRestaurantNotFoundError(snapshot.restaurantId);
       }
 
       if (!user) {
-        throw new BookingUserNotFoundError(snapshot.userId);
+        throw new ReservationUserNotFoundError(snapshot.userId);
       }
     }
 
-    const entity = BookingOrmMapper.toOrmEntity(booking, {
+    const entity = ReservationOrmMapper.toOrmEntity(booking, {
       existing: existing ?? undefined,
       restaurant,
       user,
     });
 
     const saved = await this.bookings.save(entity);
-    return BookingOrmMapper.toDomain(saved);
+    return ReservationOrmMapper.toDomain(saved);
   }
 
-  async findById(id: string): Promise<Booking | null> {
+  async findById(id: string): Promise<Reservation | null> {
     const entity = await this.bookings.findOne({
       where: { id },
       relations: ['restaurant', 'user'],
     });
 
-    return entity ? BookingOrmMapper.toDomain(entity) : null;
+    return entity ? ReservationOrmMapper.toDomain(entity) : null;
   }
 
   async delete(id: string): Promise<void> {
     const result = await this.bookings.delete({ id });
     if (!result.affected) {
-      throw new BookingNotFoundError(id);
+      throw new ReservationNotFoundError(id);
     }
   }
 
-  async paginate(query: ListBookingsQuery): Promise<PaginatedResult<Booking>> {
+  async paginate(
+    query: ListReservationsQuery,
+  ): Promise<PaginatedResult<Reservation>> {
     const qb = this.buildBaseQuery();
     return this.executePagination(qb, query);
   }
 
   async paginateByRestaurant(
-    query: ListRestaurantBookingsQuery,
-  ): Promise<PaginatedResult<Booking>> {
+    query: ListRestaurantReservationsQuery,
+  ): Promise<PaginatedResult<Reservation>> {
     const qb = this.buildBaseQuery().where('restaurant.id = :restaurantId', {
       restaurantId: query.restaurantId,
     });
     return this.executePagination(qb, query);
   }
 
-  private buildBaseQuery(): SelectQueryBuilder<BookingOrmEntity> {
+  private buildBaseQuery(): SelectQueryBuilder<ReservationOrmEntity> {
     const alias = 'booking';
     return this.bookings
       .createQueryBuilder(alias)
@@ -108,9 +110,9 @@ export class BookingTypeOrmRepository implements BookingRepositoryPort {
   }
 
   private async executePagination(
-    qb: SelectQueryBuilder<BookingOrmEntity>,
-    query: ListBookingsQuery,
-  ): Promise<PaginatedResult<Booking>> {
+    qb: SelectQueryBuilder<ReservationOrmEntity>,
+    query: ListReservationsQuery,
+  ): Promise<PaginatedResult<Reservation>> {
     const alias = qb.alias;
 
     const sortMap: Record<string, string> = {
@@ -141,7 +143,7 @@ export class BookingTypeOrmRepository implements BookingRepositoryPort {
     return {
       ...paginationResult,
       results: paginationResult.results.map((entity) =>
-        BookingOrmMapper.toDomain(entity),
+        ReservationOrmMapper.toDomain(entity),
       ),
     };
   }

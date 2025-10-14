@@ -1,10 +1,10 @@
-import { Booking } from '../../domain/index.js';
-import { BookingOrmEntity } from '../orm/index.js';
+import { Reservation } from '../../domain/index.js';
+import { ReservationOrmEntity } from '../orm/index.js';
 import { RestaurantOrmEntity } from '../../../restaurants/index.js';
-import { User } from '../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '../../../../auth/entities/user.entity.js';
 
-export class BookingOrmMapper {
-  static toDomain(entity: BookingOrmEntity): Booking {
+export class ReservationOrmMapper {
+  static toDomain(entity: ReservationOrmEntity): Reservation {
     const restaurantId = entity.restaurantId ?? entity.restaurant?.id;
     const userId = entity.userId ?? entity.user?.id;
 
@@ -12,7 +12,7 @@ export class BookingOrmMapper {
       throw new Error('Booking entity is missing relation identifiers');
     }
 
-    return Booking.rehydrate({
+    return Reservation.rehydrate({
       id: entity.id,
       userId,
       restaurantId,
@@ -27,15 +27,15 @@ export class BookingOrmMapper {
   }
 
   static toOrmEntity(
-    booking: Booking,
+    booking: Reservation,
     relations: {
       restaurant?: RestaurantOrmEntity;
-      user?: User;
-      existing?: BookingOrmEntity;
+      user?: UserOrmEntity;
+      existing?: ReservationOrmEntity;
     } = {},
-  ): BookingOrmEntity {
+  ): ReservationOrmEntity {
     const snapshot = booking.snapshot();
-    const entity = relations.existing ?? new BookingOrmEntity();
+    const entity = relations.existing ?? new ReservationOrmEntity();
 
     entity.id = snapshot.id;
     entity.tableId = snapshot.tableId;

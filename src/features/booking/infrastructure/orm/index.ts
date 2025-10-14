@@ -1,1 +1,1 @@
-export * from './booking.orm-entity.js';
+export * from './reservation.orm-entity.js';

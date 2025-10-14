@@ -1,8 +1,7 @@
 export interface PaymentDto {
   paymentId?: string;
-  payerId: string;
-  paymentType: string;
-  targetId: string;
+  reservationId?: string | undefined;
+  subscriptionId?: string | undefined;
   amount: number;
   date: string;
   paymentStatus: string;

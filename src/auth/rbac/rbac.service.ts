@@ -1,14 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity.js';
+import { UserOrmEntity } from '../entities/user.entity.js';
 import { Role } from '../entities/role.entity.js';
 import { Permission } from '../entities/permission.entity.js';
 
 @Injectable()
 export class RbacService {
   constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private readonly users: Repository<UserOrmEntity>,
     @InjectRepository(Role) private readonly roles: Repository<Role>,
     @InjectRepository(Permission)
     private readonly perms: Repository<Permission>,

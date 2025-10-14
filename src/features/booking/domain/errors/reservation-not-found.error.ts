@@ -1,6 +1,6 @@
-export class BookingNotFoundError extends Error {
+export class ReservationNotFoundError extends Error {
   constructor(public readonly bookingId: string) {
     super(`Booking ${bookingId} not found`);
-    this.name = BookingNotFoundError.name;
+    this.name = ReservationNotFoundError.name;
   }
 }

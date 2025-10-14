@@ -1,6 +1,6 @@
 import { PaginationQuery } from '@shared/application/types/pagination.js';
 
-export interface ListBookingsQuery {
+export interface ListReservationsQuery {
   pagination: PaginationQuery;
   sortBy?: string;
   sortOrder?: 'ASC' | 'DESC';

@@ -1,6 +1,6 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
 import {
   PaymentNotFoundError,
   PaymentDeletionFailedError,
@@ -11,7 +11,7 @@ import { UseCase } from '@shared/application/ports/use-case.port';
 export class DeletePaymentUseCase implements UseCase<DeletePaymentDto, void> {
   constructor(
     private readonly logger: ILoggerPort,
-    private readonly paymentRepository: IPaymentRepository,
+    private readonly paymentRepository: IPaymentRepositoryPort,
   ) {}
 
   async execute(dto: DeletePaymentDto): Promise<void> {
@@ -21,7 +21,7 @@ export class DeletePaymentUseCase implements UseCase<DeletePaymentDto, void> {
     );
 
     // Verificar que el pago existe
-    const existingPayment = await this.paymentRepository.getPaymentById(
+    const existingPayment = await this.paymentRepository.findById(
       dto.paymentId,
     );
 
@@ -39,7 +39,7 @@ export class DeletePaymentUseCase implements UseCase<DeletePaymentDto, void> {
     );
 
     // Eliminar el pago del repositorio
-    const deleted = await this.paymentRepository.deletePayment(dto.paymentId);
+    const deleted = await this.paymentRepository.delete(dto.paymentId);
 
     if (!deleted) {
       this.logger.error(
