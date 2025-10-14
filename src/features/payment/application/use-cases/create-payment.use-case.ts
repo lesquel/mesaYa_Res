@@ -1,19 +1,17 @@
-import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { UseCase } from '@shared/application/ports/use-case.port';
 
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentCreate } from '@features/payment/domain';
+import { PaymentEntity, PaymentCreate } from '@features/payment/domain';
 import { PaymentCreationFailedError } from '../../domain/errors';
 import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
-import { PaymentEntity } from '@features/payment/domain';
 import { PaymentMapper } from '../mappers';
-import { UseCase } from '@shared/application/ports/use-case.port';
 
 export class CreatePaymentUseCase
   implements UseCase<CreatePaymentDto, PaymentEntity>
 {
   constructor(
-    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepository,
     private readonly paymentMapper: PaymentMapper,
   ) {}
@@ -37,9 +35,12 @@ export class CreatePaymentUseCase
       'CreatePaymentUseCase',
     );
     if (!createdPayment) {
-      throw new PaymentCreationFailedError('Repository returned null', {
-        payerId: dto.payerId,
-      });
+      throw new PaymentCreationFailedError(
+        'Something went wrong with payment creation',
+        {
+          payerId: dto.payerId,
+        },
+      );
     }
 
     this.logger.log(
@@ -47,7 +48,6 @@ export class CreatePaymentUseCase
       'CreatePaymentUseCase',
     );
 
-    // Transformar a DTO de salida usando mapper
     return createdPayment;
   }
 }
