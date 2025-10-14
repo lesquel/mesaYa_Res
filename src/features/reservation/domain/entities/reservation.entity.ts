@@ -26,7 +26,7 @@ export interface ReservationSnapshot extends ReservartionProps {
 }
 
 export class ReservationEntity {
-  private constructor(
+  constructor(
     private readonly _id: string,
     private props: ReservartionProps,
   ) {}

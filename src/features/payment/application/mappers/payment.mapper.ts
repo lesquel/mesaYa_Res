@@ -1,18 +1,16 @@
-import {
-  MoneyVO,
-  PaymentStatusVO,
-} from '@features/payment/domain/entities/values';
+import { PaymentStatusVO } from '@features/payment/domain/entities/values';
 import { PaymentDto } from '../dtos/output/payment.dto';
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
 import { CreatePaymentDto } from '../dtos';
 import { PaymentCreate, PaymentEntity } from '@features/payment/domain';
+import { MoneyVO } from '@shared/domain/entities/values';
 
 export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
   fromEntitytoDTO(entity: PaymentEntity): PaymentDto {
     return {
-      paymentId: entity.paymentId,
-      reservationId: entity.reservation as string | undefined,
-      subscriptionId: entity.subscription as string | undefined,
+      paymentId: entity.id,
+      reservationId: entity.reservationId,
+      subscriptionId: entity.subscriptionId,
       amount: entity.amount.amount,
       date: entity.date.toISOString(),
       paymentStatus: entity.paymentStatus.status,
@@ -24,14 +22,13 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
     const date = new Date(dto.date);
     const status = new PaymentStatusVO(dto.paymentStatus);
 
-    return new PaymentEntity(
-      dto.paymentId ?? '',
+    return PaymentEntity.create(dto.paymentId ?? '', {
       amount,
       date,
-      status,
-      dto.reservationId,
-      dto.subscriptionId,
-    );
+      paymentStatus: status,
+      reservationId: dto.reservationId,
+      subscriptionId: dto.subscriptionId,
+    });
   }
 
   fromCreatePaymentDTOtoPaymentCreate(dto: CreatePaymentDto): PaymentCreate {
@@ -39,8 +36,8 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
     const status = new PaymentStatusVO('PENDING');
 
     return {
-      reservation: dto.reservationId,
-      subscription: dto.subscriptionId,
+      reservationId: dto.reservationId,
+      subscriptionId: dto.subscriptionId,
       amount,
       paymentStatus: status,
     };

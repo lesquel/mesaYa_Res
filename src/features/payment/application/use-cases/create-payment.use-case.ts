@@ -30,7 +30,7 @@ export class CreatePaymentUseCase
     const createdPayment = await this.paymentRepository.create(paymentCreate);
 
     this.logger.log(
-      `Persisting payment with ID: ${createdPayment?.paymentId}`,
+      `Persisting payment with ID: ${createdPayment?.id}`,
       'CreatePaymentUseCase',
     );
     if (!createdPayment) {
@@ -43,7 +43,7 @@ export class CreatePaymentUseCase
     }
 
     this.logger.log(
-      `Payment created successfully with ID: ${createdPayment.paymentId}`,
+      `Payment created successfully with ID: ${createdPayment.id}`,
       'CreatePaymentUseCase',
     );
 

@@ -1,51 +1,81 @@
-import { ReservationEntity as ReservationEntity } from '@features/reservation';
+import { MoneyVO } from '@shared/domain/entities/values';
 import { PaymentTypeEnum } from '../enums';
 import { PaymentMustBeAssociatedError } from '../errors/payment-must-be-associated.error';
 import { PaymentStatusVO } from './values';
-import { SubscriptionEntity } from '@features/subscription/domain/entities';
-import { MoneyVO } from '@shared/domain/entities/values';
+
+export interface PaymentProps {
+  amount: MoneyVO;
+  date: Date;
+  paymentStatus: PaymentStatusVO;
+  reservationId?: string;
+  subscriptionId?: string;
+}
+
+export interface PaymentSnapshot extends PaymentProps {
+  paymentId: string;
+}
 
 export class PaymentEntity {
   constructor(
     private readonly _paymentId: string,
-    private readonly _amount: MoneyVO,
-    private readonly _date: Date,
-    private _paymentStatus: PaymentStatusVO,
-    private readonly _reservation?: ReservationEntity,
-    private readonly _subscription?: SubscriptionEntity,
+    private props: PaymentProps,
   ) {}
 
-  get paymentId(): string {
+  static create(id: string, props: PaymentProps): PaymentEntity {
+    this.validate(props);
+    return new PaymentEntity(id, props);
+  }
+
+  static rehydrate(snapshot: PaymentSnapshot): PaymentEntity {
+    return new PaymentEntity(snapshot.paymentId, { ...snapshot });
+  }
+
+  get id(): string {
     return this._paymentId;
   }
 
-  get reservation(): ReservationEntity | undefined {
-    return this._reservation;
-  }
-
-  get subscription(): SubscriptionEntity | undefined {
-    return this._subscription;
-  }
-
   get amount(): MoneyVO {
-    return this._amount;
+    return this.props.amount;
   }
 
   get date(): Date {
-    return this._date;
+    return this.props.date;
   }
 
   get paymentStatus(): PaymentStatusVO {
-    return this._paymentStatus;
+    return this.props.paymentStatus;
+  }
+
+  get reservationId(): string | undefined {
+    return this.props.reservationId;
+  }
+
+  get subscriptionId(): string | undefined {
+    return this.props.subscriptionId;
   }
 
   updateStatus(newStatus: PaymentStatusVO): void {
-    this._paymentStatus = newStatus;
+    this.props.paymentStatus = newStatus;
   }
 
   paymentType(): PaymentTypeEnum {
-    if (this._reservation) return PaymentTypeEnum.RESERVATION;
-    if (this._subscription) return PaymentTypeEnum.SUBSCRIPTION;
+    if (this.props.reservationId) return PaymentTypeEnum.RESERVATION;
+    if (this.props.subscriptionId) return PaymentTypeEnum.SUBSCRIPTION;
     throw new PaymentMustBeAssociatedError();
+  }
+
+  snapshot(): PaymentSnapshot {
+    return {
+      paymentId: this._paymentId,
+      ...this.props,
+    };
+  }
+
+  private static validate(props: PaymentProps): void {
+    if (!props.date) throw new Error('Payment must have a valid date');
+    if (!props.paymentStatus)
+      throw new Error('Payment must have a valid status');
+    if (!props.reservationId && !props.subscriptionId)
+      throw new PaymentMustBeAssociatedError();
   }
 }
