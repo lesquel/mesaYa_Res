@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
@@ -7,7 +6,8 @@ import { PaymentEntity } from '@features/payment/domain';
 
 export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
   constructor(
-    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly logger: ILoggerPort,
+
     private readonly paymentRepository: IPaymentRepository,
   ) {}
 

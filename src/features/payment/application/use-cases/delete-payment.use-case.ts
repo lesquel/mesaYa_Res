@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
@@ -9,15 +8,13 @@ import {
 import { DeletePaymentDto } from '../dtos/input/delete-payment.dto';
 import { UseCase } from '@shared/application/ports/use-case.port';
 
-export class DeletePaymentUseCase
-  implements UseCase<DeletePaymentDto, boolean>
-{
+export class DeletePaymentUseCase implements UseCase<DeletePaymentDto, void> {
   constructor(
-    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepository,
   ) {}
 
-  async execute(dto: DeletePaymentDto): Promise<boolean> {
+  async execute(dto: DeletePaymentDto): Promise<void> {
     this.logger.log(
       `Attempting to delete payment with ID: ${dto.paymentId}`,
       'DeletePaymentUseCase',
@@ -60,7 +57,5 @@ export class DeletePaymentUseCase
       `Payment successfully deleted with ID: ${dto.paymentId}`,
       'DeletePaymentUseCase',
     );
-
-    return true;
   }
 }

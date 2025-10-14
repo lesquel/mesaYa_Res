@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
 import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
@@ -15,7 +14,8 @@ export class UpdatePaymentStatusUseCase
   implements UseCase<UpdatePaymentStatusDto, PaymentEntity>
 {
   constructor(
-    @Inject('ILogger') private readonly logger: ILoggerPort,
+    private readonly logger: ILoggerPort,
+
     private readonly paymentRepository: IPaymentRepository,
     private readonly paymentMapper: PaymentMapper,
   ) {}
