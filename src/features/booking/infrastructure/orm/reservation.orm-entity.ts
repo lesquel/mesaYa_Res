@@ -27,10 +27,10 @@ export class ReservationOrmEntity {
   @JoinColumn({ name: 'restaurant_id', referencedColumnName: 'id' })
   restaurant: RestaurantOrmEntity;
 
-  @RelationId((booking: ReservationOrmEntity) => booking.restaurant)
+  @RelationId((reservation: ReservationOrmEntity) => reservation.restaurant)
   restaurantId: string;
 
-  @RelationId((booking: ReservationOrmEntity) => booking.user)
+  @RelationId((reservation: ReservationOrmEntity) => reservation.user)
   userId: string;
 
   @Column({ type: 'uuid', name: 'table_id', nullable: false })

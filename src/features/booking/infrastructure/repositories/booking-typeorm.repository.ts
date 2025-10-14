@@ -30,8 +30,8 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
     private readonly users: Repository<UserOrmEntity>,
   ) {}
 
-  async save(booking: Reservation): Promise<Reservation> {
-    const snapshot = booking.snapshot();
+  async save(reservation: Reservation): Promise<Reservation> {
+    const snapshot = reservation.snapshot();
 
     const existing = await this.bookings.findOne({
       where: { id: snapshot.id },
@@ -59,7 +59,7 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
       }
     }
 
-    const entity = ReservationOrmMapper.toOrmEntity(booking, {
+    const entity = ReservationOrmMapper.toOrmEntity(reservation, {
       existing: existing ?? undefined,
       restaurant,
       user,

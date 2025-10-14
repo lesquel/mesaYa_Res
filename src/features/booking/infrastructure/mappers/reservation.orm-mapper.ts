@@ -27,14 +27,14 @@ export class ReservationOrmMapper {
   }
 
   static toOrmEntity(
-    booking: Reservation,
+    reservation: Reservation,
     relations: {
       restaurant?: RestaurantOrmEntity;
       user?: UserOrmEntity;
       existing?: ReservationOrmEntity;
     } = {},
   ): ReservationOrmEntity {
-    const snapshot = booking.snapshot();
+    const snapshot = reservation.snapshot();
     const entity = relations.existing ?? new ReservationOrmEntity();
 
     entity.id = snapshot.id;
