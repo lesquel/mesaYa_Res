@@ -47,15 +47,15 @@ import {
   InvalidReservationDataError,
 } from '../../domain/index.js';
 
-@ApiTags('Bookings')
-@Controller({ path: 'booking', version: '1' })
+@ApiTags('Reservations')
+@Controller({ path: 'reservations', version: '1' })
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('booking:create')
-  @ApiOperation({ summary: 'Crear una reserva (permiso booking:create)' })
+  @Permissions('reservation:create')
+  @ApiOperation({ summary: 'Crear una reserva (permiso reservation:create)' })
   @ApiBearerAuth()
   @ApiBody({ type: CreateReservationDto })
   async create(
@@ -78,7 +78,7 @@ export class ReservationsController {
   @ApiPaginationQuery()
   async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
-      const route = req.baseUrl || req.path || '/booking';
+      const route = req.baseUrl || req.path || '/reservations';
       const query: ListReservationsQuery = {
         pagination: {
           page: pagination.page,
@@ -106,7 +106,7 @@ export class ReservationsController {
     @Req() req: Request,
   ) {
     try {
-      const route = req.baseUrl || req.path || '/booking/restaurant';
+      const route = req.baseUrl || req.path || '/reservations/restaurant';
       const query: ListRestaurantReservationsQuery = {
         restaurantId,
         pagination: {
@@ -139,9 +139,9 @@ export class ReservationsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('booking:update')
+  @Permissions('reservation:update')
   @ApiOperation({
-    summary: 'Actualizar reserva propia (permiso booking:update)',
+    summary: 'Actualizar reserva propia (permiso reservation:update)',
   })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
@@ -165,8 +165,10 @@ export class ReservationsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('booking:delete')
-  @ApiOperation({ summary: 'Eliminar reserva propia (permiso booking:delete)' })
+  @Permissions('reservation:delete')
+  @ApiOperation({
+    summary: 'Eliminar reserva propia (permiso reservation:delete)',
+  })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async remove(

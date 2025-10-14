@@ -12,6 +12,9 @@ export class ReservationEventNoopProvider
 
   async publish(event: ReservationEventPayload): Promise<void> {
     // Placeholder for Kafka or other event buses. Keeps architecture ready.
-    this.logger.debug(`Booking event published (noop): ${event.type}`, event);
+    this.logger.debug(
+      `Reservation event published (noop): ${event.type}`,
+      event,
+    );
   }
 }
