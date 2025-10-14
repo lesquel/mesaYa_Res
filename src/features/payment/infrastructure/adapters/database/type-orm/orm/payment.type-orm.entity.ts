@@ -1,4 +1,4 @@
-import { ReservationOrmEntity as ReservationOrmEntity } from '@features/booking';
+import { ReservationOrmEntity as ReservationOrmEntity } from '@features/reservation';
 import {
   Entity,
   Column,
