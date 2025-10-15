@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '../../auth/auth.module.js';
+import { AuthModule } from '@features/auth/auth.module.js';
 import { SectionObjectsController } from './interface/index.js';
 import { SectionObjectsService } from './application/index.js';
 import { SectionObjectOrmEntity } from './infrastructure/index.js';
