@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthUser } from '../../domain/entities/auth-user.entity.js';
-import { AuthRole, AuthRoleName } from '../../domain/entities/auth-role.entity.js';
+import {
+  AuthRole,
+  AuthRoleName,
+} from '../../domain/entities/auth-role.entity.js';
 import { EmailAlreadyInUseError } from '../../domain/errors/email-already-in-use.error.js';
 import { SignUpCommand } from '../dto/commands/sign-up.command.js';
 import {
@@ -42,7 +45,9 @@ export class SignUpUseCase {
 
     let defaultRole = await this.roles.findByName(AuthRoleName.USER);
     if (!defaultRole) {
-      defaultRole = await this.roles.save(new AuthRole({ name: AuthRoleName.USER }));
+      defaultRole = await this.roles.save(
+        new AuthRole({ name: AuthRoleName.USER }),
+      );
     }
 
     const passwordHash = await this.hasher.hash(command.password);

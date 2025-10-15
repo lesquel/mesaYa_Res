@@ -34,7 +34,9 @@ export class AuthRoleTypeOrmRepository implements AuthRoleRepositoryPort {
   async save(role: AuthRole): Promise<AuthRole> {
     const entity = AuthRoleOrmMapper.toOrm(role);
     const saved = await this.repository.save(entity);
-    const persisted = await this.repository.findOne({ where: { id: saved.id } });
+    const persisted = await this.repository.findOne({
+      where: { id: saved.id },
+    });
     if (!persisted) {
       throw new Error('Failed to reload saved role');
     }

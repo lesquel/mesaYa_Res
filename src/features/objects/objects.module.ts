@@ -12,9 +12,7 @@ import {
   GRAPHIC_OBJECT_REPOSITORY,
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
 } from './application/index.js';
-import {
-  GraphicObjectOrmEntity,
-} from './infrastructure/database/typeorm/orm/index.js';
+import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index.js';
 import { GraphicObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/graphic-object-typeorm.repository.js';
 import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider.js';
 
@@ -22,8 +20,14 @@ import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graph
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
   controllers: [ObjectsController],
   providers: [
-    { provide: GRAPHIC_OBJECT_REPOSITORY, useClass: GraphicObjectTypeOrmRepository },
-    { provide: GRAPHIC_OBJECT_EVENT_PUBLISHER, useClass: GraphicObjectEventNoopProvider },
+    {
+      provide: GRAPHIC_OBJECT_REPOSITORY,
+      useClass: GraphicObjectTypeOrmRepository,
+    },
+    {
+      provide: GRAPHIC_OBJECT_EVENT_PUBLISHER,
+      useClass: GraphicObjectEventNoopProvider,
+    },
     CreateGraphicObjectUseCase,
     ListGraphicObjectsUseCase,
     FindGraphicObjectUseCase,

@@ -26,7 +26,9 @@ export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {
   async save(user: AuthUser): Promise<AuthUser> {
     const entity = AuthUserOrmMapper.toOrm(user);
     const saved = await this.repository.save(entity);
-    const persisted = await this.repository.findOne({ where: { id: saved.id } });
+    const persisted = await this.repository.findOne({
+      where: { id: saved.id },
+    });
     if (!persisted) {
       throw new Error('Failed to reload saved user');
     }

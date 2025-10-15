@@ -1,7 +1,10 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { AuthPermission } from '../../domain/entities/auth-permission.entity.js';
 import { AuthRole } from '../../domain/entities/auth-role.entity.js';
-import { DEFAULT_PERMISSION_NAMES, DEFAULT_ROLES } from '../../domain/constants/rbac.constants.js';
+import {
+  DEFAULT_PERMISSION_NAMES,
+  DEFAULT_ROLES,
+} from '../../domain/constants/rbac.constants.js';
 import {
   AUTH_PERMISSION_REPOSITORY,
   type AuthPermissionRepositoryPort,
@@ -28,7 +31,9 @@ export class RbacSeeder implements OnModuleInit {
 
   private async seed(): Promise<void> {
     const existingPermissions = await this.permissions.findAll();
-    const existingNames = new Set(existingPermissions.map((permission) => permission.name));
+    const existingNames = new Set(
+      existingPermissions.map((permission) => permission.name),
+    );
 
     const missingPermissionNames = DEFAULT_PERMISSION_NAMES.filter(
       (name) => !existingNames.has(name),
@@ -38,11 +43,17 @@ export class RbacSeeder implements OnModuleInit {
       for (const name of missingPermissionNames) {
         await this.permissions.save(new AuthPermission({ name }));
       }
-      this.logger.log(`Created permissions: ${missingPermissionNames.join(', ')}`);
+      this.logger.log(
+        `Created permissions: ${missingPermissionNames.join(', ')}`,
+      );
     }
 
     const allPermissions = await this.permissions.findAll();
-    const permissionByName = new Map(allPermissions.map((permission) => [permission.name, permission] as const));
+    const permissionByName = new Map(
+      allPermissions.map(
+        (permission) => [permission.name, permission] as const,
+      ),
+    );
 
     for (const roleDef of DEFAULT_ROLES) {
       let role = await this.roles.findByName(roleDef.name);
@@ -52,10 +63,14 @@ export class RbacSeeder implements OnModuleInit {
 
       const desiredPermissions = roleDef.permNames
         .map((name) => permissionByName.get(name))
-        .filter((permission): permission is AuthPermission => Boolean(permission));
+        .filter((permission): permission is AuthPermission =>
+          Boolean(permission),
+        );
 
       const existingRolePermissions = new Map(
-        role.permissions.map((permission) => [permission.name, permission] as const),
+        role.permissions.map(
+          (permission) => [permission.name, permission] as const,
+        ),
       );
 
       for (const permission of desiredPermissions) {

@@ -33,7 +33,11 @@ import { JwtAuthGuard } from './interface/guards/jwt-auth.guard.js';
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([UserOrmEntity, RoleOrmEntity, PermissionOrmEntity]),
+    TypeOrmModule.forFeature([
+      UserOrmEntity,
+      RoleOrmEntity,
+      PermissionOrmEntity,
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

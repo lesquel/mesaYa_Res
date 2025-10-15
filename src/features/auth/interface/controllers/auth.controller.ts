@@ -97,8 +97,13 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Perfil del usuario autenticado' })
   @ApiBearerAuth()
-  @ApiOkResponse({ description: 'Usuario autenticado', type: AuthUserResponseDto })
-  async me(@CurrentUser() currentUser: { userId: string }): Promise<AuthUserResponseDto> {
+  @ApiOkResponse({
+    description: 'Usuario autenticado',
+    type: AuthUserResponseDto,
+  })
+  async me(
+    @CurrentUser() currentUser: { userId: string },
+  ): Promise<AuthUserResponseDto> {
     const user = await this.findUserByIdUseCase.execute(currentUser.userId);
     if (!user) {
       throw new UnauthorizedException('Authenticated user not found');
@@ -123,11 +128,15 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del usuario' })
   @ApiBody({ type: UpdateUserRolesRequestDto })
-  @ApiOkResponse({ description: 'Roles del usuario actualizados', type: AuthUserResponseDto })
+  @ApiOkResponse({
+    description: 'Roles del usuario actualizados',
+    type: AuthUserResponseDto,
+  })
   @ApiForbiddenResponse({ description: 'Requiere rol ADMIN' })
   async updateUserRoles(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ValidationPipe({ whitelist: true })) dto: UpdateUserRolesRequestDto,
+    @Body(new ValidationPipe({ whitelist: true }))
+    dto: UpdateUserRolesRequestDto,
   ): Promise<AuthUserResponseDto> {
     const user = await this.updateUserRolesUseCase.execute(
       new UpdateUserRolesCommand(id, dto.roles),
@@ -143,11 +152,15 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiParam({ name: 'name', description: 'Nombre del rol' })
   @ApiBody({ type: UpdateRolePermissionsRequestDto })
-  @ApiOkResponse({ description: 'Permisos del rol actualizados', type: RoleResponseDto })
+  @ApiOkResponse({
+    description: 'Permisos del rol actualizados',
+    type: RoleResponseDto,
+  })
   @ApiForbiddenResponse({ description: 'Requiere rol ADMIN' })
   async updateRolePermissions(
     @Param('name') name: string,
-    @Body(new ValidationPipe({ whitelist: true })) dto: UpdateRolePermissionsRequestDto,
+    @Body(new ValidationPipe({ whitelist: true }))
+    dto: UpdateRolePermissionsRequestDto,
   ): Promise<RoleResponseDto> {
     const role = await this.updateRolePermissionsUseCase.execute(
       new UpdateRolePermissionsCommand(name, dto.permissions),
@@ -161,7 +174,10 @@ export class AuthController {
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Listar roles (ADMIN)' })
   @ApiBearerAuth()
-  @ApiOkResponse({ description: 'Listado de roles con permisos', type: [RoleResponseDto] })
+  @ApiOkResponse({
+    description: 'Listado de roles con permisos',
+    type: [RoleResponseDto],
+  })
   async listRoles(): Promise<RoleResponseDto[]> {
     const roles = await this.listRolesUseCase.execute();
     return roles.map((role) => RoleResponseDto.fromDomain(role));
@@ -172,7 +188,10 @@ export class AuthController {
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Listar permisos (ADMIN)' })
   @ApiBearerAuth()
-  @ApiOkResponse({ description: 'Listado de permisos', type: [PermissionResponseDto] })
+  @ApiOkResponse({
+    description: 'Listado de permisos',
+    type: [PermissionResponseDto],
+  })
   async listPermissions(): Promise<PermissionResponseDto[]> {
     const permissions = await this.listPermissionsUseCase.execute();
     return permissions.map((permission) =>

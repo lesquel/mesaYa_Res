@@ -25,7 +25,10 @@ import {
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TableOrmEntity, SectionOrmEntity]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([TableOrmEntity, SectionOrmEntity]),
+    AuthModule,
+  ],
   controllers: [TablesController],
   providers: [
     { provide: TABLE_REPOSITORY, useClass: TableTypeOrmRepository },
