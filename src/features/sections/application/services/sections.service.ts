@@ -90,3 +90,6 @@ export class SectionsService {
     return this.deleteSectionUseCase.execute(command);
   }
 }
+
+
+// Kafka tiene alguna interfaz web donde se pueda revisar todo$ Quiero revisarlo tambien para ver como es jeje

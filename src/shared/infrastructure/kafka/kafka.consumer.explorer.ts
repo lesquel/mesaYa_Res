@@ -9,6 +9,8 @@ import { KafkaService } from './kafka.service.js';
 
 @Injectable()
 export class KafkaConsumerExplorer implements OnApplicationBootstrap {
+
+
   private readonly logger = new Logger(KafkaConsumerExplorer.name);
   private readonly metadataScanner = new MetadataScanner();
 
