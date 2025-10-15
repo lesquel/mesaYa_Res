@@ -1,6 +1,7 @@
-import { SubscriptionStateVO } from './values/subscription-state.vo';
+import { SubscriptionStateVO } from './values/index.js';
 
 export interface SubscriptionProps {
+  // We store only identifiers to keep the aggregate decoupled from other aggregates.
   subscriptionPlanId: string;
   restaurantId: string;
   subscriptionStartDate: Date;
@@ -19,12 +20,21 @@ export class SubscriptionEntity {
 
   static create(id: string, props: SubscriptionProps): SubscriptionEntity {
     this.validate(props);
-    return new SubscriptionEntity(id, props);
+    const propsCopy: SubscriptionProps = {
+      ...props,
+      subscriptionStartDate: new Date(props.subscriptionStartDate),
+    };
+    return new SubscriptionEntity(id, propsCopy);
   }
 
   // Rehydrate from persistence (ORM → dominio)
   static rehydrate(snapshot: SubscriptionSnapshot): SubscriptionEntity {
-    return new SubscriptionEntity(snapshot.subscriptionId, { ...snapshot });
+    const { subscriptionId, ...rest } = snapshot;
+    const propsCopy: SubscriptionProps = {
+      ...rest,
+      subscriptionStartDate: new Date(rest.subscriptionStartDate),
+    };
+    return new SubscriptionEntity(subscriptionId, propsCopy);
   }
 
   // Getters
@@ -41,7 +51,7 @@ export class SubscriptionEntity {
   }
 
   get startDate(): Date {
-    return this.props.subscriptionStartDate;
+    return new Date(this.props.subscriptionStartDate);
   }
 
   get state(): SubscriptionStateVO {
@@ -58,6 +68,7 @@ export class SubscriptionEntity {
     return {
       subscriptionId: this._subscriptionId,
       ...this.props,
+      subscriptionStartDate: new Date(this.props.subscriptionStartDate),
     };
   }
 
@@ -69,6 +80,8 @@ export class SubscriptionEntity {
       throw new Error('Subscription must be linked to a restaurant');
     if (!props.subscriptionStartDate)
       throw new Error('Subscription must have a start date');
+    if (Number.isNaN(props.subscriptionStartDate.getTime()))
+      throw new Error('Subscription must have a valid start date');
     if (!props.stateSubscription)
       throw new Error('Subscription must have a valid state');
   }

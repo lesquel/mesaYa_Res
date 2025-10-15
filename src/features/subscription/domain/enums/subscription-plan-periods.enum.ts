@@ -1,5 +1,5 @@
 export enum SubscriptionPlanPeriodsEnum {
-  WWEEKLY = 'WEEKLY',
+  WEEKLY = 'WEEKLY',
   MONTHLY = 'MONTHLY',
   YEARLY = 'YEARLY',
 }

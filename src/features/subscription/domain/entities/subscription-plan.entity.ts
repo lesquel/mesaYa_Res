@@ -1,34 +1,86 @@
+import { MoneyVO } from '@shared/domain/entities/values';
 import {
-  SubscriptionPlanStatesEnum,
-  SubscriptionPlanPeriodsEnum,
-} from '../enums';
+  SubscriptionPlanPeriodVO,
+  SubscriptionPlanStateVO,
+} from './values/index.js';
+
+export interface SubscriptionPlanProps {
+  name: string;
+  price: MoneyVO;
+  subscriptionPeriod: SubscriptionPlanPeriodVO;
+  stateSubscriptionPlan: SubscriptionPlanStateVO;
+}
+
+export interface SubscriptionPlanSnapshot extends SubscriptionPlanProps {
+  subscriptionPlanId: string;
+}
 
 export class SubscriptionPlanEntity {
-  constructor(
+  private constructor(
     private readonly _subscriptionPlanId: string,
-    private readonly _name: string,
-    private readonly _price: number,
-    private readonly _subscription_period: SubscriptionPlanPeriodsEnum,
-    private readonly _stateSubscriptionPlan: SubscriptionPlanStatesEnum,
+    private props: SubscriptionPlanProps,
   ) {}
 
-  get subscriptionPlanId(): string {
+  static create(
+    id: string,
+    props: SubscriptionPlanProps,
+  ): SubscriptionPlanEntity {
+    this.validate(props);
+    return new SubscriptionPlanEntity(id, { ...props });
+  }
+
+  static rehydrate(snapshot: SubscriptionPlanSnapshot): SubscriptionPlanEntity {
+    const { subscriptionPlanId, ...rest } = snapshot;
+    return new SubscriptionPlanEntity(subscriptionPlanId, { ...rest });
+  }
+
+  get id(): string {
     return this._subscriptionPlanId;
   }
 
   get name(): string {
-    return this._name;
+    return this.props.name;
   }
 
-  get price(): number {
-    return this._price;
+  get price(): MoneyVO {
+    return this.props.price;
   }
 
-  get duration(): SubscriptionPlanPeriodsEnum {
-    return this._subscription_period;
+  get period(): SubscriptionPlanPeriodVO {
+    return this.props.subscriptionPeriod;
   }
 
-  get state(): SubscriptionPlanStatesEnum {
-    return this._stateSubscriptionPlan;
+  get state(): SubscriptionPlanStateVO {
+    return this.props.stateSubscriptionPlan;
+  }
+
+  updateState(newState: SubscriptionPlanStateVO): void {
+    this.props.stateSubscriptionPlan = newState;
+  }
+
+  updatePrice(newPrice: MoneyVO): void {
+    this.props.price = newPrice;
+  }
+
+  snapshot(): SubscriptionPlanSnapshot {
+    return {
+      subscriptionPlanId: this._subscriptionPlanId,
+      ...this.props,
+    };
+  }
+
+  private static validate(props: SubscriptionPlanProps): void {
+    if (!props.name || !props.name.trim()) {
+      throw new Error('Subscription plan must have a valid name');
+    }
+    if (!props.price) {
+      throw new Error('Subscription plan must have a valid price');
+    }
+    if (!props.subscriptionPeriod) {
+      throw new Error('Subscription plan must define a period');
+    }
+    if (!props.stateSubscriptionPlan) {
+      throw new Error('Subscription plan must define a state');
+    }
   }
 }
