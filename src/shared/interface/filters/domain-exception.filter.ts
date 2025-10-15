@@ -3,7 +3,11 @@ import { Catch, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { BaseDomainError } from '@shared/domain/errors/base-domain-error';
 
-const UNAUTHORIZED_KEYWORDS = ['Unauthorized', 'Unauthenticated', 'Credentials'];
+const UNAUTHORIZED_KEYWORDS = [
+  'Unauthorized',
+  'Unauthenticated',
+  'Credentials',
+];
 const FORBIDDEN_KEYWORDS = ['Ownership', 'Permission', 'Forbidden'];
 const CONFLICT_KEYWORDS = ['Already', 'Exists', 'Conflict'];
 const BAD_REQUEST_KEYWORDS = ['Invalid', 'Validation', 'Must'];
@@ -20,21 +24,34 @@ export class DomainExceptionFilter implements ExceptionFilter {
     }
 
     if (exception instanceof BaseDomainError) {
-      this.respondFromDomainError(exception, host, exception.statusCode, exception.details);
+      this.respondFromDomainError(
+        exception,
+        host,
+        exception.statusCode,
+        exception.details,
+      );
       return;
     }
 
     if (exception instanceof Error) {
-      const status = this.resolveStatusFromName(exception.name ?? exception.constructor.name);
+      const status = this.resolveStatusFromName(
+        exception.name ?? exception.constructor.name,
+      );
       this.respondFromDomainError(exception, host, status);
       return;
     }
 
-    this.logger.error('Unhandled non-error exception', JSON.stringify(exception));
+    this.logger.error(
+      'Unhandled non-error exception',
+      JSON.stringify(exception),
+    );
     this.respondWithInternalError(host);
   }
 
-  private respondFromHttpException(exception: HttpException, host: ArgumentsHost): void {
+  private respondFromHttpException(
+    exception: HttpException,
+    host: ArgumentsHost,
+  ): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
