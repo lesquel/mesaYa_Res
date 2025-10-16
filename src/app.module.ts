@@ -4,14 +4,22 @@ import { AppConfigModule } from '@shared/infrastructure/adapters/app-config/app-
 import { DatabaseModule } from '@shared/infrastructure/adapters/database/database.module';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { AppController } from './app.controller';
+import { RestaurantsModule } from './features/restaurants/restaurants.module';
+import { SectionsModule } from './features/sections/sections.module';
+import { ReviewsModule } from './features/reviews/reviews.module';
+import { KafkaModule } from '@shared/infrastructure/kafka';
 import { FeaturesModule } from '@features/features.module';
+import { ReservationModule } from '@features/reservation';
+
 @Module({
   imports: [
     AppConfigModule,
     DatabaseModule,
     LoggerModule,
+    KafkaModule,
     SeedModule,
     FeaturesModule,
+    ReservationModule,
   ],
   controllers: [AppController],
 })
