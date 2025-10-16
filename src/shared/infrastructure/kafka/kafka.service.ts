@@ -57,9 +57,37 @@ export class KafkaService implements OnModuleDestroy {
     topic: string,
     payload: TPayload,
   ): Promise<void> {
-    const client = await this.getOrCreateProducer();
-    const event$ = client.emit<TPayload>(topic, payload) as Observable<unknown>;
-    await lastValueFrom(event$);
+    try {
+      const client = await this.getOrCreateProducer();
+      const event$ = client.emit<TPayload>(
+        topic,
+        payload,
+      ) as Observable<unknown>;
+
+      // Fire-and-forget: subscribe and log errors so the app flow isn't blocked
+      // by Kafka internals (leadership election, slow brokers, etc.). This
+      // keeps the HTTP/request path responsive while still surfacing issues
+      // to logs. The decorator that calls this method already logs payload
+      // build errors, so we only log emission failures here.
+      event$.subscribe({
+        next: () => this.logger.debug(`Kafka event emitted ${topic}`),
+        error: (err) =>
+          this.logger.error(
+            `Kafka emit error for topic=${topic}: ${
+              err instanceof Error ? err.message : String(err)
+            }`,
+            err instanceof Error ? err.stack : undefined,
+          ),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to emit Kafka event ${topic}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      // Do not rethrow: emitting failures shouldn't break the caller flow.
+    }
   }
 
   addConsumer(definition: KafkaConsumerDefinition): void {
@@ -105,9 +133,32 @@ export class KafkaService implements OnModuleDestroy {
     };
 
     this.client = ClientProxyFactory.create(options) as ClientKafka;
-    await this.client.connect();
-    this.clientConnected = true;
-    this.logger.log(`Kafka producer connected (clientId=${clientId})`);
+
+    // Attempt to connect with a small retry loop. In containerized
+    // environments Kafka may not be immediately ready (leader election,
+    // group coordinator). Retry a few times before failing to help
+    // reliability during startup.
+    const maxAttempts = 3;
+    const baseDelay = 1000; // ms
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        await this.client.connect();
+        this.clientConnected = true;
+        this.logger.log(`Kafka producer connected (clientId=${clientId})`);
+        return this.client;
+      } catch (err) {
+        this.logger.warn(
+          `Kafka producer connect attempt ${attempt} failed: ${
+            err instanceof Error ? err.message : String(err)
+          }`,
+        );
+        if (attempt === maxAttempts) {
+          this.logger.error('Kafka producer failed to connect after retries');
+          throw err;
+        }
+        await new Promise((r) => setTimeout(r, baseDelay * attempt));
+      }
+    }
 
     return this.client;
   }

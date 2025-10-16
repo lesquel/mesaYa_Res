@@ -101,14 +101,20 @@ export const KafkaEmit = <
     descriptor.value = async function (...args: unknown[]) {
       const result = await Promise.resolve(original.apply(this, args));
       const instance = this as Record<string, unknown>;
+      const contextName = resolveContextName(instance, target);
       const kafkaService = instance.kafkaService as
         | KafkaServiceType
         | undefined;
       if (!kafkaService || typeof kafkaService.emit !== 'function') {
+        const logger = resolveLogger(instance, contextName);
+        logger.error(
+          `@KafkaEmit: kafkaService not found or does not implement emit() on ${contextName}.${String(
+            propertyKey,
+          )}. Event for topic ${options.topic} will be skipped.`,
+        );
         return result;
       }
 
-      const contextName = resolveContextName(instance, target);
       const getLogger = (): ErrorLogger => resolveLogger(instance, contextName);
 
       const context: KafkaEmitContext<TResult, TArgs> = {
@@ -137,15 +143,18 @@ export const KafkaEmit = <
       }
 
       const includeTimestamp = options.includeTimestamp !== false;
-      const basePayload = payloadBase ?? {};
-      const payload =
-        includeTimestamp &&
-        !Object.prototype.hasOwnProperty.call(basePayload, 'timestamp')
-          ? { timestamp: new Date().toISOString(), ...basePayload }
-          : basePayload;
+      const basePayload = (payloadBase ?? {}) as Record<string, unknown>;
+      const payload = includeTimestamp
+        ? Object.prototype.hasOwnProperty.call(basePayload, 'timestamp')
+          ? basePayload
+          : { timestamp: new Date().toISOString(), ...basePayload }
+        : basePayload;
 
       try {
-        await kafkaService.emit(options.topic, toPlain(payload));
+        // Fire-and-forget emission. The KafkaService.emit already logs
+        // internal failures; we avoid awaiting here so the decorated
+        // method's happy path isn't blocked by transient Kafka issues.
+        void kafkaService.emit(options.topic, toPlain(payload ?? {}));
       } catch (error) {
         const logger = getLogger();
         if (error instanceof Error) {
