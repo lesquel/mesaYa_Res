@@ -8,6 +8,18 @@ export const KAFKA_TOPICS = {
   SECTION_CREATED: 'mesa-ya.sections.created',
   SECTION_UPDATED: 'mesa-ya.sections.updated',
   SECTION_DELETED: 'mesa-ya.sections.deleted',
+  TABLE_CREATED: 'mesa-ya.tables.created',
+  TABLE_UPDATED: 'mesa-ya.tables.updated',
+  TABLE_DELETED: 'mesa-ya.tables.deleted',
+  OBJECT_CREATED: 'mesa-ya.objects.created',
+  OBJECT_UPDATED: 'mesa-ya.objects.updated',
+  OBJECT_DELETED: 'mesa-ya.objects.deleted',
+  SECTION_OBJECT_CREATED: 'mesa-ya.section-objects.created',
+  SECTION_OBJECT_UPDATED: 'mesa-ya.section-objects.updated',
+  SECTION_OBJECT_DELETED: 'mesa-ya.section-objects.deleted',
+  RESERVATION_CREATED: 'mesa-ya.reservations.created',
+  RESERVATION_UPDATED: 'mesa-ya.reservations.updated',
+  RESERVATION_DELETED: 'mesa-ya.reservations.deleted',
 } as const;
 
 export type KafkaTopic = (typeof KAFKA_TOPICS)[keyof typeof KAFKA_TOPICS];
