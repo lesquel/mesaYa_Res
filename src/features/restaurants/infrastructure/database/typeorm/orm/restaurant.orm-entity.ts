@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 
 @Entity({ name: 'restaurant' })
 export class RestaurantOrmEntity {
@@ -49,9 +49,9 @@ export class RestaurantOrmEntity {
   @Column({ type: 'uuid', name: 'owner_id', nullable: true })
   ownerId: string | null;
 
-  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'owner_id', referencedColumnName: 'id' })
-  owner: User | null;
+  owner: UserOrmEntity | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

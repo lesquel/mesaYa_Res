@@ -8,7 +8,7 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index.js';
 
 @Entity({ name: 'review' })
@@ -16,9 +16,9 @@ export class ReviewOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'review_id' })
   id: string;
 
-  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => UserOrmEntity, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: User;
+  user: UserOrmEntity;
 
   @ManyToOne(() => RestaurantOrmEntity, {
     nullable: false,

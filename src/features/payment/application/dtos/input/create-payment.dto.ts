@@ -1,6 +1,5 @@
 export interface CreatePaymentDto {
-  payerId: string;
-  paymentType: string;
-  targetId: string;
+  reservationId: string;
+  subscriptionId: string;
   amount: number;
 }

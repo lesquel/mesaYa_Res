@@ -1,28 +1,30 @@
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
-import { PaymentListResponseDto } from '../dtos/output/payment-list-response.dto';
-import { PaymentMapper } from '../mappers/payment.mapper';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-export class GetAllPaymentsUseCase {
-  constructor(private readonly paymentRepository: IPaymentRepository) {}
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaymentEntity } from '@features/payment/domain';
 
-  async execute(): Promise<PaymentListResponseDto> {
-    try {
-      // Obtener todos los pagos
-      const payments = await this.paymentRepository.getAllPayments();
+export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
+  constructor(
+    private readonly logger: ILoggerPort,
 
-      return {
-        success: true,
-        message:
-          payments.length > 0
-            ? 'Pagos obtenidos exitosamente'
-            : 'No se encontraron pagos',
-        data: PaymentMapper.toDtoList(payments),
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Error al obtener los pagos: ${(error as Error).message}`,
-      };
-    }
+    private readonly paymentRepository: IPaymentRepositoryPort,
+  ) {}
+
+  async execute(): Promise<PaymentEntity[]> {
+    this.logger.log(
+      'Fetching all payments from repository',
+      'GetAllPaymentsUseCase',
+    );
+
+    // Obtener todas las entidades de dominio del repositorio
+    const paymentEntities = await this.paymentRepository.findAll();
+
+    this.logger.log(
+      `Successfully fetched ${paymentEntities.length} payment(s)`,
+      'GetAllPaymentsUseCase',
+    );
+
+    return paymentEntities;
   }
 }

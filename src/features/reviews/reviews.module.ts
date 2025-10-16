@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '../../auth/auth.module.js';
-import { User } from '../../auth/entities/user.entity.js';
+import { AuthModule } from '@features/auth/auth.module.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import { ReviewsController } from './interface/index.js';
 import {
   ReviewOrmEntity,
@@ -25,7 +25,11 @@ import { RestaurantOrmEntity } from '../restaurants/index.js';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ReviewOrmEntity, RestaurantOrmEntity, User]),
+    TypeOrmModule.forFeature([
+      ReviewOrmEntity,
+      RestaurantOrmEntity,
+      UserOrmEntity,
+    ]),
     AuthModule,
   ],
   controllers: [ReviewsController],

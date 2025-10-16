@@ -1,50 +1,61 @@
-import { IPaymentRepository } from '../ports/repositories/payment-repository.port';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+
+import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
+import {
+  PaymentNotFoundError,
+  PaymentDeletionFailedError,
+} from '../../domain/errors';
 import { DeletePaymentDto } from '../dtos/input/delete-payment.dto';
-import { DeletePaymentResponseDto } from '../dtos/output/delete-payment-response.dto';
+import { UseCase } from '@shared/application/ports/use-case.port';
 
-export class DeletePaymentUseCase {
-  constructor(private readonly paymentRepository: IPaymentRepository) {}
+export class DeletePaymentUseCase implements UseCase<DeletePaymentDto, void> {
+  constructor(
+    private readonly logger: ILoggerPort,
+    private readonly paymentRepository: IPaymentRepositoryPort,
+  ) {}
 
-  async execute(dto: DeletePaymentDto): Promise<DeletePaymentResponseDto> {
-    try {
-      // Validación de entrada
-      if (!dto.paymentId || dto.paymentId.trim() === '') {
-        return {
-          success: false,
-          message: 'El ID del pago es requerido',
-        };
-      }
+  async execute(dto: DeletePaymentDto): Promise<void> {
+    this.logger.log(
+      `Attempting to delete payment with ID: ${dto.paymentId}`,
+      'DeletePaymentUseCase',
+    );
 
-      // Verificar que el pago existe
-      const existingPayment = await this.paymentRepository.getPaymentById(
-        dto.paymentId,
+    // Verificar que el pago existe
+    const existingPayment = await this.paymentRepository.findById(
+      dto.paymentId,
+    );
+
+    if (!existingPayment) {
+      this.logger.warn(
+        `Payment not found with ID: ${dto.paymentId}`,
+        'DeletePaymentUseCase',
       );
-      if (!existingPayment) {
-        return {
-          success: false,
-          message: 'Pago no encontrado',
-        };
-      }
-
-      // Eliminar el pago
-      const deleted = await this.paymentRepository.deletePayment(dto.paymentId);
-
-      if (!deleted) {
-        return {
-          success: false,
-          message: 'Error al eliminar el pago',
-        };
-      }
-
-      return {
-        success: true,
-        message: 'Pago eliminado exitosamente',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `Error al eliminar el pago: ${(error as Error).message}`,
-      };
+      throw new PaymentNotFoundError(dto.paymentId);
     }
+
+    this.logger.log(
+      `Payment found with ID: ${dto.paymentId}. Proceeding with deletion`,
+      'DeletePaymentUseCase',
+    );
+
+    // Eliminar el pago del repositorio
+    const deleted = await this.paymentRepository.delete(dto.paymentId);
+
+    if (!deleted) {
+      this.logger.error(
+        `Failed to delete payment with ID: ${dto.paymentId}`,
+        undefined,
+        'DeletePaymentUseCase',
+      );
+      throw new PaymentDeletionFailedError(
+        dto.paymentId,
+        'Repository returned false',
+      );
+    }
+
+    this.logger.log(
+      `Payment successfully deleted with ID: ${dto.paymentId}`,
+      'DeletePaymentUseCase',
+    );
   }
 }

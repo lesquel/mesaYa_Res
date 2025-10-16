@@ -11,7 +11,7 @@ import { PaginatedResult } from '@shared/application/types/pagination.js';
 import { type RestaurantRepositoryPort } from '../../../../application/ports/index.js';
 import { RestaurantOrmEntity } from '../orm/index.js';
 import { RestaurantOrmMapper } from '../mappers/index.js';
-import { User } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
 
 @Injectable()
@@ -19,8 +19,8 @@ export class RestaurantTypeOrmRepository implements RestaurantRepositoryPort {
   constructor(
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurantRepository: Repository<RestaurantOrmEntity>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserOrmEntity)
+    private readonly userRepository: Repository<UserOrmEntity>,
   ) {}
 
   async save(restaurant: Restaurant): Promise<Restaurant> {
