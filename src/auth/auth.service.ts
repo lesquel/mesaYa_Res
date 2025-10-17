@@ -10,7 +10,7 @@ import { Role } from './entities/role.entity.js';
 import { Permission } from './entities/permission.entity.js';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
