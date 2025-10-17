@@ -11,7 +11,7 @@ import { PaginatedResult } from '@shared/application/types/pagination.js';
 import { type RestaurantRepositoryPort } from '../../../../application/ports/index.js';
 import { RestaurantOrmEntity } from '../orm/index.js';
 import { RestaurantOrmMapper } from '../mappers/index.js';
-import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
 
 @Injectable()

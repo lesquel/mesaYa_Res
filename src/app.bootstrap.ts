@@ -9,6 +9,7 @@ import {
   configureCors,
   configureGlobalPipes,
   configureLogger,
+  configureFilters,
 } from '@shared/core/config';
 
 export function configureApp(app: INestApplication) {
@@ -26,6 +27,7 @@ export function configureApp(app: INestApplication) {
   configureCors(app, configService);
   configureGlobalPipes(app);
   configureLogger(app);
+  configureFilters(app);
 
   return app;
 }

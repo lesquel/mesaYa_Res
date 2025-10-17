@@ -1,7 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSectionObjectCommand, DeleteSectionObjectCommand, FindSectionObjectQuery, ListSectionObjectsQuery, SectionObjectResponseDto, DeleteSectionObjectResponseDto } from '../dto/index.js';
-import { CreateSectionObjectUseCase, DeleteSectionObjectUseCase, FindSectionObjectUseCase, ListByObjectUseCase, ListBySectionUseCase, ListSectionObjectsUseCase, UpdateSectionObjectUseCase } from '../use-cases/index.js';
-import { PaginatedSectionObjectResponse } from '../use-cases/list-section-objects.use-case.js';
+import {
+  KafkaEmit,
+  KafkaProducer,
+  KafkaService,
+  KAFKA_TOPICS,
+} from '../../../../shared/infrastructure/kafka/index.js';
+import type {
+  CreateSectionObjectCommand,
+  DeleteSectionObjectCommand,
+  FindSectionObjectQuery,
+  ListSectionObjectsQuery,
+  UpdateSectionObjectCommand,
+  SectionObjectResponseDto,
+  DeleteSectionObjectResponseDto,
+} from '../dto/index.js';
+import {
+  CreateSectionObjectUseCase,
+  DeleteSectionObjectUseCase,
+  FindSectionObjectUseCase,
+  ListByObjectUseCase,
+  ListBySectionUseCase,
+  ListSectionObjectsUseCase,
+  UpdateSectionObjectUseCase,
+} from '../use-cases/index.js';
+import type { PaginatedSectionObjectResponse } from '../use-cases/list-section-objects.use-case.js';
 
 @Injectable()
 export class SectionObjectsService {
@@ -13,13 +35,79 @@ export class SectionObjectsService {
     private readonly findUseCase: FindSectionObjectUseCase,
     private readonly updateUseCase: UpdateSectionObjectUseCase,
     private readonly deleteUseCase: DeleteSectionObjectUseCase,
+    @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
-  create(command: CreateSectionObjectCommand): Promise<SectionObjectResponseDto> { return this.createUseCase.execute(command); }
-  list(query: ListSectionObjectsQuery): Promise<PaginatedSectionObjectResponse> { return this.listUseCase.execute(query); }
-  listBySection(sectionId: string, query: ListSectionObjectsQuery): Promise<PaginatedSectionObjectResponse> { return this.listBySectionUseCase.execute({ sectionId, ...query }); }
-  listByObject(objectId: string, query: ListSectionObjectsQuery): Promise<PaginatedSectionObjectResponse> { return this.listByObjectUseCase.execute({ objectId, ...query }); }
-  findOne(query: FindSectionObjectQuery): Promise<SectionObjectResponseDto> { return this.findUseCase.execute(query); }
-  update(command: any): Promise<SectionObjectResponseDto> { return this.updateUseCase.execute(command); }
-  delete(command: DeleteSectionObjectCommand): Promise<DeleteSectionObjectResponseDto> { return this.deleteUseCase.execute(command); }
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SECTION_OBJECT_CREATED,
+    payload: ({ result, toPlain }) => ({
+      action: 'section-object.created',
+      entity: toPlain(result),
+    }),
+  })
+  async create(
+    command: CreateSectionObjectCommand,
+  ): Promise<SectionObjectResponseDto> {
+    return this.createUseCase.execute(command);
+  }
+
+  async list(
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedSectionObjectResponse> {
+    return this.listUseCase.execute(query);
+  }
+
+  async listBySection(
+    sectionId: string,
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedSectionObjectResponse> {
+    return this.listBySectionUseCase.execute({ sectionId, ...query });
+  }
+
+  async listByObject(
+    objectId: string,
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedSectionObjectResponse> {
+    return this.listByObjectUseCase.execute({ objectId, ...query });
+  }
+
+  async findOne(
+    query: FindSectionObjectQuery,
+  ): Promise<SectionObjectResponseDto> {
+    return this.findUseCase.execute(query);
+  }
+
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SECTION_OBJECT_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateSectionObjectCommand];
+      return {
+        action: 'section-object.updated',
+        entityId: command.sectionObjectId,
+        entity: toPlain(result),
+      };
+    },
+  })
+  async update(
+    command: UpdateSectionObjectCommand,
+  ): Promise<SectionObjectResponseDto> {
+    return this.updateUseCase.execute(command);
+  }
+
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SECTION_OBJECT_DELETED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [DeleteSectionObjectCommand];
+      return {
+        action: 'section-object.deleted',
+        entityId: command.sectionObjectId,
+        result: toPlain(result),
+      };
+    },
+  })
+  async delete(
+    command: DeleteSectionObjectCommand,
+  ): Promise<DeleteSectionObjectResponseDto> {
+    return this.deleteUseCase.execute(command);
+  }
 }

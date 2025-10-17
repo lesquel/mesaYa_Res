@@ -21,6 +21,7 @@ export const JoiValidationSchema = Joi.object({
     .default('development'),
   JWT_SECRET: Joi.string().min(16).required(),
   JWT_EXPIRES_IN: Joi.string().default('1d'),
+  AUTH_SALT_ROUNDS: Joi.number().integer().min(4).max(20).default(10),
 
   CORS_ENABLED: Joi.boolean().default(true),
   CORS_ORIGINS: Joi.string().default('*'),
@@ -29,4 +30,8 @@ export const JoiValidationSchema = Joi.object({
   CORS_ALLOWED_HEADERS: Joi.string().default('Content-Type,Authorization'),
   CORS_EXPOSE_HEADERS: Joi.string().optional().allow(''),
   CORS_MAX_AGE: Joi.number().integer().min(0).default(86400),
+
+  KAFKA_BROKER: Joi.string().required(),
+  KAFKA_CLIENT_ID: Joi.string().required(),
+  KAFKA_GROUP_ID: Joi.string().required(),
 });
