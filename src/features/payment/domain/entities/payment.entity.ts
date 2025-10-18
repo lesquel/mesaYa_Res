@@ -16,7 +16,7 @@ export interface PaymentSnapshot extends PaymentProps {
 }
 
 export class PaymentEntity {
-  constructor(
+  private constructor(
     private readonly _paymentId: string,
     private props: PaymentProps,
   ) {}
@@ -26,6 +26,12 @@ export class PaymentEntity {
     return new PaymentEntity(id, props);
   }
 
+  snapshot(): PaymentSnapshot {
+    return {
+      paymentId: this._paymentId,
+      ...this.props,
+    };
+  }
   static rehydrate(snapshot: PaymentSnapshot): PaymentEntity {
     return new PaymentEntity(snapshot.paymentId, { ...snapshot });
   }
@@ -58,17 +64,10 @@ export class PaymentEntity {
     this.props.paymentStatus = newStatus;
   }
 
-  paymentType(): PaymentTypeEnum {
+  get paymentType(): PaymentTypeEnum {
     if (this.props.reservationId) return PaymentTypeEnum.RESERVATION;
     if (this.props.subscriptionId) return PaymentTypeEnum.SUBSCRIPTION;
     throw new PaymentMustBeAssociatedError();
-  }
-
-  snapshot(): PaymentSnapshot {
-    return {
-      paymentId: this._paymentId,
-      ...this.props,
-    };
   }
 
   private static validate(props: PaymentProps): void {

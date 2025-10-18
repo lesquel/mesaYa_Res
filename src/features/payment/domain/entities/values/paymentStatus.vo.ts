@@ -1,12 +1,11 @@
 import { PaymentStatusEnum } from '../../enums';
 
 export class PaymentStatusVO {
-  private static readonly validStatuses = Object.values(PaymentStatusEnum);
+  private constructor(private value: PaymentStatusEnum) {}
 
-  constructor(private value: PaymentStatusEnum) {
-    if (!PaymentStatusVO.validStatuses.includes(value)) {
-      throw new Error(`Invalid status: ${value}`);
-    }
+  static create(value: PaymentStatusEnum): PaymentStatusVO {
+    this.validateStatus(value);
+    return new PaymentStatusVO(value);
   }
 
   get status(): PaymentStatusEnum {
@@ -14,9 +13,13 @@ export class PaymentStatusVO {
   }
 
   changeStatus(newStatus: PaymentStatusEnum): void {
-    if (!PaymentStatusVO.validStatuses.includes(newStatus)) {
-      throw new Error(`Invalid status: ${newStatus}`);
-    }
+    PaymentStatusVO.validateStatus(newStatus);
     this.value = newStatus;
+  }
+
+  private static validateStatus(value: PaymentStatusEnum): void {
+    if (!Object.values(PaymentStatusEnum).includes(value)) {
+      throw new Error(`Invalid status: ${value}`);
+    }
   }
 }

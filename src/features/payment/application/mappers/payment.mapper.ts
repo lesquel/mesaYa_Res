@@ -4,6 +4,7 @@ import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto
 import { CreatePaymentDto } from '../dtos';
 import { PaymentCreate, PaymentEntity } from '@features/payment/domain';
 import { MoneyVO } from '@shared/domain/entities/values';
+import { PaymentStatusEnum } from '@features/payment/domain/enums';
 
 export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
   fromEntitytoDTO(entity: PaymentEntity): PaymentDto {
@@ -20,7 +21,7 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
   fromDTOtoEntity(dto: PaymentDto): PaymentEntity {
     const amount = new MoneyVO(dto.amount);
     const date = new Date(dto.date);
-    const status = new PaymentStatusVO(dto.paymentStatus);
+    const status = PaymentStatusVO.create(dto.paymentStatus);
 
     return PaymentEntity.create(dto.paymentId ?? '', {
       amount,
@@ -33,7 +34,7 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
 
   fromCreatePaymentDTOtoPaymentCreate(dto: CreatePaymentDto): PaymentCreate {
     const amount = new MoneyVO(dto.amount);
-    const status = new PaymentStatusVO('PENDING');
+    const status = PaymentStatusVO.create(PaymentStatusEnum.PENDING);
 
     return {
       reservationId: dto.reservationId,
@@ -45,9 +46,9 @@ export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
 
   fromUpdatePaymentStatusDTOtoPaymentUpdate(dto: {
     paymentId: string;
-    status: string;
+    status: PaymentStatusEnum;
   }) {
-    const status = new PaymentStatusVO(dto.status);
+    const status = PaymentStatusVO.create(dto.status);
 
     return {
       paymentId: dto.paymentId,
