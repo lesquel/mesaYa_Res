@@ -4,12 +4,12 @@ import { Repository } from 'typeorm';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
 import { SubscriptionPlanOrmMapper } from '../mappers/subscription-plan.orm-mapper';
 import { SubscriptionPlanEntity } from '../../../domain/entities/subscription-plan.entity.js';
-import { ISubscriptionPlanRepositoryPort } from '@features/subscription/application/ports/repositories';
-import {
-  SubscriptionPlanCreatePort,
-  SubscriptionPlanUpdatePort,
-} from '@features/subscription/application/ports/models/subscription-plan-repository.port-models.js';
+import { ISubscriptionPlanRepositoryPort } from '@features/subscription/domain/repositories';
 import { SubscriptionPlanNotFoundError } from '../../../domain/errors/subscription-plan-not-found.error';
+import {
+  SubscriptionPlanCreate,
+  SubscriptionPlanUpdate,
+} from '@features/subscription/domain';
 
 @Injectable()
 export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanRepositoryPort {
@@ -20,9 +20,7 @@ export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanReposito
     super();
   }
 
-  async create(
-    data: SubscriptionPlanCreatePort,
-  ): Promise<SubscriptionPlanEntity> {
+  async create(data: SubscriptionPlanCreate): Promise<SubscriptionPlanEntity> {
     const entity = this.plans.create({
       name: data.name,
       price: data.price.amount,
@@ -35,7 +33,7 @@ export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanReposito
   }
 
   async update(
-    data: SubscriptionPlanUpdatePort,
+    data: SubscriptionPlanUpdate,
   ): Promise<SubscriptionPlanEntity | null> {
     const entity = await this.plans.findOne({
       where: { id: data.subscriptionPlanId },

@@ -16,7 +16,9 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
-import { IPaymentRepositoryPort } from '../ports/repositories';
+import { IPaymentRepositoryPort } from '../../domain/repositories';
+import { ILoggerPort } from '@shared/application/ports/logger.port';
+import { PaymentEntityDTOMapper } from '../mappers';
 
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
@@ -25,14 +27,33 @@ export class PaymentService {
   private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
   private deletePaymentUseCase: DeletePaymentUseCase;
 
-  constructor(paymentRepository: IPaymentRepositoryPort) {
-    this.createPaymentUseCase = new CreatePaymentUseCase(paymentRepository);
-    this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(paymentRepository);
-    this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(paymentRepository);
-    this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
+  constructor(
+    logger: ILoggerPort,
+    paymentRepository: IPaymentRepositoryPort,
+    paymentEntityToMapper: PaymentEntityDTOMapper,
+  ) {
+    this.createPaymentUseCase = new CreatePaymentUseCase(
+      logger,
+      paymentRepository,
+      paymentEntityToMapper,
+    );
+    this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(
+      logger,
       paymentRepository,
     );
-    this.deletePaymentUseCase = new DeletePaymentUseCase(paymentRepository);
+    this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
+      logger,
+      paymentRepository,
+    );
+    this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
+      logger,
+      paymentRepository,
+      paymentEntityToMapper,
+    );
+    this.deletePaymentUseCase = new DeletePaymentUseCase(
+      logger,
+      paymentRepository,
+    );
   }
 
   async createPayment(dto: CreatePaymentDto): Promise<PaymentResponseDto> {

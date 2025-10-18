@@ -1,6 +1,6 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../../domain/repositories/payment-repository.port';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaymentEntity } from '@features/payment/domain';
 

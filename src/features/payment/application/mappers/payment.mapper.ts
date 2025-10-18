@@ -6,7 +6,10 @@ import { PaymentCreate, PaymentEntity } from '@features/payment/domain';
 import { MoneyVO } from '@shared/domain/entities/values';
 import { PaymentStatusEnum } from '@features/payment/domain/enums';
 
-export class PaymentMapper extends EntityDTOMapper<PaymentEntity, PaymentDto> {
+export class PaymentEntityDTOMapper extends EntityDTOMapper<
+  PaymentEntity,
+  PaymentDto
+> {
   fromEntitytoDTO(entity: PaymentEntity): PaymentDto {
     return {
       paymentId: entity.id,

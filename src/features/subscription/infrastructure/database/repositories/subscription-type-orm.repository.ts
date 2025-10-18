@@ -13,11 +13,11 @@ import { SubscriptionOrmMapper } from '../mappers/subscription.orm-mapper.js';
 import { SubscriptionOrmEntity } from '../orm/subscription.type-orm.entity';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
 import { RestaurantOrmEntity } from '@features/restaurants';
-import { ISubscriptionRepositoryPort } from '@features/subscription/application/ports/repositories';
+import { ISubscriptionRepositoryPort } from '@features/subscription/domain/repositories/index.js';
 import {
-  SubscriptionCreatePort,
-  SubscriptionUpdatePort,
-} from '@features/subscription/application/ports/models/subscription-repository.port-models.js';
+  SubscriptionCreate,
+  SubscriptionUpdate,
+} from '@features/subscription/domain/index.js';
 
 @Injectable()
 export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
@@ -32,7 +32,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     super();
   }
 
-  async create(data: SubscriptionCreatePort): Promise<SubscriptionEntity> {
+  async create(data: SubscriptionCreate): Promise<SubscriptionEntity> {
     const plan = await this.ensurePlanIsUsable(data.subscriptionPlanId);
     const restaurant = await this.ensureRestaurantExists(data.restaurantId);
 
@@ -49,9 +49,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     return SubscriptionOrmMapper.toDomain(saved);
   }
 
-  async update(
-    data: SubscriptionUpdatePort,
-  ): Promise<SubscriptionEntity | null> {
+  async update(data: SubscriptionUpdate): Promise<SubscriptionEntity | null> {
     const entity = await this.subscriptions.findOne({
       where: { id: data.subscriptionId },
       relations: ['plan', 'restaurant'],
@@ -61,8 +59,13 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
       return null;
     }
 
-    if (data.subscriptionPlanId && data.subscriptionPlanId !== entity.subscriptionPlan.id) {
-      entity.subscriptionPlan = await this.ensurePlanIsUsable(data.subscriptionPlanId);
+    if (
+      data.subscriptionPlanId &&
+      data.subscriptionPlanId !== entity.subscriptionPlan.id
+    ) {
+      entity.subscriptionPlan = await this.ensurePlanIsUsable(
+        data.subscriptionPlanId,
+      );
       entity.subscriptionPlanId = data.subscriptionPlanId;
     }
 

@@ -1,11 +1,11 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { UseCase } from '@shared/application/ports/use-case.port';
 
-import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../../domain/repositories/payment-repository.port';
 import { PaymentEntity, PaymentCreate } from '@features/payment/domain';
 import { PaymentCreationFailedError } from '../../domain/errors';
 import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
-import { PaymentMapper } from '../mappers';
+import { PaymentEntityDTOMapper } from '../mappers';
 
 export class CreatePaymentUseCase
   implements UseCase<CreatePaymentDto, PaymentEntity>
@@ -13,7 +13,7 @@ export class CreatePaymentUseCase
   constructor(
     private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepositoryPort,
-    private readonly paymentMapper: PaymentMapper,
+    private readonly paymentMapper: PaymentEntityDTOMapper,
   ) {}
 
   async execute(dto: CreatePaymentDto): Promise<PaymentEntity> {

@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { IPaymentRepositoryPort } from '@features/payment/application/ports/repositories';
-import {
-  PaymentCreatePort,
-  PaymentUpdatePort,
-} from '@features/payment/application/ports/models/payment-repository.port-models.js';
+import { IPaymentRepositoryPort } from '@features/payment/domain/repositories';
 import { PaymentEntity } from '@features/payment/domain';
 
 @Injectable()
 export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
-  create(_data: PaymentCreatePort): Promise<PaymentEntity> {
+  create(_data: any): Promise<PaymentEntity> {
     void _data;
     throw new Error('Method not implemented.');
   }
@@ -26,7 +22,7 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     void _id;
     throw new Error('Method not implemented.');
   }
-  update(_data: PaymentUpdatePort): Promise<PaymentEntity | null> {
+  update(_data: any): Promise<PaymentEntity | null> {
     void _data;
     throw new Error('Method not implemented.');
   }

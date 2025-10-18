@@ -5,14 +5,14 @@ import {
   RestaurantEntity,
   RestaurantOwnerNotFoundError,
   RestaurantNotFoundError,
-} from '../../../../domain/index.js';
-import { ListRestaurantsQuery } from '../../../../application/dto/index.js';
+} from '../../../../domain';
+import { ListRestaurantsQuery } from '../../../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination.js';
-import { type RestaurantRepositoryPort } from '../../../../application/ports/index.js';
-import { RestaurantOrmEntity } from '../orm/index.js';
-import { RestaurantOrmMapper } from '../mappers/index.js';
+import { type RestaurantRepositoryPort } from '../../../../application/ports';
+import { RestaurantOrmEntity } from '../orm';
+import { RestaurantOrmMapper } from '../mappers';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
-import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate.js';
 
 @Injectable()
 export class RestaurantTypeOrmRepository implements RestaurantRepositoryPort {

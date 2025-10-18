@@ -1,12 +1,12 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
+import { IPaymentRepositoryPort } from '../../domain/repositories/payment-repository.port';
 import {
   PaymentNotFoundError,
   PaymentUpdateFailedError,
 } from '../../domain/errors';
 import { UpdatePaymentStatusDto } from '../dtos/input/update-payment-status-dto';
-import { PaymentMapper } from '../mappers/payment.mapper';
+import { PaymentEntityDTOMapper } from '../mappers/payment.mapper';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaymentEntity } from '@features/payment/domain';
 
@@ -17,7 +17,7 @@ export class UpdatePaymentStatusUseCase
     private readonly logger: ILoggerPort,
 
     private readonly paymentRepository: IPaymentRepositoryPort,
-    private readonly paymentMapper: PaymentMapper,
+    private readonly paymentMapper: PaymentEntityDTOMapper,
   ) {}
 
   async execute(dto: UpdatePaymentStatusDto): Promise<PaymentEntity> {
