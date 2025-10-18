@@ -35,7 +35,7 @@ import {
   UpdateGraphicObjectCommand,
   UpdateGraphicObjectDto,
   ObjectsService,
-} from '../../application/index.js';
+} from '../../application';
 import {
   GraphicObjectNotFoundError,
   InvalidGraphicObjectDataError,
