@@ -26,7 +26,7 @@ export class SubscriptionOrmMapper {
     entity.subscriptionStartDate = snapshot.subscriptionStartDate;
     entity.stateSubscription = snapshot.stateSubscription.value;
     if (options.plan) {
-      entity.plan = options.plan;
+      entity.subscriptionPlan = options.plan;
     }
     if (options.restaurant) {
       entity.restaurant = options.restaurant;

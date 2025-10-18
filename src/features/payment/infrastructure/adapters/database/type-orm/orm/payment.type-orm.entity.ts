@@ -1,33 +1,55 @@
-import { ReservationOrmEntity as ReservationOrmEntity } from '@features/reservation';
-import { SubscriptionOrmEntity } from '@features/subscription/infrastructure/database/orm/subscription.type-orm.entity';
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
+  Column,
   CreateDateColumn,
-  OneToOne,
+  UpdateDateColumn,
+  ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { PaymentStatusEnum } from '@features/payment/domain/enums';
+import { SubscriptionOrmEntity } from '@features/subscription/';
+import { ReservationOrmEntity } from '@features/reservation';
 
-@Entity('payment')
+@Entity({ name: 'payments' })
 export class PaymentOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'payment_id' })
-  id!: string;
+  id: string;
 
-  @OneToOne(() => ReservationOrmEntity, { nullable: true })
+  @Column({ type: 'uuid', name: 'reservation_id', nullable: true })
+  reservationId?: string;
+
+  @Column({ type: 'uuid', name: 'subscription_id', nullable: true })
+  subscriptionId?: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  amount: number;
+
+  @Column({
+    type: 'enum',
+    enum: PaymentStatusEnum,
+    name: 'payment_status',
+    nullable: false,
+  })
+  paymentStatus: PaymentStatusEnum;
+
+  @ManyToOne(() => ReservationOrmEntity, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'reservation_id', referencedColumnName: 'id' })
-  reservation!: ReservationOrmEntity | null;
+  reservation?: ReservationOrmEntity;
 
-  @OneToOne(() => SubscriptionOrmEntity, { nullable: true })
+  @ManyToOne(() => SubscriptionOrmEntity, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'subscription_id', referencedColumnName: 'id' })
-  subscription!: SubscriptionOrmEntity | null;
+  subscription?: SubscriptionOrmEntity;
 
-  @Column({ type: 'decimal' })
-  amount!: number;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @Column({ type: 'varchar', length: 10 })
-  status!: string;
-
-  @CreateDateColumn()
-  createdAt!: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

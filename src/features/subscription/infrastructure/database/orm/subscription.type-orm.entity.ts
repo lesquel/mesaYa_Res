@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { SubscriptionPlanOrmEntity } from './subscription-plan.type-orm.entity';
@@ -38,22 +37,17 @@ export class SubscriptionOrmEntity {
   })
   stateSubscription: SubscriptionStatesEnum;
 
-  // Relaciones
   @ManyToOne(() => SubscriptionPlanOrmEntity, (plan) => plan.subscriptions, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'subscription_plan_id', referencedColumnName: 'id' })
-  plan: SubscriptionPlanOrmEntity;
+  subscriptionPlan: SubscriptionPlanOrmEntity;
 
-  @ManyToOne(() => RestaurantOrmEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => RestaurantOrmEntity, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'restaurant_id', referencedColumnName: 'id' })
   restaurant: RestaurantOrmEntity;
-
-  @RelationId((subscription: SubscriptionOrmEntity) => subscription.plan)
-  planRelationId: string;
-
-  @RelationId((subscription: SubscriptionOrmEntity) => subscription.restaurant)
-  restaurantRelationId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

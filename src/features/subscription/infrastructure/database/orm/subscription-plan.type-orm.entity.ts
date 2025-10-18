@@ -39,7 +39,7 @@ export class SubscriptionPlanOrmEntity {
   })
   stateSubscriptionPlan: SubscriptionPlanStatesEnum;
 
-  @OneToMany(() => SubscriptionOrmEntity, (subscription) => subscription.plan)
+  @OneToMany(() => SubscriptionOrmEntity, (subscription) => subscription.subscriptionPlan)
   subscriptions: SubscriptionOrmEntity[];
 
   @CreateDateColumn({ name: 'created_at' })

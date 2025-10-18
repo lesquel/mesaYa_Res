@@ -41,7 +41,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
       restaurantId: data.restaurantId,
       subscriptionStartDate: data.subscriptionStartDate,
       stateSubscription: data.stateSubscription.value,
-      plan,
+      subscriptionPlan: plan,
       restaurant,
     });
 
@@ -61,8 +61,8 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
       return null;
     }
 
-    if (data.subscriptionPlanId && data.subscriptionPlanId !== entity.plan.id) {
-      entity.plan = await this.ensurePlanIsUsable(data.subscriptionPlanId);
+    if (data.subscriptionPlanId && data.subscriptionPlanId !== entity.subscriptionPlan.id) {
+      entity.subscriptionPlan = await this.ensurePlanIsUsable(data.subscriptionPlanId);
       entity.subscriptionPlanId = data.subscriptionPlanId;
     }
 
