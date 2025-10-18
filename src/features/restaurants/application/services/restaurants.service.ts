@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
+  KafkaEmit,
+  KafkaProducer,
+  KafkaService,
+  KAFKA_TOPICS,
+} from '../../../../shared/infrastructure/kafka/index.js';
+import type {
   CreateRestaurantCommand,
   DeleteRestaurantCommand,
   FindRestaurantQuery,
@@ -28,8 +34,20 @@ export class RestaurantsService {
     private readonly findRestaurantUseCase: FindRestaurantUseCase,
     private readonly updateRestaurantUseCase: UpdateRestaurantUseCase,
     private readonly deleteRestaurantUseCase: DeleteRestaurantUseCase,
+    @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.RESTAURANT_CREATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [CreateRestaurantCommand];
+      return {
+        action: 'restaurant.created',
+        entity: toPlain(result),
+        performedBy: command.ownerId,
+      };
+    },
+  })
   async create(
     command: CreateRestaurantCommand,
   ): Promise<RestaurantResponseDto> {
@@ -52,12 +70,35 @@ export class RestaurantsService {
     return this.findRestaurantUseCase.execute(query);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateRestaurantCommand];
+      return {
+        action: 'restaurant.updated',
+        entity: toPlain(result),
+        performedBy: command.ownerId,
+      };
+    },
+  })
   async update(
     command: UpdateRestaurantCommand,
   ): Promise<RestaurantResponseDto> {
     return this.updateRestaurantUseCase.execute(command);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.RESTAURANT_DELETED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [DeleteRestaurantCommand];
+      return {
+        action: 'restaurant.deleted',
+        entityId: command.restaurantId,
+        performedBy: command.ownerId,
+        result: toPlain(result),
+      };
+    },
+  })
   async delete(
     command: DeleteRestaurantCommand,
   ): Promise<DeleteRestaurantResponseDto> {

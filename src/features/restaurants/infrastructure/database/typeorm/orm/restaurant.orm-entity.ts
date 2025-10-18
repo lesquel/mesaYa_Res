@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserOrmEntity } from '../../../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 
 @Entity({ name: 'restaurant' })
 export class RestaurantOrmEntity {

@@ -15,10 +15,16 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../../auth/guard/jwt-auth.guard.js';
-import { PermissionsGuard } from '../../../../auth/guard/permissions.guard.js';
-import { Permissions } from '../../../../auth/decorator/permissions.decorator.js';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import {
@@ -32,7 +38,11 @@ import {
   DeleteTableCommand,
 } from '../../application/dto/index.js';
 import { TablesService } from '../../application/services/index.js';
-import { InvalidTableDataError, TableNotFoundError, TableSectionNotFoundError } from '../../domain/index.js';
+import {
+  InvalidTableDataError,
+  TableNotFoundError,
+  TableSectionNotFoundError,
+} from '../../domain/index.js';
 
 @ApiTags('Tables')
 @Controller({ path: 'table', version: '1' })

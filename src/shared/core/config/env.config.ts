@@ -21,4 +21,8 @@ export const envConfig = () => ({
   CORS_ALLOWED_HEADERS: process.env.CORS_ALLOWED_HEADERS,
   CORS_EXPOSE_HEADERS: process.env.CORS_EXPOSE_HEADERS,
   CORS_MAX_AGE: process.env.CORS_MAX_AGE,
+
+  KAFKA_BROKER: process.env.KAFKA_BROKER,
+  KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
+  KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID,
 });

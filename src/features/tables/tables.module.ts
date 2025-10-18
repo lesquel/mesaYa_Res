@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '../../auth/auth.module.js';
+import { AuthModule } from '@features/auth/auth.module.js';
 import { TablesController } from './interface/index.js';
 import {
   TableOrmEntity,
@@ -25,7 +25,10 @@ import {
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TableOrmEntity, SectionOrmEntity]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([TableOrmEntity, SectionOrmEntity]),
+    AuthModule,
+  ],
   controllers: [TablesController],
   providers: [
     { provide: TABLE_REPOSITORY, useClass: TableTypeOrmRepository },

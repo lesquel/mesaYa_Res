@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '../../auth/auth.module.js';
+import { AuthModule } from '@features/auth/auth.module.js';
 import { RestaurantOrmEntity } from '../restaurants/index.js';
 import { SectionsController } from './interface/index.js';
 import {

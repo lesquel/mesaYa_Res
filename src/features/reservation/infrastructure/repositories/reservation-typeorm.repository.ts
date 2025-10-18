@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { UserOrmEntity } from '../../../../auth/entities/user.entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import {
   ReservationEntity,
   ReservationNotFoundError,
