@@ -165,6 +165,79 @@ export class ReviewEventsHandler {
 }
 ```
 
+### Qué se emite en cada operación
+
+| Operación | `action`                    | Cuerpo principal (`entity`)                                                     | Metadatos adicionales                                                         |
+| --------- | --------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Create    | `mesa-ya.<feature>.created` | Entidad recién persistida (DTO de respuesta del caso de uso)                    | `performedBy` cuando la acción depende de un usuario (p. ej. ownerId, userId) |
+| Update    | `mesa-ya.<feature>.updated` | Entidad resultante tras aplicar los cambios                                     | `performedBy`, `entityId` si el caso de uso recibe un identificador explícito |
+| Delete    | `mesa-ya.<feature>.deleted` | Snapshot completo de la entidad antes de su eliminación (`entity` + `entityId`) | `performedBy` cuando aplica                                                   |
+
+**Ejemplos completos (restaurant):**
+
+```json
+{
+  "action": "restaurant.created",
+  "entity": {
+    "id": "rest-123",
+    "name": "MesaYa Centro",
+    "ownerId": "owner-456",
+    "status": "active",
+    "createdAt": "2025-10-12T10:00:00.000Z",
+    "updatedAt": "2025-10-12T10:00:00.000Z"
+  },
+  "performedBy": "owner-456",
+  "timestamp": "2025-10-12T10:00:00.000Z"
+}
+```
+
+```json
+{
+  "action": "restaurant.updated",
+  "entityId": "rest-123",
+  "entity": {
+    "id": "rest-123",
+    "name": "MesaYa Centro",
+    "ownerId": "owner-456",
+    "status": "inactive",
+    "createdAt": "2025-10-12T10:00:00.000Z",
+    "updatedAt": "2025-10-13T09:30:15.000Z"
+  },
+  "performedBy": "owner-456",
+  "timestamp": "2025-10-13T09:30:15.000Z"
+}
+```
+
+```json
+{
+  "action": "restaurant.deleted",
+  "entityId": "rest-123",
+  "entity": {
+    "id": "rest-123",
+    "name": "MesaYa Centro",
+    "ownerId": "owner-456",
+    "status": "inactive",
+    "createdAt": "2025-10-12T10:00:00.000Z",
+    "updatedAt": "2025-10-13T09:30:15.000Z"
+  },
+  "performedBy": "owner-456",
+  "timestamp": "2025-10-14T08:45:00.000Z"
+}
+```
+
+**Secuencia interna del decorador `@KafkaEmit`:**
+
+1. Ejecuta el método original (caso de uso / servicio) y captura el resultado (`result`).
+2. Construye el payload con la función `payload` definida en el servicio. Ahí se recibe:
+   - `result`: salida del método (los delete incluyen `{ ok, entity }`).
+   - `args`: parámetros originales (útil para tomar IDs o usuarios ejecutores).
+   - `toPlain`: helper que serializa DTOs y entidades a JSON plano.
+3. Añade `timestamp` ISO8601 si el payload aún no lo trae.
+4. Serializa el mensaje (internamente usa `JSON.parse(JSON.stringify(...))` para remover símbolos, fechas y prototypes).
+5. Publica el evento vía `KafkaService.emit(topic, payload)` y registra cualquier error en el `Logger` del contexto sin interrumpir la respuesta HTTP.
+
+> Gracias al snapshot incluido en `entity`, los consumidores pueden procesar eventos de eliminación sin consultas adicionales a la base de datos.
+
 ## Manejo de errores y resiliencia
 
 - `KafkaEmit` atrapa cualquier error al construir o enviar el payload y los escribe en el `Logger` del contexto (o crea uno nuevo con el nombre de la clase).
