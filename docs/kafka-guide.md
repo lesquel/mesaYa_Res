@@ -145,9 +145,25 @@ export class ReviewEventsHandler {
 
 ## Estrategia de payloads
 
-- Cada evento incluye al menos: `action`, `entity` (o `entityId`), `timestamp` y metadatos relevantes (`performedBy`, `result`, etc.).
+- Cada evento incluye al menos: `action`, `entity` (para create/update/delete), `entityId` cuando aplica, `timestamp` y metadatos relevantes (`performedBy`, etc.).
+- Las operaciones de eliminación publican la entidad completa tal y como existía antes de borrarla. Esto permite a los consumidores reconstruir el estado sin hacer llamadas adicionales.
 - Usa `toPlain` para transformar entidades/DTOs en objetos simples sin prototipos de clase ni fechas crudas.
 - Mantén backward compatibility: si introduces campos nuevos, hazlos opcionales y documenta el cambio.
+
+```json
+{
+  "action": "restaurant.deleted",
+  "entityId": "rest-123",
+  "entity": {
+    "id": "rest-123",
+    "name": "MesaYa Centro",
+    "ownerId": "owner-456",
+    "status": "inactive"
+  },
+  "performedBy": "owner-456",
+  "timestamp": "2025-10-12T23:59:59.000Z"
+}
+```
 
 ## Manejo de errores y resiliencia
 

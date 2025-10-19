@@ -78,12 +78,12 @@ export class ObjectsService {
 
   @KafkaEmit({
     topic: KAFKA_TOPICS.OBJECT_DELETED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [DeleteGraphicObjectCommand];
+    payload: ({ result, toPlain }) => {
+      const { graphicObject } = result as DeleteGraphicObjectResponseDto;
       return {
         action: 'object.deleted',
-        entityId: command.objectId,
-        result: toPlain(result),
+        entityId: graphicObject.id,
+        entity: toPlain(graphicObject),
       };
     },
   })

@@ -8,6 +8,7 @@ import {
   DeleteRestaurantCommand,
   DeleteRestaurantResponseDto,
 } from '../dto/index.js';
+import { RestaurantMapper } from '../mappers/index.js';
 import {
   RESTAURANT_REPOSITORY,
   type RestaurantRepositoryPort,
@@ -36,8 +37,10 @@ export class DeleteRestaurantUseCase
       throw new RestaurantOwnershipError();
     }
 
+    const restaurantResponse = RestaurantMapper.toResponse(restaurant);
+
     await this.restaurantRepository.delete(command.restaurantId);
 
-    return { ok: true };
+    return { ok: true, restaurant: restaurantResponse };
   }
 }

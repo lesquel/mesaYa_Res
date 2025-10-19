@@ -75,12 +75,12 @@ export class SectionsService {
 
   @KafkaEmit({
     topic: KAFKA_TOPICS.SECTION_DELETED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [DeleteSectionCommand];
+    payload: ({ result, toPlain }) => {
+      const { section } = result as DeleteSectionResponseDto;
       return {
         action: 'section.deleted',
-        entityId: command.sectionId,
-        result: toPlain(result),
+        entityId: section.id,
+        entity: toPlain(section),
       };
     },
   })
@@ -90,6 +90,3 @@ export class SectionsService {
     return this.deleteSectionUseCase.execute(command);
   }
 }
-
-
-// Kafka tiene alguna interfaz web donde se pueda revisar todo$ Quiero revisarlo tambien para ver como es jeje
