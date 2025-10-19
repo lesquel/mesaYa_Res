@@ -1,4 +1,3 @@
-import type { Request } from 'express';
 import {
   BadRequestException,
   Body,
@@ -11,8 +10,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -26,17 +23,19 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js'
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
   CreateReservationDto,
   CreateReservationCommand,
   UpdateReservationDto,
   UpdateReservationCommand,
-  ListReservationsQuery,
-  ListRestaurantReservationsQuery,
   FindReservationQuery,
   DeleteReservationCommand,
+} from '../../application/dto/index.js';
+import type {
+  ListReservationsQuery,
+  ListRestaurantReservationsQuery,
 } from '../../application/dto/index.js';
 import { ReservationService } from '../../application/services/index.js';
 import {
@@ -76,20 +75,11 @@ export class ReservationsController {
   @Get()
   @ApiOperation({ summary: 'Listar reservas (paginado)' })
   @ApiPaginationQuery()
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
+  async findAll(
+    @PaginationParams({ defaultRoute: '/reservations' })
+    query: ListReservationsQuery,
+  ) {
     try {
-      const route = req.baseUrl || req.path || '/reservations';
-      const query: ListReservationsQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
       return await this.reservationsService.list(query);
     } catch (error) {
       this.handleError(error);
@@ -102,22 +92,13 @@ export class ReservationsController {
   @ApiPaginationQuery()
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
+    @PaginationParams({ defaultRoute: '/reservations/restaurant' })
+    pagination: ListReservationsQuery,
   ) {
     try {
-      const route = req.baseUrl || req.path || '/reservations/restaurant';
       const query: ListRestaurantReservationsQuery = {
         restaurantId,
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
+        ...pagination,
       };
       return await this.reservationsService.listByRestaurant(query);
     } catch (error) {

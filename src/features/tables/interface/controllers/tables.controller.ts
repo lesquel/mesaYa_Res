@@ -1,18 +1,14 @@
-import type { Request } from 'express';
 import {
   BadRequestException,
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -25,17 +21,16 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import {
-  CreateTableDto,
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
+import { CreateTableDto, UpdateTableDto } from '../../application/dto/index.js';
+import type {
   CreateTableCommand,
-  UpdateTableDto,
-  UpdateTableCommand,
-  ListTablesQuery,
-  ListSectionTablesQuery,
-  FindTableQuery,
   DeleteTableCommand,
+  FindTableQuery,
+  ListSectionTablesQuery,
+  ListTablesQuery,
+  UpdateTableCommand,
 } from '../../application/dto/index.js';
 import { TablesService } from '../../application/services/index.js';
 import {
@@ -67,20 +62,11 @@ export class TablesController {
   @Get()
   @ApiOperation({ summary: 'Listar mesas (paginado)' })
   @ApiPaginationQuery()
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
+  async findAll(
+    @PaginationParams({ defaultRoute: '/table' })
+    query: ListTablesQuery,
+  ) {
     try {
-      const route = req.baseUrl || req.path || '/table';
-      const query: ListTablesQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
       return await this.tablesService.list(query);
     } catch (error) {
       this.handleError(error);
@@ -93,22 +79,13 @@ export class TablesController {
   @ApiPaginationQuery()
   async findBySection(
     @Param('sectionId', ParseUUIDPipe) sectionId: string,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
+    @PaginationParams({ defaultRoute: '/table/section' })
+    pagination: ListTablesQuery,
   ) {
     try {
-      const route = req.baseUrl || req.path || '/table/section';
       const query: ListSectionTablesQuery = {
         sectionId,
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
+        ...pagination,
       };
       return await this.tablesService.listSection(query);
     } catch (error) {

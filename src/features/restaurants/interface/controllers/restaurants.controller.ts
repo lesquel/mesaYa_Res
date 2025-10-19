@@ -9,10 +9,8 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
   UseGuards,
   Body,
-  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -25,18 +23,20 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js'
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
   CreateRestaurantCommand,
   CreateRestaurantDto,
   DeleteRestaurantCommand,
   FindRestaurantQuery,
-  ListOwnerRestaurantsQuery,
-  ListRestaurantsQuery,
   RestaurantsService,
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
+} from '../../application/index.js';
+import type {
+  ListOwnerRestaurantsQuery,
+  ListRestaurantsQuery,
 } from '../../application/index.js';
 import {
   InvalidRestaurantDataError,
@@ -44,7 +44,6 @@ import {
   RestaurantOwnerNotFoundError,
   RestaurantOwnershipError,
 } from '../../domain/index.js';
-import type { Request } from 'express';
 
 @ApiTags('Restaurants')
 @Controller({ path: 'restaurant', version: '1' })
@@ -75,20 +74,11 @@ export class RestaurantsController {
   @Get()
   @ApiOperation({ summary: 'Listar restaurantes (paginado)' })
   @ApiPaginationQuery()
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
+  async findAll(
+    @PaginationParams({ defaultRoute: '/restaurant' })
+    query: ListRestaurantsQuery,
+  ) {
     try {
-      const route = req.baseUrl || req.path || '/restaurant';
-      const query: ListRestaurantsQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
       return await this.restaurantsService.list(query);
     } catch (error) {
       this.handleError(error);
@@ -102,23 +92,14 @@ export class RestaurantsController {
   @ApiBearerAuth()
   @ApiPaginationQuery()
   async findMine(
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
+    @PaginationParams({ defaultRoute: '/restaurant/me' })
+    pagination: ListRestaurantsQuery,
     @CurrentUser() user: { userId: string },
   ) {
     try {
-      const route = req.baseUrl || req.path || '/restaurant/me';
       const query: ListOwnerRestaurantsQuery = {
+        ...pagination,
         ownerId: user.userId,
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
       };
       return await this.restaurantsService.listByOwner(query);
     } catch (error) {

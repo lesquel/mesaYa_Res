@@ -1,4 +1,3 @@
-import type { Request } from 'express';
 import {
   BadRequestException,
   Body,
@@ -11,8 +10,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -26,18 +23,20 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js'
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
-  CreateReviewCommand,
   CreateReviewDto,
+  ReviewsService,
+  UpdateReviewDto,
+} from '../../application/index.js';
+import type {
+  CreateReviewCommand,
+  DeleteReviewCommand,
+  FindReviewQuery,
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
-  FindReviewQuery,
-  DeleteReviewCommand,
-  ReviewsService,
   UpdateReviewCommand,
-  UpdateReviewDto,
 } from '../../application/index.js';
 import {
   InvalidReviewDataError,
@@ -76,20 +75,11 @@ export class ReviewsController {
   @Get()
   @ApiOperation({ summary: 'Listar reseñas (paginado)' })
   @ApiPaginationQuery()
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
+  async findAll(
+    @PaginationParams({ defaultRoute: '/review' })
+    query: ListReviewsQuery,
+  ) {
     try {
-      const route = req.baseUrl || req.path || '/review';
-      const query: ListReviewsQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
       return await this.reviewsService.list(query);
     } catch (error) {
       this.handleError(error);
@@ -102,22 +92,13 @@ export class ReviewsController {
   @ApiPaginationQuery()
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
+    @PaginationParams({ defaultRoute: '/review/restaurant' })
+    pagination: ListReviewsQuery,
   ) {
     try {
-      const route = req.baseUrl || req.path || '/review/restaurant';
       const query: ListRestaurantReviewsQuery = {
         restaurantId,
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
+        ...pagination,
       };
       return await this.reviewsService.listByRestaurant(query);
     } catch (error) {

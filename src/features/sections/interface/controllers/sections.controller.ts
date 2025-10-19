@@ -9,8 +9,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -23,19 +21,20 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import type { Request } from 'express';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
-  CreateSectionCommand,
   CreateSectionDto,
-  ListSectionsQuery,
-  ListRestaurantSectionsQuery,
-  FindSectionQuery,
-  UpdateSectionCommand,
-  UpdateSectionDto,
-  DeleteSectionCommand,
   SectionsService,
+  UpdateSectionDto,
+} from '../../application/index.js';
+import type {
+  CreateSectionCommand,
+  DeleteSectionCommand,
+  FindSectionQuery,
+  ListRestaurantSectionsQuery,
+  ListSectionsQuery,
+  UpdateSectionCommand,
 } from '../../application/index.js';
 import {
   InvalidSectionDataError,
@@ -69,22 +68,13 @@ export class SectionsController {
   @ApiPaginationQuery()
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
+    @PaginationParams({ defaultRoute: '/section/restaurant' })
+    pagination: ListSectionsQuery,
   ) {
     try {
-      const route = req.baseUrl || req.path || '/section/restaurant';
       const query: ListRestaurantSectionsQuery = {
+        ...pagination,
         restaurantId,
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
       };
       return await this.sectionsService.listByRestaurant(query);
     } catch (error) {
@@ -95,20 +85,11 @@ export class SectionsController {
   @Get()
   @ApiOperation({ summary: 'Listar secciones (paginado)' })
   @ApiPaginationQuery()
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request) {
+  async findAll(
+    @PaginationParams({ defaultRoute: '/section' })
+    query: ListSectionsQuery,
+  ) {
     try {
-      const route = req.baseUrl || req.path || '/section';
-      const query: ListSectionsQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
       return await this.sectionsService.list(query);
     } catch (error) {
       this.handleError(error);

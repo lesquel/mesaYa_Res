@@ -9,8 +9,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -23,18 +21,19 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import type { Request } from 'express';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import { SectionObjectsService } from '../../application/services/index.js';
 import {
-  CreateSectionObjectCommand,
   CreateSectionObjectDto,
+  UpdateSectionObjectDto,
+} from '../../application/dto/index.js';
+import type {
+  CreateSectionObjectCommand,
   DeleteSectionObjectCommand,
   FindSectionObjectQuery,
   ListSectionObjectsQuery,
   UpdateSectionObjectCommand,
-  UpdateSectionObjectDto,
 } from '../../application/dto/index.js';
 import {
   InvalidSectionObjectDataError,
@@ -68,20 +67,11 @@ export class SectionObjectsController {
   @Get()
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
   @ApiPaginationQuery()
-  async list(@Query() pagination: PaginationDto, @Req() req: Request) {
+  async list(
+    @PaginationParams({ defaultRoute: '/section-object' })
+    query: ListSectionObjectsQuery,
+  ) {
     try {
-      const route = req?.baseUrl || req?.path || '/section-object';
-      const query: ListSectionObjectsQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
       return await this.service.list(query);
     } catch (error) {
       this.handleError(error);
