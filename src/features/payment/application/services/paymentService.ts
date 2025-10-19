@@ -16,9 +16,12 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
-import { IPaymentRepositoryPort } from '../../domain/repositories';
 import { ILoggerPort } from '@shared/application/ports/logger.port';
 import { PaymentEntityDTOMapper } from '../mappers';
+import {
+  IPaymentRepositoryPort,
+  PaymentDomainService,
+} from '@features/payment/domain';
 
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
@@ -26,33 +29,37 @@ export class PaymentService {
   private getAllPaymentsUseCase: GetAllPaymentsUseCase;
   private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
   private deletePaymentUseCase: DeletePaymentUseCase;
+  private readonly paymentDomainService: PaymentDomainService;
 
   constructor(
     logger: ILoggerPort,
     paymentRepository: IPaymentRepositoryPort,
     paymentEntityToMapper: PaymentEntityDTOMapper,
   ) {
+    this.paymentDomainService = new PaymentDomainService(paymentRepository);
     this.createPaymentUseCase = new CreatePaymentUseCase(
       logger,
-      paymentRepository,
+      this.paymentDomainService,
       paymentEntityToMapper,
     );
     this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(
       logger,
-      paymentRepository,
+      this.paymentDomainService,
+      paymentEntityToMapper,
     );
     this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
       logger,
-      paymentRepository,
+      this.paymentDomainService,
+      paymentEntityToMapper,
     );
     this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
       logger,
-      paymentRepository,
       paymentEntityToMapper,
+      this.paymentDomainService,
     );
     this.deletePaymentUseCase = new DeletePaymentUseCase(
       logger,
-      paymentRepository,
+      this.paymentDomainService,
     );
   }
 

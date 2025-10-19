@@ -4,20 +4,16 @@ import {
   SubscriptionPlanEntity,
   SubscriptionPlanPeriodVO,
   SubscriptionPlanStateVO,
-} from '../../domain/entities';
-import {
   SubscriptionPlanCreate,
   SubscriptionPlanUpdate,
-} from '../../domain/types';
+  SubscriptionPlanPeriodsEnum,
+  SubscriptionPlanStatesEnum,
+} from '@features/subscription/domain';
 import {
   CreateSubscriptionPlanDto,
   SubscriptionPlanDto,
   UpdateSubscriptionPlanDto,
 } from '../dtos';
-import {
-  SubscriptionPlanPeriodsEnum,
-  SubscriptionPlanStatesEnum,
-} from '../../domain/enums';
 
 export class SubscriptionPlanMapper extends EntityDTOMapper<
   SubscriptionPlanEntity,

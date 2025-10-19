@@ -1,13 +1,17 @@
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
-import { SubscriptionEntity, SubscriptionStateVO } from '../../domain/entities';
-import { SubscriptionCreate, SubscriptionUpdate } from '../../domain/types';
+import {
+  SubscriptionEntity,
+  SubscriptionStateVO,
+  SubscriptionCreate,
+  SubscriptionUpdate,
+  SubscriptionStatesEnum,
+} from '@features/subscription/domain';
 import {
   CreateSubscriptionDto,
   SubscriptionDto,
   UpdateSubscriptionDto,
   UpdateSubscriptionStateDto,
 } from '../dtos';
-import { SubscriptionStatesEnum } from '../../domain/enums';
 
 export class SubscriptionMapper extends EntityDTOMapper<
   SubscriptionEntity,

@@ -1,30 +1,32 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepositoryPort } from '../../domain/repositories/payment-repository.port';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { PaymentEntity } from '@features/payment/domain';
+import { PaymentDomainService } from '@features/payment/domain';
+import { PaymentEntityDTOMapper } from '../mappers';
+import { PaymentDto } from '../dtos/output/payment.dto';
 
-export class GetAllPaymentsUseCase implements UseCase<void, PaymentEntity[]> {
+export class GetAllPaymentsUseCase implements UseCase<void, PaymentDto[]> {
   constructor(
     private readonly logger: ILoggerPort,
-
-    private readonly paymentRepository: IPaymentRepositoryPort,
+    private readonly paymentDomainService: PaymentDomainService,
+    private readonly paymentMapper: PaymentEntityDTOMapper,
   ) {}
 
-  async execute(): Promise<PaymentEntity[]> {
+  async execute(): Promise<PaymentDto[]> {
     this.logger.log(
       'Fetching all payments from repository',
       'GetAllPaymentsUseCase',
     );
 
-    // Obtener todas las entidades de dominio del repositorio
-    const paymentEntities = await this.paymentRepository.findAll();
+    const paymentEntities = await this.paymentDomainService.findAllPayments();
 
     this.logger.log(
       `Successfully fetched ${paymentEntities.length} payment(s)`,
       'GetAllPaymentsUseCase',
     );
 
-    return paymentEntities;
+    return paymentEntities.map((entity) =>
+      this.paymentMapper.fromEntitytoDTO(entity),
+    );
   }
 }
