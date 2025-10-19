@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -9,7 +9,6 @@ import {
 } from '../../../domain/errors/index.js';
 import { SubscriptionEntity } from '../../../domain/entities/subscription.entity.js';
 import { SubscriptionPlanStatesEnum } from '../../../domain/enums';
-import { SubscriptionOrmMapper } from '../mappers/subscription.orm-mapper.js';
 import { SubscriptionOrmEntity } from '../orm/subscription.type-orm.entity';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
 import { RestaurantOrmEntity } from '@features/restaurants';
@@ -18,6 +17,10 @@ import {
   SubscriptionCreate,
   SubscriptionUpdate,
 } from '@features/subscription/domain/index.js';
+import {
+  SUBSCRIPTION_ORM_MAPPER,
+  SubscriptionOrmMapperPort,
+} from '@features/subscription/application';
 
 @Injectable()
 export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
@@ -28,6 +31,8 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     private readonly plans: Repository<SubscriptionPlanOrmEntity>,
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
+    @Inject(SUBSCRIPTION_ORM_MAPPER)
+    private readonly mapper: SubscriptionOrmMapperPort<SubscriptionOrmEntity>,
   ) {
     super();
   }
@@ -46,7 +51,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     });
 
     const saved = await this.subscriptions.save(entity);
-    return SubscriptionOrmMapper.toDomain(saved);
+    return this.mapper.toDomain(saved);
   }
 
   async update(data: SubscriptionUpdate): Promise<SubscriptionEntity | null> {
@@ -83,7 +88,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     }
 
     const saved = await this.subscriptions.save(entity);
-    return SubscriptionOrmMapper.toDomain(saved);
+    return this.mapper.toDomain(saved);
   }
 
   async findById(id: string): Promise<SubscriptionEntity | null> {
@@ -92,7 +97,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
       relations: ['plan', 'restaurant'],
     });
 
-    return entity ? SubscriptionOrmMapper.toDomain(entity) : null;
+    return entity ? this.mapper.toDomain(entity) : null;
   }
 
   async findAll(): Promise<SubscriptionEntity[]> {
@@ -100,7 +105,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
       relations: ['plan', 'restaurant'],
     });
 
-    return entities.map((entity) => SubscriptionOrmMapper.toDomain(entity));
+    return this.mapper.toDomainList(entities);
   }
 
   async delete(id: string): Promise<boolean> {

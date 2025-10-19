@@ -1,1 +1,1 @@
-export * from './payment.mapper';
+export * from './payment.mapper.js';

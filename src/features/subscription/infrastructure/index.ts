@@ -1,3 +1,3 @@
-export * from './database/mappers';
-export * from './database/orm';
-export * from './database/repositories';
+export * from './database/mappers/index.js';
+export * from './database/orm/index.js';
+export * from './database/repositories/index.js';

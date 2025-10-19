@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   CreatePaymentUseCase,
   GetPaymentByIdUseCase,
@@ -75,8 +76,10 @@ export class PaymentService {
     return await this.getPaymentByIdUseCase.execute(dto);
   }
 
-  async getAllPayments(): Promise<PaymentListResponseDto> {
-    return await this.getAllPaymentsUseCase.execute();
+  async getAllPayments(
+    params?: PaginatedQueryParams,
+  ): Promise<PaymentListResponseDto> {
+    return await this.getAllPaymentsUseCase.execute(params);
   }
 
   async updatePaymentStatus(

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   CreateSubscriptionUseCase,
   DeleteSubscriptionUseCase,
@@ -94,8 +95,10 @@ export class SubscriptionService {
     return this.getSubscriptionByIdUseCase.execute(dto);
   }
 
-  async findAll(): Promise<SubscriptionListResponseDto> {
-    return this.listSubscriptionsUseCase.execute();
+  async findAll(
+    params?: PaginatedQueryParams,
+  ): Promise<SubscriptionListResponseDto> {
+    return this.listSubscriptionsUseCase.execute(params);
   }
 
   async update(dto: UpdateSubscriptionDto): Promise<SubscriptionResponseDto> {

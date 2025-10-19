@@ -1,1 +1,1 @@
-export * from './paymentStatus.vo';
+export * from './paymentStatus.vo.js';

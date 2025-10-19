@@ -1,1 +1,1 @@
-export * from './mappers/payment-orm-mapper.port';
+export * from './mappers/payment-orm-mapper.port.js';

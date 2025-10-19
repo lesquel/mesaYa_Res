@@ -1,3 +1,3 @@
-export * from './subscription-plan-states.enum';
-export * from './subscription-plan-periods.enum';
-export * from './subscription-states.enum';
+export * from './subscription-plan-states.enum.js';
+export * from './subscription-plan-periods.enum.js';
+export * from './subscription-states.enum.js';

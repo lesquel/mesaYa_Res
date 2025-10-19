@@ -1,2 +1,1 @@
-export * from './payment-repository.port';
-export * from '../../application/ports/models/index.js';
+export * from './payment-repository.port.js';

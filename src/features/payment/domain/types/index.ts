@@ -1,2 +1,2 @@
-export * from './paymentCreate';
-export * from './paymentUpdate';
+export * from './paymentCreate.js';
+export * from './paymentUpdate.js';

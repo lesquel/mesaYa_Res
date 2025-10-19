@@ -1,2 +1,2 @@
-export * from './subscription-plan-type-orm.repository';
-export * from './subscription-type-orm.repository';
+export * from './subscription-plan-type-orm.repository.js';
+export * from './subscription-type-orm.repository.js';

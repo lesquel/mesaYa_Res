@@ -19,6 +19,7 @@ import type {
   UpdatePaymentStatusDto,
   DeletePaymentResponseDto,
 } from '@features/payment/application';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   PaymentCreationFailedError,
   PaymentDeletionFailedError,
@@ -27,6 +28,8 @@ import {
 } from '@features/payment/domain';
 import { PaymentMustBeAssociatedError } from '@features/payment/domain/errors/payment-must-be-associated.error';
 import { NotFoundException } from '@nestjs/common';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })
@@ -47,9 +50,12 @@ export class PaymentController {
 
   @Get()
   @ApiOperation({ summary: 'List payments' })
-  async getPayments(): Promise<PaymentListResponseDto> {
+  @PaginatedEndpoint()
+  async getPayments(
+    @PaginationParams() params: PaginatedQueryParams,
+  ): Promise<PaymentListResponseDto> {
     try {
-      return await this.paymentService.getAllPayments();
+      return await this.paymentService.getAllPayments(params);
     } catch (error) {
       this.handleError(error);
     }

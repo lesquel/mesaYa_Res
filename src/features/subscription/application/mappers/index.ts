@@ -1,2 +1,2 @@
-export * from './subscription-plan.mapper';
-export * from './subscription.mapper';
+export * from './subscription-plan.mapper.js';
+export * from './subscription.mapper.js';

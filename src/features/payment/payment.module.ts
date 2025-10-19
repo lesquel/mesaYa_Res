@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PaymentController } from './presentation';
+import { PaymentController } from './presentation/index.js';
 import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
   PaymentOrmMapper,
-} from './infrastructure';
+} from './infrastructure/index.js';
 import {
   PaymentService,
   PaymentEntityDTOMapper,
   PAYMENT_ORM_MAPPER,
-} from './application';
-import { IPaymentRepositoryPort } from './domain';
+} from './application/index.js';
+import { IPaymentRepositoryPort } from './domain/index.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PaymentOrmEntity])],

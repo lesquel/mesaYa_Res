@@ -1,41 +1,15 @@
+import { Injectable } from '@nestjs/common';
+
 import {
   SubscriptionEntity,
   SubscriptionStateVO,
 } from '../../../domain/entities';
 import { SubscriptionOrmEntity } from '../orm/subscription.type-orm.entity';
-import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
-import { RestaurantOrmEntity } from '@features/restaurants';
+import { SubscriptionOrmMapperPort } from '@features/subscription/application';
 
-export interface SubscriptionOrmMapperOptions {
-  existing?: SubscriptionOrmEntity;
-  plan?: SubscriptionPlanOrmEntity;
-  restaurant?: RestaurantOrmEntity;
-}
-
-export class SubscriptionOrmMapper {
-  static toOrmEntity(
-    subscription: SubscriptionEntity,
-    options: SubscriptionOrmMapperOptions = {},
-  ): SubscriptionOrmEntity {
-    const snapshot = subscription.snapshot();
-    const entity = options.existing ?? new SubscriptionOrmEntity();
-
-    entity.id = snapshot.subscriptionId;
-    entity.subscriptionPlanId = snapshot.subscriptionPlanId;
-    entity.restaurantId = snapshot.restaurantId;
-    entity.subscriptionStartDate = snapshot.subscriptionStartDate;
-    entity.stateSubscription = snapshot.stateSubscription.value;
-    if (options.plan) {
-      entity.subscriptionPlan = options.plan;
-    }
-    if (options.restaurant) {
-      entity.restaurant = options.restaurant;
-    }
-
-    return entity;
-  }
-
-  static toDomain(entity: SubscriptionOrmEntity): SubscriptionEntity {
+@Injectable()
+export class SubscriptionOrmMapper extends SubscriptionOrmMapperPort<SubscriptionOrmEntity> {
+  toDomain(entity: SubscriptionOrmEntity): SubscriptionEntity {
     return SubscriptionEntity.rehydrate({
       subscriptionId: entity.id,
       subscriptionPlanId: entity.subscriptionPlanId,
@@ -43,5 +17,17 @@ export class SubscriptionOrmMapper {
       subscriptionStartDate: entity.subscriptionStartDate,
       stateSubscription: SubscriptionStateVO.create(entity.stateSubscription),
     });
+  }
+
+  toOrm(domain: SubscriptionEntity): SubscriptionOrmEntity {
+    const snapshot = domain.snapshot();
+    const ormEntity = new SubscriptionOrmEntity();
+    ormEntity.id = snapshot.subscriptionId;
+    ormEntity.subscriptionPlanId = snapshot.subscriptionPlanId;
+    ormEntity.restaurantId = snapshot.restaurantId;
+    ormEntity.subscriptionStartDate = snapshot.subscriptionStartDate;
+    ormEntity.stateSubscription = snapshot.stateSubscription.value;
+
+    return ormEntity;
   }
 }

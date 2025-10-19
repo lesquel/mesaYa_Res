@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { MoneyVO } from '@shared/domain/entities/values';
 import {
   SubscriptionPlanEntity,
@@ -5,19 +7,13 @@ import {
   SubscriptionPlanStateVO,
 } from '../../../domain/entities';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
+import { SubscriptionPlanOrmMapperPort } from '@features/subscription/application';
 
-export interface SubscriptionPlanOrmMapperOptions {
-  existing?: SubscriptionPlanOrmEntity;
-}
-
-export class SubscriptionPlanOrmMapper {
-  static toOrmEntity(
-    plan: SubscriptionPlanEntity,
-    options: SubscriptionPlanOrmMapperOptions = {},
-  ): SubscriptionPlanOrmEntity {
-    const snapshot = plan.snapshot();
-    const entity = options.existing ?? new SubscriptionPlanOrmEntity();
-
+@Injectable()
+export class SubscriptionPlanOrmMapper extends SubscriptionPlanOrmMapperPort<SubscriptionPlanOrmEntity> {
+  toOrm(domain: SubscriptionPlanEntity): SubscriptionPlanOrmEntity {
+    const snapshot = domain.snapshot();
+    const entity = new SubscriptionPlanOrmEntity();
     entity.id = snapshot.subscriptionPlanId;
     entity.name = snapshot.name;
     entity.price = snapshot.price.amount;
@@ -27,7 +23,7 @@ export class SubscriptionPlanOrmMapper {
     return entity;
   }
 
-  static toDomain(entity: SubscriptionPlanOrmEntity): SubscriptionPlanEntity {
+  toDomain(entity: SubscriptionPlanOrmEntity): SubscriptionPlanEntity {
     return SubscriptionPlanEntity.rehydrate({
       subscriptionPlanId: entity.id,
       name: entity.name,

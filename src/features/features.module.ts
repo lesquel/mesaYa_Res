@@ -8,6 +8,8 @@ import { TablesModule } from './tables/tables.module.js';
 import { ObjectsModule } from './objects/objects.module.js';
 import { SectionObjectsModule } from './section-objects/section-objects.module.js';
 import { MenusModule } from './menus/menus.module.js';
+import { PaymentModule } from './payment/payment.module.js';
+import { SubscriptionModule } from './subscription/subscription.module.js';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { MenusModule } from './menus/menus.module.js';
     ObjectsModule,
     SectionObjectsModule,
     MenusModule,
+    PaymentModule,
+    SubscriptionModule,
   ],
   exports: [
     RestaurantsModule,
@@ -31,6 +35,8 @@ import { MenusModule } from './menus/menus.module.js';
     ObjectsModule,
     SectionObjectsModule,
     MenusModule,
+    PaymentModule,
+    SubscriptionModule,
   ],
 })
 export class FeaturesModule {}

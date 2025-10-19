@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
-import { SubscriptionPlanOrmMapper } from '../mappers/subscription-plan.orm-mapper';
 import { SubscriptionPlanEntity } from '../../../domain/entities/subscription-plan.entity.js';
 import { ISubscriptionPlanRepositoryPort } from '@features/subscription/domain/repositories';
 import { SubscriptionPlanNotFoundError } from '../../../domain/errors/subscription-plan-not-found.error';
@@ -10,12 +9,18 @@ import {
   SubscriptionPlanCreate,
   SubscriptionPlanUpdate,
 } from '@features/subscription/domain';
+import {
+  SubscriptionPlanOrmMapperPort,
+  SUBSCRIPTION_PLAN_ORM_MAPPER,
+} from '@features/subscription/application';
 
 @Injectable()
 export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanRepositoryPort {
   constructor(
     @InjectRepository(SubscriptionPlanOrmEntity)
     private readonly plans: Repository<SubscriptionPlanOrmEntity>,
+    @Inject(SUBSCRIPTION_PLAN_ORM_MAPPER)
+    private readonly mapper: SubscriptionPlanOrmMapperPort<SubscriptionPlanOrmEntity>,
   ) {
     super();
   }
@@ -29,7 +34,7 @@ export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanReposito
     });
 
     const saved = await this.plans.save(entity);
-    return SubscriptionPlanOrmMapper.toDomain(saved);
+    return this.mapper.toDomain(saved);
   }
 
   async update(
@@ -60,17 +65,17 @@ export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanReposito
     }
 
     const saved = await this.plans.save(entity);
-    return SubscriptionPlanOrmMapper.toDomain(saved);
+    return this.mapper.toDomain(saved);
   }
 
   async findById(id: string): Promise<SubscriptionPlanEntity | null> {
     const entity = await this.plans.findOne({ where: { id } });
-    return entity ? SubscriptionPlanOrmMapper.toDomain(entity) : null;
+    return entity ? this.mapper.toDomain(entity) : null;
   }
 
   async findAll(): Promise<SubscriptionPlanEntity[]> {
     const entities = await this.plans.find();
-    return entities.map((entity) => SubscriptionPlanOrmMapper.toDomain(entity));
+    return this.mapper.toDomainList(entities);
   }
 
   async delete(id: string): Promise<boolean> {
