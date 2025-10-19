@@ -1,29 +1,74 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { IPaymentRepositoryPort } from '@features/payment/domain/repositories';
-import { PaymentEntity } from '@features/payment/domain';
+import {
+  IPaymentRepositoryPort,
+  PaymentEntity,
+  PaymentCreate,
+  PaymentUpdate,
+  PaymentCreationFailedError,
+} from '@features/payment/domain';
+import {
+  PaymentOrmMapperPort,
+  PAYMENT_ORM_MAPPER,
+} from '@features/payment/application';
+import { PaymentOrmEntity } from '../orm/payment.type-orm.entity';
 
 @Injectable()
 export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
-  create(_data: any): Promise<PaymentEntity> {
-    void _data;
-    throw new Error('Method not implemented.');
+  constructor(
+    @InjectRepository(PaymentOrmEntity)
+    private readonly payments: Repository<PaymentOrmEntity>,
+    @Inject(PAYMENT_ORM_MAPPER)
+    private readonly mapper: PaymentOrmMapperPort<PaymentOrmEntity>,
+  ) {
+    super();
   }
 
-  delete(_id: string): Promise<boolean> {
-    void _id;
-    throw new Error('Method not implemented.');
+  async create(data: PaymentCreate): Promise<PaymentEntity> {
+    if (!data.reservationId && !data.subscriptionId) {
+      throw new PaymentCreationFailedError(
+        'Payment must be associated with a reservation or subscription',
+      );
+    }
+
+    const entity = new PaymentOrmEntity();
+    entity.reservationId = data.reservationId ?? undefined;
+    entity.subscriptionId = data.subscriptionId ?? undefined;
+    entity.amount = data.amount.amount;
+    entity.paymentStatus = data.paymentStatus.status;
+
+    const saved = await this.payments.save(entity);
+    return this.mapper.toDomain(saved);
   }
 
-  findAll(): Promise<PaymentEntity[]> {
-    throw new Error('Method not implemented.');
+  async update(data: PaymentUpdate): Promise<PaymentEntity | null> {
+    const entity = await this.payments.findOne({
+      where: { id: data.paymentId },
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    entity.paymentStatus = data.status.status;
+    const saved = await this.payments.save(entity);
+    return this.mapper.toDomain(saved);
   }
-  findById(_id: string): Promise<PaymentEntity | null> {
-    void _id;
-    throw new Error('Method not implemented.');
+
+  async findById(id: string): Promise<PaymentEntity | null> {
+    const entity = await this.payments.findOne({ where: { id } });
+    return entity ? this.mapper.toDomain(entity) : null;
   }
-  update(_data: any): Promise<PaymentEntity | null> {
-    void _data;
-    throw new Error('Method not implemented.');
+
+  async findAll(): Promise<PaymentEntity[]> {
+    const entities = await this.payments.find();
+    return this.mapper.toDomainList(entities);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await this.payments.delete({ id });
+    return (result.affected ?? 0) > 0;
   }
 }

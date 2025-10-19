@@ -1,3 +1,5 @@
+import { Inject, Injectable } from '@nestjs/common';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import {
   CreatePaymentUseCase,
   GetPaymentByIdUseCase,
@@ -16,13 +18,14 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
-import { ILoggerPort } from '@shared/application/ports/logger.port';
 import { PaymentEntityDTOMapper } from '../mappers';
 import {
   IPaymentRepositoryPort,
   PaymentDomainService,
 } from '@features/payment/domain';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 
+@Injectable()
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
   private getPaymentByIdUseCase: GetPaymentByIdUseCase;
@@ -32,7 +35,8 @@ export class PaymentService {
   private readonly paymentDomainService: PaymentDomainService;
 
   constructor(
-    logger: ILoggerPort,
+    @Inject(LOGGER) logger: ILoggerPort,
+    @Inject(IPaymentRepositoryPort)
     paymentRepository: IPaymentRepositoryPort,
     paymentEntityToMapper: PaymentEntityDTOMapper,
   ) {

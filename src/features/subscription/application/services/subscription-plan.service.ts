@@ -1,5 +1,5 @@
-import { ILoggerPort } from '@shared/application/ports/logger.port';
-
+import { Inject, Injectable } from '@nestjs/common';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import {
   CreateSubscriptionPlanUseCase,
   DeleteSubscriptionPlanUseCase,
@@ -23,7 +23,9 @@ import {
   SubscriptionPlanDomainService,
 } from '@features/subscription/domain';
 import { SubscriptionPlanMapper } from '../mappers';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 
+@Injectable()
 export class SubscriptionPlanService {
   private readonly subscriptionPlanDomainService: SubscriptionPlanDomainService;
 
@@ -34,7 +36,8 @@ export class SubscriptionPlanService {
   private readonly deleteSubscriptionPlanUseCase: DeleteSubscriptionPlanUseCase;
 
   constructor(
-    logger: ILoggerPort,
+    @Inject(LOGGER) logger: ILoggerPort,
+    @Inject(ISubscriptionPlanRepositoryPort)
     subscriptionPlanRepository: ISubscriptionPlanRepositoryPort,
     subscriptionPlanMapper: SubscriptionPlanMapper,
   ) {

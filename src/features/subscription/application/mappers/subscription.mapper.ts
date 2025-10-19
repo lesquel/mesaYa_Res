@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
 import {
   SubscriptionEntity,
@@ -13,6 +14,7 @@ import {
   UpdateSubscriptionStateDto,
 } from '../dtos';
 
+@Injectable()
 export class SubscriptionMapper extends EntityDTOMapper<
   SubscriptionEntity,
   SubscriptionDto
