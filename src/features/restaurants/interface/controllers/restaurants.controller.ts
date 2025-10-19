@@ -1,16 +1,13 @@
 import {
-  BadRequestException,
+  Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
-  Body,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -38,12 +35,6 @@ import type {
   ListOwnerRestaurantsQuery,
   ListRestaurantsQuery,
 } from '../../application/index.js';
-import {
-  InvalidRestaurantDataError,
-  RestaurantNotFoundError,
-  RestaurantOwnerNotFoundError,
-  RestaurantOwnershipError,
-} from '../../domain/index.js';
 
 @ApiTags('Restaurants')
 @Controller({ path: 'restaurant', version: '1' })
@@ -60,15 +51,11 @@ export class RestaurantsController {
     @Body() dto: CreateRestaurantDto,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: CreateRestaurantCommand = {
-        ...dto,
-        ownerId: user.userId,
-      };
-      return await this.restaurantsService.create(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: CreateRestaurantCommand = {
+      ...dto,
+      ownerId: user.userId,
+    };
+    return this.restaurantsService.create(command);
   }
 
   @Get()
@@ -78,11 +65,7 @@ export class RestaurantsController {
     @PaginationParams({ defaultRoute: '/restaurant' })
     query: ListRestaurantsQuery,
   ) {
-    try {
-      return await this.restaurantsService.list(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.restaurantsService.list(query);
   }
 
   @Get('me')
@@ -96,27 +79,19 @@ export class RestaurantsController {
     pagination: ListRestaurantsQuery,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const query: ListOwnerRestaurantsQuery = {
-        ...pagination,
-        ownerId: user.userId,
-      };
-      return await this.restaurantsService.listByOwner(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: ListOwnerRestaurantsQuery = {
+      ...pagination,
+      ownerId: user.userId,
+    };
+    return this.restaurantsService.listByOwner(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un restaurante por ID' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const query: FindRestaurantQuery = { restaurantId: id };
-      return await this.restaurantsService.findOne(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: FindRestaurantQuery = { restaurantId: id };
+    return this.restaurantsService.findOne(query);
   }
 
   @Patch(':id')
@@ -133,16 +108,12 @@ export class RestaurantsController {
     @Body() dto: UpdateRestaurantDto,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: UpdateRestaurantCommand = {
-        restaurantId: id,
-        ownerId: user.userId,
-        ...dto,
-      };
-      return await this.restaurantsService.update(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: UpdateRestaurantCommand = {
+      restaurantId: id,
+      ownerId: user.userId,
+      ...dto,
+    };
+    return this.restaurantsService.update(command);
   }
 
   @Delete(':id')
@@ -155,30 +126,10 @@ export class RestaurantsController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: DeleteRestaurantCommand = {
-        restaurantId: id,
-        ownerId: user.userId,
-      };
-      return await this.restaurantsService.delete(command);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof RestaurantOwnerNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof RestaurantNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof RestaurantOwnershipError) {
-      throw new ForbiddenException(error.message);
-    }
-    if (error instanceof InvalidRestaurantDataError) {
-      throw new BadRequestException(error.message);
-    }
-    throw error;
+    const command: DeleteRestaurantCommand = {
+      restaurantId: id,
+      ownerId: user.userId,
+    };
+    return this.restaurantsService.delete(command);
   }
 }

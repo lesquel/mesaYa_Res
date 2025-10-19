@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -33,11 +31,6 @@ import type {
   UpdateTableCommand,
 } from '../../application/dto/index.js';
 import { TablesService } from '../../application/services/index.js';
-import {
-  InvalidTableDataError,
-  TableNotFoundError,
-  TableSectionNotFoundError,
-} from '../../domain/index.js';
 
 @ApiTags('Tables')
 @Controller({ path: 'table', version: '1' })
@@ -51,12 +44,8 @@ export class TablesController {
   @ApiBearerAuth()
   @ApiBody({ type: CreateTableDto })
   async create(@Body() dto: CreateTableDto) {
-    try {
-      const command: CreateTableCommand = { ...dto };
-      return await this.tablesService.create(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: CreateTableCommand = { ...dto };
+    return this.tablesService.create(command);
   }
 
   @Get()
@@ -66,11 +55,7 @@ export class TablesController {
     @PaginationParams({ defaultRoute: '/table' })
     query: ListTablesQuery,
   ) {
-    try {
-      return await this.tablesService.list(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.tablesService.list(query);
   }
 
   @Get('section/:sectionId')
@@ -82,27 +67,19 @@ export class TablesController {
     @PaginationParams({ defaultRoute: '/table/section' })
     pagination: ListTablesQuery,
   ) {
-    try {
-      const query: ListSectionTablesQuery = {
-        sectionId,
-        ...pagination,
-      };
-      return await this.tablesService.listSection(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: ListSectionTablesQuery = {
+      sectionId,
+      ...pagination,
+    };
+    return this.tablesService.listSection(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener mesa por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const query: FindTableQuery = { tableId: id };
-      return await this.tablesService.findOne(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: FindTableQuery = { tableId: id };
+    return this.tablesService.findOne(query);
   }
 
   @Patch(':id')
@@ -116,12 +93,8 @@ export class TablesController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTableDto,
   ) {
-    try {
-      const command: UpdateTableCommand = { ...dto, tableId: id };
-      return await this.tablesService.update(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: UpdateTableCommand = { ...dto, tableId: id };
+    return this.tablesService.update(command);
   }
 
   @Delete(':id')
@@ -131,24 +104,7 @@ export class TablesController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const command: DeleteTableCommand = { tableId: id };
-      return await this.tablesService.delete(command);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof TableNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof TableSectionNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof InvalidTableDataError) {
-      throw new BadRequestException(error.message);
-    }
-    throw error as any;
+    const command: DeleteTableCommand = { tableId: id };
+    return this.tablesService.delete(command);
   }
 }

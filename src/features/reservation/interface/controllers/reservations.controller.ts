@@ -1,11 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -38,13 +35,6 @@ import type {
   ListRestaurantReservationsQuery,
 } from '../../application/dto/index.js';
 import { ReservationService } from '../../application/services/index.js';
-import {
-  ReservationNotFoundError,
-  ReservationOwnershipError,
-  ReservationRestaurantNotFoundError,
-  ReservationUserNotFoundError,
-  InvalidReservationDataError,
-} from '../../domain/index.js';
 
 @ApiTags('Reservations')
 @Controller({ path: 'reservations', version: '1' })
@@ -61,15 +51,11 @@ export class ReservationsController {
     @Body() dto: CreateReservationDto,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: CreateReservationCommand = {
-        ...dto,
-        userId: user.userId,
-      };
-      return await this.reservationsService.create(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: CreateReservationCommand = {
+      ...dto,
+      userId: user.userId,
+    };
+    return this.reservationsService.create(command);
   }
 
   @Get()
@@ -79,11 +65,7 @@ export class ReservationsController {
     @PaginationParams({ defaultRoute: '/reservations' })
     query: ListReservationsQuery,
   ) {
-    try {
-      return await this.reservationsService.list(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.reservationsService.list(query);
   }
 
   @Get('restaurant/:restaurantId')
@@ -95,27 +77,19 @@ export class ReservationsController {
     @PaginationParams({ defaultRoute: '/reservations/restaurant' })
     pagination: ListReservationsQuery,
   ) {
-    try {
-      const query: ListRestaurantReservationsQuery = {
-        restaurantId,
-        ...pagination,
-      };
-      return await this.reservationsService.listByRestaurant(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: ListRestaurantReservationsQuery = {
+      restaurantId,
+      ...pagination,
+    };
+    return this.reservationsService.listByRestaurant(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una reserva por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const query: FindReservationQuery = { reservationId: id };
-      return await this.reservationsService.findOne(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: FindReservationQuery = { reservationId: id };
+    return this.reservationsService.findOne(query);
   }
 
   @Patch(':id')
@@ -132,16 +106,12 @@ export class ReservationsController {
     @Body() dto: UpdateReservationDto,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: UpdateReservationCommand = {
-        ...dto,
-        reservationId: id,
-        userId: user.userId,
-      };
-      return await this.reservationsService.update(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: UpdateReservationCommand = {
+      ...dto,
+      reservationId: id,
+      userId: user.userId,
+    };
+    return this.reservationsService.update(command);
   }
 
   @Delete(':id')
@@ -156,33 +126,10 @@ export class ReservationsController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: DeleteReservationCommand = {
-        reservationId: id,
-        userId: user.userId,
-      };
-      return await this.reservationsService.delete(command);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof ReservationNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof ReservationOwnershipError) {
-      throw new ForbiddenException(error.message);
-    }
-    if (error instanceof ReservationRestaurantNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof ReservationUserNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof InvalidReservationDataError) {
-      throw new BadRequestException(error.message);
-    }
-    throw error as any;
+    const command: DeleteReservationCommand = {
+      reservationId: id,
+      userId: user.userId,
+    };
+    return this.reservationsService.delete(command);
   }
 }

@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -22,7 +20,6 @@ import type {
   DeleteSubscriptionPlanResponseDto,
 } from '@features/subscription/application';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
-import { SubscriptionPlanNotFoundError } from '@features/subscription/domain';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 
@@ -38,11 +35,7 @@ export class SubscriptionPlanController {
   async createSubscriptionPlan(
     @Body() dto: CreateSubscriptionPlanDto,
   ): Promise<SubscriptionPlanResponseDto> {
-    try {
-      return await this.subscriptionPlanService.create(dto);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.subscriptionPlanService.create(dto);
   }
 
   @Get()
@@ -51,11 +44,7 @@ export class SubscriptionPlanController {
   async getSubscriptionPlans(
     @PaginationParams() params: PaginatedQueryParams,
   ): Promise<SubscriptionPlanListResponseDto> {
-    try {
-      return await this.subscriptionPlanService.findAll(params);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.subscriptionPlanService.findAll(params);
   }
 
   @Get(':subscriptionPlanId')
@@ -64,13 +53,9 @@ export class SubscriptionPlanController {
   async getSubscriptionPlanById(
     @Param('subscriptionPlanId', ParseUUIDPipe) subscriptionPlanId: string,
   ): Promise<SubscriptionPlanResponseDto> {
-    try {
-      return await this.subscriptionPlanService.findById({
-        subscriptionPlanId,
-      });
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.subscriptionPlanService.findById({
+      subscriptionPlanId,
+    });
   }
 
   @Patch(':subscriptionPlanId')
@@ -80,14 +65,10 @@ export class SubscriptionPlanController {
     @Param('subscriptionPlanId', ParseUUIDPipe) subscriptionPlanId: string,
     @Body() dto: Omit<UpdateSubscriptionPlanDto, 'subscriptionPlanId'>,
   ): Promise<SubscriptionPlanResponseDto> {
-    try {
-      return await this.subscriptionPlanService.update({
-        ...dto,
-        subscriptionPlanId,
-      });
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.subscriptionPlanService.update({
+      ...dto,
+      subscriptionPlanId,
+    });
   }
 
   @Delete(':subscriptionPlanId')
@@ -96,23 +77,7 @@ export class SubscriptionPlanController {
   async deleteSubscriptionPlan(
     @Param('subscriptionPlanId', ParseUUIDPipe) subscriptionPlanId: string,
   ): Promise<DeleteSubscriptionPlanResponseDto> {
-    try {
-      const dto: DeleteSubscriptionPlanDto = { subscriptionPlanId };
-      return await this.subscriptionPlanService.delete(dto);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof SubscriptionPlanNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-
-    if (error instanceof Error) {
-      throw new BadRequestException(error.message);
-    }
-
-    throw error as Error;
+    const dto: DeleteSubscriptionPlanDto = { subscriptionPlanId };
+    return this.subscriptionPlanService.delete(dto);
   }
 }

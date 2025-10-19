@@ -1,11 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -38,13 +35,6 @@ import type {
   ListRestaurantReviewsQuery,
   UpdateReviewCommand,
 } from '../../application/index.js';
-import {
-  InvalidReviewDataError,
-  ReviewNotFoundError,
-  ReviewOwnershipError,
-  ReviewRestaurantNotFoundError,
-  ReviewUserNotFoundError,
-} from '../../domain/index.js';
 
 @ApiTags('Reviews')
 @Controller({ path: 'review', version: '1' })
@@ -61,15 +51,11 @@ export class ReviewsController {
     @Body() dto: CreateReviewDto,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: CreateReviewCommand = {
-        ...dto,
-        userId: user.userId,
-      };
-      return await this.reviewsService.create(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: CreateReviewCommand = {
+      ...dto,
+      userId: user.userId,
+    };
+    return this.reviewsService.create(command);
   }
 
   @Get()
@@ -79,11 +65,7 @@ export class ReviewsController {
     @PaginationParams({ defaultRoute: '/review' })
     query: ListReviewsQuery,
   ) {
-    try {
-      return await this.reviewsService.list(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.reviewsService.list(query);
   }
 
   @Get('restaurant/:restaurantId')
@@ -95,27 +77,19 @@ export class ReviewsController {
     @PaginationParams({ defaultRoute: '/review/restaurant' })
     pagination: ListReviewsQuery,
   ) {
-    try {
-      const query: ListRestaurantReviewsQuery = {
-        restaurantId,
-        ...pagination,
-      };
-      return await this.reviewsService.listByRestaurant(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: ListRestaurantReviewsQuery = {
+      restaurantId,
+      ...pagination,
+    };
+    return this.reviewsService.listByRestaurant(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una reseña por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const query: FindReviewQuery = { reviewId: id };
-      return await this.reviewsService.findOne(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: FindReviewQuery = { reviewId: id };
+    return this.reviewsService.findOne(query);
   }
 
   @Patch(':id')
@@ -130,16 +104,12 @@ export class ReviewsController {
     @Body() dto: UpdateReviewDto,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: UpdateReviewCommand = {
-        ...dto,
-        reviewId: id,
-        userId: user.userId,
-      };
-      return await this.reviewsService.update(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: UpdateReviewCommand = {
+      ...dto,
+      reviewId: id,
+      userId: user.userId,
+    };
+    return this.reviewsService.update(command);
   }
 
   @Delete(':id')
@@ -152,33 +122,10 @@ export class ReviewsController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
   ) {
-    try {
-      const command: DeleteReviewCommand = {
-        reviewId: id,
-        userId: user.userId,
-      };
-      return await this.reviewsService.delete(command);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof ReviewNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof ReviewOwnershipError) {
-      throw new ForbiddenException(error.message);
-    }
-    if (error instanceof ReviewRestaurantNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof ReviewUserNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof InvalidReviewDataError) {
-      throw new BadRequestException(error.message);
-    }
-    throw error;
+    const command: DeleteReviewCommand = {
+      reviewId: id,
+      userId: user.userId,
+    };
+    return this.reviewsService.delete(command);
   }
 }

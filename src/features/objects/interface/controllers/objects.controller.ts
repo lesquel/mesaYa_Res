@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -35,10 +33,6 @@ import type {
   ListGraphicObjectsQuery,
   UpdateGraphicObjectCommand,
 } from '../../application/index.js';
-import {
-  GraphicObjectNotFoundError,
-  InvalidGraphicObjectDataError,
-} from '../../domain/index.js';
 
 @ApiTags('Objects')
 @Controller({ path: 'object', version: '1' })
@@ -52,12 +46,8 @@ export class ObjectsController {
   @ApiBearerAuth()
   @ApiBody({ type: CreateGraphicObjectDto })
   async create(@Body() dto: CreateGraphicObjectDto) {
-    try {
-      const command: CreateGraphicObjectCommand = { ...dto };
-      return await this.objects.create(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: CreateGraphicObjectCommand = { ...dto };
+    return this.objects.create(command);
   }
 
   @Get()
@@ -67,23 +57,15 @@ export class ObjectsController {
     @PaginationParams({ defaultRoute: '/object' })
     query: ListGraphicObjectsQuery,
   ) {
-    try {
-      return await this.objects.list(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    return this.objects.list(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener objeto por ID' })
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const query: FindGraphicObjectQuery = { objectId: id };
-      return await this.objects.findOne(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: FindGraphicObjectQuery = { objectId: id };
+    return this.objects.findOne(query);
   }
 
   @Patch(':id')
@@ -97,12 +79,8 @@ export class ObjectsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateGraphicObjectDto,
   ) {
-    try {
-      const command: UpdateGraphicObjectCommand = { objectId: id, ...dto };
-      return await this.objects.update(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: UpdateGraphicObjectCommand = { objectId: id, ...dto };
+    return this.objects.update(command);
   }
 
   @Delete(':id')
@@ -112,21 +90,7 @@ export class ObjectsController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const command: DeleteGraphicObjectCommand = { objectId: id };
-      return await this.objects.delete(command);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof GraphicObjectNotFoundError) {
-      throw new NotFoundException(error.message);
-    }
-    if (error instanceof InvalidGraphicObjectDataError) {
-      throw new BadRequestException(error.message);
-    }
-    throw error as any;
+    const command: DeleteGraphicObjectCommand = { objectId: id };
+    return this.objects.delete(command);
   }
 }
