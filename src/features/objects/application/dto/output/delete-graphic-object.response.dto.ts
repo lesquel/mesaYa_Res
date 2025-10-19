@@ -1,1 +1,3 @@
-export interface DeleteGraphicObjectResponseDto { ok: boolean }
+export interface DeleteGraphicObjectResponseDto {
+  ok: boolean;
+}

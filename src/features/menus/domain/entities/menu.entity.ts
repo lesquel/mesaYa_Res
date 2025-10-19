@@ -47,7 +47,7 @@ export class MenuEntity {
     this.props = next;
   }
 
-  replacePlatillos(dishes: DishSnapshot[]): void {
+  replaceDishes(dishes: DishSnapshot[]): void {
     this.props = {
       ...this.props,
       dishes: [...dishes],
@@ -84,23 +84,23 @@ export class MenuEntity {
 
   private static validate(props: MenuProps): void {
     if (!props.name || !props.name.trim()) {
-      throw new Error('Menu must have a valid nombre');
+      throw new Error('Menu must have a valid name');
     }
 
     if (!props.description || !props.description.trim()) {
-      throw new Error('Menu must have a valid descripcion');
+      throw new Error('Menu must have a valid description');
     }
 
     if (!props.imageUrl || !props.imageUrl.trim()) {
-      throw new Error('Menu must have a valid fotoUrl');
+      throw new Error('Menu must have a valid imageUrl');
     }
 
     if (!(props.price instanceof MoneyVO)) {
-      throw new Error('Menu must have a valid precio value object');
+      throw new Error('Menu must have a valid price value object');
     }
 
     if (props.restaurantId <= 0) {
-      throw new Error('Menu must reference a valid restaurante');
+      throw new Error('Menu must reference a valid restaurant');
     }
   }
 }

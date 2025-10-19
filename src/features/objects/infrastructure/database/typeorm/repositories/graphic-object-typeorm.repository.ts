@@ -10,7 +10,9 @@ import { ListGraphicObjectsQuery } from '../../../../application/dto/index.js';
 import { type GraphicObjectRepositoryPort } from '../../../../application/ports/index.js';
 
 @Injectable()
-export class GraphicObjectTypeOrmRepository implements GraphicObjectRepositoryPort {
+export class GraphicObjectTypeOrmRepository
+  implements GraphicObjectRepositoryPort
+{
   constructor(
     @InjectRepository(GraphicObjectOrmEntity)
     private readonly objects: Repository<GraphicObjectOrmEntity>,
@@ -33,7 +35,9 @@ export class GraphicObjectTypeOrmRepository implements GraphicObjectRepositoryPo
     await this.objects.delete({ id });
   }
 
-  async paginate(query: ListGraphicObjectsQuery): Promise<PaginatedResult<GraphicObject>> {
+  async paginate(
+    query: ListGraphicObjectsQuery,
+  ): Promise<PaginatedResult<GraphicObject>> {
     const qb = this.buildBaseQuery();
     return this.execPagination(qb, query);
   }
@@ -56,7 +60,8 @@ export class GraphicObjectTypeOrmRepository implements GraphicObjectRepositoryPo
       imageId: `${alias}.imageId`,
       createdAt: `${alias}.createdAt`,
     };
-    const sortByColumn = query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
 
     const paginationResult = await paginateQueryBuilder(qb, {
       ...query.pagination,
@@ -65,12 +70,20 @@ export class GraphicObjectTypeOrmRepository implements GraphicObjectRepositoryPo
       sortOrder: query.sortOrder,
       q: query.search ?? undefined,
       allowedSorts: Object.values(sortMap),
-      searchable: [`${alias}.posX`, `${alias}.posY`, `${alias}.width`, `${alias}.height`, `${alias}.imageId`],
+      searchable: [
+        `${alias}.posX`,
+        `${alias}.posY`,
+        `${alias}.width`,
+        `${alias}.height`,
+        `${alias}.imageId`,
+      ],
     });
 
     return {
       ...paginationResult,
-      results: paginationResult.results.map((e) => GraphicObjectOrmMapper.toDomain(e)),
+      results: paginationResult.results.map((e) =>
+        GraphicObjectOrmMapper.toDomain(e),
+      ),
     };
   }
 }

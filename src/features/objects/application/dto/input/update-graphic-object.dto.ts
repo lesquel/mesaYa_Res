@@ -31,4 +31,6 @@ export class UpdateGraphicObjectDto {
   imageId?: number;
 }
 
-export type UpdateGraphicObjectCommand = UpdateGraphicObjectDto & { objectId: string };
+export type UpdateGraphicObjectCommand = UpdateGraphicObjectDto & {
+  objectId: string;
+};

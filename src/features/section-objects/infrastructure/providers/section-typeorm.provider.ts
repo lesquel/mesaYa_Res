@@ -5,7 +5,14 @@ import { SectionOrmEntity } from '../../../sections/infrastructure/database/type
 import { type SectionReaderForSectionObjectPort } from '../../application/ports/index.js';
 
 @Injectable()
-export class SectionTypeOrmReaderForSectionObject implements SectionReaderForSectionObjectPort {
-  constructor(@InjectRepository(SectionOrmEntity) private readonly sections: Repository<SectionOrmEntity>) {}
-  async exists(sectionId: string): Promise<boolean> { return !!(await this.sections.findOne({ where: { id: sectionId } })); }
+export class SectionTypeOrmReaderForSectionObject
+  implements SectionReaderForSectionObjectPort
+{
+  constructor(
+    @InjectRepository(SectionOrmEntity)
+    private readonly sections: Repository<SectionOrmEntity>,
+  ) {}
+  async exists(sectionId: string): Promise<boolean> {
+    return !!(await this.sections.findOne({ where: { id: sectionId } }));
+  }
 }

@@ -1,1 +1,3 @@
-export interface DeleteGraphicObjectCommand { objectId: string }
+export interface DeleteGraphicObjectCommand {
+  objectId: string;
+}

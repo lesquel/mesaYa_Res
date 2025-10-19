@@ -7,6 +7,7 @@ import { ReservationModule } from './reservation/reservation.module.js';
 import { TablesModule } from './tables/tables.module.js';
 import { ObjectsModule } from './objects/objects.module.js';
 import { SectionObjectsModule } from './section-objects/section-objects.module.js';
+import { MenusModule } from './menus/menus.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SectionObjectsModule } from './section-objects/section-objects.module.j
     TablesModule,
     ObjectsModule,
     SectionObjectsModule,
+    MenusModule,
   ],
   exports: [
     RestaurantsModule,
@@ -28,6 +30,7 @@ import { SectionObjectsModule } from './section-objects/section-objects.module.j
     TablesModule,
     ObjectsModule,
     SectionObjectsModule,
+    MenusModule,
   ],
 })
 export class FeaturesModule {}

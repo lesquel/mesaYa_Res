@@ -70,7 +70,7 @@ export class SectionObjectsController {
   @ApiPaginationQuery()
   async list(@Query() pagination: PaginationDto, @Req() req: Request) {
     try {
-      const route = (req?.baseUrl || req?.path || '/section-object') as string;
+      const route = req?.baseUrl || req?.path || '/section-object';
       const query: ListSectionObjectsQuery = {
         pagination: {
           page: pagination.page,

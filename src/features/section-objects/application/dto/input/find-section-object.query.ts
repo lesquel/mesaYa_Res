@@ -1,1 +1,3 @@
-export interface FindSectionObjectQuery { sectionObjectId: string }
+export interface FindSectionObjectQuery {
+  sectionObjectId: string;
+}

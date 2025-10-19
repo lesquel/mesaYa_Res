@@ -1,1 +1,3 @@
-export interface DeleteSectionObjectCommand { sectionObjectId: string }
+export interface DeleteSectionObjectCommand {
+  sectionObjectId: string;
+}

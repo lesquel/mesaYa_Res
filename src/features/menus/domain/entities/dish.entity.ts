@@ -71,23 +71,23 @@ export class DishEntity {
 
   private static validate(props: DishProps): void {
     if (!props.name || !props.name.trim()) {
-      throw new Error('Dish must have a valid nombre');
+      throw new Error('Dish must have a valid name');
     }
 
     if (!props.description || !props.description.trim()) {
-      throw new Error('Dish must have a valid descripcion');
+      throw new Error('Dish must have a valid description');
     }
 
     if (!(props.price instanceof MoneyVO)) {
-      throw new Error('Dish must have a valid precio value object');
+      throw new Error('Dish must have a valid price value object');
     }
 
     if (props.restaurantId <= 0) {
-      throw new Error('Dish must reference a valid restaurante');
+      throw new Error('Dish must reference a valid restaurant');
     }
 
     if (props.imageId !== undefined && props.imageId < 0) {
-      throw new Error('Dish cannot reference a negative imagenId');
+      throw new Error('Dish cannot reference a negative imageId');
     }
   }
 }

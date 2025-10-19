@@ -3,10 +3,7 @@ import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { randomUUID } from 'crypto';
 import { Table, TableSectionNotFoundError } from '../../domain/index.js';
 import { TableMapper } from '../mappers/index.js';
-import {
-  CreateTableCommand,
-  TableResponseDto,
-} from '../dto/index.js';
+import { CreateTableCommand, TableResponseDto } from '../dto/index.js';
 import {
   TABLE_REPOSITORY,
   type TableRepositoryPort,

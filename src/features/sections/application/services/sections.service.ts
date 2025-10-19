@@ -91,5 +91,4 @@ export class SectionsService {
   }
 }
 
-
 // Kafka tiene alguna interfaz web donde se pueda revisar todo$ Quiero revisarlo tambien para ver como es jeje

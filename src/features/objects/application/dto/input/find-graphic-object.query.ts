@@ -1,1 +1,3 @@
-export interface FindGraphicObjectQuery { objectId: string }
+export interface FindGraphicObjectQuery {
+  objectId: string;
+}

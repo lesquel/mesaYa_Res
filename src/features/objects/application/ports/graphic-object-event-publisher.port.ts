@@ -1,4 +1,6 @@
-export const GRAPHIC_OBJECT_EVENT_PUBLISHER = Symbol('GRAPHIC_OBJECT_EVENT_PUBLISHER');
+export const GRAPHIC_OBJECT_EVENT_PUBLISHER = Symbol(
+  'GRAPHIC_OBJECT_EVENT_PUBLISHER',
+);
 
 export type GraphicObjectEventType =
   | 'object.created'

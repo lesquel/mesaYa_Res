@@ -100,7 +100,9 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
     }
   }
 
-  async paginate(query: ListReviewsQuery): Promise<PaginatedResult<ReviewEntity>> {
+  async paginate(
+    query: ListReviewsQuery,
+  ): Promise<PaginatedResult<ReviewEntity>> {
     const qb = this.buildBaseQuery();
     return this.executePagination(qb, query);
   }

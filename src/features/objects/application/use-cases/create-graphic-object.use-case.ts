@@ -3,17 +3,31 @@ import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { randomUUID } from 'crypto';
 import { GraphicObject } from '../../domain/index.js';
 import { GraphicObjectMapper } from '../mappers/index.js';
-import { CreateGraphicObjectCommand, GraphicObjectResponseDto } from '../dto/index.js';
-import { GRAPHIC_OBJECT_EVENT_PUBLISHER, GRAPHIC_OBJECT_REPOSITORY, type GraphicObjectEventPublisherPort, type GraphicObjectRepositoryPort } from '../ports/index.js';
+import {
+  CreateGraphicObjectCommand,
+  GraphicObjectResponseDto,
+} from '../dto/index.js';
+import {
+  GRAPHIC_OBJECT_EVENT_PUBLISHER,
+  GRAPHIC_OBJECT_REPOSITORY,
+  type GraphicObjectEventPublisherPort,
+  type GraphicObjectRepositoryPort,
+} from '../ports/index.js';
 
 @Injectable()
-export class CreateGraphicObjectUseCase implements UseCase<CreateGraphicObjectCommand, GraphicObjectResponseDto> {
+export class CreateGraphicObjectUseCase
+  implements UseCase<CreateGraphicObjectCommand, GraphicObjectResponseDto>
+{
   constructor(
-    @Inject(GRAPHIC_OBJECT_REPOSITORY) private readonly repo: GraphicObjectRepositoryPort,
-    @Inject(GRAPHIC_OBJECT_EVENT_PUBLISHER) private readonly events: GraphicObjectEventPublisherPort,
+    @Inject(GRAPHIC_OBJECT_REPOSITORY)
+    private readonly repo: GraphicObjectRepositoryPort,
+    @Inject(GRAPHIC_OBJECT_EVENT_PUBLISHER)
+    private readonly events: GraphicObjectEventPublisherPort,
   ) {}
 
-  async execute(command: CreateGraphicObjectCommand): Promise<GraphicObjectResponseDto> {
+  async execute(
+    command: CreateGraphicObjectCommand,
+  ): Promise<GraphicObjectResponseDto> {
     const object = GraphicObject.create(randomUUID(), {
       posX: command.posX,
       posY: command.posY,
@@ -22,7 +36,12 @@ export class CreateGraphicObjectUseCase implements UseCase<CreateGraphicObjectCo
       imageId: command.imageId,
     });
     const saved = await this.repo.save(object);
-    await this.events.publish({ type: 'object.created', objectId: saved.id, occurredAt: new Date(), data: { width: saved.width, height: saved.height } });
+    await this.events.publish({
+      type: 'object.created',
+      objectId: saved.id,
+      occurredAt: new Date(),
+      data: { width: saved.width, height: saved.height },
+    });
     return GraphicObjectMapper.toResponse(saved);
   }
 }

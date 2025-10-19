@@ -1570,7 +1570,7 @@ export class ObjectsController {
     @Req() req: Request,
   ) {
     try {
-      const route = (req?.baseUrl || req?.path || '/object') as string;
+      const route = req?.baseUrl || req?.path || '/object';
       const query: ListGraphicObjectsQuery = {
         pagination: {
           page: pagination.page,

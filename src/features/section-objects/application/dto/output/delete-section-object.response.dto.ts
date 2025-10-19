@@ -1,1 +1,3 @@
-export interface DeleteSectionObjectResponseDto { ok: boolean }
+export interface DeleteSectionObjectResponseDto {
+  ok: boolean;
+}

@@ -24,21 +24,32 @@ export class TableTypeOrmRepository implements TableRepositoryPort {
 
   async save(table: Table): Promise<Table> {
     const s = table.snapshot();
-    const existing = await this.tables.findOne({ where: { id: s.id }, relations: ['section'] });
+    const existing = await this.tables.findOne({
+      where: { id: s.id },
+      relations: ['section'],
+    });
 
     let section = existing?.section;
     if (!existing) {
-      section = await this.sections.findOne({ where: { id: s.sectionId } }) ?? undefined;
+      section =
+        (await this.sections.findOne({ where: { id: s.sectionId } })) ??
+        undefined;
       if (!section) throw new Error('Section not found');
     }
 
-    const entity = TableOrmMapper.toOrmEntity(table, { existing: existing ?? undefined, section });
+    const entity = TableOrmMapper.toOrmEntity(table, {
+      existing: existing ?? undefined,
+      section,
+    });
     const saved = await this.tables.save(entity);
     return TableOrmMapper.toDomain(saved);
   }
 
   async findById(id: string): Promise<Table | null> {
-    const entity = await this.tables.findOne({ where: { id }, relations: ['section'] });
+    const entity = await this.tables.findOne({
+      where: { id },
+      relations: ['section'],
+    });
     return entity ? TableOrmMapper.toDomain(entity) : null;
   }
 

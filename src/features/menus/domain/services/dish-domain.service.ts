@@ -23,7 +23,7 @@ export class DishDomainService {
     return dish;
   }
 
-  async updatePlatillo(data: DishUpdate): Promise<DishEntity> {
+  async updateDish(data: DishUpdate): Promise<DishEntity> {
     const updated = await this.dishRepository.update(data);
 
     if (!updated) {
@@ -33,7 +33,7 @@ export class DishDomainService {
     return updated;
   }
 
-  async findPlatilloById(dishId: string): Promise<DishEntity> {
+  async findDishById(dishId: string): Promise<DishEntity> {
     const dish = await this.dishRepository.findById(dishId);
 
     if (!dish) {
@@ -43,11 +43,11 @@ export class DishDomainService {
     return dish;
   }
 
-  async findAllPlatillos(): Promise<DishEntity[]> {
+  async findAllDishes(): Promise<DishEntity[]> {
     return this.dishRepository.findAll();
   }
 
-  async deletePlatillo(dishId: string): Promise<void> {
+  async deleteDish(dishId: string): Promise<void> {
     const deleted = await this.dishRepository.delete(dishId);
 
     if (!deleted) {
