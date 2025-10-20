@@ -18,11 +18,18 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
+<<<<<<< HEAD
 import { PaymentEntityDTOMapper } from '../mappers';
 import {
   IPaymentRepositoryPort,
   PaymentDomainService,
 } from '@features/payment/domain';
+=======
+import { IPaymentRepositoryPort } from '../../domain/repositories';
+import { ILoggerPort } from '@shared/application/ports/logger.port';
+import { PaymentEntityDTOMapper } from '../mappers';
+
+>>>>>>> fe5730e (refactor(payment): restructure payment repository ports and mappers)
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
   private getPaymentByIdUseCase: GetPaymentByIdUseCase;
@@ -32,6 +39,7 @@ export class PaymentService {
   private readonly paymentDomainService: PaymentDomainService;
 
   constructor(
+<<<<<<< HEAD
     private readonly logger: ILoggerPort,
     paymentRepository: IPaymentRepositoryPort,
     paymentEntityToMapper: PaymentEntityDTOMapper,
@@ -60,6 +68,33 @@ export class PaymentService {
     this.deletePaymentUseCase = new DeletePaymentUseCase(
       this.logger,
       this.paymentDomainService,
+=======
+    logger: ILoggerPort,
+    paymentRepository: IPaymentRepositoryPort,
+    paymentEntityToMapper: PaymentEntityDTOMapper,
+  ) {
+    this.createPaymentUseCase = new CreatePaymentUseCase(
+      logger,
+      paymentRepository,
+      paymentEntityToMapper,
+    );
+    this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(
+      logger,
+      paymentRepository,
+    );
+    this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
+      logger,
+      paymentRepository,
+    );
+    this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
+      logger,
+      paymentRepository,
+      paymentEntityToMapper,
+    );
+    this.deletePaymentUseCase = new DeletePaymentUseCase(
+      logger,
+      paymentRepository,
+>>>>>>> fe5730e (refactor(payment): restructure payment repository ports and mappers)
     );
   }
 
