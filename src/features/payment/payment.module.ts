@@ -13,12 +13,17 @@ import {
   PAYMENT_ORM_MAPPER,
 } from './application/index.js';
 import { IPaymentRepositoryPort } from './domain/index.js';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants.js';
+import type { ILoggerPort } from '@shared/application/ports/logger.port.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PaymentOrmEntity])],
   controllers: [PaymentController],
   providers: [
-    PaymentEntityDTOMapper,
+    {
+      provide: PaymentEntityDTOMapper,
+      useFactory: () => new PaymentEntityDTOMapper(),
+    },
     {
       provide: PAYMENT_ORM_MAPPER,
       useClass: PaymentOrmMapper,
@@ -27,7 +32,15 @@ import { IPaymentRepositoryPort } from './domain/index.js';
       provide: IPaymentRepositoryPort,
       useClass: PaymentTypeOrmRepository,
     },
-    PaymentService,
+    {
+      provide: PaymentService,
+      useFactory: (
+        logger: ILoggerPort,
+        paymentRepository: IPaymentRepositoryPort,
+        mapper: PaymentEntityDTOMapper,
+      ) => new PaymentService(logger, paymentRepository, mapper),
+      inject: [LOGGER, IPaymentRepositoryPort, PaymentEntityDTOMapper],
+    },
   ],
   exports: [PaymentService],
 })

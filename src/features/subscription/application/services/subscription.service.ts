@@ -1,4 +1,3 @@
-import { Inject, Injectable } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
@@ -26,9 +25,6 @@ import {
   SubscriptionDomainService,
 } from '@features/subscription/domain';
 import { SubscriptionMapper } from '../mappers';
-import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
-
-@Injectable()
 export class SubscriptionService {
   private readonly subscriptionDomainService: SubscriptionDomainService;
 
@@ -40,8 +36,7 @@ export class SubscriptionService {
   private readonly deleteSubscriptionUseCase: DeleteSubscriptionUseCase;
 
   constructor(
-    @Inject(LOGGER) logger: ILoggerPort,
-    @Inject(ISubscriptionRepositoryPort)
+    private readonly logger: ILoggerPort,
     subscriptionRepository: ISubscriptionRepositoryPort,
     subscriptionMapper: SubscriptionMapper,
   ) {
@@ -50,37 +45,37 @@ export class SubscriptionService {
     );
 
     this.createSubscriptionUseCase = new CreateSubscriptionUseCase(
-      logger,
+      this.logger,
       this.subscriptionDomainService,
       subscriptionMapper,
     );
 
     this.getSubscriptionByIdUseCase = new GetSubscriptionByIdUseCase(
-      logger,
+      this.logger,
       this.subscriptionDomainService,
       subscriptionMapper,
     );
 
     this.listSubscriptionsUseCase = new ListSubscriptionsUseCase(
-      logger,
+      this.logger,
       this.subscriptionDomainService,
       subscriptionMapper,
     );
 
     this.updateSubscriptionUseCase = new UpdateSubscriptionUseCase(
-      logger,
+      this.logger,
       this.subscriptionDomainService,
       subscriptionMapper,
     );
 
     this.updateSubscriptionStateUseCase = new UpdateSubscriptionStateUseCase(
-      logger,
+      this.logger,
       this.subscriptionDomainService,
       subscriptionMapper,
     );
 
     this.deleteSubscriptionUseCase = new DeleteSubscriptionUseCase(
-      logger,
+      this.logger,
       this.subscriptionDomainService,
     );
   }

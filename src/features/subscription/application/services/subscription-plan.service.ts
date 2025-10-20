@@ -1,4 +1,3 @@
-import { Inject, Injectable } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
@@ -24,9 +23,6 @@ import {
   SubscriptionPlanDomainService,
 } from '@features/subscription/domain';
 import { SubscriptionPlanMapper } from '../mappers';
-import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
-
-@Injectable()
 export class SubscriptionPlanService {
   private readonly subscriptionPlanDomainService: SubscriptionPlanDomainService;
 
@@ -37,8 +33,7 @@ export class SubscriptionPlanService {
   private readonly deleteSubscriptionPlanUseCase: DeleteSubscriptionPlanUseCase;
 
   constructor(
-    @Inject(LOGGER) logger: ILoggerPort,
-    @Inject(ISubscriptionPlanRepositoryPort)
+    private readonly logger: ILoggerPort,
     subscriptionPlanRepository: ISubscriptionPlanRepositoryPort,
     subscriptionPlanMapper: SubscriptionPlanMapper,
   ) {
@@ -47,31 +42,31 @@ export class SubscriptionPlanService {
     );
 
     this.createSubscriptionPlanUseCase = new CreateSubscriptionPlanUseCase(
-      logger,
+      this.logger,
       this.subscriptionPlanDomainService,
       subscriptionPlanMapper,
     );
 
     this.getSubscriptionPlanByIdUseCase = new GetSubscriptionPlanByIdUseCase(
-      logger,
+      this.logger,
       this.subscriptionPlanDomainService,
       subscriptionPlanMapper,
     );
 
     this.listSubscriptionPlansUseCase = new ListSubscriptionPlansUseCase(
-      logger,
+      this.logger,
       this.subscriptionPlanDomainService,
       subscriptionPlanMapper,
     );
 
     this.updateSubscriptionPlanUseCase = new UpdateSubscriptionPlanUseCase(
-      logger,
+      this.logger,
       this.subscriptionPlanDomainService,
       subscriptionPlanMapper,
     );
 
     this.deleteSubscriptionPlanUseCase = new DeleteSubscriptionPlanUseCase(
-      logger,
+      this.logger,
       this.subscriptionPlanDomainService,
     );
   }

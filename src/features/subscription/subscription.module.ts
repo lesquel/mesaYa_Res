@@ -6,6 +6,8 @@ import {
   SubscriptionService,
   SUBSCRIPTION_ORM_MAPPER,
   SUBSCRIPTION_PLAN_ORM_MAPPER,
+  SubscriptionMapper,
+  SubscriptionPlanMapper,
 } from './application/index.js';
 import {
   SubscriptionPlanOrmMapper,
@@ -24,6 +26,8 @@ import {
   ISubscriptionRepositoryPort,
 } from './domain/index.js';
 import { RestaurantOrmEntity } from '@features/restaurants';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants.js';
+import type { ILoggerPort } from '@shared/application/ports/logger.port.js';
 
 @Module({
   imports: [
@@ -51,8 +55,42 @@ import { RestaurantOrmEntity } from '@features/restaurants';
       provide: ISubscriptionPlanRepositoryPort,
       useClass: SubscriptionPlanTypeOrmRepository,
     },
-    SubscriptionService,
-    SubscriptionPlanService,
+    {
+      provide: SubscriptionMapper,
+      useFactory: () => new SubscriptionMapper(),
+    },
+    {
+      provide: SubscriptionPlanMapper,
+      useFactory: () => new SubscriptionPlanMapper(),
+    },
+    {
+      provide: SubscriptionService,
+      useFactory: (
+        logger: ILoggerPort,
+        subscriptionRepository: ISubscriptionRepositoryPort,
+        subscriptionMapper: SubscriptionMapper,
+      ) =>
+        new SubscriptionService(
+          logger,
+          subscriptionRepository,
+          subscriptionMapper,
+        ),
+      inject: [LOGGER, ISubscriptionRepositoryPort, SubscriptionMapper],
+    },
+    {
+      provide: SubscriptionPlanService,
+      useFactory: (
+        logger: ILoggerPort,
+        subscriptionPlanRepository: ISubscriptionPlanRepositoryPort,
+        subscriptionPlanMapper: SubscriptionPlanMapper,
+      ) =>
+        new SubscriptionPlanService(
+          logger,
+          subscriptionPlanRepository,
+          subscriptionPlanMapper,
+        ),
+      inject: [LOGGER, ISubscriptionPlanRepositoryPort, SubscriptionPlanMapper],
+    },
   ],
   exports: [SubscriptionService, SubscriptionPlanService],
 })

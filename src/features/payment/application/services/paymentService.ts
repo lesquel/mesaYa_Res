@@ -1,4 +1,3 @@
-import { Inject, Injectable } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
@@ -24,9 +23,6 @@ import {
   IPaymentRepositoryPort,
   PaymentDomainService,
 } from '@features/payment/domain';
-import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
-
-@Injectable()
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
   private getPaymentByIdUseCase: GetPaymentByIdUseCase;
@@ -36,34 +32,33 @@ export class PaymentService {
   private readonly paymentDomainService: PaymentDomainService;
 
   constructor(
-    @Inject(LOGGER) logger: ILoggerPort,
-    @Inject(IPaymentRepositoryPort)
+    private readonly logger: ILoggerPort,
     paymentRepository: IPaymentRepositoryPort,
     paymentEntityToMapper: PaymentEntityDTOMapper,
   ) {
     this.paymentDomainService = new PaymentDomainService(paymentRepository);
     this.createPaymentUseCase = new CreatePaymentUseCase(
-      logger,
+      this.logger,
       this.paymentDomainService,
       paymentEntityToMapper,
     );
     this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(
-      logger,
+      this.logger,
       this.paymentDomainService,
       paymentEntityToMapper,
     );
     this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
-      logger,
+      this.logger,
       this.paymentDomainService,
       paymentEntityToMapper,
     );
     this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
-      logger,
+      this.logger,
       paymentEntityToMapper,
       this.paymentDomainService,
     );
     this.deletePaymentUseCase = new DeletePaymentUseCase(
-      logger,
+      this.logger,
       this.paymentDomainService,
     );
   }

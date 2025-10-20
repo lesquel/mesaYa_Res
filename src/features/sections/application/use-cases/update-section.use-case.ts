@@ -1,10 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { SectionMapper } from '../mappers/index.js';
 import { SectionResponseDto, UpdateSectionCommand } from '../dto/index.js';
 import {
-  RESTAURANT_SECTION_READER,
-  SECTION_REPOSITORY,
   type RestaurantSectionReaderPort,
   type SectionRepositoryPort,
 } from '../ports/index.js';
@@ -14,14 +11,11 @@ import {
   type SectionUpdate,
 } from '../../domain/index.js';
 
-@Injectable()
 export class UpdateSectionUseCase
   implements UseCase<UpdateSectionCommand, SectionResponseDto>
 {
   constructor(
-    @Inject(SECTION_REPOSITORY)
     private readonly sectionRepository: SectionRepositoryPort,
-    @Inject(RESTAURANT_SECTION_READER)
     private readonly restaurantReader: RestaurantSectionReaderPort,
   ) {}
 

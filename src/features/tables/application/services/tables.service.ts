@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import {
   KafkaEmit,
-  KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
 } from '../../../../shared/infrastructure/kafka/index.js';
@@ -25,7 +23,6 @@ import {
   UpdateTableUseCase,
 } from '../use-cases/index.js';
 
-@Injectable()
 export class TablesService {
   constructor(
     private readonly createTable: CreateTableUseCase,
@@ -34,7 +31,7 @@ export class TablesService {
     private readonly findTable: FindTableUseCase,
     private readonly updateTable: UpdateTableUseCase,
     private readonly deleteTable: DeleteTableUseCase,
-    @KafkaProducer() private readonly kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @KafkaEmit({

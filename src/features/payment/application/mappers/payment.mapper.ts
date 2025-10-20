@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { PaymentStatusVO } from '@features/payment/domain/entities/values';
 import { PaymentDto } from '../dtos/output/payment.dto';
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
@@ -7,7 +6,6 @@ import { PaymentCreate, PaymentEntity } from '@features/payment/domain';
 import { MoneyVO } from '@shared/domain/entities/values';
 import { PaymentStatusEnum } from '@features/payment/domain/enums';
 
-@Injectable()
 export class PaymentEntityDTOMapper extends EntityDTOMapper<
   PaymentEntity,
   PaymentDto

@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import {
   KafkaEmit,
-  KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
 } from '../../../../shared/infrastructure/kafka/index.js';
@@ -25,7 +23,6 @@ import {
   UpdateSectionUseCase,
 } from '../use-cases/index.js';
 
-@Injectable()
 export class SectionsService {
   constructor(
     private readonly createSectionUseCase: CreateSectionUseCase,
@@ -34,7 +31,7 @@ export class SectionsService {
     private readonly findSectionUseCase: FindSectionUseCase,
     private readonly updateSectionUseCase: UpdateSectionUseCase,
     private readonly deleteSectionUseCase: DeleteSectionUseCase,
-    @KafkaProducer() private readonly kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @KafkaEmit({
@@ -90,5 +87,3 @@ export class SectionsService {
     return this.deleteSectionUseCase.execute(command);
   }
 }
-
-// Kafka tiene alguna interfaz web donde se pueda revisar todo$ Quiero revisarlo tambien para ver como es jeje
