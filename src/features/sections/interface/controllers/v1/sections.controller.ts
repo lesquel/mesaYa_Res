@@ -12,6 +12,8 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -20,6 +22,7 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js'
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
   CreateSectionDto,
@@ -29,11 +32,18 @@ import {
 import type {
   CreateSectionCommand,
   DeleteSectionCommand,
+  DeleteSectionResponseDto,
   FindSectionQuery,
   ListRestaurantSectionsQuery,
   ListSectionsQuery,
+  PaginatedSectionResponse,
+  SectionResponseDto,
   UpdateSectionCommand,
 } from '../../../application/index.js';
+import {
+  DeleteSectionResponseSwaggerDto,
+  SectionResponseSwaggerDto,
+} from '@features/sections/interface/dto/index.js';
 
 @ApiTags('Sections')
 @Controller({ path: 'section', version: '1' })
@@ -46,7 +56,11 @@ export class SectionsController {
   @ApiOperation({ summary: 'Crear sección (permiso section:create)' })
   @ApiBearerAuth()
   @ApiBody({ type: CreateSectionDto })
-  async create(@Body() dto: CreateSectionDto) {
+  @ApiCreatedResponse({
+    description: 'Sección creada correctamente',
+    type: SectionResponseSwaggerDto,
+  })
+  async create(@Body() dto: CreateSectionDto): Promise<SectionResponseDto> {
     const command: CreateSectionCommand = { ...dto };
     return this.sectionsService.create(command);
   }
@@ -55,11 +69,15 @@ export class SectionsController {
   @ApiOperation({ summary: 'Listar secciones por restaurante' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiPaginationQuery()
+  @ApiPaginatedResponse({
+    model: SectionResponseSwaggerDto,
+    description: 'Listado paginado de secciones por restaurante',
+  })
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @PaginationParams({ defaultRoute: '/section/restaurant' })
     pagination: ListSectionsQuery,
-  ) {
+  ): Promise<PaginatedSectionResponse> {
     const query: ListRestaurantSectionsQuery = {
       ...pagination,
       restaurantId,
@@ -70,17 +88,27 @@ export class SectionsController {
   @Get()
   @ApiOperation({ summary: 'Listar secciones (paginado)' })
   @ApiPaginationQuery()
+  @ApiPaginatedResponse({
+    model: SectionResponseSwaggerDto,
+    description: 'Listado paginado de secciones',
+  })
   async findAll(
     @PaginationParams({ defaultRoute: '/section' })
     query: ListSectionsQuery,
-  ) {
+  ): Promise<PaginatedSectionResponse> {
     return this.sectionsService.list(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una sección por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiOkResponse({
+    description: 'Detalle de la sección',
+    type: SectionResponseSwaggerDto,
+  })
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<SectionResponseDto> {
     const query: FindSectionQuery = { sectionId: id };
     return this.sectionsService.findOne(query);
   }
@@ -92,10 +120,14 @@ export class SectionsController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiBody({ type: UpdateSectionDto })
+  @ApiOkResponse({
+    description: 'Sección actualizada correctamente',
+    type: SectionResponseSwaggerDto,
+  })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateSectionDto,
-  ) {
+  ): Promise<SectionResponseDto> {
     const command: UpdateSectionCommand = {
       sectionId: id,
       ...dto,
@@ -109,7 +141,13 @@ export class SectionsController {
   @ApiOperation({ summary: 'Eliminar sección (permiso section:delete)' })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiOkResponse({
+    description: 'Sección eliminada correctamente',
+    type: DeleteSectionResponseSwaggerDto,
+  })
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<DeleteSectionResponseDto> {
     const command: DeleteSectionCommand = { sectionId: id };
     return this.sectionsService.delete(command);
   }
