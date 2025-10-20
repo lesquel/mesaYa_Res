@@ -1,2 +1,2 @@
-export * from './dish.mapper';
-export * from './menu.mapper';
+export * from './dish.mapper.js';
+export * from './menu.mapper.js';
