@@ -65,9 +65,11 @@ export class PaymentEntity {
   }
 
   get paymentType(): PaymentTypeEnum {
-    if (this.props.reservationId) return PaymentTypeEnum.RESERVATION;
-    if (this.props.subscriptionId) return PaymentTypeEnum.SUBSCRIPTION;
-    throw new PaymentMustBeAssociatedError();
+    if (reservationId){return PaymentTypeEnum.RESERVATION}
+    else{
+      return PaymentTypeEnum.SUBSCRIPTION
+    }
+
   }
 
   private static validate(props: PaymentProps): void {

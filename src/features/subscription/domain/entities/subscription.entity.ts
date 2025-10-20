@@ -1,7 +1,6 @@
-import { SubscriptionStateVO } from './values/index.js';
+import { SubscriptionStateVO } from './values/subscription-state.vo';
 
 export interface SubscriptionProps {
-  // We store only identifiers to keep the aggregate decoupled from other aggregates.
   subscriptionPlanId: string;
   restaurantId: string;
   subscriptionStartDate: Date;
@@ -31,7 +30,6 @@ export class SubscriptionEntity {
   static rehydrate(snapshot: SubscriptionSnapshot): SubscriptionEntity {
     const { subscriptionId, ...rest } = snapshot;
     const propsCopy: SubscriptionProps = {
-      ...rest,
       subscriptionStartDate: new Date(rest.subscriptionStartDate),
     };
     return new SubscriptionEntity(subscriptionId, propsCopy);
