@@ -28,9 +28,11 @@ import {
 import { RestaurantOrmEntity } from '@features/restaurants';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants.js';
 import type { ILoggerPort } from '@shared/application/ports/logger.port.js';
+import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module.js';
 
 @Module({
   imports: [
+    LoggerModule,
     TypeOrmModule.forFeature([
       SubscriptionOrmEntity,
       SubscriptionPlanOrmEntity,
