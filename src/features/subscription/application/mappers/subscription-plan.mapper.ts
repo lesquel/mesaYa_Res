@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
 import { MoneyVO } from '@shared/domain/entities/values';
 import {
@@ -16,7 +15,6 @@ import {
   UpdateSubscriptionPlanDto,
 } from '../dtos';
 
-@Injectable()
 export class SubscriptionPlanMapper extends EntityDTOMapper<
   SubscriptionPlanEntity,
   SubscriptionPlanDto
