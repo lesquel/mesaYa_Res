@@ -22,7 +22,7 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
-  type ObjectsService,
+  ObjectsService,
   type CreateGraphicObjectCommand,
   type DeleteGraphicObjectCommand,
   type FindGraphicObjectQuery,

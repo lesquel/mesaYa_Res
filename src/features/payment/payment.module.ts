@@ -15,9 +15,10 @@ import {
 import { IPaymentRepositoryPort } from './domain/index';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PaymentOrmEntity])],
+  imports: [TypeOrmModule.forFeature([PaymentOrmEntity]), LoggerModule],
   controllers: [PaymentController],
   providers: [
     {

@@ -31,7 +31,10 @@ export class SubscriptionEntity {
   static rehydrate(snapshot: SubscriptionSnapshot): SubscriptionEntity {
     const { subscriptionId, ...rest } = snapshot;
     const propsCopy: SubscriptionProps = {
+      subscriptionPlanId: rest.subscriptionPlanId,
+      restaurantId: rest.restaurantId,
       subscriptionStartDate: new Date(rest.subscriptionStartDate),
+      stateSubscription: rest.stateSubscription,
     };
     return new SubscriptionEntity(subscriptionId, propsCopy);
   }
