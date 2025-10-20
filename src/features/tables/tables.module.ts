@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module.js';
-import { TablesController } from './interface/index.js';
 import {
   TableOrmEntity,
   SectionTypeOrmTableProvider,
@@ -29,6 +28,7 @@ import type {
   TableEventPublisherPort,
 } from './application/ports/index.js';
 import { KafkaService } from '@shared/infrastructure/kafka/index.js';
+import { TablesController } from './interface/controllers/v1/tables.controller.js';
 
 @Module({
   imports: [

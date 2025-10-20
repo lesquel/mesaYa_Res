@@ -1,1 +1,1 @@
-export * from './reviews.controller.js';
+export * from './v1/reviews.controller.js';

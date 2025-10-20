@@ -1,1 +1,1 @@
-export { ReservationsController } from './controllers/reservations.controller.js';
+export { ReservationsController } from './controllers/v1/reservations.controller.js';

@@ -20,7 +20,7 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js'
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
   CreateReservationDto,
@@ -29,12 +29,12 @@ import {
   UpdateReservationCommand,
   FindReservationQuery,
   DeleteReservationCommand,
-} from '../../application/dto/index.js';
+} from '../../../application/dto/index.js';
 import type {
   ListReservationsQuery,
   ListRestaurantReservationsQuery,
-} from '../../application/dto/index.js';
-import { ReservationService } from '../../application/services/index.js';
+} from '../../../application/dto/index.js';
+import { ReservationService } from '../../../application/services/index.js';
 
 @ApiTags('Reservations')
 @Controller({ path: 'reservations', version: '1' })
