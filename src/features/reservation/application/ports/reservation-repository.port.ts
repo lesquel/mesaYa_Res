@@ -1,4 +1,4 @@
-import { Reservation } from '../../domain/entities/reservation.entity.js';
+import { ReservationEntity } from '../../domain/entities/reservation.entity.js';
 import {
   ListReservationsQuery,
   ListRestaurantReservationsQuery,
@@ -8,11 +8,13 @@ import { PaginatedResult } from '@shared/application/types/pagination.js';
 export const RESERVATION_REPOSITORY = Symbol('RESERVATION_REPOSITORY');
 
 export interface ReservationRepositoryPort {
-  save(reservation: Reservation): Promise<Reservation>;
-  findById(id: string): Promise<Reservation | null>;
+  save(reservation: ReservationEntity): Promise<ReservationEntity>;
+  findById(id: string): Promise<ReservationEntity | null>;
   delete(id: string): Promise<void>;
-  paginate(query: ListReservationsQuery): Promise<PaginatedResult<Reservation>>;
+  paginate(
+    query: ListReservationsQuery,
+  ): Promise<PaginatedResult<ReservationEntity>>;
   paginateByRestaurant(
     query: ListRestaurantReservationsQuery,
-  ): Promise<PaginatedResult<Reservation>>;
+  ): Promise<PaginatedResult<ReservationEntity>>;
 }

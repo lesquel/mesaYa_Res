@@ -21,7 +21,10 @@ export class GraphicObjectNotFoundError extends Error {
 }
 
 export class GraphicObject {
-  private constructor(private _id: string, private props: GraphicObjectProps) {}
+  private constructor(
+    private _id: string,
+    private props: GraphicObjectProps,
+  ) {}
 
   static create(id: string, props: GraphicObjectProps): GraphicObject {
     GraphicObject.validate(props);
@@ -31,10 +34,18 @@ export class GraphicObject {
   static validate(props: GraphicObjectProps) {
     const { posX, posY, width, height, imageId } = props;
     const isInt = (n: unknown) => Number.isInteger(n as number);
-    if (!isInt(posX) || !isInt(posY)) throw new InvalidGraphicObjectDataError('posX/posY must be integers');
-    if (!isInt(width) || width <= 0) throw new InvalidGraphicObjectDataError('width must be positive integer');
-    if (!isInt(height) || height <= 0) throw new InvalidGraphicObjectDataError('height must be positive integer');
-    if (!isInt(imageId) || imageId <= 0) throw new InvalidGraphicObjectDataError('imageId must be positive integer');
+    if (!isInt(posX) || !isInt(posY))
+      throw new InvalidGraphicObjectDataError('posX/posY must be integers');
+    if (!isInt(width) || width <= 0)
+      throw new InvalidGraphicObjectDataError('width must be positive integer');
+    if (!isInt(height) || height <= 0)
+      throw new InvalidGraphicObjectDataError(
+        'height must be positive integer',
+      );
+    if (!isInt(imageId) || imageId <= 0)
+      throw new InvalidGraphicObjectDataError(
+        'imageId must be positive integer',
+      );
   }
 
   get id() {

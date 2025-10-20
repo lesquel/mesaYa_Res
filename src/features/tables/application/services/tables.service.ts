@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import {
   KafkaEmit,
-  KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
 } from '../../../../shared/infrastructure/kafka/index.js';
@@ -25,7 +23,6 @@ import {
   UpdateTableUseCase,
 } from '../use-cases/index.js';
 
-@Injectable()
 export class TablesService {
   constructor(
     private readonly createTable: CreateTableUseCase,
@@ -34,7 +31,7 @@ export class TablesService {
     private readonly findTable: FindTableUseCase,
     private readonly updateTable: UpdateTableUseCase,
     private readonly deleteTable: DeleteTableUseCase,
-    @KafkaProducer() private readonly kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @KafkaEmit({
@@ -79,12 +76,12 @@ export class TablesService {
 
   @KafkaEmit({
     topic: KAFKA_TOPICS.TABLE_DELETED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [DeleteTableCommand];
+    payload: ({ result, toPlain }) => {
+      const { table } = result as DeleteTableResponseDto;
       return {
         action: 'table.deleted',
-        entityId: command.tableId,
-        result: toPlain(result),
+        entityId: table.id,
+        entity: toPlain(table),
       };
     },
   })

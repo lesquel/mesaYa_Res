@@ -1,23 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import {
   DeleteSectionCommand,
   DeleteSectionResponseDto,
 } from '../dto/index.js';
-import {
-  SECTION_REPOSITORY,
-  type SectionRepositoryPort,
-} from '../ports/index.js';
+import { SectionMapper } from '../mappers/index.js';
+import { type SectionRepositoryPort } from '../ports/index.js';
 import { SectionNotFoundError } from '../../domain/index.js';
 
-@Injectable()
 export class DeleteSectionUseCase
   implements UseCase<DeleteSectionCommand, DeleteSectionResponseDto>
 {
-  constructor(
-    @Inject(SECTION_REPOSITORY)
-    private readonly sectionRepository: SectionRepositoryPort,
-  ) {}
+  constructor(private readonly sectionRepository: SectionRepositoryPort) {}
 
   async execute(
     command: DeleteSectionCommand,
@@ -28,8 +21,10 @@ export class DeleteSectionUseCase
       throw new SectionNotFoundError(command.sectionId);
     }
 
+    const sectionResponse = SectionMapper.toResponse(section);
+
     await this.sectionRepository.delete(command.sectionId);
 
-    return { ok: true };
+    return { ok: true, section: sectionResponse };
   }
 }

@@ -1,46 +1,23 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
-import {
-  PaymentNotFoundError,
-  PaymentUpdateFailedError,
-} from '../../domain/errors';
 import { UpdatePaymentStatusDto } from '../dtos/input/update-payment-status-dto';
-import { PaymentMapper } from '../mappers/payment.mapper';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { PaymentEntity } from '@features/payment/domain';
+import { PaymentDomainService } from '@features/payment/domain';
+import { PaymentEntityDTOMapper } from '../mappers';
+import { PaymentDto } from '../dtos/output/payment.dto';
 
 export class UpdatePaymentStatusUseCase
-  implements UseCase<UpdatePaymentStatusDto, PaymentEntity>
+  implements UseCase<UpdatePaymentStatusDto, PaymentDto>
 {
   constructor(
     private readonly logger: ILoggerPort,
-
-    private readonly paymentRepository: IPaymentRepositoryPort,
-    private readonly paymentMapper: PaymentMapper,
+    private readonly paymentMapper: PaymentEntityDTOMapper,
+    private readonly paymentDomainService: PaymentDomainService,
   ) {}
 
-  async execute(dto: UpdatePaymentStatusDto): Promise<PaymentEntity> {
+  async execute(dto: UpdatePaymentStatusDto): Promise<PaymentDto> {
     this.logger.log(
       `Updating payment status for ID: ${dto.paymentId} to status: ${dto.status}`,
-      'UpdatePaymentStatusUseCase',
-    );
-
-    // Verificar que el pago existe
-    const existingPayment = await this.paymentRepository.findById(
-      dto.paymentId,
-    );
-
-    if (!existingPayment) {
-      this.logger.warn(
-        `Payment not found with ID: ${dto.paymentId}`,
-        'UpdatePaymentStatusUseCase',
-      );
-      throw new PaymentNotFoundError(dto.paymentId);
-    }
-
-    this.logger.log(
-      `Payment found. Current status: ${existingPayment.paymentStatus.status}`,
       'UpdatePaymentStatusUseCase',
     );
 
@@ -48,26 +25,14 @@ export class UpdatePaymentStatusUseCase
     const paymentUpdate =
       this.paymentMapper.fromUpdatePaymentStatusDTOtoPaymentUpdate(dto);
 
-    // Actualizar el pago en el repositorio
-    const updatedPayment = await this.paymentRepository.update(paymentUpdate);
-
-    if (!updatedPayment) {
-      this.logger.error(
-        `Failed to update payment with ID: ${dto.paymentId}`,
-        undefined,
-        'UpdatePaymentStatusUseCase',
-      );
-      throw new PaymentUpdateFailedError(
-        dto.paymentId,
-        'Repository returned null',
-      );
-    }
+    const updatedPayment =
+      await this.paymentDomainService.updatePaymentStatus(paymentUpdate);
 
     this.logger.log(
       `Payment status updated successfully. New status: ${updatedPayment.paymentStatus.status}`,
       'UpdatePaymentStatusUseCase',
     );
 
-    return updatedPayment;
+    return this.paymentMapper.fromEntitytoDTO(updatedPayment);
   }
 }

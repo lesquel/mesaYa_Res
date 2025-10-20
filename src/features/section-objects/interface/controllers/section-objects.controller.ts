@@ -1,16 +1,12 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -23,25 +19,20 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { PaginationDto } from '../../../../shared/application/dto/pagination.dto.js';
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import type { Request } from 'express';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import { SectionObjectsService } from '../../application/services/index.js';
 import {
-  CreateSectionObjectCommand,
   CreateSectionObjectDto,
+  UpdateSectionObjectDto,
+} from '../../application/dto/index.js';
+import type {
+  CreateSectionObjectCommand,
   DeleteSectionObjectCommand,
   FindSectionObjectQuery,
   ListSectionObjectsQuery,
   UpdateSectionObjectCommand,
-  UpdateSectionObjectDto,
 } from '../../application/dto/index.js';
-import {
-  InvalidSectionObjectDataError,
-  ObjectNotFoundForSectionObjectError,
-  SectionNotFoundForSectionObjectError,
-  SectionObjectNotFoundError,
-} from '../../domain/index.js';
 
 @ApiTags('SectionObjects')
 @Controller({ path: 'section-object', version: '1' })
@@ -57,47 +48,26 @@ export class SectionObjectsController {
   @ApiBearerAuth()
   @ApiBody({ type: CreateSectionObjectDto })
   async create(@Body() dto: CreateSectionObjectDto) {
-    try {
-      const command: CreateSectionObjectCommand = { ...dto };
-      return await this.service.create(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: CreateSectionObjectCommand = { ...dto };
+    return this.service.create(command);
   }
 
   @Get()
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
   @ApiPaginationQuery()
-  async list(@Query() pagination: PaginationDto, @Req() req: Request) {
-    try {
-      const route = (req?.baseUrl || req?.path || '/section-object') as string;
-      const query: ListSectionObjectsQuery = {
-        pagination: {
-          page: pagination.page,
-          limit: pagination.limit,
-          offset: pagination.offset,
-        },
-        sortBy: pagination.sortBy,
-        sortOrder: pagination.sortOrder,
-        search: pagination.q,
-        route,
-      };
-      return await this.service.list(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+  async list(
+    @PaginationParams({ defaultRoute: '/section-object' })
+    query: ListSectionObjectsQuery,
+  ) {
+    return this.service.list(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener relación por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const query: FindSectionObjectQuery = { sectionObjectId: id };
-      return await this.service.findOne(query);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const query: FindSectionObjectQuery = { sectionObjectId: id };
+    return this.service.findOne(query);
   }
 
   @Patch(':id')
@@ -113,15 +83,11 @@ export class SectionObjectsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateSectionObjectDto,
   ) {
-    try {
-      const command: UpdateSectionObjectCommand = {
-        sectionObjectId: id,
-        ...dto,
-      };
-      return await this.service.update(command);
-    } catch (error) {
-      this.handleError(error);
-    }
+    const command: UpdateSectionObjectCommand = {
+      sectionObjectId: id,
+      ...dto,
+    };
+    return this.service.update(command);
   }
 
   @Delete(':id')
@@ -133,23 +99,7 @@ export class SectionObjectsController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const command: DeleteSectionObjectCommand = { sectionObjectId: id };
-      return await this.service.delete(command);
-    } catch (error) {
-      this.handleError(error);
-    }
-  }
-
-  private handleError(error: unknown): never {
-    if (error instanceof SectionObjectNotFoundError)
-      throw new NotFoundException(error.message);
-    if (error instanceof SectionNotFoundForSectionObjectError)
-      throw new NotFoundException(error.message);
-    if (error instanceof ObjectNotFoundForSectionObjectError)
-      throw new NotFoundException(error.message);
-    if (error instanceof InvalidSectionObjectDataError)
-      throw new BadRequestException(error.message);
-    throw error as any;
+    const command: DeleteSectionObjectCommand = { sectionObjectId: id };
+    return this.service.delete(command);
   }
 }

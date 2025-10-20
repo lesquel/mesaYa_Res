@@ -1,9 +1,3 @@
-import { PaginationQuery } from '@shared/application/types/pagination.js';
+import { PaginatedQueryParams } from '@shared/application/types/pagination.js';
 
-export interface ListRestaurantsQuery {
-  pagination: PaginationQuery;
-  sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
-  search?: string;
-  route: string;
-}
+export type ListRestaurantsQuery = PaginatedQueryParams;

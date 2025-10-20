@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import {
   KafkaEmit,
-  KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
 } from '../../../../shared/infrastructure/kafka/index.js';
@@ -25,7 +23,6 @@ import {
   UpdateSectionUseCase,
 } from '../use-cases/index.js';
 
-@Injectable()
 export class SectionsService {
   constructor(
     private readonly createSectionUseCase: CreateSectionUseCase,
@@ -34,7 +31,7 @@ export class SectionsService {
     private readonly findSectionUseCase: FindSectionUseCase,
     private readonly updateSectionUseCase: UpdateSectionUseCase,
     private readonly deleteSectionUseCase: DeleteSectionUseCase,
-    @KafkaProducer() private readonly kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @KafkaEmit({
@@ -75,12 +72,12 @@ export class SectionsService {
 
   @KafkaEmit({
     topic: KAFKA_TOPICS.SECTION_DELETED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [DeleteSectionCommand];
+    payload: ({ result, toPlain }) => {
+      const { section } = result as DeleteSectionResponseDto;
       return {
         action: 'section.deleted',
-        entityId: command.sectionId,
-        result: toPlain(result),
+        entityId: section.id,
+        entity: toPlain(section),
       };
     },
   })
@@ -90,6 +87,3 @@ export class SectionsService {
     return this.deleteSectionUseCase.execute(command);
   }
 }
-
-
-// Kafka tiene alguna interfaz web donde se pueda revisar todo$ Quiero revisarlo tambien para ver como es jeje

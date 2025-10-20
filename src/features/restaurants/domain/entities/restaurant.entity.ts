@@ -32,13 +32,16 @@ interface RestaurantProps {
   updatedAt: Date;
 }
 
-export class Restaurant {
+export class RestaurantEntity {
   private constructor(
     private props: RestaurantProps,
     private readonly internalId: string,
   ) {}
 
-  static create(props: RestaurantCreate, id: string = randomUUID()): Restaurant {
+  static create(
+    props: RestaurantCreate,
+    id: string = randomUUID(),
+  ): RestaurantEntity {
     const now = new Date();
 
     const aggregated: RestaurantProps = {
@@ -56,10 +59,10 @@ export class Restaurant {
       updatedAt: props.updatedAt ?? now,
     };
 
-    return new Restaurant(aggregated, id);
+    return new RestaurantEntity(aggregated, id);
   }
 
-  static rehydrate(snapshot: RestaurantSnapshot): Restaurant {
+  static rehydrate(snapshot: RestaurantSnapshot): RestaurantEntity {
     const aggregated: RestaurantProps = {
       name: new RestaurantName(snapshot.name),
       description: RestaurantDescription.create(snapshot.description),
@@ -75,7 +78,7 @@ export class Restaurant {
       updatedAt: snapshot.updatedAt,
     };
 
-    return new Restaurant(aggregated, snapshot.id);
+    return new RestaurantEntity(aggregated, snapshot.id);
   }
 
   get id(): string {

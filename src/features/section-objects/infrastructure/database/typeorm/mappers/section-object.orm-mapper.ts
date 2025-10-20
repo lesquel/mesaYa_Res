@@ -3,7 +3,10 @@ import { SectionObjectOrmEntity } from '../orm/index.js';
 
 export class SectionObjectOrmMapper {
   static toDomain(entity: SectionObjectOrmEntity): SectionObject {
-    return SectionObject.create(entity.id, { sectionId: entity.sectionId, objectId: entity.objectId });
+    return SectionObject.create(entity.id, {
+      sectionId: entity.sectionId,
+      objectId: entity.objectId,
+    });
   }
 
   static toOrmEntity(domain: SectionObject): SectionObjectOrmEntity {

@@ -8,5 +8,7 @@ export interface GraphicObjectRepositoryPort {
   save(object: GraphicObject): Promise<GraphicObject>;
   findById(id: string): Promise<GraphicObject | null>;
   delete(id: string): Promise<void>;
-  paginate(query: ListGraphicObjectsQuery): Promise<PaginatedResult<GraphicObject>>;
+  paginate(
+    query: ListGraphicObjectsQuery,
+  ): Promise<PaginatedResult<GraphicObject>>;
 }

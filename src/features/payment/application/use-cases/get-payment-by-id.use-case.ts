@@ -1,43 +1,35 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 
-import { IPaymentRepositoryPort } from '../ports/repositories/payment-repository.port';
-import { PaymentNotFoundError } from '../../domain/errors';
 import { GetPaymentByIdDto } from '../dtos/input/get-payment-by-id.dto';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { PaymentEntity } from '@features/payment/domain';
+import { PaymentDomainService } from '@features/payment/domain';
+import { PaymentEntityDTOMapper } from '../mappers';
+import { PaymentDto } from '../dtos/output/payment.dto';
 
 export class GetPaymentByIdUseCase
-  implements UseCase<GetPaymentByIdDto, PaymentEntity>
+  implements UseCase<GetPaymentByIdDto, PaymentDto>
 {
   constructor(
     private readonly logger: ILoggerPort,
-
-    private readonly paymentRepository: IPaymentRepositoryPort,
+    private readonly paymentDomainService: PaymentDomainService,
+    private readonly paymentMapper: PaymentEntityDTOMapper,
   ) {}
 
-  async execute(dto: GetPaymentByIdDto): Promise<PaymentEntity> {
+  async execute(dto: GetPaymentByIdDto): Promise<PaymentDto> {
     this.logger.log(
       `Fetching payment with ID: ${dto.paymentId}`,
       'GetPaymentByIdUseCase',
     );
 
-    // Buscar la entidad de dominio en el repositorio
-    const paymentEntity = await this.paymentRepository.findById(dto.paymentId);
-
-    // Si no existe, lanzar error de dominio
-    if (!paymentEntity) {
-      this.logger.warn(
-        `Payment not found with ID: ${dto.paymentId}`,
-        'GetPaymentByIdUseCase',
-      );
-      throw new PaymentNotFoundError(dto.paymentId);
-    }
+    const paymentEntity = await this.paymentDomainService.findPaymentById(
+      dto.paymentId,
+    );
 
     this.logger.log(
       `Successfully fetched payment with ID: ${dto.paymentId}`,
       'GetPaymentByIdUseCase',
     );
 
-    return paymentEntity;
+    return this.paymentMapper.fromEntitytoDTO(paymentEntity);
   }
 }

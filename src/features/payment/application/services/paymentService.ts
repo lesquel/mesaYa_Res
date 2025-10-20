@@ -1,3 +1,5 @@
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   CreatePaymentUseCase,
   GetPaymentByIdUseCase,
@@ -16,23 +18,49 @@ import {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '../dtos/output';
-import { IPaymentRepositoryPort } from '../ports/repositories';
-
+import { PaymentEntityDTOMapper } from '../mappers';
+import {
+  IPaymentRepositoryPort,
+  PaymentDomainService,
+} from '@features/payment/domain';
 export class PaymentService {
   private createPaymentUseCase: CreatePaymentUseCase;
   private getPaymentByIdUseCase: GetPaymentByIdUseCase;
   private getAllPaymentsUseCase: GetAllPaymentsUseCase;
   private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
   private deletePaymentUseCase: DeletePaymentUseCase;
+  private readonly paymentDomainService: PaymentDomainService;
 
-  constructor(paymentRepository: IPaymentRepositoryPort) {
-    this.createPaymentUseCase = new CreatePaymentUseCase(paymentRepository);
-    this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(paymentRepository);
-    this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(paymentRepository);
-    this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
-      paymentRepository,
+  constructor(
+    private readonly logger: ILoggerPort,
+    paymentRepository: IPaymentRepositoryPort,
+    paymentEntityToMapper: PaymentEntityDTOMapper,
+  ) {
+    this.paymentDomainService = new PaymentDomainService(paymentRepository);
+    this.createPaymentUseCase = new CreatePaymentUseCase(
+      this.logger,
+      this.paymentDomainService,
+      paymentEntityToMapper,
     );
-    this.deletePaymentUseCase = new DeletePaymentUseCase(paymentRepository);
+    this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(
+      this.logger,
+      this.paymentDomainService,
+      paymentEntityToMapper,
+    );
+    this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
+      this.logger,
+      this.paymentDomainService,
+      paymentEntityToMapper,
+    );
+    this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
+      this.logger,
+      paymentEntityToMapper,
+      this.paymentDomainService,
+    );
+    this.deletePaymentUseCase = new DeletePaymentUseCase(
+      this.logger,
+      this.paymentDomainService,
+    );
   }
 
   async createPayment(dto: CreatePaymentDto): Promise<PaymentResponseDto> {
@@ -43,8 +71,10 @@ export class PaymentService {
     return await this.getPaymentByIdUseCase.execute(dto);
   }
 
-  async getAllPayments(): Promise<PaymentListResponseDto> {
-    return await this.getAllPaymentsUseCase.execute();
+  async getAllPayments(
+    params?: PaginatedQueryParams,
+  ): Promise<PaymentListResponseDto> {
+    return await this.getAllPaymentsUseCase.execute(params);
   }
 
   async updatePaymentStatus(

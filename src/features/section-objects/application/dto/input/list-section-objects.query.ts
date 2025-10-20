@@ -1,9 +1,3 @@
-import { PaginationDto } from '../../../../../shared/application/dto/pagination.dto.js';
+import { PaginatedQueryParams } from '@shared/application/types/pagination.js';
 
-export interface ListSectionObjectsQuery {
-  pagination: Pick<PaginationDto, 'page' | 'limit' | 'offset'>;
-  sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
-  search?: string | null;
-  route?: string;
-}
+export type ListSectionObjectsQuery = PaginatedQueryParams;

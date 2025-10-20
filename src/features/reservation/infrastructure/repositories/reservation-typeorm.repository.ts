@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import {
-  Reservation,
+  ReservationEntity,
   ReservationNotFoundError,
   ReservationRestaurantNotFoundError,
   ReservationUserNotFoundError,
@@ -30,7 +30,7 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
     private readonly users: Repository<UserOrmEntity>,
   ) {}
 
-  async save(reservation: Reservation): Promise<Reservation> {
+  async save(reservation: ReservationEntity): Promise<ReservationEntity> {
     const snapshot = reservation.snapshot();
 
     const existing = await this.reservations.findOne({
@@ -69,7 +69,7 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
     return ReservationOrmMapper.toDomain(saved);
   }
 
-  async findById(id: string): Promise<Reservation | null> {
+  async findById(id: string): Promise<ReservationEntity | null> {
     const entity = await this.reservations.findOne({
       where: { id },
       relations: ['restaurant', 'user'],
@@ -87,14 +87,14 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
 
   async paginate(
     query: ListReservationsQuery,
-  ): Promise<PaginatedResult<Reservation>> {
+  ): Promise<PaginatedResult<ReservationEntity>> {
     const qb = this.buildBaseQuery();
     return this.executePagination(qb, query);
   }
 
   async paginateByRestaurant(
     query: ListRestaurantReservationsQuery,
-  ): Promise<PaginatedResult<Reservation>> {
+  ): Promise<PaginatedResult<ReservationEntity>> {
     const qb = this.buildBaseQuery().where('restaurant.id = :restaurantId', {
       restaurantId: query.restaurantId,
     });
@@ -112,7 +112,7 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
   private async executePagination(
     qb: SelectQueryBuilder<ReservationOrmEntity>,
     query: ListReservationsQuery,
-  ): Promise<PaginatedResult<Reservation>> {
+  ): Promise<PaginatedResult<ReservationEntity>> {
     const alias = qb.alias;
 
     const sortMap: Record<string, string> = {

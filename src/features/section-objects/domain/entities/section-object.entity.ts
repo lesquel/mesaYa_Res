@@ -32,7 +32,10 @@ export class ObjectNotFoundForSectionObjectError extends Error {
 }
 
 export class SectionObject {
-  private constructor(private _id: string, private props: SectionObjectProps) {}
+  private constructor(
+    private _id: string,
+    private props: SectionObjectProps,
+  ) {}
 
   static create(id: string, props: SectionObjectProps): SectionObject {
     SectionObject.validate(props);

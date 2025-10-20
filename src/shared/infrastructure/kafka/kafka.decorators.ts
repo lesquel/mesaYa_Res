@@ -33,8 +33,8 @@ const resolveContextName = (instance: unknown, target: unknown): string => {
       ?.name === 'string'
   ) {
     return (
-      ((instance as { constructor: { name: string } }).constructor
-        .name as string) || 'KafkaEmit'
+      (instance as { constructor: { name: string } }).constructor.name ||
+      'KafkaEmit'
     );
   }
   if (
@@ -143,7 +143,7 @@ export const KafkaEmit = <
       }
 
       const includeTimestamp = options.includeTimestamp !== false;
-      const basePayload = (payloadBase ?? {}) as Record<string, unknown>;
+      const basePayload = payloadBase ?? {};
       const payload = includeTimestamp
         ? Object.prototype.hasOwnProperty.call(basePayload, 'timestamp')
           ? basePayload

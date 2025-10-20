@@ -13,4 +13,6 @@ export class UpdateSectionObjectDto {
   objectId?: string;
 }
 
-export type UpdateSectionObjectCommand = UpdateSectionObjectDto & { sectionObjectId: string };
+export type UpdateSectionObjectCommand = UpdateSectionObjectDto & {
+  sectionObjectId: string;
+};

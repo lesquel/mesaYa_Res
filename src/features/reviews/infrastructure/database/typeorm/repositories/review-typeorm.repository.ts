@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
 import {
-  Review,
+  Review as ReviewEntity,
   ReviewNotFoundError,
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
@@ -30,7 +30,7 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
     private readonly users: Repository<UserOrmEntity>,
   ) {}
 
-  async save(review: Review): Promise<Review> {
+  async save(review: ReviewEntity): Promise<ReviewEntity> {
     const snapshot = review.snapshot();
 
     const existing = await this.reviews.findOne({
@@ -69,7 +69,7 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
     return ReviewOrmMapper.toDomain(saved);
   }
 
-  async findById(id: string): Promise<Review | null> {
+  async findById(id: string): Promise<ReviewEntity | null> {
     const entity = await this.reviews.findOne({
       where: { id },
       relations: ['restaurant', 'user'],
@@ -81,7 +81,7 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
   async findByUserAndRestaurant(
     userId: string,
     restaurantId: string,
-  ): Promise<Review | null> {
+  ): Promise<ReviewEntity | null> {
     const entity = await this.reviews.findOne({
       where: {
         user: { id: userId },
@@ -100,14 +100,16 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
     }
   }
 
-  async paginate(query: ListReviewsQuery): Promise<PaginatedResult<Review>> {
+  async paginate(
+    query: ListReviewsQuery,
+  ): Promise<PaginatedResult<ReviewEntity>> {
     const qb = this.buildBaseQuery();
     return this.executePagination(qb, query);
   }
 
   async paginateByRestaurant(
     query: ListRestaurantReviewsQuery,
-  ): Promise<PaginatedResult<Review>> {
+  ): Promise<PaginatedResult<ReviewEntity>> {
     const qb = this.buildBaseQuery().where('restaurant.id = :restaurantId', {
       restaurantId: query.restaurantId,
     });
@@ -125,7 +127,7 @@ export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
   private async executePagination(
     qb: SelectQueryBuilder<ReviewOrmEntity>,
     query: ListReviewsQuery,
-  ): Promise<PaginatedResult<Review>> {
+  ): Promise<PaginatedResult<ReviewEntity>> {
     const alias = qb.alias;
 
     const sortMap: Record<string, string> = {

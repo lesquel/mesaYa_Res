@@ -10,7 +10,9 @@ import { ListSectionObjectsQuery } from '../../../../application/dto/index.js';
 import { type SectionObjectRepositoryPort } from '../../../../application/ports/index.js';
 
 @Injectable()
-export class SectionObjectTypeOrmRepository implements SectionObjectRepositoryPort {
+export class SectionObjectTypeOrmRepository
+  implements SectionObjectRepositoryPort
+{
   constructor(
     @InjectRepository(SectionObjectOrmEntity)
     private readonly repo: Repository<SectionObjectOrmEntity>,
@@ -29,20 +31,36 @@ export class SectionObjectTypeOrmRepository implements SectionObjectRepositoryPo
     return entity ? SectionObjectOrmMapper.toDomain(entity) : null;
   }
 
-  async delete(id: string): Promise<void> { await this.repo.delete({ id }); }
+  async delete(id: string): Promise<void> {
+    await this.repo.delete({ id });
+  }
 
-  async paginate(query: ListSectionObjectsQuery): Promise<PaginatedResult<SectionObject>> {
+  async paginate(
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedResult<SectionObject>> {
     const qb = this.buildBaseQuery();
     return this.execPagination(qb, query);
   }
 
-  async paginateBySection(sectionId: string, query: ListSectionObjectsQuery): Promise<PaginatedResult<SectionObject>> {
-    const qb = this.buildBaseQuery().where('sectionObject.sectionId = :sectionId', { sectionId });
+  async paginateBySection(
+    sectionId: string,
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedResult<SectionObject>> {
+    const qb = this.buildBaseQuery().where(
+      'sectionObject.sectionId = :sectionId',
+      { sectionId },
+    );
     return this.execPagination(qb, query);
   }
 
-  async paginateByObject(objectId: string, query: ListSectionObjectsQuery): Promise<PaginatedResult<SectionObject>> {
-    const qb = this.buildBaseQuery().where('sectionObject.objectId = :objectId', { objectId });
+  async paginateByObject(
+    objectId: string,
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedResult<SectionObject>> {
+    const qb = this.buildBaseQuery().where(
+      'sectionObject.objectId = :objectId',
+      { objectId },
+    );
     return this.execPagination(qb, query);
   }
 
@@ -51,14 +69,18 @@ export class SectionObjectTypeOrmRepository implements SectionObjectRepositoryPo
     return this.repo.createQueryBuilder(alias);
   }
 
-  private async execPagination(qb: SelectQueryBuilder<SectionObjectOrmEntity>, query: ListSectionObjectsQuery): Promise<PaginatedResult<SectionObject>> {
+  private async execPagination(
+    qb: SelectQueryBuilder<SectionObjectOrmEntity>,
+    query: ListSectionObjectsQuery,
+  ): Promise<PaginatedResult<SectionObject>> {
     const alias = qb.alias;
     const sortMap: Record<string, string> = {
       sectionId: `${alias}.sectionId`,
       objectId: `${alias}.objectId`,
       createdAt: `${alias}.createdAt`,
     };
-    const sortByColumn = query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
 
     const paginationResult = await paginateQueryBuilder(qb, {
       ...query.pagination,
@@ -70,6 +92,11 @@ export class SectionObjectTypeOrmRepository implements SectionObjectRepositoryPo
       searchable: [`${alias}.sectionId`, `${alias}.objectId`],
     });
 
-    return { ...paginationResult, results: paginationResult.results.map((e) => SectionObjectOrmMapper.toDomain(e)) };
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((e) =>
+        SectionObjectOrmMapper.toDomain(e),
+      ),
+    };
   }
 }

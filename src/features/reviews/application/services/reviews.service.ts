@@ -85,11 +85,12 @@ export class ReviewsService {
     topic: KAFKA_TOPICS.REVIEW_DELETED,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteReviewCommand];
+      const { review } = result as DeleteReviewResponseDto;
       return {
         action: 'review.deleted',
-        entityId: command.reviewId,
+        entityId: review.id,
         performedBy: command.userId,
-        result: toPlain(result),
+        entity: toPlain(review),
       };
     },
   })

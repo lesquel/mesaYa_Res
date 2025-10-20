@@ -10,7 +10,7 @@ export class TableOrmMapper {
     const s = table.snapshot();
     const entity = ctx.existing ?? new TableOrmEntity();
     entity.id = s.id;
-    entity.section = ctx.section ?? entity.section!;
+    entity.section = ctx.section ?? entity.section;
     entity.number = s.number;
     entity.capacity = s.capacity;
     entity.posX = s.posX;
