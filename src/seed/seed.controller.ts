@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { SeedService } from './seed.service';
 
-@Controller('seed')
+@Controller({ path: 'seed', version: '1' })
 export class SeedController {
   constructor(private readonly seedService: SeedService) {}
 

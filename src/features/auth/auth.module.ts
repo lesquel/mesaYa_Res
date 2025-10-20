@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './interface/controllers/auth.controller.js';
+import { AuthController } from './interface/controllers/v1/auth.controller.js';
 import { UserOrmEntity } from './infrastructure/database/typeorm/entities/user.orm-entity.js';
 import { RoleOrmEntity } from './infrastructure/database/typeorm/entities/role.orm-entity.js';
 import { PermissionOrmEntity } from './infrastructure/database/typeorm/entities/permission.orm-entity.js';
