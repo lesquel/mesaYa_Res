@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-<<<<<<< HEAD
 import {
   IPaymentRepositoryPort,
   PaymentEntity,
@@ -25,16 +24,6 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     private readonly mapper: PaymentOrmMapperPort<PaymentOrmEntity>,
   ) {
     super();
-=======
-import { IPaymentRepositoryPort } from '@features/payment/domain/repositories';
-import { PaymentEntity } from '@features/payment/domain';
-
-@Injectable()
-export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
-  create(_data: any): Promise<PaymentEntity> {
-    void _data;
-    throw new Error('Method not implemented.');
->>>>>>> fe5730e (refactor(payment): restructure payment repository ports and mappers)
   }
 
   async create(data: PaymentCreate): Promise<PaymentEntity> {
@@ -72,7 +61,6 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     const entity = await this.payments.findOne({ where: { id } });
     return entity ? this.mapper.toDomain(entity) : null;
   }
-<<<<<<< HEAD
 
   async findAll(): Promise<PaymentEntity[]> {
     const entities = await this.payments.find();
@@ -82,10 +70,5 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
   async delete(id: string): Promise<boolean> {
     const result = await this.payments.delete({ id });
     return (result.affected ?? 0) > 0;
-=======
-  update(_data: any): Promise<PaymentEntity | null> {
-    void _data;
-    throw new Error('Method not implemented.');
->>>>>>> fe5730e (refactor(payment): restructure payment repository ports and mappers)
   }
 }
