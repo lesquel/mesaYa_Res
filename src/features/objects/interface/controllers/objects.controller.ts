@@ -22,16 +22,14 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
-  CreateGraphicObjectDto,
-  ObjectsService,
+  type ObjectsService,
+  type CreateGraphicObjectCommand,
+  type DeleteGraphicObjectCommand,
+  type FindGraphicObjectQuery,
+  type ListGraphicObjectsQuery,
   UpdateGraphicObjectDto,
-} from '../../application/index.js';
-import type {
-  CreateGraphicObjectCommand,
-  DeleteGraphicObjectCommand,
-  FindGraphicObjectQuery,
-  ListGraphicObjectsQuery,
   UpdateGraphicObjectCommand,
+  CreateGraphicObjectDto,
 } from '../../application/index.js';
 
 @ApiTags('Objects')

@@ -5,6 +5,7 @@ import {
   ReviewOwnershipError,
 } from '../../domain/index.js';
 import { DeleteReviewCommand, DeleteReviewResponseDto } from '../dto/index.js';
+import { ReviewMapper } from '../mappers/index.js';
 import {
   REVIEW_REPOSITORY,
   type ReviewRepositoryPort,
@@ -32,8 +33,10 @@ export class DeleteReviewUseCase
       throw new ReviewOwnershipError();
     }
 
+    const reviewResponse = ReviewMapper.toResponse(review);
+
     await this.reviewRepository.delete(command.reviewId);
 
-    return { ok: true };
+    return { ok: true, review: reviewResponse };
   }
 }

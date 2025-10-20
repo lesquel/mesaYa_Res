@@ -5,6 +5,7 @@ import {
   DeleteGraphicObjectCommand,
   DeleteGraphicObjectResponseDto,
 } from '../dto/index.js';
+import { GraphicObjectMapper } from '../mappers/index.js';
 import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   GRAPHIC_OBJECT_REPOSITORY,
@@ -28,12 +29,14 @@ export class DeleteGraphicObjectUseCase
   ): Promise<DeleteGraphicObjectResponseDto> {
     const object = await this.repo.findById(command.objectId);
     if (!object) throw new GraphicObjectNotFoundError(command.objectId);
+    const graphicObjectResponse = GraphicObjectMapper.toResponse(object);
+
     await this.repo.delete(command.objectId);
     await this.events.publish({
       type: 'object.deleted',
       objectId: command.objectId,
       occurredAt: new Date(),
     });
-    return { ok: true };
+    return { ok: true, graphicObject: graphicObjectResponse };
   }
 }

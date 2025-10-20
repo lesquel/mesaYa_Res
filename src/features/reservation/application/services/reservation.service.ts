@@ -92,11 +92,12 @@ export class ReservationService {
     topic: KAFKA_TOPICS.RESERVATION_DELETED,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteReservationCommand];
+      const { reservation } = result as DeleteReservationResponseDto;
       return {
         action: 'reservation.deleted',
-        entityId: command.reservationId,
+        entityId: reservation.id,
         performedBy: command.userId,
-        result: toPlain(result),
+        entity: toPlain(reservation),
       };
     },
   })

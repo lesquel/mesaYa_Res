@@ -3,6 +3,7 @@ import {
   DeleteSectionCommand,
   DeleteSectionResponseDto,
 } from '../dto/index.js';
+import { SectionMapper } from '../mappers/index.js';
 import { type SectionRepositoryPort } from '../ports/index.js';
 import { SectionNotFoundError } from '../../domain/index.js';
 
@@ -20,8 +21,10 @@ export class DeleteSectionUseCase
       throw new SectionNotFoundError(command.sectionId);
     }
 
+    const sectionResponse = SectionMapper.toResponse(section);
+
     await this.sectionRepository.delete(command.sectionId);
 
-    return { ok: true };
+    return { ok: true, section: sectionResponse };
   }
 }

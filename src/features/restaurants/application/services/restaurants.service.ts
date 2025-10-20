@@ -91,11 +91,12 @@ export class RestaurantsService {
     topic: KAFKA_TOPICS.RESTAURANT_DELETED,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteRestaurantCommand];
+      const { restaurant } = result as DeleteRestaurantResponseDto;
       return {
         action: 'restaurant.deleted',
-        entityId: command.restaurantId,
+        entityId: restaurant.id,
         performedBy: command.ownerId,
-        result: toPlain(result),
+        entity: toPlain(restaurant),
       };
     },
   })

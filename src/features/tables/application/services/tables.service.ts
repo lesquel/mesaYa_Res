@@ -76,12 +76,12 @@ export class TablesService {
 
   @KafkaEmit({
     topic: KAFKA_TOPICS.TABLE_DELETED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [DeleteTableCommand];
+    payload: ({ result, toPlain }) => {
+      const { table } = result as DeleteTableResponseDto;
       return {
         action: 'table.deleted',
-        entityId: command.tableId,
-        result: toPlain(result),
+        entityId: table.id,
+        entity: toPlain(table),
       };
     },
   })

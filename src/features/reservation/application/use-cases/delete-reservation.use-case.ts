@@ -8,6 +8,7 @@ import {
   DeleteReservationCommand,
   DeleteReservationResponseDto,
 } from '../dto/index.js';
+import { ReservationMapper } from '../mappers/index.js';
 import {
   RESERVATION_REPOSITORY,
   type ReservationRepositoryPort,
@@ -41,6 +42,8 @@ export class DeleteReservatioUseCase
       throw new ReservationOwnershipError();
     }
 
+    const reservationResponse = ReservationMapper.toResponse(reservation);
+
     await this.reservationRepository.delete(command.reservationId);
     await this.eventPublisher.publish({
       type: 'reservation.deleted',
@@ -49,6 +52,6 @@ export class DeleteReservatioUseCase
       userId: reservation.userId,
       occurredAt: new Date(),
     });
-    return { ok: true };
+    return { ok: true, reservation: reservationResponse };
   }
 }

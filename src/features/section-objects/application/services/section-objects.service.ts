@@ -96,12 +96,12 @@ export class SectionObjectsService {
 
   @KafkaEmit({
     topic: KAFKA_TOPICS.SECTION_OBJECT_DELETED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [DeleteSectionObjectCommand];
+    payload: ({ result, toPlain }) => {
+      const { sectionObject } = result as DeleteSectionObjectResponseDto;
       return {
         action: 'section-object.deleted',
-        entityId: command.sectionObjectId,
-        result: toPlain(result),
+        entityId: sectionObject.id,
+        entity: toPlain(sectionObject),
       };
     },
   })
