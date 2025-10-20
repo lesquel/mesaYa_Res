@@ -40,8 +40,8 @@ export class PaymentEntityDTOMapper extends EntityDTOMapper<
     const status = PaymentStatusVO.create(PaymentStatusEnum.PENDING);
 
     return {
-      reservationId: dto.reservationId,
-      subscriptionId: dto.subscriptionId,
+      reservation: dto.reservationId,
+      subscription: dto.subscriptionId,
       amount,
       paymentStatus: status,
     };
