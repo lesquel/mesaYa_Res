@@ -8,18 +8,30 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PaymentService } from '@features/payment/application';
 import type {
-  CreatePaymentDto,
   PaymentResponseDto,
   PaymentListResponseDto,
-  UpdatePaymentStatusDto,
   DeletePaymentResponseDto,
 } from '@features/payment/application';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator.js';
+import {
+  CreatePaymentRequestDto,
+  DeletePaymentResponseSwaggerDto,
+  PaymentResponseSwaggerDto,
+  UpdatePaymentStatusRequestDto,
+} from '@features/payment/presentation/dto/index.js';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })
@@ -28,8 +40,13 @@ export class PaymentController {
 
   @Post()
   @ApiOperation({ summary: 'Create a payment' })
+  @ApiBody({ type: CreatePaymentRequestDto })
+  @ApiCreatedResponse({
+    description: 'Payment successfully created',
+    type: PaymentResponseSwaggerDto,
+  })
   async createPayment(
-    @Body() dto: CreatePaymentDto,
+    @Body() dto: CreatePaymentRequestDto,
   ): Promise<PaymentResponseDto> {
     return this.paymentService.createPayment(dto);
   }
@@ -37,6 +54,10 @@ export class PaymentController {
   @Get()
   @ApiOperation({ summary: 'List payments' })
   @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: PaymentResponseSwaggerDto,
+    description: 'Paginated collection of payments',
+  })
   async getPayments(
     @PaginationParams() params: PaginatedQueryParams,
   ): Promise<PaymentListResponseDto> {
@@ -46,6 +67,10 @@ export class PaymentController {
   @Get(':paymentId')
   @ApiOperation({ summary: 'Get payment by ID' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
+  @ApiOkResponse({
+    description: 'Payment details',
+    type: PaymentResponseSwaggerDto,
+  })
   async getPaymentById(
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
   ): Promise<PaymentResponseDto> {
@@ -55,9 +80,14 @@ export class PaymentController {
   @Patch(':paymentId/status')
   @ApiOperation({ summary: 'Update payment status' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
+  @ApiBody({ type: UpdatePaymentStatusRequestDto })
+  @ApiOkResponse({
+    description: 'Payment status updated',
+    type: PaymentResponseSwaggerDto,
+  })
   async updatePaymentStatus(
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
-    @Body() dto: UpdatePaymentStatusDto,
+    @Body() dto: UpdatePaymentStatusRequestDto,
   ): Promise<PaymentResponseDto> {
     return this.paymentService.updatePaymentStatus({
       ...dto,
@@ -68,6 +98,10 @@ export class PaymentController {
   @Delete(':paymentId')
   @ApiOperation({ summary: 'Delete payment' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
+  @ApiOkResponse({
+    description: 'Payment removed',
+    type: DeletePaymentResponseSwaggerDto,
+  })
   async deletePayment(
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
   ): Promise<DeletePaymentResponseDto> {
