@@ -32,7 +32,7 @@ import type {
   FindSectionObjectQuery,
   ListSectionObjectsQuery,
   UpdateSectionObjectCommand,
-} from '../../application/dto/index.js';
+} from '../../../application/dto/index.js';
 
 @ApiTags('SectionObjects')
 @Controller({ path: 'section-object', version: '1' })
