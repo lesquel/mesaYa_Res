@@ -2,6 +2,7 @@ import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { UseCase } from '@shared/application/ports/use-case.port';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { PaymentDomainService } from '@features/payment/domain';
 import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
 import { PaymentEntityDTOMapper } from '../mappers';
@@ -13,6 +14,12 @@ import { PaymentCreationFailedError } from '../../domain/errors';
 import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
 import { PaymentEntityDTOMapper } from '../mappers';
 >>>>>>> fe5730e (refactor(payment): restructure payment repository ports and mappers)
+=======
+import { PaymentDomainService } from '@features/payment/domain';
+import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
+import { PaymentEntityDTOMapper } from '../mappers';
+import { PaymentDto } from '../dtos/output/payment.dto';
+>>>>>>> def5413 (feat(subscription): implement subscription and subscription plan services, use cases, and controllers)
 
 export class CreatePaymentUseCase
   implements UseCase<CreatePaymentDto, PaymentDto>
@@ -20,10 +27,14 @@ export class CreatePaymentUseCase
   constructor(
     private readonly logger: ILoggerPort,
 <<<<<<< HEAD
+<<<<<<< HEAD
     private readonly paymentDomainService: PaymentDomainService,
 =======
     private readonly paymentRepository: IPaymentRepositoryPort,
 >>>>>>> fe5730e (refactor(payment): restructure payment repository ports and mappers)
+=======
+    private readonly paymentDomainService: PaymentDomainService,
+>>>>>>> def5413 (feat(subscription): implement subscription and subscription plan services, use cases, and controllers)
     private readonly paymentMapper: PaymentEntityDTOMapper,
   ) {}
 
