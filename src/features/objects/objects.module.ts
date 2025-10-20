@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module.js';
-import { ObjectsController } from './interface/controllers/objects.controller.js';
+import { ObjectsController } from './interface/controllers/v1/objects.controller.js';
 import { ObjectsService } from './application/services/objects.service.js';
 import {
   CreateGraphicObjectUseCase,

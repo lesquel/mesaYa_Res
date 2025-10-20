@@ -19,7 +19,7 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
   ObjectsService,
@@ -30,7 +30,7 @@ import {
   UpdateGraphicObjectDto,
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
-} from '../../application/index.js';
+} from '../../../application/index.js';
 
 @ApiTags('Objects')
 @Controller({ path: 'object', version: '1' })

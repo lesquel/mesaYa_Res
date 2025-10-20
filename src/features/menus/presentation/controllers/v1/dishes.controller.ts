@@ -19,7 +19,7 @@ import type {
 import { DishService } from '@features/menus/application';
 
 @ApiTags('Dishes')
-@Controller('dishes')
+@Controller({ path: 'dishes', version: '1' })
 export class DishesController {
   constructor(private readonly dishService: DishService) {}
 

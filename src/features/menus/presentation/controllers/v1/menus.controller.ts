@@ -19,7 +19,7 @@ import type {
 import { MenuService } from '@features/menus/application';
 
 @ApiTags('Menus')
-@Controller('menus')
+@Controller({ path: 'menus', version: '1' })
 export class MenusController {
   constructor(private readonly menuService: MenuService) {}
 
