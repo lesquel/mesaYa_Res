@@ -16,7 +16,7 @@ export class MenuDomainService {
 
     if (!menu) {
       throw new MenuCreationFailedError('Repository returned null', {
-        restauranteId: data.restaurantId,
+        restaurantId: data.restaurantId,
       });
     }
 
