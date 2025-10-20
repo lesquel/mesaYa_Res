@@ -1,1 +1,1 @@
-export * from './tables.service.js';
+export * from './tables.service';

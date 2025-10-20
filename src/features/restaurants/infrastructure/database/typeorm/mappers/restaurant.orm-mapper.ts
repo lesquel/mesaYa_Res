@@ -1,9 +1,6 @@
-import {
-  RestaurantEntity,
-  type RestaurantDay,
-} from '../../../../domain/index.js';
-import { RestaurantOrmEntity } from '../orm/index.js';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
+import { RestaurantEntity, type RestaurantDay } from '../../../../domain/index';
+import { RestaurantOrmEntity } from '../orm/index';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
 export class RestaurantOrmMapper {
   static toDomain(entity: RestaurantOrmEntity): RestaurantEntity {

@@ -1,13 +1,13 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
 import { randomUUID } from 'crypto';
-import { Table, TableSectionNotFoundError } from '../../domain/index.js';
-import { TableMapper } from '../mappers/index.js';
-import { CreateTableCommand, TableResponseDto } from '../dto/index.js';
+import { Table, TableSectionNotFoundError } from '../../domain/index';
+import { TableMapper } from '../mappers/index';
+import { CreateTableCommand, TableResponseDto } from '../dto/index';
 import {
   type TableRepositoryPort,
   type SectionTableReaderPort,
   type TableEventPublisherPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 export class CreateTableUseCase
   implements UseCase<CreateTableCommand, TableResponseDto>

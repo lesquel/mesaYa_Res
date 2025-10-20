@@ -1,2 +1,2 @@
-export * from './reservation.response.dto.js';
-export * from './delete-reservation.response.js';
+export * from './reservation.response.dto';
+export * from './delete-reservation.response';

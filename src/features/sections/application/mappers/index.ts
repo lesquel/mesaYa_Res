@@ -1,1 +1,1 @@
-export * from './section.mapper.js';
+export * from './section.mapper';

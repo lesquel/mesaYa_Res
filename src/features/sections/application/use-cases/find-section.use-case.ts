@@ -1,8 +1,8 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { SectionMapper } from '../mappers/index.js';
-import { SectionResponseDto, FindSectionQuery } from '../dto/index.js';
-import { type SectionRepositoryPort } from '../ports/index.js';
-import { SectionNotFoundError } from '../../domain/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { SectionMapper } from '../mappers/index';
+import { SectionResponseDto, FindSectionQuery } from '../dto/index';
+import { type SectionRepositoryPort } from '../ports/index';
+import { SectionNotFoundError } from '../../domain/index';
 
 export class FindSectionUseCase
   implements UseCase<FindSectionQuery, SectionResponseDto>

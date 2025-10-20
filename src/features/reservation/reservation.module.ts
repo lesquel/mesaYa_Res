@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
-import { ReservationsController } from './interface/index.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
+import { ReservationsController } from './interface/index';
 import {
   ReservationOrmEntity,
   ReservationTypeOrmRepository,
   RestaurantTypeOrmReservationProvider,
   UserTypeOrmReservationProvider,
-} from './infrastructure/index.js';
+} from './infrastructure/index';
 import {
   CreateReservationUseCase,
   ListReservationsUseCase,
@@ -20,10 +20,10 @@ import {
   RESTAURANT_RESERVATION_READER,
   USER_RESERVATION_READER,
   RESERVATION_EVENT_PUBLISHER,
-} from './application/index.js';
-import { RestaurantOrmEntity } from '../restaurants/index.js';
-import { ReservationService } from './application/index.js';
-import { ReservationEventNoopProvider } from './infrastructure/index.js';
+} from './application/index';
+import { RestaurantOrmEntity } from '../restaurants/index';
+import { ReservationService } from './application/index';
+import { ReservationEventNoopProvider } from './infrastructure/index';
 
 @Module({
   imports: [

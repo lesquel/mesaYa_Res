@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthUser } from '../../domain/entities/auth-user.entity.js';
-import { type AuthTokenServicePort } from '../../application/ports/token.service.port.js';
+import { AuthUser } from '../../domain/entities/auth-user.entity';
+import { type AuthTokenServicePort } from '../../application/ports/token.service.port';
 
 @Injectable()
 export class JwtTokenServiceAdapter implements AuthTokenServicePort {

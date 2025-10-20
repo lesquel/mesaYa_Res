@@ -1,1 +1,1 @@
-export * from './review.mapper.js';
+export * from './review.mapper';

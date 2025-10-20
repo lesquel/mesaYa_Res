@@ -1,1 +1,1 @@
-export * from './controllers/tables.controller.js';
+export * from './controllers/index';

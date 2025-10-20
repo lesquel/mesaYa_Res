@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AuthPermission } from '../../domain/entities/auth-permission.entity.js';
+import { AuthPermission } from '../../domain/entities/auth-permission.entity';
 import {
   AUTH_PERMISSION_REPOSITORY,
   type AuthPermissionRepositoryPort,
-} from '../ports/permission.repository.port.js';
+} from '../ports/permission.repository.port';
 
 @Injectable()
 export class ListPermissionsUseCase {

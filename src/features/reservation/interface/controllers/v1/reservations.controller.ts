@@ -16,12 +16,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
   CreateReservationDto,
   CreateReservationCommand,
@@ -29,12 +29,13 @@ import {
   UpdateReservationCommand,
   FindReservationQuery,
   DeleteReservationCommand,
-} from '../../application/dto/index.js';
-import type {
-  ListReservationsQuery,
-  ListRestaurantReservationsQuery,
-} from '../../application/dto/index.js';
-import { ReservationService } from '../../application/services/index.js';
+  type ListReservationsQuery,
+  type ListRestaurantReservationsQuery,
+  type ReservationResponseDto,
+  type PaginatedReservationResponse,
+  type DeleteReservationResponseDto,
+} from '@features/reservation/application/dto/index';
+import { ReservationService } from '@features/reservation/application/services/index';
 
 @ApiTags('Reservations')
 @Controller({ path: 'reservations', version: '1' })
@@ -50,7 +51,7 @@ export class ReservationsController {
   async create(
     @Body() dto: CreateReservationDto,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<ReservationResponseDto> {
     const command: CreateReservationCommand = {
       ...dto,
       userId: user.userId,
@@ -64,7 +65,7 @@ export class ReservationsController {
   async findAll(
     @PaginationParams({ defaultRoute: '/reservations' })
     query: ListReservationsQuery,
-  ) {
+  ): Promise<PaginatedReservationResponse> {
     return this.reservationsService.list(query);
   }
 
@@ -76,7 +77,7 @@ export class ReservationsController {
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @PaginationParams({ defaultRoute: '/reservations/restaurant' })
     pagination: ListReservationsQuery,
-  ) {
+  ): Promise<PaginatedReservationResponse> {
     const query: ListRestaurantReservationsQuery = {
       restaurantId,
       ...pagination,
@@ -87,7 +88,9 @@ export class ReservationsController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una reserva por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ReservationResponseDto> {
     const query: FindReservationQuery = { reservationId: id };
     return this.reservationsService.findOne(query);
   }
@@ -105,7 +108,7 @@ export class ReservationsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateReservationDto,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<ReservationResponseDto> {
     const command: UpdateReservationCommand = {
       ...dto,
       reservationId: id,
@@ -125,7 +128,7 @@ export class ReservationsController {
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<DeleteReservationResponseDto> {
     const command: DeleteReservationCommand = {
       reservationId: id,
       userId: user.userId,

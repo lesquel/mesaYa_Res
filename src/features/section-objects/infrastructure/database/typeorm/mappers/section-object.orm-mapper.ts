@@ -1,5 +1,5 @@
-import { SectionObject } from '../../../../domain/index.js';
-import { SectionObjectOrmEntity } from '../orm/index.js';
+import { SectionObject } from '../../../../domain/index';
+import { SectionObjectOrmEntity } from '../orm/index';
 
 export class SectionObjectOrmMapper {
   static toDomain(entity: SectionObjectOrmEntity): SectionObject {

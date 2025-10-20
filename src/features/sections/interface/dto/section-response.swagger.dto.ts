@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { SectionResponseDto } from '../../application/dto/output/section.response.dto.js';
+import type { SectionResponseDto } from '../../application/dto/output/section.response.dto';
 
 export class SectionResponseSwaggerDto implements SectionResponseDto {
   @ApiProperty({

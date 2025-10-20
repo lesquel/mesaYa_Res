@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
-import { RestaurantsController } from './interface/index.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
+import { RestaurantsController } from './interface/index';
 import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
   OwnerTypeOrmProvider,
-} from './infrastructure/index.js';
+} from './infrastructure/index';
 import {
   CreateRestaurantUseCase,
   ListRestaurantsUseCase,
@@ -18,7 +18,7 @@ import {
   RestaurantsService,
   OWNER_READER,
   RESTAURANT_REPOSITORY,
-} from './application/index.js';
+} from './application/index';
 
 @Module({
   imports: [

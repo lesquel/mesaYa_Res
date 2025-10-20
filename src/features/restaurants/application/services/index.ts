@@ -1,1 +1,1 @@
-export * from './restaurants.service.js';
+export * from './restaurants.service';

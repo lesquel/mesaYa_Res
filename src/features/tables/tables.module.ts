@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { TablesController } from './interface/index.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { TablesController } from './interface/index';
 import {
   TableOrmEntity,
   SectionTypeOrmTableProvider,
   TableTypeOrmRepository,
   TableEventNoopProvider,
-} from './infrastructure/index.js';
-import { TablesService } from './application/services/index.js';
+} from './infrastructure/index';
+import { TablesService } from './application/services/index';
 import {
   CreateTableUseCase,
   ListTablesUseCase,
@@ -16,19 +16,19 @@ import {
   FindTableUseCase,
   UpdateTableUseCase,
   DeleteTableUseCase,
-} from './application/use-cases/index.js';
+} from './application/use-cases/index';
 import {
   TABLE_REPOSITORY,
   SECTION_TABLE_READER,
   TABLE_EVENT_PUBLISHER,
-} from './application/ports/index.js';
-import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index.js';
+} from './application/ports/index';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
 import type {
   TableRepositoryPort,
   SectionTableReaderPort,
   TableEventPublisherPort,
-} from './application/ports/index.js';
-import { KafkaService } from '@shared/infrastructure/kafka/index.js';
+} from './application/ports/index';
+import { KafkaService } from '@shared/infrastructure/kafka/index';
 
 @Module({
   imports: [

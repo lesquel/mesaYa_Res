@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { DeleteSectionResponseDto } from '../../application/dto/output/delete-section.response.dto.js';
-import { SectionResponseSwaggerDto } from './section-response.swagger.dto.js';
+import type { DeleteSectionResponseDto } from '../../application/dto/output/delete-section.response.dto';
+import { SectionResponseSwaggerDto } from './section-response.swagger.dto';
 
 export class DeleteSectionResponseSwaggerDto
   implements DeleteSectionResponseDto

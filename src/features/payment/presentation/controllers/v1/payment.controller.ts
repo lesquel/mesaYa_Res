@@ -25,13 +25,13 @@ import type {
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
-import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator.js';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import {
   CreatePaymentRequestDto,
   DeletePaymentResponseSwaggerDto,
   PaymentResponseSwaggerDto,
   UpdatePaymentStatusRequestDto,
-} from '@features/payment/presentation/dto/index.js';
+} from '@features/payment/presentation/dto/index';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })

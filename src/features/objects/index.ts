@@ -1,3 +1,3 @@
-export * from './objects.module.js';
-export * from './infrastructure/index.js';
-export * from './application/index.js';
+export * from './objects.module';
+export * from './infrastructure/index';
+export * from './application/index';

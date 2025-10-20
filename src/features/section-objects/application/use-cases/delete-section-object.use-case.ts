@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { SectionObjectNotFoundError } from '../../domain/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { SectionObjectNotFoundError } from '../../domain/index';
 import {
   DeleteSectionObjectCommand,
   DeleteSectionObjectResponseDto,
-} from '../dto/index.js';
-import { SectionObjectMapper } from '../mappers/index.js';
+} from '../dto/index';
+import { SectionObjectMapper } from '../mappers/index';
 import {
   SECTION_OBJECT_REPOSITORY,
   type SectionObjectRepositoryPort,
   SECTION_OBJECT_EVENT_PUBLISHER,
   type SectionObjectEventPublisherPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 @Injectable()
 export class DeleteSectionObjectUseCase

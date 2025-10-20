@@ -1,2 +1,2 @@
-export * from './dishes.controller.js';
-export * from './menus.controller.js';
+export * from './dishes.controller';
+export * from './menus.controller';

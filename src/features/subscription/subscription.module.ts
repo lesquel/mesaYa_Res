@@ -8,7 +8,7 @@ import {
   SUBSCRIPTION_PLAN_ORM_MAPPER,
   SubscriptionMapper,
   SubscriptionPlanMapper,
-} from './application/index.js';
+} from './application/index';
 import {
   SubscriptionPlanOrmMapper,
   SubscriptionOrmMapper,
@@ -16,19 +16,19 @@ import {
   SubscriptionTypeOrmRepository,
   SubscriptionPlanOrmEntity,
   SubscriptionOrmEntity,
-} from './infrastructure/index.js';
+} from './infrastructure/index';
 import {
   SubscriptionPlanController,
   SubscriptionController,
-} from './presentation/index.js';
+} from './presentation/index';
 import {
   ISubscriptionPlanRepositoryPort,
   ISubscriptionRepositoryPort,
-} from './domain/index.js';
+} from './domain/index';
 import { RestaurantOrmEntity } from '@features/restaurants';
-import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants.js';
-import type { ILoggerPort } from '@shared/application/ports/logger.port.js';
-import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module.js';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { AuthRole } from './auth-role.entity.js';
+import { AuthRole } from './auth-role.entity';
 
 export interface AuthUserProps {
   id?: string | null;

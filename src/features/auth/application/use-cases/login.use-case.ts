@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials.error.js';
-import { LoginCommand } from '../dto/commands/login.command.js';
-import { AuthTokenResponse } from '../dto/responses/auth-token.response.js';
+import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials.error';
+import { LoginCommand } from '../dto/commands/login.command';
+import { AuthTokenResponse } from '../dto/responses/auth-token.response';
 import {
   AUTH_USER_REPOSITORY,
   type AuthUserRepositoryPort,
-} from '../ports/user.repository.port.js';
+} from '../ports/user.repository.port';
 import {
   AUTH_PASSWORD_HASHER,
   type AuthPasswordHasherPort,
-} from '../ports/password-hasher.port.js';
+} from '../ports/password-hasher.port';
 import {
   AUTH_TOKEN_SERVICE,
   type AuthTokenServicePort,
-} from '../ports/token.service.port.js';
+} from '../ports/token.service.port';
 
 @Injectable()
 export class LoginUseCase {

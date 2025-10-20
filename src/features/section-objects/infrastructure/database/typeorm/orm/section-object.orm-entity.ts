@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index.js';
-import { GraphicObjectOrmEntity } from '../../../../../objects/infrastructure/database/typeorm/orm/index.js';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
+import { GraphicObjectOrmEntity } from '../../../../../objects/infrastructure/database/typeorm/orm/index';
 
 @Entity({ name: 'section_object' })
 export class SectionObjectOrmEntity {

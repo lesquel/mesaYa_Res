@@ -1,1 +1,1 @@
-export * from './entities/section-object.entity.js';
+export * from './entities/section-object.entity';

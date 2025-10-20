@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { DeleteDishResponseDto } from '../../application/dtos/output/delete-dish-response.dto.js';
+import type { DeleteDishResponseDto } from '../../application/dtos/output/delete-dish-response.dto';
 
 export class DeleteDishResponseSwaggerDto implements DeleteDishResponseDto {
   @ApiProperty({

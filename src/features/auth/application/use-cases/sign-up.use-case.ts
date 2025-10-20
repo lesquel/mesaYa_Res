@@ -1,28 +1,25 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AuthUser } from '../../domain/entities/auth-user.entity.js';
-import {
-  AuthRole,
-  AuthRoleName,
-} from '../../domain/entities/auth-role.entity.js';
-import { EmailAlreadyInUseError } from '../../domain/errors/email-already-in-use.error.js';
-import { SignUpCommand } from '../dto/commands/sign-up.command.js';
+import { AuthUser } from '../../domain/entities/auth-user.entity';
+import { AuthRole, AuthRoleName } from '../../domain/entities/auth-role.entity';
+import { EmailAlreadyInUseError } from '../../domain/errors/email-already-in-use.error';
+import { SignUpCommand } from '../dto/commands/sign-up.command';
 import {
   AUTH_USER_REPOSITORY,
   type AuthUserRepositoryPort,
-} from '../ports/user.repository.port.js';
+} from '../ports/user.repository.port';
 import {
   AUTH_ROLE_REPOSITORY,
   type AuthRoleRepositoryPort,
-} from '../ports/role.repository.port.js';
+} from '../ports/role.repository.port';
 import {
   AUTH_PASSWORD_HASHER,
   type AuthPasswordHasherPort,
-} from '../ports/password-hasher.port.js';
+} from '../ports/password-hasher.port';
 import {
   AUTH_TOKEN_SERVICE,
   type AuthTokenServicePort,
-} from '../ports/token.service.port.js';
-import { AuthTokenResponse } from '../dto/responses/auth-token.response.js';
+} from '../ports/token.service.port';
+import { AuthTokenResponse } from '../dto/responses/auth-token.response';
 
 @Injectable()
 export class SignUpUseCase {

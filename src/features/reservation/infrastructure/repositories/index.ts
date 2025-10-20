@@ -1,1 +1,1 @@
-export * from './reservation-typeorm.repository.js';
+export * from './reservation-typeorm.repository';

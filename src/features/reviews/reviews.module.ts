@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
-import { ReviewsController } from './interface/index.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
+import { ReviewsController } from './interface/index';
 import {
   ReviewOrmEntity,
   ReviewTypeOrmRepository,
   RestaurantTypeOrmReviewProvider,
   UserTypeOrmReviewProvider,
-} from './infrastructure/index.js';
+} from './infrastructure/index';
 import {
   CreateReviewUseCase,
   ListReviewsUseCase,
@@ -20,8 +20,8 @@ import {
   REVIEW_REPOSITORY,
   RESTAURANT_REVIEW_READER,
   USER_REVIEW_READER,
-} from './application/index.js';
-import { RestaurantOrmEntity } from '../restaurants/index.js';
+} from './application/index';
+import { RestaurantOrmEntity } from '../restaurants/index';
 
 @Module({
   imports: [

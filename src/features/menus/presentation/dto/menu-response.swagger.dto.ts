@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { MenuDto } from '../../application/dtos/output/menu.dto.js';
-import { DishResponseSwaggerDto } from './dish-response.swagger.dto.js';
+import type { MenuDto } from '../../application/dtos/output/menu.dto';
+import { DishResponseSwaggerDto } from './dish-response.swagger.dto';
 
 export class MenuResponseSwaggerDto implements MenuDto {
   @ApiProperty({

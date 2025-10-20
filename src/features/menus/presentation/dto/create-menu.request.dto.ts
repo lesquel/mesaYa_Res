@@ -12,8 +12,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import type { CreateMenuDto } from '../../application/dtos/input/create-menu.dto.js';
-import { CreateDishRequestDto } from './create-dish.request.dto.js';
+import type { CreateMenuDto } from '../../application/dtos/input/create-menu.dto';
+import { CreateDishRequestDto } from './create-dish.request.dto';
 
 export class CreateMenuRequestDto implements CreateMenuDto {
   @ApiProperty({ description: 'Identificador del restaurante', example: 1001 })

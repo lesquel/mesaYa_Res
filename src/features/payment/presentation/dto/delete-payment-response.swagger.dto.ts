@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { DeletePaymentResponseDto } from '../../application/dtos/output/delete-payment-response.dto.js';
+import type { DeletePaymentResponseDto } from '../../application/dtos/output/delete-payment-response.dto';
 
 export class DeletePaymentResponseSwaggerDto
   implements DeletePaymentResponseDto

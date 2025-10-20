@@ -1,4 +1,4 @@
-import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error.js';
+import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error';
 
 export class RestaurantSubscriptionId {
   private readonly internal: number;

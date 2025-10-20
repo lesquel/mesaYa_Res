@@ -1,15 +1,15 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { SectionMapper } from '../mappers/index.js';
-import { SectionResponseDto, UpdateSectionCommand } from '../dto/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { SectionMapper } from '../mappers/index';
+import { SectionResponseDto, UpdateSectionCommand } from '../dto/index';
 import {
   type RestaurantSectionReaderPort,
   type SectionRepositoryPort,
-} from '../ports/index.js';
+} from '../ports/index';
 import {
   SectionNotFoundError,
   SectionRestaurantNotFoundError,
   type SectionUpdate,
-} from '../../domain/index.js';
+} from '../../domain/index';
 
 export class UpdateSectionUseCase
   implements UseCase<UpdateSectionCommand, SectionResponseDto>

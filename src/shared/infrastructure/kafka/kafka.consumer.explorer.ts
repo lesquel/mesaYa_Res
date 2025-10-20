@@ -4,8 +4,8 @@ import { KafkaContext } from '@nestjs/microservices';
 import {
   KAFKA_CONSUMER_METADATA,
   KafkaConsumerMetadata,
-} from './kafka.constants.js';
-import { KafkaService } from './kafka.service.js';
+} from './kafka.constants';
+import { KafkaService } from './kafka.service';
 
 @Injectable()
 export class KafkaConsumerExplorer implements OnApplicationBootstrap {

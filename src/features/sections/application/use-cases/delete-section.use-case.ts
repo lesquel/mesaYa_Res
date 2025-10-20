@@ -1,11 +1,8 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  DeleteSectionCommand,
-  DeleteSectionResponseDto,
-} from '../dto/index.js';
-import { SectionMapper } from '../mappers/index.js';
-import { type SectionRepositoryPort } from '../ports/index.js';
-import { SectionNotFoundError } from '../../domain/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { DeleteSectionCommand, DeleteSectionResponseDto } from '../dto/index';
+import { SectionMapper } from '../mappers/index';
+import { type SectionRepositoryPort } from '../ports/index';
+import { SectionNotFoundError } from '../../domain/index';
 
 export class DeleteSectionUseCase
   implements UseCase<DeleteSectionCommand, DeleteSectionResponseDto>

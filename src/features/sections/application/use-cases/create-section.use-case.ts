@@ -1,11 +1,11 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { Section, SectionRestaurantNotFoundError } from '../../domain/index.js';
-import { SectionMapper } from '../mappers/index.js';
-import { SectionResponseDto, CreateSectionCommand } from '../dto/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { Section, SectionRestaurantNotFoundError } from '../../domain/index';
+import { SectionMapper } from '../mappers/index';
+import { SectionResponseDto, CreateSectionCommand } from '../dto/index';
 import {
   type RestaurantSectionReaderPort,
   type SectionRepositoryPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 export class CreateSectionUseCase
   implements UseCase<CreateSectionCommand, SectionResponseDto>

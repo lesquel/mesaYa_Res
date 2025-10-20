@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
-import { PermissionOrmEntity } from '../entities/permission.orm-entity.js';
-import { AuthPermissionOrmMapper } from '../mappers/auth-permission.orm-mapper.js';
-import { AuthPermission } from '../../../../domain/entities/auth-permission.entity.js';
-import { type AuthPermissionRepositoryPort } from '../../../../application/ports/permission.repository.port.js';
+import { PermissionOrmEntity } from '../entities/permission.orm-entity';
+import { AuthPermissionOrmMapper } from '../mappers/auth-permission.orm-mapper';
+import { AuthPermission } from '../../../../domain/entities/auth-permission.entity';
+import { type AuthPermissionRepositoryPort } from '../../../../application/ports/permission.repository.port';
 
 @Injectable()
 export class AuthPermissionTypeOrmRepository

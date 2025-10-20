@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { SectionObjectsController } from './interface/index.js';
-import { SectionObjectsService } from './application/index.js';
-import { SectionObjectOrmEntity } from './infrastructure/index.js';
-import { SectionObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/section-object-typeorm.repository.js';
-import { SectionTypeOrmReaderForSectionObject } from './infrastructure/providers/section-typeorm.provider.js';
-import { ObjectTypeOrmReaderForSectionObject } from './infrastructure/providers/object-typeorm.provider.js';
-import { SectionObjectEventNoopProvider } from './infrastructure/providers/section-object-event-noop.provider.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { SectionObjectsController } from './interface/index';
+import { SectionObjectsService } from './application/index';
+import { SectionObjectOrmEntity } from './infrastructure/index';
+import { SectionObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/section-object-typeorm.repository';
+import { SectionTypeOrmReaderForSectionObject } from './infrastructure/providers/section-typeorm.provider';
+import { ObjectTypeOrmReaderForSectionObject } from './infrastructure/providers/object-typeorm.provider';
+import { SectionObjectEventNoopProvider } from './infrastructure/providers/section-object-event-noop.provider';
 import {
   SECTION_OBJECT_REPOSITORY,
   SECTION_READER_FOR_SECTION_OBJECT,
@@ -20,9 +20,9 @@ import {
   FindSectionObjectUseCase,
   UpdateSectionObjectUseCase,
   DeleteSectionObjectUseCase,
-} from './application/index.js';
-import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index.js';
-import { GraphicObjectOrmEntity } from '../objects/infrastructure/database/typeorm/orm/index.js';
+} from './application/index';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
+import { GraphicObjectOrmEntity } from '../objects/infrastructure/database/typeorm/orm/index';
 
 @Module({
   imports: [

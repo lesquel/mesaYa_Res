@@ -1,7 +1,7 @@
-import { ReservationEntity } from '../../domain/index.js';
-import { ReservationOrmEntity } from '../orm/index.js';
-import { RestaurantOrmEntity } from '../../../restaurants/index.js';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
+import { ReservationEntity } from '../../domain/index';
+import { ReservationOrmEntity } from '../orm/index';
+import { RestaurantOrmEntity } from '../../../restaurants/index';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
 export class ReservationOrmMapper {
   static toDomain(entity: ReservationOrmEntity): ReservationEntity {

@@ -1,1 +1,1 @@
-export * from './table-typeorm.repository.js';
+export * from './table-typeorm.repository';

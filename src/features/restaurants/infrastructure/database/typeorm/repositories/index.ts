@@ -1,1 +1,1 @@
-export * from './restaurant-typeorm.repository.js';
+export * from './restaurant-typeorm.repository';

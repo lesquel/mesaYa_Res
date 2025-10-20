@@ -1,17 +1,17 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Table } from '../../../../domain/index.js';
-import { TableOrmEntity } from '../orm/index.js';
-import { TableOrmMapper } from '../mappers/index.js';
-import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
+import { Table } from '../../../../domain/index';
+import { TableOrmEntity } from '../orm/index';
+import { TableOrmMapper } from '../mappers/index';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types/pagination';
 import {
   ListTablesQuery,
   ListSectionTablesQuery,
-} from '../../../../application/dto/index.js';
-import { type TableRepositoryPort } from '../../../../application/ports/index.js';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index.js';
+} from '../../../../application/dto/index';
+import { type TableRepositoryPort } from '../../../../application/ports/index';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
 
 @Injectable()
 export class TableTypeOrmRepository implements TableRepositoryPort {

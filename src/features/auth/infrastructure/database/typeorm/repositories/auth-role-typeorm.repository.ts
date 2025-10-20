@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
-import { RoleOrmEntity } from '../entities/role.orm-entity.js';
-import { AuthRoleOrmMapper } from '../mappers/auth-role.orm-mapper.js';
-import { AuthRole } from '../../../../domain/entities/auth-role.entity.js';
-import { type AuthRoleRepositoryPort } from '../../../../application/ports/role.repository.port.js';
+import { RoleOrmEntity } from '../entities/role.orm-entity';
+import { AuthRoleOrmMapper } from '../mappers/auth-role.orm-mapper';
+import { AuthRole } from '../../../../domain/entities/auth-role.entity';
+import { type AuthRoleRepositoryPort } from '../../../../application/ports/role.repository.port';
 
 @Injectable()
 export class AuthRoleTypeOrmRepository implements AuthRoleRepositoryPort {

@@ -1,3 +1,3 @@
-export * from './section-create.type.js';
-export * from './section-snapshot.type.js';
-export * from './section-update.type.js';
+export * from './section-create.type';
+export * from './section-snapshot.type';
+export * from './section-update.type';

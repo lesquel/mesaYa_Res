@@ -1,14 +1,11 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  TableNotFoundError,
-  type UpdateTableProps,
-} from '../../domain/index.js';
-import { UpdateTableCommand, TableResponseDto } from '../dto/index.js';
-import { TableMapper } from '../mappers/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { TableNotFoundError, type UpdateTableProps } from '../../domain/index';
+import { UpdateTableCommand, TableResponseDto } from '../dto/index';
+import { TableMapper } from '../mappers/index';
 import {
   type TableRepositoryPort,
   type TableEventPublisherPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 export class UpdateTableUseCase
   implements UseCase<UpdateTableCommand, TableResponseDto>

@@ -1,4 +1,4 @@
-import { InvalidReviewDataError } from '../../errors/invalid-review-data.error.js';
+import { InvalidReviewDataError } from '../../errors/invalid-review-data.error';
 
 export class ReviewRestaurantId {
   private readonly internal: string;

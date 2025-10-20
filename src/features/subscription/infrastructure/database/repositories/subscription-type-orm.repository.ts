@@ -6,17 +6,17 @@ import {
   SubscriptionPlanInactiveError,
   SubscriptionPlanNotFoundError,
   SubscriptionRestaurantNotFoundError,
-} from '../../../domain/errors/index.js';
-import { SubscriptionEntity } from '../../../domain/entities/subscription.entity.js';
+} from '../../../domain/errors/index';
+import { SubscriptionEntity } from '../../../domain/entities/subscription.entity';
 import { SubscriptionPlanStatesEnum } from '../../../domain/enums';
 import { SubscriptionOrmEntity } from '../orm/subscription.type-orm.entity';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
 import { RestaurantOrmEntity } from '@features/restaurants';
-import { ISubscriptionRepositoryPort } from '@features/subscription/domain/repositories/index.js';
+import { ISubscriptionRepositoryPort } from '@features/subscription/domain/repositories/index';
 import {
   SubscriptionCreate,
   SubscriptionUpdate,
-} from '@features/subscription/domain/index.js';
+} from '@features/subscription/domain/index';
 import {
   SUBSCRIPTION_ORM_MAPPER,
   SubscriptionOrmMapperPort,

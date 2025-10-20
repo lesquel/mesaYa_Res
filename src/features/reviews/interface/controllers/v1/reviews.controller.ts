@@ -16,17 +16,17 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
   CreateReviewDto,
   ReviewsService,
   UpdateReviewDto,
-} from '../../application/index.js';
+} from '@features/reviews/application/index';
 import type {
   CreateReviewCommand,
   DeleteReviewCommand,
@@ -34,7 +34,10 @@ import type {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
   UpdateReviewCommand,
-} from '../../application/index.js';
+  ReviewResponseDto,
+  PaginatedReviewResponse,
+  DeleteReviewResponseDto,
+} from '@features/reviews/application/index';
 
 @ApiTags('Reviews')
 @Controller({ path: 'review', version: '1' })
@@ -50,7 +53,7 @@ export class ReviewsController {
   async create(
     @Body() dto: CreateReviewDto,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<ReviewResponseDto> {
     const command: CreateReviewCommand = {
       ...dto,
       userId: user.userId,
@@ -64,7 +67,7 @@ export class ReviewsController {
   async findAll(
     @PaginationParams({ defaultRoute: '/review' })
     query: ListReviewsQuery,
-  ) {
+  ): Promise<PaginatedReviewResponse> {
     return this.reviewsService.list(query);
   }
 
@@ -76,7 +79,7 @@ export class ReviewsController {
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @PaginationParams({ defaultRoute: '/review/restaurant' })
     pagination: ListReviewsQuery,
-  ) {
+  ): Promise<PaginatedReviewResponse> {
     const query: ListRestaurantReviewsQuery = {
       restaurantId,
       ...pagination,
@@ -87,7 +90,9 @@ export class ReviewsController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una reseña por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ReviewResponseDto> {
     const query: FindReviewQuery = { reviewId: id };
     return this.reviewsService.findOne(query);
   }
@@ -103,7 +108,7 @@ export class ReviewsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateReviewDto,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<ReviewResponseDto> {
     const command: UpdateReviewCommand = {
       ...dto,
       reviewId: id,
@@ -121,7 +126,7 @@ export class ReviewsController {
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<DeleteReviewResponseDto> {
     const command: DeleteReviewCommand = {
       reviewId: id,
       userId: user.userId,

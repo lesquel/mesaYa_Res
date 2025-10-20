@@ -1,2 +1,2 @@
-export * from './restaurant.entity.js';
-export * from './values/index.js';
+export * from './restaurant.entity';
+export * from './values/index';

@@ -1,1 +1,1 @@
-export * from './controllers/v1/index.js';
+export * from './controllers/v1/index';

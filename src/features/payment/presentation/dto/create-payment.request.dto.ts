@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator';
-import type { CreatePaymentDto } from '../../application/dtos/input/create-payment.dto.js';
+import type { CreatePaymentDto } from '../../application/dtos/input/create-payment.dto';
 
 export class CreatePaymentRequestDto implements CreatePaymentDto {
   @ApiPropertyOptional({

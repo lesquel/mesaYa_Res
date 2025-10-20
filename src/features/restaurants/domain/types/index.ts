@@ -1,3 +1,3 @@
-export * from './restaurant-create.type.js';
-export * from './restaurant-snapshot.type.js';
-export * from './restaurant-update.type.js';
+export * from './restaurant-create.type';
+export * from './restaurant-snapshot.type';
+export * from './restaurant-update.type';

@@ -2,7 +2,7 @@ import { MoneyVO } from '@shared/domain/entities/values';
 import {
   SubscriptionPlanPeriodVO,
   SubscriptionPlanStateVO,
-} from '../entities/values/index.js';
+} from '../entities/values/index';
 
 export interface SubscriptionPlanCreate {
   name: string;

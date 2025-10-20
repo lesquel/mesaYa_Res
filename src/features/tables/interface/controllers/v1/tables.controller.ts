@@ -16,12 +16,15 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { ApiPaginationQuery } from '../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
-import { CreateTableDto, UpdateTableDto } from '../../application/dto/index.js';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import {
+  CreateTableDto,
+  UpdateTableDto,
+} from '@features/tables/application/dto/index';
 import type {
   CreateTableCommand,
   DeleteTableCommand,
@@ -29,8 +32,11 @@ import type {
   ListSectionTablesQuery,
   ListTablesQuery,
   UpdateTableCommand,
-} from '../../application/dto/index.js';
-import { TablesService } from '../../application/services/index.js';
+  TableResponseDto,
+  PaginatedTableResponse,
+  DeleteTableResponseDto,
+} from '@features/tables/application/dto/index';
+import { TablesService } from '@features/tables/application/services/index';
 
 @ApiTags('Tables')
 @Controller({ path: 'table', version: '1' })
@@ -43,7 +49,7 @@ export class TablesController {
   @ApiOperation({ summary: 'Crear mesa (permiso table:create)' })
   @ApiBearerAuth()
   @ApiBody({ type: CreateTableDto })
-  async create(@Body() dto: CreateTableDto) {
+  async create(@Body() dto: CreateTableDto): Promise<TableResponseDto> {
     const command: CreateTableCommand = { ...dto };
     return this.tablesService.create(command);
   }
@@ -54,7 +60,7 @@ export class TablesController {
   async findAll(
     @PaginationParams({ defaultRoute: '/table' })
     query: ListTablesQuery,
-  ) {
+  ): Promise<PaginatedTableResponse> {
     return this.tablesService.list(query);
   }
 
@@ -66,7 +72,7 @@ export class TablesController {
     @Param('sectionId', ParseUUIDPipe) sectionId: string,
     @PaginationParams({ defaultRoute: '/table/section' })
     pagination: ListTablesQuery,
-  ) {
+  ): Promise<PaginatedTableResponse> {
     const query: ListSectionTablesQuery = {
       sectionId,
       ...pagination,
@@ -77,7 +83,9 @@ export class TablesController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener mesa por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<TableResponseDto> {
     const query: FindTableQuery = { tableId: id };
     return this.tablesService.findOne(query);
   }
@@ -92,7 +100,7 @@ export class TablesController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTableDto,
-  ) {
+  ): Promise<TableResponseDto> {
     const command: UpdateTableCommand = { ...dto, tableId: id };
     return this.tablesService.update(command);
   }
@@ -103,7 +111,9 @@ export class TablesController {
   @ApiOperation({ summary: 'Eliminar mesa (permiso table:delete)' })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<DeleteTableResponseDto> {
     const command: DeleteTableCommand = { tableId: id };
     return this.tablesService.delete(command);
   }

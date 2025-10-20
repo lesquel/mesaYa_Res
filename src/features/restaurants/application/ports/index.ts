@@ -1,2 +1,2 @@
-export * from './owner-reader.port.js';
-export * from './restaurant-repository.port.js';
+export * from './owner-reader.port';
+export * from './restaurant-repository.port';

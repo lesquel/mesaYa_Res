@@ -1,1 +1,1 @@
-export * from './section-object.orm-mapper.js';
+export * from './section-object.orm-mapper';

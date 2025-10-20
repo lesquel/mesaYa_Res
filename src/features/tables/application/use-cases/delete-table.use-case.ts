@@ -1,11 +1,11 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { TableNotFoundError } from '../../domain/index.js';
-import { DeleteTableCommand, DeleteTableResponseDto } from '../dto/index.js';
-import { TableMapper } from '../mappers/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { TableNotFoundError } from '../../domain/index';
+import { DeleteTableCommand, DeleteTableResponseDto } from '../dto/index';
+import { TableMapper } from '../mappers/index';
 import {
   type TableRepositoryPort,
   type TableEventPublisherPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 export class DeleteTableUseCase
   implements UseCase<DeleteTableCommand, DeleteTableResponseDto>

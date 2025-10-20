@@ -9,8 +9,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import type { UpdateMenuDto } from '../../application/dtos/input/update-menu.dto.js';
-import { UpdateDishRequestDto } from './update-dish.request.dto.js';
+import type { UpdateMenuDto } from '../../application/dtos/input/update-menu.dto';
+import { UpdateDishRequestDto } from './update-dish.request.dto';
 
 export class UpdateMenuRequestDto implements Omit<UpdateMenuDto, 'menuId'> {
   @ApiPropertyOptional({ description: 'Nombre del menú', maxLength: 100 })

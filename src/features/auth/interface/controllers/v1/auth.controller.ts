@@ -20,30 +20,30 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard.js';
-import { RolesGuard } from '../../guards/roles.guard.js';
-import { Roles } from '../../decorators/roles.decorator.js';
-import { CurrentUser } from '../../decorators/current-user.decorator.js';
-import { SignUpUseCase } from '../../../application/use-cases/sign-up.use-case.js';
-import { LoginUseCase } from '../../../application/use-cases/login.use-case.js';
-import { UpdateUserRolesUseCase } from '../../../application/use-cases/update-user-roles.use-case.js';
-import { UpdateRolePermissionsUseCase } from '../../../application/use-cases/update-role-permissions.use-case.js';
-import { ListRolesUseCase } from '../../../application/use-cases/list-roles.use-case.js';
-import { ListPermissionsUseCase } from '../../../application/use-cases/list-permissions.use-case.js';
-import { SignUpRequestDto } from '../../dto/sign-up.request.dto.js';
-import { AuthTokenResponseDto } from '../../dto/auth-token.response.dto.js';
-import { LoginRequestDto } from '../../dto/login.request.dto.js';
-import { UpdateUserRolesRequestDto } from '../../dto/update-user-roles.request.dto.js';
-import { UpdateRolePermissionsRequestDto } from '../../dto/update-role-permissions.request.dto.js';
-import { AuthUserResponseDto } from '../../dto/auth-user.response.dto.js';
-import { RoleResponseDto } from '../../dto/role.response.dto.js';
-import { PermissionResponseDto } from '../../dto/permission.response.dto.js';
-import { SignUpCommand } from '../../../application/dto/commands/sign-up.command.js';
-import { LoginCommand } from '../../../application/dto/commands/login.command.js';
-import { UpdateUserRolesCommand } from '../../../application/dto/commands/update-user-roles.command.js';
-import { UpdateRolePermissionsCommand } from '../../../application/dto/commands/update-role-permissions.command.js';
-import { FindUserByIdUseCase } from '../../../application/use-cases/find-user-by-id.use-case.js';
-import { AuthRoleName } from '../../../domain/entities/auth-role.entity.js';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { RolesGuard } from '../../guards/roles.guard';
+import { Roles } from '../../decorators/roles.decorator';
+import { CurrentUser } from '../../decorators/current-user.decorator';
+import { SignUpUseCase } from '../../../application/use-cases/sign-up.use-case';
+import { LoginUseCase } from '../../../application/use-cases/login.use-case';
+import { UpdateUserRolesUseCase } from '../../../application/use-cases/update-user-roles.use-case';
+import { UpdateRolePermissionsUseCase } from '../../../application/use-cases/update-role-permissions.use-case';
+import { ListRolesUseCase } from '../../../application/use-cases/list-roles.use-case';
+import { ListPermissionsUseCase } from '../../../application/use-cases/list-permissions.use-case';
+import { SignUpRequestDto } from '../../dto/sign-up.request.dto';
+import { AuthTokenResponseDto } from '../../dto/auth-token.response.dto';
+import { LoginRequestDto } from '../../dto/login.request.dto';
+import { UpdateUserRolesRequestDto } from '../../dto/update-user-roles.request.dto';
+import { UpdateRolePermissionsRequestDto } from '../../dto/update-role-permissions.request.dto';
+import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
+import { RoleResponseDto } from '../../dto/role.response.dto';
+import { PermissionResponseDto } from '../../dto/permission.response.dto';
+import { SignUpCommand } from '../../../application/dto/commands/sign-up.command';
+import { LoginCommand } from '../../../application/dto/commands/login.command';
+import { UpdateUserRolesCommand } from '../../../application/dto/commands/update-user-roles.command';
+import { UpdateRolePermissionsCommand } from '../../../application/dto/commands/update-role-permissions.command';
+import { FindUserByIdUseCase } from '../../../application/use-cases/find-user-by-id.use-case';
+import { AuthRoleName } from '../../../domain/entities/auth-role.entity';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })

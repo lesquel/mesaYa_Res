@@ -1,1 +1,1 @@
-export * from './payment.entity.js';
+export * from './payment.entity';

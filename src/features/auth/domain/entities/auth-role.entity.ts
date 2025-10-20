@@ -1,4 +1,4 @@
-import { AuthPermission } from './auth-permission.entity.js';
+import { AuthPermission } from './auth-permission.entity';
 
 export enum AuthRoleName {
   USER = 'USER',

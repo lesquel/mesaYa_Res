@@ -4,7 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '../../../../shared/infrastructure/kafka/index.js';
+} from '@shared/infrastructure/kafka/index';
 import type {
   CreateSectionObjectCommand,
   DeleteSectionObjectCommand,
@@ -13,7 +13,7 @@ import type {
   UpdateSectionObjectCommand,
   SectionObjectResponseDto,
   DeleteSectionObjectResponseDto,
-} from '../dto/index.js';
+} from '../dto/index';
 import {
   CreateSectionObjectUseCase,
   DeleteSectionObjectUseCase,
@@ -22,8 +22,8 @@ import {
   ListBySectionUseCase,
   ListSectionObjectsUseCase,
   UpdateSectionObjectUseCase,
-} from '../use-cases/index.js';
-import type { PaginatedSectionObjectResponse } from '../use-cases/list-section-objects.use-case.js';
+} from '../use-cases/index';
+import type { PaginatedSectionObjectResponse } from '../use-cases/list-section-objects.use-case';
 
 @Injectable()
 export class SectionObjectsService {

@@ -1,2 +1,2 @@
-export * from './menu.types.js';
-export * from './dish.types.js';
+export * from './menu.types';
+export * from './dish.types';

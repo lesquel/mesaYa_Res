@@ -1,23 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
   Review as ReviewEntity,
   ReviewNotFoundError,
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
-} from '../../../../domain/index.js';
+} from '../../../../domain/index';
 import {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
-} from '../../../../application/dto/index.js';
-import { PaginatedResult } from '../../../../../../shared/application/types/pagination.js';
-import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
-import { type ReviewRepositoryPort } from '../../../../application/ports/index.js';
-import { ReviewOrmEntity } from '../orm/index.js';
-import { ReviewOrmMapper } from '../mappers/index.js';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index.js';
+} from '../../../../application/dto/index';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { type ReviewRepositoryPort } from '../../../../application/ports/index';
+import { ReviewOrmEntity } from '../orm/index';
+import { ReviewOrmMapper } from '../mappers/index';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
 
 @Injectable()
 export class ReviewTypeOrmRepository implements ReviewRepositoryPort {

@@ -1,23 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
   ReservationEntity,
   ReservationNotFoundError,
   ReservationRestaurantNotFoundError,
   ReservationUserNotFoundError,
-} from '../../domain/index.js';
+} from '../../domain/index';
 import {
   ListReservationsQuery,
   ListRestaurantReservationsQuery,
-} from '../../application/dto/index.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
-import { paginateQueryBuilder } from '../../../../shared/infrastructure/pagination/paginate.js';
-import { type ReservationRepositoryPort } from '../../application/ports/index.js';
-import { ReservationOrmEntity } from '../orm/index.js';
-import { ReservationOrmMapper } from '../mappers/index.js';
-import { RestaurantOrmEntity } from '../../../restaurants/index.js';
+} from '../../application/dto/index';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { type ReservationRepositoryPort } from '../../application/ports/index';
+import { ReservationOrmEntity } from '../orm/index';
+import { ReservationOrmMapper } from '../mappers/index';
+import { RestaurantOrmEntity } from '../../../restaurants/index';
 
 @Injectable()
 export class ReservationTypeOrmRepository implements ReservationRepositoryPort {

@@ -1,4 +1,4 @@
-import { AuthPermission } from '../../domain/entities/auth-permission.entity.js';
+import { AuthPermission } from '../../domain/entities/auth-permission.entity';
 
 export const AUTH_PERMISSION_REPOSITORY = Symbol('AUTH_PERMISSION_REPOSITORY');
 

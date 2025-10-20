@@ -25,7 +25,7 @@ import {
   DeleteDishResponseSwaggerDto,
   DishResponseSwaggerDto,
   UpdateDishRequestDto,
-} from '@features/menus/presentation/dto/index.js';
+} from '@features/menus/presentation/dto/index';
 
 @ApiTags('Dishes')
 @Controller({ path: 'dishes', version: '1' })

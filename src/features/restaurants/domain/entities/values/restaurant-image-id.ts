@@ -1,4 +1,4 @@
-import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error.js';
+import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error';
 
 export class RestaurantImageId {
   private constructor(private readonly internal: number | null) {}

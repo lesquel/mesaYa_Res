@@ -1,9 +1,9 @@
-import { ReservationEntity } from '../../domain/entities/reservation.entity.js';
+import { ReservationEntity } from '../../domain/entities/reservation.entity';
 import {
   ListReservationsQuery,
   ListRestaurantReservationsQuery,
-} from '../dto/index.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
+} from '../dto/index';
+import { PaginatedResult } from '@shared/application/types/pagination';
 
 export const RESERVATION_REPOSITORY = Symbol('RESERVATION_REPOSITORY');
 

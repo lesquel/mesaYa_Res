@@ -1,5 +1,5 @@
-import { AuthPermission } from '../../../../domain/entities/auth-permission.entity.js';
-import { PermissionOrmEntity } from '../entities/permission.orm-entity.js';
+import { AuthPermission } from '../../../../domain/entities/auth-permission.entity';
+import { PermissionOrmEntity } from '../entities/permission.orm-entity';
 
 export class AuthPermissionOrmMapper {
   static toDomain(entity: PermissionOrmEntity): AuthPermission {

@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
-import { SectionObject } from '../../domain/index.js';
-import { SectionObjectMapper } from '../mappers/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { SectionObject } from '../../domain/index';
+import { SectionObjectMapper } from '../mappers/index';
 import {
   ListSectionObjectsQuery,
   SectionObjectResponseDto,
-} from '../dto/index.js';
+} from '../dto/index';
 import {
   SECTION_OBJECT_REPOSITORY,
   type SectionObjectRepositoryPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 export type PaginatedSectionObjectResponse =
   PaginatedResult<SectionObjectResponseDto>;

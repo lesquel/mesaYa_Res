@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { SubscriptionPlanDto } from '../../application/dtos/output/subscription-plan.dto.js';
+import type { SubscriptionPlanDto } from '../../application/dtos/output/subscription-plan.dto';
 
 export class SubscriptionPlanResponseSwaggerDto implements SubscriptionPlanDto {
   @ApiProperty({

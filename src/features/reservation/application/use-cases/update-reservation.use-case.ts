@@ -1,21 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
 import {
   ReservationEntity,
   ReservationNotFoundError,
   ReservationOwnershipError,
 } from '../../domain';
-import {
-  UpdateReservationCommand,
-  ReservationResponseDto,
-} from '../dto/index.js';
-import { ReservationMapper } from '../mappers/index.js';
+import { UpdateReservationCommand, ReservationResponseDto } from '../dto/index';
+import { ReservationMapper } from '../mappers/index';
 import {
   RESERVATION_REPOSITORY,
   type ReservationRepositoryPort,
   RESERVATION_EVENT_PUBLISHER,
   type ReservationEventPublisherPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 @Injectable()
 export class UpdateReservationUseCase
