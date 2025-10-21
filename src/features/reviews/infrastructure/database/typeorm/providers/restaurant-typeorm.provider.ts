@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
 import { type RestaurantReviewReaderPort } from '../../../../application/ports/index';
+import { type ReviewRestaurantPort } from '../../../../domain/ports';
 
 @Injectable()
 export class RestaurantTypeOrmReviewProvider
-  implements RestaurantReviewReaderPort
+  implements RestaurantReviewReaderPort, ReviewRestaurantPort
 {
   constructor(
     @InjectRepository(RestaurantOrmEntity)

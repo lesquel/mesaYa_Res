@@ -15,12 +15,15 @@ import {
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { type ReviewRepositoryPort } from '../../../../application/ports/index';
+import { IReviewDomainRepositoryPort } from '../../../../domain/repositories';
 import { ReviewOrmEntity } from '../orm/index';
 import { ReviewOrmMapper } from '../mappers/index';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
 
 @Injectable()
-export class ReviewTypeOrmRepository implements ReviewRepositoryPort {
+export class ReviewTypeOrmRepository
+  implements ReviewRepositoryPort, IReviewDomainRepositoryPort
+{
   constructor(
     @InjectRepository(ReviewOrmEntity)
     private readonly reviews: Repository<ReviewOrmEntity>,

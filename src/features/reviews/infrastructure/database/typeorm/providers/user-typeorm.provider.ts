@@ -3,9 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { type UserReviewReaderPort } from '../../../../application/ports/index';
+import { type ReviewUserPort } from '../../../../domain/ports';
 
 @Injectable()
-export class UserTypeOrmReviewProvider implements UserReviewReaderPort {
+export class UserTypeOrmReviewProvider
+  implements UserReviewReaderPort, ReviewUserPort
+{
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly users: Repository<UserOrmEntity>,

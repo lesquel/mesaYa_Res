@@ -1,36 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { ReviewNotFoundError, ReviewOwnershipError } from '../../domain/index';
+import { ReviewDomainService } from '../../domain/index';
 import { UpdateReviewCommand, ReviewResponseDto } from '../dto/index';
 import { ReviewMapper } from '../mappers/index';
-import { REVIEW_REPOSITORY, type ReviewRepositoryPort } from '../ports/index';
-
-@Injectable()
 export class UpdateReviewUseCase
   implements UseCase<UpdateReviewCommand, ReviewResponseDto>
 {
-  constructor(
-    @Inject(REVIEW_REPOSITORY)
-    private readonly reviewRepository: ReviewRepositoryPort,
-  ) {}
+  constructor(private readonly reviewDomainService: ReviewDomainService) {}
 
   async execute(command: UpdateReviewCommand): Promise<ReviewResponseDto> {
-    const review = await this.reviewRepository.findById(command.reviewId);
-
-    if (!review) {
-      throw new ReviewNotFoundError(command.reviewId);
-    }
-
-    if (review.userId !== command.userId) {
-      throw new ReviewOwnershipError();
-    }
-
-    review.update({
-      ...(command.rating !== undefined ? { rating: command.rating } : {}),
-      ...(command.comment !== undefined ? { comment: command.comment } : {}),
+    const review = await this.reviewDomainService.updateReview({
+      reviewId: command.reviewId,
+      userId: command.userId,
+      rating: command.rating,
+      comment: command.comment,
     });
 
-    const saved = await this.reviewRepository.save(review);
-    return ReviewMapper.toResponse(saved);
+    return ReviewMapper.toResponse(review);
   }
 }
