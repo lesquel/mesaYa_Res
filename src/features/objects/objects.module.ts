@@ -12,7 +12,9 @@ import {
   GRAPHIC_OBJECT_REPOSITORY,
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
 } from './application/index.js';
-import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index.js';
+import {
+  GraphicObjectOrmEntity,
+} from './infrastructure/database/typeorm/orm/index.js';
 import { GraphicObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/graphic-object-typeorm.repository.js';
 import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider.js';
 
