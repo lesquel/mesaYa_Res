@@ -20,24 +20,23 @@ export class CreatePaymentUseCase
       'CreatePaymentUseCase',
     );
 
-    // Usar mapper para transformar DTO a Entidad de dominio
-    const paymentCreate =
-      this.paymentMapper.fromCreatePaymentDTOtoPaymentCreate(dto);
+    const registrationRequest = this.paymentMapper.toRegistrationRequest(dto);
 
-    // Persistir en el repositorio a través del servicio de dominio
-    const createdPayment =
-      await this.paymentDomainService.createPayment(paymentCreate);
+    const registrationResult =
+      await this.paymentDomainService.registerPayment(registrationRequest);
 
     this.logger.log(
-      `Persisting payment with ID: ${createdPayment?.id}`,
+      `Payment ${registrationResult.payment.id} persisted for target ${registrationResult.ledger.target.id} with status ${registrationResult.payment.paymentStatus.status}`,
       'CreatePaymentUseCase',
     );
 
-    this.logger.log(
-      `Payment created successfully with ID: ${createdPayment.id}`,
-      'CreatePaymentUseCase',
-    );
+    if (registrationResult.settlesTarget) {
+      this.logger.log(
+        `Target ${registrationResult.ledger.target.id} fully settled after payment ${registrationResult.payment.id}`,
+        'CreatePaymentUseCase',
+      );
+    }
 
-    return this.paymentMapper.fromEntitytoDTO(createdPayment);
+    return this.paymentMapper.fromEntitytoDTO(registrationResult.payment);
   }
 }

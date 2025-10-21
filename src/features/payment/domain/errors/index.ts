@@ -2,3 +2,7 @@ export * from './payment-not-found.error';
 export * from './payment-creation-failed.error';
 export * from './payment-update-failed.error';
 export * from './payment-deletion-failed.error';
+export * from './payment-already-settled.error';
+export * from './payment-exceeds-outstanding.error';
+export * from './payment-target-ambiguity.error';
+export * from './partial-payments-not-allowed.error';
