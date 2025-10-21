@@ -1,28 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import {
-  ReservationNotFoundError,
-  ReservationOwnershipError,
-} from '../../domain';
-import {
   DeleteReservationCommand,
   DeleteReservationResponseDto,
 } from '../dto/index';
 import { ReservationMapper } from '../mappers/index';
 import {
-  RESERVATION_REPOSITORY,
-  type ReservationRepositoryPort,
   RESERVATION_EVENT_PUBLISHER,
   type ReservationEventPublisherPort,
 } from '../ports/index';
+import { ReservationDomainService } from '../../domain/services/reservation-domain.service';
 
 @Injectable()
 export class DeleteReservatioUseCase
   implements UseCase<DeleteReservationCommand, DeleteReservationResponseDto>
 {
   constructor(
-    @Inject(RESERVATION_REPOSITORY)
-    private readonly reservationRepository: ReservationRepositoryPort,
+    private readonly reservationDomainService: ReservationDomainService,
     @Inject(RESERVATION_EVENT_PUBLISHER)
     private readonly eventPublisher: ReservationEventPublisherPort,
   ) {}
@@ -30,21 +24,12 @@ export class DeleteReservatioUseCase
   async execute(
     command: DeleteReservationCommand,
   ): Promise<DeleteReservationResponseDto> {
-    const reservation = await this.reservationRepository.findById(
-      command.reservationId,
-    );
-
-    if (!reservation) {
-      throw new ReservationNotFoundError(command.reservationId);
-    }
-
-    if (reservation.userId !== command.userId) {
-      throw new ReservationOwnershipError();
-    }
+    const reservation = await this.reservationDomainService.cancelReservation({
+      reservationId: command.reservationId,
+      userId: command.userId,
+    });
 
     const reservationResponse = ReservationMapper.toResponse(reservation);
-
-    await this.reservationRepository.delete(command.reservationId);
     await this.eventPublisher.publish({
       type: 'reservation.deleted',
       reservationId: command.reservationId,

@@ -8,6 +8,7 @@ import {
   ReservationTypeOrmRepository,
   RestaurantTypeOrmReservationProvider,
   UserTypeOrmReservationProvider,
+  TableTypeOrmReservationProvider,
 } from './infrastructure/index';
 import {
   CreateReservationUseCase,
@@ -24,6 +25,15 @@ import {
 import { RestaurantOrmEntity } from '../restaurants/index';
 import { ReservationService } from './application/index';
 import { ReservationEventNoopProvider } from './infrastructure/index';
+import {
+  ReservationDomainService,
+  IReservationRepositoryPort,
+  IReservationRestaurantPort,
+  IReservationUserPort,
+  IReservationTablePort,
+} from './domain/index';
+import { TableOrmEntity } from '../tables/infrastructure/database/typeorm/orm/table.orm-entity';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/section.orm-entity';
 
 @Module({
   imports: [
@@ -31,6 +41,8 @@ import { ReservationEventNoopProvider } from './infrastructure/index';
       ReservationOrmEntity,
       RestaurantOrmEntity,
       UserOrmEntity,
+      TableOrmEntity,
+      SectionOrmEntity,
     ]),
     AuthModule,
   ],
@@ -48,9 +60,47 @@ import { ReservationEventNoopProvider } from './infrastructure/index';
       provide: USER_RESERVATION_READER,
       useClass: UserTypeOrmReservationProvider,
     },
+    TableTypeOrmReservationProvider,
     {
       provide: RESERVATION_EVENT_PUBLISHER,
       useClass: ReservationEventNoopProvider,
+    },
+    {
+      provide: IReservationRepositoryPort,
+      useExisting: ReservationTypeOrmRepository,
+    },
+    {
+      provide: IReservationRestaurantPort,
+      useExisting: RestaurantTypeOrmReservationProvider,
+    },
+    {
+      provide: IReservationUserPort,
+      useExisting: UserTypeOrmReservationProvider,
+    },
+    {
+      provide: IReservationTablePort,
+      useExisting: TableTypeOrmReservationProvider,
+    },
+    {
+      provide: ReservationDomainService,
+      useFactory: (
+        reservationRepository: IReservationRepositoryPort,
+        restaurantPort: IReservationRestaurantPort,
+        tablePort: IReservationTablePort,
+        userPort: IReservationUserPort,
+      ) =>
+        new ReservationDomainService(
+          reservationRepository,
+          restaurantPort,
+          tablePort,
+          userPort,
+        ),
+      inject: [
+        IReservationRepositoryPort,
+        IReservationRestaurantPort,
+        IReservationTablePort,
+        IReservationUserPort,
+      ],
     },
     ReservationService,
     CreateReservationUseCase,

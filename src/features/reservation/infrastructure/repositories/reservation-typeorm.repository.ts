@@ -15,12 +15,16 @@ import {
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { type ReservationRepositoryPort } from '../../application/ports/index';
+import { IReservationRepositoryPort } from '../../domain/repositories';
+import type { ReservationWindowQuery } from '../../domain/types';
 import { ReservationOrmEntity } from '../orm/index';
 import { ReservationOrmMapper } from '../mappers/index';
 import { RestaurantOrmEntity } from '../../../restaurants/index';
 
 @Injectable()
-export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
+export class ReservationTypeOrmRepository
+  implements ReservationRepositoryPort, IReservationRepositoryPort
+{
   constructor(
     @InjectRepository(ReservationOrmEntity)
     private readonly reservations: Repository<ReservationOrmEntity>,
@@ -83,6 +87,39 @@ export class ReservationTypeOrmRepository implements ReservationRepositoryPort {
     if (!result.affected) {
       throw new ReservationNotFoundError(id);
     }
+  }
+
+  async findActiveWithinWindow(
+    query: ReservationWindowQuery,
+  ): Promise<ReservationEntity[]> {
+    const qb = this.reservations
+      .createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.user', 'user')
+      .leftJoinAndSelect('reservation.restaurant', 'restaurant')
+      .where('reservation.reservationTime BETWEEN :startAt AND :endAt', {
+        startAt: query.startAt,
+        endAt: query.endAt,
+      })
+      .andWhere('reservation.status IN (:...statuses)', {
+        statuses: ['PENDING', 'CONFIRMED'],
+      });
+
+    if (query.tableId) {
+      qb.andWhere('reservation.tableId = :tableId', { tableId: query.tableId });
+    }
+
+    if (query.userId) {
+      qb.andWhere('reservation.userId = :userId', { userId: query.userId });
+    }
+
+    if (query.excludeReservationId) {
+      qb.andWhere('reservation.id <> :excludeReservationId', {
+        excludeReservationId: query.excludeReservationId,
+      });
+    }
+
+    const entities = await qb.getMany();
+    return entities.map((entity) => ReservationOrmMapper.toDomain(entity));
   }
 
   async paginate(
