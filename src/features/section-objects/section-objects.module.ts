@@ -23,6 +23,12 @@ import {
 } from './application/index';
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
 import { GraphicObjectOrmEntity } from '../objects/infrastructure/database/typeorm/orm/index';
+import {
+  SectionObjectDomainService,
+  ISectionObjectDomainRepositoryPort,
+  ISectionObjectSectionReaderPort,
+  ISectionObjectObjectReaderPort,
+} from './domain/index';
 
 @Module({
   imports: [
@@ -50,6 +56,32 @@ import { GraphicObjectOrmEntity } from '../objects/infrastructure/database/typeo
     {
       provide: SECTION_OBJECT_EVENT_PUBLISHER,
       useClass: SectionObjectEventNoopProvider,
+    },
+    {
+      provide: ISectionObjectDomainRepositoryPort,
+      useExisting: SectionObjectTypeOrmRepository,
+    },
+    {
+      provide: ISectionObjectSectionReaderPort,
+      useExisting: SECTION_READER_FOR_SECTION_OBJECT,
+    },
+    {
+      provide: ISectionObjectObjectReaderPort,
+      useExisting: OBJECT_READER_FOR_SECTION_OBJECT,
+    },
+    {
+      provide: SectionObjectDomainService,
+      useFactory: (
+        repository: ISectionObjectDomainRepositoryPort,
+        sectionReader: ISectionObjectSectionReaderPort,
+        objectReader: ISectionObjectObjectReaderPort,
+      ) =>
+        new SectionObjectDomainService(repository, sectionReader, objectReader),
+      inject: [
+        ISectionObjectDomainRepositoryPort,
+        ISectionObjectSectionReaderPort,
+        ISectionObjectObjectReaderPort,
+      ],
     },
     CreateSectionObjectUseCase,
     ListSectionObjectsUseCase,

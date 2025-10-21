@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SectionOrmEntity } from '../../../sections/infrastructure/database/typeorm/orm/index';
 import { type SectionReaderForSectionObjectPort } from '../../application/ports/index';
+import { ISectionObjectSectionReaderPort } from '../../domain/index';
 
 @Injectable()
 export class SectionTypeOrmReaderForSectionObject
-  implements SectionReaderForSectionObjectPort
+  implements SectionReaderForSectionObjectPort, ISectionObjectSectionReaderPort
 {
   constructor(
     @InjectRepository(SectionOrmEntity)

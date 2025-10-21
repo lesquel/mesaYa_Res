@@ -1,1 +1,1 @@
-export * from './controllers/section-objects.controller';
+export * from './controllers/v1/section-objects.controller';

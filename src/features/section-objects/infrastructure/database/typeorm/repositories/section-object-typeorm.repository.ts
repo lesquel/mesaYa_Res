@@ -1,7 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { SectionObject } from '../../../../domain/index';
+import {
+  SectionObject,
+  ISectionObjectDomainRepositoryPort,
+} from '../../../../domain/index';
 import { SectionObjectOrmEntity } from '../orm/index';
 import { SectionObjectOrmMapper } from '../mappers/index';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
@@ -11,7 +14,7 @@ import { type SectionObjectRepositoryPort } from '../../../../application/ports/
 
 @Injectable()
 export class SectionObjectTypeOrmRepository
-  implements SectionObjectRepositoryPort
+  implements SectionObjectRepositoryPort, ISectionObjectDomainRepositoryPort
 {
   constructor(
     @InjectRepository(SectionObjectOrmEntity)
