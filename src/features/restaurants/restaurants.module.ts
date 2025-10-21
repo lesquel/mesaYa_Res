@@ -19,6 +19,11 @@ import {
   OWNER_READER,
   RESTAURANT_REPOSITORY,
 } from './application/index';
+import { RestaurantDomainService } from './domain/services/restaurant-domain.service';
+import { IRestaurantDomainRepositoryPort } from './domain/repositories/restaurant-domain-repository.port';
+import { IRestaurantOwnerPort } from './domain/ports/restaurant-owner.port';
+import { KafkaService } from '@shared/infrastructure/kafka/index';
+import type { RestaurantRepositoryPort } from './application/index';
 
 @Module({
   imports: [
@@ -35,13 +40,88 @@ import {
       provide: OWNER_READER,
       useClass: OwnerTypeOrmProvider,
     },
-    CreateRestaurantUseCase,
-    ListRestaurantsUseCase,
-    ListOwnerRestaurantsUseCase,
-    FindRestaurantUseCase,
-    UpdateRestaurantUseCase,
-    DeleteRestaurantUseCase,
-    RestaurantsService,
+    {
+      provide: IRestaurantDomainRepositoryPort,
+      useExisting: RestaurantTypeOrmRepository,
+    },
+    {
+      provide: IRestaurantOwnerPort,
+      useExisting: OwnerTypeOrmProvider,
+    },
+    {
+      provide: RestaurantDomainService,
+      useFactory: (
+        restaurantRepository: IRestaurantDomainRepositoryPort,
+        ownerPort: IRestaurantOwnerPort,
+      ) => new RestaurantDomainService(restaurantRepository, ownerPort),
+      inject: [IRestaurantDomainRepositoryPort, IRestaurantOwnerPort],
+    },
+    {
+      provide: CreateRestaurantUseCase,
+      useFactory: (restaurantDomainService: RestaurantDomainService) =>
+        new CreateRestaurantUseCase(restaurantDomainService),
+      inject: [RestaurantDomainService],
+    },
+    {
+      provide: ListRestaurantsUseCase,
+      useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
+        new ListRestaurantsUseCase(restaurantRepository),
+      inject: [RESTAURANT_REPOSITORY],
+    },
+    {
+      provide: ListOwnerRestaurantsUseCase,
+      useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
+        new ListOwnerRestaurantsUseCase(restaurantRepository),
+      inject: [RESTAURANT_REPOSITORY],
+    },
+    {
+      provide: FindRestaurantUseCase,
+      useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
+        new FindRestaurantUseCase(restaurantRepository),
+      inject: [RESTAURANT_REPOSITORY],
+    },
+    {
+      provide: UpdateRestaurantUseCase,
+      useFactory: (restaurantDomainService: RestaurantDomainService) =>
+        new UpdateRestaurantUseCase(restaurantDomainService),
+      inject: [RestaurantDomainService],
+    },
+    {
+      provide: DeleteRestaurantUseCase,
+      useFactory: (restaurantDomainService: RestaurantDomainService) =>
+        new DeleteRestaurantUseCase(restaurantDomainService),
+      inject: [RestaurantDomainService],
+    },
+    {
+      provide: RestaurantsService,
+      useFactory: (
+        createRestaurantUseCase: CreateRestaurantUseCase,
+        listRestaurantsUseCase: ListRestaurantsUseCase,
+        listOwnerRestaurantsUseCase: ListOwnerRestaurantsUseCase,
+        findRestaurantUseCase: FindRestaurantUseCase,
+        updateRestaurantUseCase: UpdateRestaurantUseCase,
+        deleteRestaurantUseCase: DeleteRestaurantUseCase,
+        kafkaService: KafkaService,
+      ) =>
+        new RestaurantsService(
+          createRestaurantUseCase,
+          listRestaurantsUseCase,
+          listOwnerRestaurantsUseCase,
+          findRestaurantUseCase,
+          updateRestaurantUseCase,
+          deleteRestaurantUseCase,
+          kafkaService,
+        ),
+      inject: [
+        CreateRestaurantUseCase,
+        ListRestaurantsUseCase,
+        ListOwnerRestaurantsUseCase,
+        FindRestaurantUseCase,
+        UpdateRestaurantUseCase,
+        DeleteRestaurantUseCase,
+        KafkaService,
+      ],
+    },
   ],
   exports: [
     CreateRestaurantUseCase,

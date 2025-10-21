@@ -13,9 +13,12 @@ import { RestaurantOrmEntity } from '../orm';
 import { RestaurantOrmMapper } from '../mappers';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { IRestaurantDomainRepositoryPort } from '../../../../domain/repositories/restaurant-domain-repository.port';
 
 @Injectable()
-export class RestaurantTypeOrmRepository implements RestaurantRepositoryPort {
+export class RestaurantTypeOrmRepository
+  implements RestaurantRepositoryPort, IRestaurantDomainRepositoryPort
+{
   constructor(
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurantRepository: Repository<RestaurantOrmEntity>,
