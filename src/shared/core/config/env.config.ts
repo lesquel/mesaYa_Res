@@ -9,6 +9,11 @@ export const envConfig = () => ({
   PGPASSWORD: process.env.PGPASSWORD,
   PGSSLMODE: process.env.PGSSLMODE,
   PGCHANNELBINDING: process.env.PGCHANNELBINDING,
+  PG_SSL_CERT_PATH: process.env.PG_SSL_CERT_PATH,
+
+  SUPABASE_URL: process.env.SUPABASE_URL,
+  SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY,
+  SUPABASE_BUCKET: process.env.SUPABASE_BUCKET,
 
   NODE_ENV: process.env.NODE_ENV,
   JWT_SECRET: process.env.JWT_SECRET,

@@ -53,6 +53,7 @@ export class ImageTypeOrmRepository implements ImageRepositoryPort {
     const alias = qb.alias;
     const sortMap: Record<string, string> = {
       url: `${alias}.url`,
+      storagePath: `${alias}.storagePath`,
       title: `${alias}.title`,
       description: `${alias}.description`,
       entityId: `${alias}.entityId`,
@@ -68,7 +69,12 @@ export class ImageTypeOrmRepository implements ImageRepositoryPort {
       sortOrder: query.sortOrder,
       q: query.search ?? undefined,
       allowedSorts: Object.values(sortMap),
-      searchable: [`${alias}.url`, `${alias}.title`, `${alias}.description`],
+      searchable: [
+        `${alias}.url`,
+        `${alias}.storagePath`,
+        `${alias}.title`,
+        `${alias}.description`,
+      ],
     });
 
     return {

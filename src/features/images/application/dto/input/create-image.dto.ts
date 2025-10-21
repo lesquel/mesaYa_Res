@@ -1,12 +1,8 @@
+import type { Buffer } from 'node:buffer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsPositive, IsString, MaxLength } from 'class-validator';
 
 export class CreateImageDto {
-  @ApiProperty({ example: 'https://cdn.mesaya.com/assets/banner.jpg' })
-  @IsString()
-  @IsNotEmpty()
-  url: string;
-
   @ApiProperty({ example: 'Banner' })
   @IsString()
   @IsNotEmpty()
@@ -25,4 +21,12 @@ export class CreateImageDto {
   entityId: number;
 }
 
-export type CreateImageCommand = CreateImageDto;
+export interface ImageFilePayload {
+  buffer: Buffer;
+  originalName: string;
+  mimeType: string;
+}
+
+export type CreateImageCommand = CreateImageDto & {
+  file: ImageFilePayload;
+};

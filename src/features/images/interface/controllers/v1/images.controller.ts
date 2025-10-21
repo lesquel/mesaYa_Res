@@ -1,21 +1,30 @@
 import {
   Body,
+  BadRequestException,
   Controller,
   Delete,
   Get,
   Param,
   ParseIntPipe,
+  ParseFilePipe,
   Patch,
   Post,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
@@ -31,6 +40,10 @@ import {
   type ListImagesQuery,
   type UpdateImageCommand,
 } from '../../../application/index.js';
+import type { ImageFilePayload } from '../../../application/dto/input/create-image.dto.js';
+import type { Multer } from 'multer';
+
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 @ApiTags('Images')
 @Controller({ path: 'image', version: '1' })
@@ -42,9 +55,48 @@ export class ImagesController {
   @Permissions('image:create')
   @ApiOperation({ summary: 'Crear imagen (permiso image:create)' })
   @ApiBearerAuth()
-  @ApiBody({ type: CreateImageDto })
-  async create(@Body() dto: CreateImageDto) {
-    const command: CreateImageCommand = { ...dto };
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', example: 'Banner' },
+        description: {
+          type: 'string',
+          example: 'Main banner for the landing section',
+        },
+        entityId: { type: 'integer', example: 1 },
+        file: { type: 'string', format: 'binary' },
+      },
+      required: ['title', 'description', 'entityId', 'file'],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+    }),
+  )
+  async create(
+    @Body() dto: CreateImageDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: MAX_IMAGE_SIZE_BYTES }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|gif|webp)$/i }),
+        ],
+      }),
+    )
+  file: Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('Image file is required');
+
+    const payload: ImageFilePayload = {
+      buffer: file.buffer,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+    };
+
+    const command: CreateImageCommand = { ...dto, file: payload };
     return this.images.create(command);
   }
 
@@ -71,12 +123,51 @@ export class ImagesController {
   @ApiOperation({ summary: 'Actualizar imagen (permiso image:update)' })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
-  @ApiBody({ type: UpdateImageDto })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', example: 'Banner' },
+        description: {
+          type: 'string',
+          example: 'Main banner for the landing section',
+        },
+        entityId: { type: 'integer', example: 1 },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+    }),
+  )
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateImageDto,
+  @UploadedFile() file?: Multer.File,
   ) {
-    const command: UpdateImageCommand = { imageId: id, ...dto };
+    let filePayload: ImageFilePayload | undefined;
+
+    if (file) {
+      if (file.size > MAX_IMAGE_SIZE_BYTES)
+        throw new BadRequestException('File size exceeds 5 MB limit');
+      if (!/^image\//.test(file.mimetype))
+        throw new BadRequestException('Only image files are allowed');
+
+      filePayload = {
+        buffer: file.buffer,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+      };
+    }
+
+    const command: UpdateImageCommand = {
+      imageId: id,
+      ...dto,
+      file: filePayload,
+    };
     return this.images.update(command);
   }
 

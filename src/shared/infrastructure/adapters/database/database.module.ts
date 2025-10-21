@@ -21,10 +21,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           database: config.get<string>('PGDATABASE'),
           autoLoadEntities: true,
           synchronize: !IS_PROD,
-          ssl: USE_SSL ? { rejectUnauthorized: false } : false,
-          extra: {
-            channelBinding: config.get<string>('PGCHANNELBINDING') ?? 'require',
-          },
+          ssl: USE_SSL
+            ? {
+                rejectUnauthorized: false,
+              }
+            : undefined,
+          extra:
+            SSL_MODE === 'verify-ca'
+              ? {
+                  sslmode: 'verify-ca',
+                  sslrootcert: config.get<string>('PG_SSL_CERT_PATH'),
+                }
+              : undefined,
         };
       },
     }),

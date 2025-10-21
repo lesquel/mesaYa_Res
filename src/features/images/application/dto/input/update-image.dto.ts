@@ -7,14 +7,9 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import type { ImageFilePayload } from './create-image.dto.js';
 
 export class UpdateImageDto {
-  @ApiPropertyOptional({ example: 'https://cdn.mesaya.com/assets/banner.jpg' })
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  url?: string;
-
   @ApiPropertyOptional({ example: 'Banner' })
   @IsOptional()
   @IsString()
@@ -38,4 +33,5 @@ export class UpdateImageDto {
 
 export type UpdateImageCommand = UpdateImageDto & {
   imageId: number;
+  file?: ImageFilePayload;
 };

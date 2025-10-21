@@ -6,6 +6,7 @@ export class ImageMapper {
     return {
       id: image.id,
       url: image.url,
+      storagePath: image.storagePath,
       title: image.title,
       description: image.description,
       entityId: image.entityId,

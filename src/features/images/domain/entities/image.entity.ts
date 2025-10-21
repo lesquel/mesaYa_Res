@@ -1,5 +1,6 @@
 export interface ImageProps {
   url: string;
+  storagePath: string;
   title: string;
   description: string;
   entityId: number;
@@ -46,6 +47,7 @@ export class Image {
     return Image.create(
       {
         url: snapshot.url,
+        storagePath: snapshot.storagePath,
         title: snapshot.title,
         description: snapshot.description,
         entityId: snapshot.entityId,
@@ -59,6 +61,7 @@ export class Image {
     Image.validate(props);
     return {
       url: props.url.trim(),
+      storagePath: props.storagePath.trim(),
       title: props.title.trim(),
       description: props.description.trim(),
       entityId: props.entityId,
@@ -69,6 +72,8 @@ export class Image {
   private static validate(props: ImageProps): void {
     if (!props.url || props.url.trim().length === 0)
       throw new InvalidImageDataError('url cannot be empty');
+    if (!props.storagePath || props.storagePath.trim().length === 0)
+      throw new InvalidImageDataError('storagePath cannot be empty');
     if (!props.title || props.title.trim().length === 0)
       throw new InvalidImageDataError('title cannot be empty');
     if (props.title.trim().length > 20)
@@ -97,6 +102,10 @@ export class Image {
 
   get url(): string {
     return this.props.url;
+  }
+
+  get storagePath(): string {
+    return this.props.storagePath;
   }
 
   get title(): string {

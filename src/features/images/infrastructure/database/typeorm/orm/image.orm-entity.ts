@@ -13,6 +13,9 @@ export class ImageOrmEntity {
   @Column({ type: 'varchar', length: 255, name: 'url', nullable: false })
   url!: string;
 
+  @Column({ type: 'varchar', length: 255, name: 'storage_path', nullable: false })
+  storagePath!: string;
+
   @CreateDateColumn({
     type: 'timestamptz',
     name: 'fecha_creacion',

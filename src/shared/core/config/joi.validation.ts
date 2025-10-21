@@ -15,6 +15,11 @@ export const JoiValidationSchema = Joi.object({
   PGPASSWORD: Joi.string().required(),
   PGSSLMODE: Joi.string().required(),
   PGCHANNELBINDING: Joi.string().required(),
+  PG_SSL_CERT_PATH: Joi.string().optional().allow(''),
+
+  SUPABASE_URL: Joi.string().uri().required(),
+  SUPABASE_SERVICE_KEY: Joi.string().required(),
+  SUPABASE_BUCKET: Joi.string().required(),
 
   NODE_ENV: Joi.string()
     .valid('development', 'test', 'production')
