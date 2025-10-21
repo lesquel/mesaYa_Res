@@ -19,11 +19,13 @@ import {
   SECTION_REPOSITORY,
   RESTAURANT_SECTION_READER,
 } from './application/index';
-import type {
-  SectionRepositoryPort,
-  RestaurantSectionReaderPort,
-} from './application/index';
+import type { SectionRepositoryPort } from './application/index';
 import { KafkaService } from '@shared/infrastructure/kafka/index';
+import {
+  SectionDomainService,
+  ISectionDomainRepositoryPort,
+  ISectionRestaurantPort,
+} from './domain/index';
 
 @Module({
   imports: [
@@ -41,12 +43,26 @@ import { KafkaService } from '@shared/infrastructure/kafka/index';
       useClass: RestaurantTypeOrmSectionProvider,
     },
     {
-      provide: CreateSectionUseCase,
+      provide: ISectionDomainRepositoryPort,
+      useExisting: SectionTypeOrmRepository,
+    },
+    {
+      provide: ISectionRestaurantPort,
+      useExisting: RestaurantTypeOrmSectionProvider,
+    },
+    {
+      provide: SectionDomainService,
       useFactory: (
-        sectionRepository: SectionRepositoryPort,
-        restaurantReader: RestaurantSectionReaderPort,
-      ) => new CreateSectionUseCase(sectionRepository, restaurantReader),
-      inject: [SECTION_REPOSITORY, RESTAURANT_SECTION_READER],
+        sectionRepository: ISectionDomainRepositoryPort,
+        restaurantPort: ISectionRestaurantPort,
+      ) => new SectionDomainService(sectionRepository, restaurantPort),
+      inject: [ISectionDomainRepositoryPort, ISectionRestaurantPort],
+    },
+    {
+      provide: CreateSectionUseCase,
+      useFactory: (sectionDomainService: SectionDomainService) =>
+        new CreateSectionUseCase(sectionDomainService),
+      inject: [SectionDomainService],
     },
     {
       provide: ListSectionsUseCase,
@@ -68,17 +84,15 @@ import { KafkaService } from '@shared/infrastructure/kafka/index';
     },
     {
       provide: UpdateSectionUseCase,
-      useFactory: (
-        sectionRepository: SectionRepositoryPort,
-        restaurantReader: RestaurantSectionReaderPort,
-      ) => new UpdateSectionUseCase(sectionRepository, restaurantReader),
-      inject: [SECTION_REPOSITORY, RESTAURANT_SECTION_READER],
+      useFactory: (sectionDomainService: SectionDomainService) =>
+        new UpdateSectionUseCase(sectionDomainService),
+      inject: [SectionDomainService],
     },
     {
       provide: DeleteSectionUseCase,
-      useFactory: (sectionRepository: SectionRepositoryPort) =>
-        new DeleteSectionUseCase(sectionRepository),
-      inject: [SECTION_REPOSITORY],
+      useFactory: (sectionDomainService: SectionDomainService) =>
+        new DeleteSectionUseCase(sectionDomainService),
+      inject: [SectionDomainService],
     },
     {
       provide: SectionsService,

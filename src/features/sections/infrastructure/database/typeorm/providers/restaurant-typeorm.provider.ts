@@ -3,10 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
 import { type RestaurantSectionReaderPort } from '../../../../application/ports/index';
+import {
+  ISectionRestaurantPort,
+  type SectionRestaurantSnapshot,
+} from '../../../../domain/ports/index';
 
 @Injectable()
 export class RestaurantTypeOrmSectionProvider
-  implements RestaurantSectionReaderPort
+  implements RestaurantSectionReaderPort, ISectionRestaurantPort
 {
   constructor(
     @InjectRepository(RestaurantOrmEntity)
@@ -14,11 +18,27 @@ export class RestaurantTypeOrmSectionProvider
   ) {}
 
   async exists(restaurantId: string): Promise<boolean> {
+    const restaurant = await this.loadById(restaurantId);
+    return Boolean(restaurant);
+  }
+
+  async loadById(
+    restaurantId: string,
+  ): Promise<SectionRestaurantSnapshot | null> {
     if (!restaurantId) {
-      return false;
+      return null;
     }
 
-    const count = await this.restaurants.count({ where: { id: restaurantId } });
-    return count > 0;
+    const restaurant = await this.restaurants.findOne({
+      where: { id: restaurantId },
+    });
+
+    if (!restaurant) {
+      return null;
+    }
+
+    return {
+      restaurantId: restaurant.id,
+    };
   }
 }
