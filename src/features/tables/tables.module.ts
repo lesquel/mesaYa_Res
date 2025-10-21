@@ -25,10 +25,14 @@ import {
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
 import type {
   TableRepositoryPort,
-  SectionTableReaderPort,
   TableEventPublisherPort,
 } from './application/ports/index';
 import { KafkaService } from '@shared/infrastructure/kafka/index';
+import {
+  TableDomainService,
+  ITableDomainRepositoryPort,
+  ITableSectionPort,
+} from './domain/index';
 
 @Module({
   imports: [
@@ -41,13 +45,25 @@ import { KafkaService } from '@shared/infrastructure/kafka/index';
     { provide: SECTION_TABLE_READER, useClass: SectionTypeOrmTableProvider },
     { provide: TABLE_EVENT_PUBLISHER, useClass: TableEventNoopProvider },
     {
+      provide: ITableDomainRepositoryPort,
+      useExisting: TableTypeOrmRepository,
+    },
+    { provide: ITableSectionPort, useExisting: SectionTypeOrmTableProvider },
+    {
+      provide: TableDomainService,
+      useFactory: (
+        repo: ITableDomainRepositoryPort,
+        sectionPort: ITableSectionPort,
+      ) => new TableDomainService(repo, sectionPort),
+      inject: [ITableDomainRepositoryPort, ITableSectionPort],
+    },
+    {
       provide: CreateTableUseCase,
       useFactory: (
-        repo: TableRepositoryPort,
-        sectionReader: SectionTableReaderPort,
+        tableService: TableDomainService,
         events: TableEventPublisherPort,
-      ) => new CreateTableUseCase(repo, sectionReader, events),
-      inject: [TABLE_REPOSITORY, SECTION_TABLE_READER, TABLE_EVENT_PUBLISHER],
+      ) => new CreateTableUseCase(tableService, events),
+      inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
       provide: ListTablesUseCase,
@@ -68,18 +84,18 @@ import { KafkaService } from '@shared/infrastructure/kafka/index';
     {
       provide: UpdateTableUseCase,
       useFactory: (
-        repo: TableRepositoryPort,
+        tableService: TableDomainService,
         events: TableEventPublisherPort,
-      ) => new UpdateTableUseCase(repo, events),
-      inject: [TABLE_REPOSITORY, TABLE_EVENT_PUBLISHER],
+      ) => new UpdateTableUseCase(tableService, events),
+      inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
       provide: DeleteTableUseCase,
       useFactory: (
-        repo: TableRepositoryPort,
+        tableService: TableDomainService,
         events: TableEventPublisherPort,
-      ) => new DeleteTableUseCase(repo, events),
-      inject: [TABLE_REPOSITORY, TABLE_EVENT_PUBLISHER],
+      ) => new DeleteTableUseCase(tableService, events),
+      inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
       provide: TablesService,

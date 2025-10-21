@@ -1,31 +1,27 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { TableNotFoundError } from '../../domain/index';
+import { TableDomainService } from '../../domain/index';
 import { DeleteTableCommand, DeleteTableResponseDto } from '../dto/index';
 import { TableMapper } from '../mappers/index';
-import {
-  type TableRepositoryPort,
-  type TableEventPublisherPort,
-} from '../ports/index';
+import { type TableEventPublisherPort } from '../ports/index';
 
 export class DeleteTableUseCase
   implements UseCase<DeleteTableCommand, DeleteTableResponseDto>
 {
   constructor(
-    private readonly repo: TableRepositoryPort,
+    private readonly tableService: TableDomainService,
     private readonly events: TableEventPublisherPort,
   ) {}
 
   async execute(command: DeleteTableCommand): Promise<DeleteTableResponseDto> {
-    const existing = await this.repo.findById(command.tableId);
-    if (!existing) throw new TableNotFoundError(command.tableId);
+    const removed = await this.tableService.deleteTable({
+      tableId: command.tableId,
+    });
+    const tableResponse = TableMapper.toResponse(removed);
 
-    const tableResponse = TableMapper.toResponse(existing);
-
-    await this.repo.delete(command.tableId);
     await this.events.publish({
       type: 'table.deleted',
-      tableId: command.tableId,
-      sectionId: existing.sectionId,
+      tableId: removed.id,
+      sectionId: removed.sectionId,
       occurredAt: new Date(),
     });
     return { ok: true, table: tableResponse };
