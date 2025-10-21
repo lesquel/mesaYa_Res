@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { GraphicObject } from '../../../../domain/index';
+import { IGraphicObjectDomainRepositoryPort } from '../../../../domain/repositories';
 import { GraphicObjectOrmEntity } from '../orm/index';
 import { GraphicObjectOrmMapper } from '../mappers/index';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
@@ -11,7 +12,7 @@ import { type GraphicObjectRepositoryPort } from '../../../../application/ports/
 
 @Injectable()
 export class GraphicObjectTypeOrmRepository
-  implements GraphicObjectRepositoryPort
+  implements GraphicObjectRepositoryPort, IGraphicObjectDomainRepositoryPort
 {
   constructor(
     @InjectRepository(GraphicObjectOrmEntity)

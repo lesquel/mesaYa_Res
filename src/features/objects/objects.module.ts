@@ -15,6 +15,10 @@ import {
 import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index';
 import { GraphicObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/graphic-object-typeorm.repository';
 import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider';
+import {
+  GraphicObjectDomainService,
+  IGraphicObjectDomainRepositoryPort,
+} from './domain/index';
 
 @Module({
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
@@ -27,6 +31,16 @@ import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graph
     {
       provide: GRAPHIC_OBJECT_EVENT_PUBLISHER,
       useClass: GraphicObjectEventNoopProvider,
+    },
+    {
+      provide: IGraphicObjectDomainRepositoryPort,
+      useExisting: GraphicObjectTypeOrmRepository,
+    },
+    {
+      provide: GraphicObjectDomainService,
+      useFactory: (repository: IGraphicObjectDomainRepositoryPort) =>
+        new GraphicObjectDomainService(repository),
+      inject: [IGraphicObjectDomainRepositoryPort],
     },
     CreateGraphicObjectUseCase,
     ListGraphicObjectsUseCase,
