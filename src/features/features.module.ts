@@ -10,6 +10,7 @@ import { SectionObjectsModule } from './section-objects/section-objects.module';
 import { MenusModule } from './menus/menus.module';
 import { PaymentModule } from './payment/payment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     TablesModule,
     ObjectsModule,
     SectionObjectsModule,
+    ImagesModule,
     MenusModule,
     PaymentModule,
     SubscriptionModule,
@@ -34,6 +36,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     TablesModule,
     ObjectsModule,
     SectionObjectsModule,
+    ImagesModule,
     MenusModule,
     PaymentModule,
     SubscriptionModule,

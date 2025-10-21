@@ -19,20 +19,20 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { SectionObjectsService } from '../../application/services/index';
+import { SectionObjectsService } from '../../../application/services/index';
 import {
   CreateSectionObjectDto,
   UpdateSectionObjectDto,
-} from '../../application/dto/index';
+} from '../../../application/dto/index';
 import type {
   CreateSectionObjectCommand,
   DeleteSectionObjectCommand,
   FindSectionObjectQuery,
   ListSectionObjectsQuery,
   UpdateSectionObjectCommand,
-} from '../../application/dto/index';
+} from '../../../application/dto/index';
 
 @ApiTags('SectionObjects')
 @Controller({ path: 'section-object', version: '1' })

@@ -36,6 +36,11 @@ $ npm install
 ```bash
 # development
 $ npm run start
+el dueño del restaurante va a poder crear platillos, mapear el restaurante
+
+y el usuario administrador donde se va a encargar 
+
+y el usuario cliente donde se va a encargarse va a encargar de pedir platillos, reseervar mesas
 
 # watch mode
 $ npm run start:dev

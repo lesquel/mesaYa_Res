@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm/index';
 
 @Entity({ name: 'object' })
 export class GraphicObjectOrmEntity {
@@ -19,4 +26,8 @@ export class GraphicObjectOrmEntity {
 
   @Column({ type: 'int', name: 'imagen_id', nullable: false })
   imageId: number;
+
+  @ManyToOne(() => ImageOrmEntity, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'imagen_id' })
+  image?: ImageOrmEntity;
 }
