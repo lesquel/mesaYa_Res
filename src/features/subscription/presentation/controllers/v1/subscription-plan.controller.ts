@@ -32,7 +32,7 @@ import {
   DeleteSubscriptionPlanResponseSwaggerDto,
   SubscriptionPlanResponseSwaggerDto,
   UpdateSubscriptionPlanRequestDto,
-} from '@features/subscription/presentation/dto/index.js';
+} from '@features/subscription/presentation/dto/index';
 
 @ApiTags('Subscription plans')
 @Controller({ path: 'subscription-plans', version: '1' })

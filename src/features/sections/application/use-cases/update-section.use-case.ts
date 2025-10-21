@@ -1,62 +1,22 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { SectionMapper } from '../mappers/index.js';
-import { SectionResponseDto, UpdateSectionCommand } from '../dto/index.js';
-import {
-  type RestaurantSectionReaderPort,
-  type SectionRepositoryPort,
-} from '../ports/index.js';
-import {
-  SectionNotFoundError,
-  SectionRestaurantNotFoundError,
-  type SectionUpdate,
-} from '../../domain/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { SectionDomainService } from '../../domain/index';
+import { SectionMapper } from '../mappers/index';
+import { SectionResponseDto, UpdateSectionCommand } from '../dto/index';
 
 export class UpdateSectionUseCase
   implements UseCase<UpdateSectionCommand, SectionResponseDto>
 {
-  constructor(
-    private readonly sectionRepository: SectionRepositoryPort,
-    private readonly restaurantReader: RestaurantSectionReaderPort,
-  ) {}
+  constructor(private readonly sectionDomainService: SectionDomainService) {}
 
   async execute(command: UpdateSectionCommand): Promise<SectionResponseDto> {
-    const section = await this.sectionRepository.findById(command.sectionId);
-
-    if (!section) {
-      throw new SectionNotFoundError(command.sectionId);
-    }
-
-    if (
-      command.restaurantId !== undefined &&
-      command.restaurantId !== section.restaurantId
-    ) {
-      const exists = await this.restaurantReader.exists(command.restaurantId);
-      if (!exists) {
-        throw new SectionRestaurantNotFoundError(command.restaurantId);
-      }
-    }
-
-    const updateData: SectionUpdate = {};
-
-    if (command.name !== undefined) {
-      updateData.name = command.name;
-    }
-    if (command.description !== undefined) {
-      updateData.description = command.description;
-    }
-    if (command.restaurantId !== undefined) {
-      updateData.restaurantId = command.restaurantId;
-    }
-    if (command.width !== undefined) {
-      updateData.width = command.width;
-    }
-    if (command.height !== undefined) {
-      updateData.height = command.height;
-    }
-
-    section.update(updateData);
-
-    const saved = await this.sectionRepository.save(section);
+    const saved = await this.sectionDomainService.updateSection({
+      sectionId: command.sectionId,
+      restaurantId: command.restaurantId,
+      name: command.name,
+      description: command.description,
+      width: command.width,
+      height: command.height,
+    });
     return SectionMapper.toResponse(saved);
   }
 }

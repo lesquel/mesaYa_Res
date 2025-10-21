@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm/index.js';
+import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm/index';
 
 @Entity({ name: 'object' })
 export class GraphicObjectOrmEntity {

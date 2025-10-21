@@ -16,11 +16,11 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
   ObjectsService,
   type CreateGraphicObjectCommand,
@@ -30,7 +30,7 @@ import {
   UpdateGraphicObjectDto,
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
-} from '../../../application/index.js';
+} from '../../../application/index';
 
 @ApiTags('Objects')
 @Controller({ path: 'object', version: '1' })

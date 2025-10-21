@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentStatusEnum } from '@features/payment/domain/enums/index.js';
-import type { PaymentDto } from '../../application/dtos/output/payment.dto.js';
+import { PaymentStatusEnum } from '@features/payment/domain/enums/index';
+import type { PaymentDto } from '../../application/dtos/output/payment.dto';
 
 export class PaymentResponseSwaggerDto implements PaymentDto {
   @ApiProperty({ format: 'uuid', required: false })

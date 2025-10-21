@@ -1,31 +1,29 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  TableNotFoundError,
-  type UpdateTableProps,
-} from '../../domain/index.js';
-import { UpdateTableCommand, TableResponseDto } from '../dto/index.js';
-import { TableMapper } from '../mappers/index.js';
-import {
-  type TableRepositoryPort,
-  type TableEventPublisherPort,
-} from '../ports/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { TableDomainService } from '../../domain/index';
+import { UpdateTableCommand, TableResponseDto } from '../dto/index';
+import { TableMapper } from '../mappers/index';
+import { type TableEventPublisherPort } from '../ports/index';
 
 export class UpdateTableUseCase
   implements UseCase<UpdateTableCommand, TableResponseDto>
 {
   constructor(
-    private readonly repo: TableRepositoryPort,
+    private readonly tableService: TableDomainService,
     private readonly events: TableEventPublisherPort,
   ) {}
 
   async execute(command: UpdateTableCommand): Promise<TableResponseDto> {
-    const table = await this.repo.findById(command.tableId);
-    if (!table) throw new TableNotFoundError(command.tableId);
-
-    const { tableId, ...rest } = command;
-    void tableId;
-    table.update(rest as UpdateTableProps);
-    const saved = await this.repo.save(table);
+    const saved = await this.tableService.updateTable({
+      tableId: command.tableId,
+      sectionId: command.sectionId,
+      number: command.number,
+      capacity: command.capacity,
+      posX: command.posX,
+      posY: command.posY,
+      width: command.width,
+      tableImageId: command.tableImageId,
+      chairImageId: command.chairImageId,
+    });
     await this.events.publish({
       type: 'table.updated',
       tableId: saved.id,

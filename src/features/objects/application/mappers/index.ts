@@ -1,1 +1,1 @@
-export * from './graphic-object.mapper.js';
+export * from './graphic-object.mapper';

@@ -1,4 +1,4 @@
-import { AuthUser } from '../../../domain/entities/auth-user.entity.js';
+import { AuthUser } from '../../../domain/entities/auth-user.entity';
 
 export interface AuthTokenResponse {
   user: AuthUser;

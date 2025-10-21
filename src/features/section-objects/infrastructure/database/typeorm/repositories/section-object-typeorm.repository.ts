@@ -1,17 +1,20 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { SectionObject } from '../../../../domain/index.js';
-import { SectionObjectOrmEntity } from '../orm/index.js';
-import { SectionObjectOrmMapper } from '../mappers/index.js';
-import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
-import { ListSectionObjectsQuery } from '../../../../application/dto/index.js';
-import { type SectionObjectRepositoryPort } from '../../../../application/ports/index.js';
+import {
+  SectionObject,
+  ISectionObjectDomainRepositoryPort,
+} from '../../../../domain/index';
+import { SectionObjectOrmEntity } from '../orm/index';
+import { SectionObjectOrmMapper } from '../mappers/index';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { ListSectionObjectsQuery } from '../../../../application/dto/index';
+import { type SectionObjectRepositoryPort } from '../../../../application/ports/index';
 
 @Injectable()
 export class SectionObjectTypeOrmRepository
-  implements SectionObjectRepositoryPort
+  implements SectionObjectRepositoryPort, ISectionObjectDomainRepositoryPort
 {
   constructor(
     @InjectRepository(SectionObjectOrmEntity)

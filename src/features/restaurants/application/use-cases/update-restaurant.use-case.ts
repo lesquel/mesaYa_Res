@@ -1,46 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  type RestaurantUpdate,
-  RestaurantNotFoundError,
-  RestaurantOwnershipError,
-} from '../../domain/index.js';
-import {
-  UpdateRestaurantCommand,
-  RestaurantResponseDto,
-} from '../dto/index.js';
-import { RestaurantMapper } from '../mappers/index.js';
-import {
-  RESTAURANT_REPOSITORY,
-  type RestaurantRepositoryPort,
-} from '../ports/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
+import { UpdateRestaurantCommand, RestaurantResponseDto } from '../dto/index';
+import { RestaurantMapper } from '../mappers/index';
 
-@Injectable()
 export class UpdateRestaurantUseCase
   implements UseCase<UpdateRestaurantCommand, RestaurantResponseDto>
 {
   constructor(
-    @Inject(RESTAURANT_REPOSITORY)
-    private readonly restaurantRepository: RestaurantRepositoryPort,
+    private readonly restaurantDomainService: RestaurantDomainService,
   ) {}
 
   async execute(
     command: UpdateRestaurantCommand,
   ): Promise<RestaurantResponseDto> {
-    const { restaurantId, ownerId, ...partial } = command;
+    const restaurant = await this.restaurantDomainService.updateRestaurant({
+      restaurantId: command.restaurantId,
+      ownerId: command.ownerId,
+      name: command.name,
+      description: command.description,
+      location: command.location,
+      openTime: command.openTime,
+      closeTime: command.closeTime,
+      daysOpen: command.daysOpen,
+      totalCapacity: command.totalCapacity,
+      subscriptionId: command.subscriptionId,
+      imageId: command.imageId,
+    });
 
-    const restaurant = await this.restaurantRepository.findById(restaurantId);
-    if (!restaurant) {
-      throw new RestaurantNotFoundError(restaurantId);
-    }
-
-    if (restaurant.ownerId !== ownerId) {
-      throw new RestaurantOwnershipError();
-    }
-
-    restaurant.update(partial as RestaurantUpdate);
-    const saved = await this.restaurantRepository.save(restaurant);
-
-    return RestaurantMapper.toResponse(saved);
+    return RestaurantMapper.toResponse(restaurant);
   }
 }

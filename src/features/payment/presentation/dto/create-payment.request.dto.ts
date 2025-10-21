@@ -1,6 +1,12 @@
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator';
-import type { CreatePaymentDto } from '../../application/dtos/input/create-payment.dto.js';
+import type { CreatePaymentDto } from '../../application/dtos/input/create-payment.dto';
 
 export class CreatePaymentRequestDto implements CreatePaymentDto {
   @ApiPropertyOptional({
@@ -9,7 +15,7 @@ export class CreatePaymentRequestDto implements CreatePaymentDto {
   })
   @IsOptional()
   @IsUUID()
-  reservationId!: string;
+  reservationId?: string;
 
   @ApiPropertyOptional({
     description: 'Suscripción asociada al pago',
@@ -17,10 +23,27 @@ export class CreatePaymentRequestDto implements CreatePaymentDto {
   })
   @IsOptional()
   @IsUUID()
-  subscriptionId!: string;
+  subscriptionId?: string;
 
   @ApiProperty({ description: 'Monto del pago', example: 100.5 })
   @IsNumber()
   @IsPositive()
   amount!: number;
+
+  @ApiPropertyOptional({
+    description: 'Importe total esperado para el objetivo del pago',
+    example: 100.5,
+  })
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  expectedTotal?: number;
+
+  @ApiPropertyOptional({
+    description: 'Permitir pagos parciales para el objetivo',
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  allowPartialPayments?: boolean;
 }

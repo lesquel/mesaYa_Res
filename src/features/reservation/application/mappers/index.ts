@@ -1,1 +1,1 @@
-export * from './reservation.mapper.js';
+export * from './reservation.mapper';

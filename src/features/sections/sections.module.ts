@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { RestaurantOrmEntity } from '../restaurants/index.js';
-import { SectionsController } from './interface/index.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { RestaurantOrmEntity } from '../restaurants/index';
+import { SectionsController } from './interface/index';
 import {
   SectionOrmEntity,
   SectionTypeOrmRepository,
   RestaurantTypeOrmSectionProvider,
-} from './infrastructure/index.js';
+} from './infrastructure/index';
 import {
   CreateSectionUseCase,
   ListSectionsUseCase,
@@ -18,12 +18,14 @@ import {
   SectionsService,
   SECTION_REPOSITORY,
   RESTAURANT_SECTION_READER,
-} from './application/index.js';
-import type {
-  SectionRepositoryPort,
-  RestaurantSectionReaderPort,
-} from './application/index.js';
-import { KafkaService } from '@shared/infrastructure/kafka/index.js';
+} from './application/index';
+import type { SectionRepositoryPort } from './application/index';
+import { KafkaService } from '@shared/infrastructure/kafka/index';
+import {
+  SectionDomainService,
+  ISectionDomainRepositoryPort,
+  ISectionRestaurantPort,
+} from './domain/index';
 
 @Module({
   imports: [
@@ -41,12 +43,26 @@ import { KafkaService } from '@shared/infrastructure/kafka/index.js';
       useClass: RestaurantTypeOrmSectionProvider,
     },
     {
-      provide: CreateSectionUseCase,
+      provide: ISectionDomainRepositoryPort,
+      useExisting: SectionTypeOrmRepository,
+    },
+    {
+      provide: ISectionRestaurantPort,
+      useExisting: RestaurantTypeOrmSectionProvider,
+    },
+    {
+      provide: SectionDomainService,
       useFactory: (
-        sectionRepository: SectionRepositoryPort,
-        restaurantReader: RestaurantSectionReaderPort,
-      ) => new CreateSectionUseCase(sectionRepository, restaurantReader),
-      inject: [SECTION_REPOSITORY, RESTAURANT_SECTION_READER],
+        sectionRepository: ISectionDomainRepositoryPort,
+        restaurantPort: ISectionRestaurantPort,
+      ) => new SectionDomainService(sectionRepository, restaurantPort),
+      inject: [ISectionDomainRepositoryPort, ISectionRestaurantPort],
+    },
+    {
+      provide: CreateSectionUseCase,
+      useFactory: (sectionDomainService: SectionDomainService) =>
+        new CreateSectionUseCase(sectionDomainService),
+      inject: [SectionDomainService],
     },
     {
       provide: ListSectionsUseCase,
@@ -68,17 +84,15 @@ import { KafkaService } from '@shared/infrastructure/kafka/index.js';
     },
     {
       provide: UpdateSectionUseCase,
-      useFactory: (
-        sectionRepository: SectionRepositoryPort,
-        restaurantReader: RestaurantSectionReaderPort,
-      ) => new UpdateSectionUseCase(sectionRepository, restaurantReader),
-      inject: [SECTION_REPOSITORY, RESTAURANT_SECTION_READER],
+      useFactory: (sectionDomainService: SectionDomainService) =>
+        new UpdateSectionUseCase(sectionDomainService),
+      inject: [SectionDomainService],
     },
     {
       provide: DeleteSectionUseCase,
-      useFactory: (sectionRepository: SectionRepositoryPort) =>
-        new DeleteSectionUseCase(sectionRepository),
-      inject: [SECTION_REPOSITORY],
+      useFactory: (sectionDomainService: SectionDomainService) =>
+        new DeleteSectionUseCase(sectionDomainService),
+      inject: [SectionDomainService],
     },
     {
       provide: SectionsService,

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { DishDto } from '../../application/dtos/output/dish.dto.js';
+import type { DishDto } from '../../application/dtos/output/dish.dto';
 
 export class DishResponseSwaggerDto implements DishDto {
   @ApiProperty({

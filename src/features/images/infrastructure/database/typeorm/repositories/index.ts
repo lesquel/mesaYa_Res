@@ -1,1 +1,1 @@
-export * from './image-typeorm.repository.js';
+export * from './image-typeorm.repository';

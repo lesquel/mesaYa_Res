@@ -1,18 +1,18 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { AuthPermission } from '../../domain/entities/auth-permission.entity.js';
-import { AuthRole } from '../../domain/entities/auth-role.entity.js';
+import { AuthPermission } from '../../domain/entities/auth-permission.entity';
+import { AuthRole } from '../../domain/entities/auth-role.entity';
 import {
   DEFAULT_PERMISSION_NAMES,
   DEFAULT_ROLES,
-} from '../../domain/constants/rbac.constants.js';
+} from '../../domain/constants/rbac.constants';
 import {
   AUTH_PERMISSION_REPOSITORY,
   type AuthPermissionRepositoryPort,
-} from '../../application/ports/permission.repository.port.js';
+} from '../../application/ports/permission.repository.port';
 import {
   AUTH_ROLE_REPOSITORY,
   type AuthRoleRepositoryPort,
-} from '../../application/ports/role.repository.port.js';
+} from '../../application/ports/role.repository.port';
 
 @Injectable()
 export class RbacSeeder implements OnModuleInit {

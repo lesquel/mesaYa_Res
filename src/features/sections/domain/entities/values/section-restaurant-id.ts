@@ -1,4 +1,4 @@
-import { InvalidSectionDataError } from '../../errors/invalid-section-data.error.js';
+import { InvalidSectionDataError } from '../../errors/invalid-section-data.error';
 
 export class SectionRestaurantId {
   private readonly internal: string;

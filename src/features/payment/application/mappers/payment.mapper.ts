@@ -1,10 +1,14 @@
-import { PaymentStatusVO } from '@features/payment/domain/entities/values';
-import { PaymentDto } from '../dtos/output/payment.dto';
 import { EntityDTOMapper } from '@shared/application/mappers/abstract-domain-dto.mapper';
-import { CreatePaymentDto } from '../dtos';
-import { PaymentCreate, PaymentEntity } from '@features/payment/domain';
 import { MoneyVO } from '@shared/domain/entities/values';
-import { PaymentStatusEnum } from '@features/payment/domain/enums';
+import {
+  PaymentEntity,
+  PaymentRegistrationRequest,
+  PaymentStatusEnum,
+  PaymentTargetAmbiguityError,
+} from '@features/payment/domain';
+import { PaymentStatusVO } from '@features/payment/domain/entities/values';
+import { CreatePaymentDto } from '../dtos';
+import { PaymentDto } from '../dtos/output/payment.dto';
 
 export class PaymentEntityDTOMapper extends EntityDTOMapper<
   PaymentEntity,
@@ -35,15 +39,18 @@ export class PaymentEntityDTOMapper extends EntityDTOMapper<
     });
   }
 
-  fromCreatePaymentDTOtoPaymentCreate(dto: CreatePaymentDto): PaymentCreate {
+  toRegistrationRequest(dto: CreatePaymentDto): PaymentRegistrationRequest {
+    const target = this.mapTarget(dto);
     const amount = new MoneyVO(dto.amount);
-    const status = PaymentStatusVO.create(PaymentStatusEnum.PENDING);
+    const expectedTotalValue = dto.expectedTotal ?? dto.amount;
+    const expectedTotal = new MoneyVO(expectedTotalValue);
 
     return {
-      reservationId: dto.reservationId,
-      subscriptionId: dto.subscriptionId,
+      target,
       amount,
-      paymentStatus: status,
+      expectedTotal,
+      allowPartialPayments: dto.allowPartialPayments ?? false,
+      occurredAt: new Date(),
     };
   }
 
@@ -57,5 +64,32 @@ export class PaymentEntityDTOMapper extends EntityDTOMapper<
       paymentId: dto.paymentId,
       status,
     };
+  }
+
+  private mapTarget(
+    dto: CreatePaymentDto,
+  ): PaymentRegistrationRequest['target'] {
+    const hasReservation = Boolean(dto.reservationId);
+    const hasSubscription = Boolean(dto.subscriptionId);
+
+    if (hasReservation === hasSubscription) {
+      throw new PaymentTargetAmbiguityError();
+    }
+
+    if (hasReservation && dto.reservationId) {
+      return {
+        type: 'RESERVATION',
+        id: dto.reservationId,
+      };
+    }
+
+    if (dto.subscriptionId) {
+      return {
+        type: 'SUBSCRIPTION',
+        id: dto.subscriptionId,
+      };
+    }
+
+    throw new PaymentTargetAmbiguityError();
   }
 }

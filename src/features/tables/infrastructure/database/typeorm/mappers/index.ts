@@ -1,1 +1,1 @@
-export * from './table.orm-mapper.js';
+export * from './table.orm-mapper';

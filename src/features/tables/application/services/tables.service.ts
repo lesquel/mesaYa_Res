@@ -2,7 +2,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
-} from '../../../../shared/infrastructure/kafka/index.js';
+} from '@shared/infrastructure/kafka/index';
 import type {
   CreateTableCommand,
   DeleteTableCommand,
@@ -13,7 +13,7 @@ import type {
   DeleteTableResponseDto,
   PaginatedTableResponse,
   UpdateTableCommand,
-} from '../dto/index.js';
+} from '../dto/index';
 import {
   CreateTableUseCase,
   DeleteTableUseCase,
@@ -21,7 +21,7 @@ import {
   ListTablesUseCase,
   ListSectionTablesUseCase,
   UpdateTableUseCase,
-} from '../use-cases/index.js';
+} from '../use-cases/index';
 
 export class TablesService {
   constructor(

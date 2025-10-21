@@ -1,3 +1,3 @@
-export * from './restaurant-reader.port.js';
-export * from './review-repository.port.js';
-export * from './user-reader.port.js';
+export * from './restaurant-reader.port';
+export * from './review-repository.port';
+export * from './user-reader.port';

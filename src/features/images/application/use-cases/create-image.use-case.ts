@@ -1,11 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { Image } from '../../domain/index.js';
-import { ImageMapper } from '../mappers/index.js';
-import {
-  CreateImageCommand,
-  ImageResponseDto,
-} from '../dto/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { Image } from '../../domain/index';
+import { ImageMapper } from '../mappers/index';
+import { CreateImageCommand, ImageResponseDto } from '../dto/index';
 import {
   IMAGE_EVENT_PUBLISHER,
   IMAGE_REPOSITORY,

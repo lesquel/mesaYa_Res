@@ -1,1 +1,1 @@
-export * from './table.orm-entity.js';
+export * from './table.orm-entity';

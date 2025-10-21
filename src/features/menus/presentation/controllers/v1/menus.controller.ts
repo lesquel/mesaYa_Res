@@ -25,7 +25,7 @@ import {
   DeleteMenuResponseSwaggerDto,
   MenuResponseSwaggerDto,
   UpdateMenuRequestDto,
-} from '@features/menus/presentation/dto/index.js';
+} from '@features/menus/presentation/dto/index';
 
 @ApiTags('Menus')
 @Controller({ path: 'menus', version: '1' })

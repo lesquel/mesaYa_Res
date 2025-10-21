@@ -1,7 +1,7 @@
-import { Table } from '../../domain/entities/table.entity.js';
-import { ListTablesQuery } from '../dto/input/list-tables.query.js';
-import { ListSectionTablesQuery } from '../dto/input/list-section-tables.query.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
+import { Table } from '../../domain/entities/table.entity';
+import { ListTablesQuery } from '../dto/input/list-tables.query';
+import { ListSectionTablesQuery } from '../dto/input/list-section-tables.query';
+import { PaginatedResult } from '@shared/application/types/pagination';
 
 export const TABLE_REPOSITORY = Symbol('TABLE_REPOSITORY');
 

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
-import { SubscriptionPlanEntity } from '../../../domain/entities/subscription-plan.entity.js';
+import { SubscriptionPlanEntity } from '../../../domain/entities/subscription-plan.entity';
 import { ISubscriptionPlanRepositoryPort } from '@features/subscription/domain/repositories';
 import { SubscriptionPlanNotFoundError } from '../../../domain/errors/subscription-plan-not-found.error';
 import {

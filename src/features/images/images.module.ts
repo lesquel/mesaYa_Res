@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { ImagesController } from './interface/controllers/v1/images.controller.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { ImagesController } from './interface/controllers/v1/images.controller';
 import {
   CreateImageUseCase,
   DeleteImageUseCase,

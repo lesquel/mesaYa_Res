@@ -1,4 +1,4 @@
-import { ListReviewsQuery } from './list-reviews.query.js';
+import { ListReviewsQuery } from './list-reviews.query';
 
 export interface ListRestaurantReviewsQuery extends ListReviewsQuery {
   restaurantId: string;

@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserOrmEntity } from '../entities/user.orm-entity.js';
-import { AuthUserOrmMapper } from '../mappers/auth-user.orm-mapper.js';
-import { AuthUser } from '../../../../domain/entities/auth-user.entity.js';
-import { type AuthUserRepositoryPort } from '../../../../application/ports/user.repository.port.js';
+import { UserOrmEntity } from '../entities/user.orm-entity';
+import { AuthUserOrmMapper } from '../mappers/auth-user.orm-mapper';
+import { AuthUser } from '../../../../domain/entities/auth-user.entity';
+import { type AuthUserRepositoryPort } from '../../../../application/ports/user.repository.port';
 
 @Injectable()
 export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {

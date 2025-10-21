@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsISO8601, IsOptional, IsString, IsUUID } from 'class-validator';
-import type { CreateSubscriptionDto } from '../../application/dtos/input/create-subscription.dto.js';
+import type { CreateSubscriptionDto } from '../../application/dtos/input/create-subscription.dto';
 
 export class CreateSubscriptionRequestDto implements CreateSubscriptionDto {
   @ApiProperty({

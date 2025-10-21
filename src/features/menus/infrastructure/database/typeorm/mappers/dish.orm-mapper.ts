@@ -1,6 +1,6 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 import { DishCreate, DishEntity, DishUpdate } from '@features/menus/domain';
-import { DishOrmEntity } from '../orm/index.js';
+import { DishOrmEntity } from '../orm/index';
 
 export class DishOrmMapper {
   static toDomain(entity: DishOrmEntity): DishEntity {

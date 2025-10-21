@@ -1,1 +1,1 @@
-export * from './section-typeorm.provider.js';
+export * from './section-typeorm.provider';

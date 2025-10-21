@@ -1,10 +1,7 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  PaginatedTableResponse,
-  ListSectionTablesQuery,
-} from '../dto/index.js';
-import { TableMapper } from '../mappers/index.js';
-import { type TableRepositoryPort } from '../ports/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { PaginatedTableResponse, ListSectionTablesQuery } from '../dto/index';
+import { TableMapper } from '../mappers/index';
+import { type TableRepositoryPort } from '../ports/index';
 
 export class ListSectionTablesUseCase
   implements UseCase<ListSectionTablesQuery, PaginatedTableResponse>

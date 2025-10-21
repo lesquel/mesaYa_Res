@@ -1,1 +1,1 @@
-export * from './section-object.orm-entity.js';
+export * from './section-object.orm-entity';

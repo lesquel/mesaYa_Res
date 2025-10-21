@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
 import { ReservationNotFoundError } from '../../domain';
-import { FindReservationQuery, ReservationResponseDto } from '../dto/index.js';
-import { ReservationMapper } from '../mappers/index.js';
+import { FindReservationQuery, ReservationResponseDto } from '../dto/index';
+import { ReservationMapper } from '../mappers/index';
 import {
   RESERVATION_REPOSITORY,
   type ReservationRepositoryPort,
-} from '../ports/index.js';
+} from '../ports/index';
 
 @Injectable()
 export class FindReservationUseCase

@@ -16,12 +16,12 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator.js';
-import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
   CreateRestaurantCommand,
   CreateRestaurantDto,
@@ -30,11 +30,14 @@ import {
   RestaurantsService,
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
-} from '../../../application/index.js';
+} from '@features/restaurants/application/index';
 import type {
   ListOwnerRestaurantsQuery,
   ListRestaurantsQuery,
-} from '../../../application/index.js';
+  RestaurantResponseDto,
+  PaginatedRestaurantResponse,
+  DeleteRestaurantResponseDto,
+} from '@features/restaurants/application/index';
 
 @ApiTags('Restaurants')
 @Controller({ path: 'restaurant', version: '1' })
@@ -50,7 +53,7 @@ export class RestaurantsController {
   async create(
     @Body() dto: CreateRestaurantDto,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<RestaurantResponseDto> {
     const command: CreateRestaurantCommand = {
       ...dto,
       ownerId: user.userId,
@@ -64,7 +67,7 @@ export class RestaurantsController {
   async findAll(
     @PaginationParams({ defaultRoute: '/restaurant' })
     query: ListRestaurantsQuery,
-  ) {
+  ): Promise<PaginatedRestaurantResponse> {
     return this.restaurantsService.list(query);
   }
 
@@ -78,7 +81,7 @@ export class RestaurantsController {
     @PaginationParams({ defaultRoute: '/restaurant/me' })
     pagination: ListRestaurantsQuery,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<PaginatedRestaurantResponse> {
     const query: ListOwnerRestaurantsQuery = {
       ...pagination,
       ownerId: user.userId,
@@ -89,7 +92,9 @@ export class RestaurantsController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un restaurante por ID' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<RestaurantResponseDto> {
     const query: FindRestaurantQuery = { restaurantId: id };
     return this.restaurantsService.findOne(query);
   }
@@ -107,7 +112,7 @@ export class RestaurantsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateRestaurantDto,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<RestaurantResponseDto> {
     const command: UpdateRestaurantCommand = {
       restaurantId: id,
       ownerId: user.userId,
@@ -125,7 +130,7 @@ export class RestaurantsController {
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
-  ) {
+  ): Promise<DeleteRestaurantResponseDto> {
     const command: DeleteRestaurantCommand = {
       restaurantId: id,
       ownerId: user.userId,

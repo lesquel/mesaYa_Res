@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { DeleteMenuResponseDto } from '../../application/dtos/output/delete-menu-response.dto.js';
+import type { DeleteMenuResponseDto } from '../../application/dtos/output/delete-menu-response.dto';
 
 export class DeleteMenuResponseSwaggerDto implements DeleteMenuResponseDto {
   @ApiProperty({

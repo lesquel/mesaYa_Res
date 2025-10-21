@@ -1,1 +1,1 @@
-export * from './review-typeorm.repository.js';
+export * from './review-typeorm.repository';

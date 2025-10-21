@@ -1,3 +1,3 @@
-export * from './table-repository.port.js';
-export * from './section-reader.port.js';
-export * from './table-event-publisher.port.js';
+export * from './table-repository.port';
+export * from './section-reader.port';
+export * from './table-event-publisher.port';

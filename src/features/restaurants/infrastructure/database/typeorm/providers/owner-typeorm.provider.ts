@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity.js';
-import { type OwnerReaderPort } from '../../../../application/ports/index.js';
+import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
+import { type OwnerReaderPort } from '../../../../application/ports/index';
+import { IRestaurantOwnerPort } from '../../../../domain/ports/restaurant-owner.port';
 
 @Injectable()
-export class OwnerTypeOrmProvider implements OwnerReaderPort {
+export class OwnerTypeOrmProvider
+  implements OwnerReaderPort, IRestaurantOwnerPort
+{
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly userRepository: Repository<UserOrmEntity>,

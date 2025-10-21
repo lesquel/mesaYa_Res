@@ -1,9 +1,6 @@
-import { Section } from '../../domain/index.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
-import {
-  ListRestaurantSectionsQuery,
-  ListSectionsQuery,
-} from '../dto/index.js';
+import { Section } from '../../domain/index';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { ListRestaurantSectionsQuery, ListSectionsQuery } from '../dto/index';
 
 export const SECTION_REPOSITORY = Symbol('SECTION_REPOSITORY');
 

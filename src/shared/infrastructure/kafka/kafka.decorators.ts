@@ -1,11 +1,11 @@
 import { Inject, Logger, SetMetadata } from '@nestjs/common';
-import { KafkaService } from './kafka.service.js';
+import { KafkaService } from './kafka.service';
 import {
   KAFKA_CONSUMER_METADATA,
   KafkaConsumerMetadata,
-} from './kafka.constants.js';
-import type { KafkaTopic } from './kafka.topics.js';
-import type { KafkaService as KafkaServiceType } from './kafka.service.js';
+} from './kafka.constants';
+import type { KafkaTopic } from './kafka.topics';
+import type { KafkaService as KafkaServiceType } from './kafka.service';
 
 export const KafkaProducer = () => Inject(KafkaService);
 

@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AuthRole } from '../../domain/entities/auth-role.entity.js';
+import { AuthRole } from '../../domain/entities/auth-role.entity';
 import {
   AUTH_ROLE_REPOSITORY,
   type AuthRoleRepositoryPort,
-} from '../ports/role.repository.port.js';
+} from '../ports/role.repository.port';
 import {
   AUTH_PERMISSION_REPOSITORY,
   type AuthPermissionRepositoryPort,
-} from '../ports/permission.repository.port.js';
-import { UpdateRolePermissionsCommand } from '../dto/commands/update-role-permissions.command.js';
+} from '../ports/permission.repository.port';
+import { UpdateRolePermissionsCommand } from '../dto/commands/update-role-permissions.command';
 
 @Injectable()
 export class UpdateRolePermissionsUseCase {

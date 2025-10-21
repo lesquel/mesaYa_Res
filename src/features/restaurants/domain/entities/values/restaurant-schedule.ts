@@ -1,4 +1,4 @@
-import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error.js';
+import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error';
 
 const TIME_REGEX = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
 

@@ -1,4 +1,4 @@
-import { AuthRole } from '../../domain/entities/auth-role.entity.js';
+import { AuthRole } from '../../domain/entities/auth-role.entity';
 
 export const AUTH_ROLE_REPOSITORY = Symbol('AUTH_ROLE_REPOSITORY');
 

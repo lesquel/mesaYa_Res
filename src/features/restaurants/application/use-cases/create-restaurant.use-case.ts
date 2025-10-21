@@ -1,43 +1,31 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  RestaurantEntity,
-  RestaurantOwnerNotFoundError,
-} from '../../domain/index.js';
-import { RestaurantMapper } from '../mappers/index.js';
-import {
-  RestaurantResponseDto,
-  CreateRestaurantCommand,
-} from '../dto/index.js';
-import {
-  OWNER_READER,
-  RESTAURANT_REPOSITORY,
-  type OwnerReaderPort,
-  type RestaurantRepositoryPort,
-} from '../ports/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
+import { RestaurantMapper } from '../mappers/index';
+import { RestaurantResponseDto, CreateRestaurantCommand } from '../dto/index';
 
-@Injectable()
 export class CreateRestaurantUseCase
   implements UseCase<CreateRestaurantCommand, RestaurantResponseDto>
 {
   constructor(
-    @Inject(RESTAURANT_REPOSITORY)
-    private readonly restaurantRepository: RestaurantRepositoryPort,
-    @Inject(OWNER_READER)
-    private readonly ownerReader: OwnerReaderPort,
+    private readonly restaurantDomainService: RestaurantDomainService,
   ) {}
 
   async execute(
     command: CreateRestaurantCommand,
   ): Promise<RestaurantResponseDto> {
-    const ownerExists = await this.ownerReader.exists(command.ownerId);
-    if (!ownerExists) {
-      throw new RestaurantOwnerNotFoundError(command.ownerId);
-    }
+    const restaurant = await this.restaurantDomainService.createRestaurant({
+      ownerId: command.ownerId,
+      name: command.name,
+      description: command.description ?? null,
+      location: command.location,
+      openTime: command.openTime,
+      closeTime: command.closeTime,
+      daysOpen: command.daysOpen,
+      totalCapacity: command.totalCapacity,
+      subscriptionId: command.subscriptionId,
+      imageId: command.imageId ?? null,
+    });
 
-    const restaurant = RestaurantEntity.create({ ...command });
-    const saved = await this.restaurantRepository.save(restaurant);
-
-    return RestaurantMapper.toResponse(saved);
+    return RestaurantMapper.toResponse(restaurant);
   }
 }

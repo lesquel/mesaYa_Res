@@ -1,3 +1,3 @@
-import { PaginatedQueryParams } from '@shared/application/types/pagination.js';
+import { PaginatedQueryParams } from '@shared/application/types/pagination';
 
 export type ListReviewsQuery = PaginatedQueryParams;

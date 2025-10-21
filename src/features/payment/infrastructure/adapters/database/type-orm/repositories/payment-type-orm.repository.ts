@@ -71,4 +71,14 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     const result = await this.payments.delete({ id });
     return (result.affected ?? 0) > 0;
   }
+
+  async findByReservationId(reservationId: string): Promise<PaymentEntity[]> {
+    const entities = await this.payments.find({ where: { reservationId } });
+    return this.mapper.toDomainList(entities);
+  }
+
+  async findBySubscriptionId(subscriptionId: string): Promise<PaymentEntity[]> {
+    const entities = await this.payments.find({ where: { subscriptionId } });
+    return this.mapper.toDomainList(entities);
+  }
 }

@@ -4,7 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '../../../../shared/infrastructure/kafka/index.js';
+} from '@shared/infrastructure/kafka/index';
 import type {
   CreateGraphicObjectCommand,
   DeleteGraphicObjectCommand,
@@ -13,15 +13,15 @@ import type {
   UpdateGraphicObjectCommand,
   DeleteGraphicObjectResponseDto,
   GraphicObjectResponseDto,
-} from '../dto/index.js';
+} from '../dto/index';
 import {
   CreateGraphicObjectUseCase,
   DeleteGraphicObjectUseCase,
   FindGraphicObjectUseCase,
   ListGraphicObjectsUseCase,
   UpdateGraphicObjectUseCase,
-} from '../use-cases/index.js';
-import type { PaginatedGraphicObjectResponse } from '../use-cases/list-graphic-objects.use-case.js';
+} from '../use-cases/index';
+import type { PaginatedGraphicObjectResponse } from '../use-cases/list-graphic-objects.use-case';
 
 @Injectable()
 export class ObjectsService {

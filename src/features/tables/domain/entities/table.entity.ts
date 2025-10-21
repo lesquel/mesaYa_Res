@@ -1,4 +1,4 @@
-import { InvalidTableDataError } from '../errors/invalid-table-data.error.js';
+import { InvalidTableDataError } from '../errors/invalid-table-data.error';
 
 export interface TableProps {
   sectionId: string; // FK a section

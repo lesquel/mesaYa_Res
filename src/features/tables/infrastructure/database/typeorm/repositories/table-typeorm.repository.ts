@@ -1,20 +1,26 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Table } from '../../../../domain/index.js';
-import { TableOrmEntity } from '../orm/index.js';
-import { TableOrmMapper } from '../mappers/index.js';
-import { paginateQueryBuilder } from '../../../../../../shared/infrastructure/pagination/paginate.js';
-import { PaginatedResult } from '@shared/application/types/pagination.js';
+import {
+  Table,
+  TableSectionNotFoundError,
+  ITableDomainRepositoryPort,
+} from '../../../../domain/index';
+import { TableOrmEntity } from '../orm/index';
+import { TableOrmMapper } from '../mappers/index';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types/pagination';
 import {
   ListTablesQuery,
   ListSectionTablesQuery,
-} from '../../../../application/dto/index.js';
-import { type TableRepositoryPort } from '../../../../application/ports/index.js';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index.js';
+} from '../../../../application/dto/index';
+import { type TableRepositoryPort } from '../../../../application/ports/index';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
 
 @Injectable()
-export class TableTypeOrmRepository implements TableRepositoryPort {
+export class TableTypeOrmRepository
+  implements TableRepositoryPort, ITableDomainRepositoryPort
+{
   constructor(
     @InjectRepository(TableOrmEntity)
     private readonly tables: Repository<TableOrmEntity>,
@@ -30,11 +36,13 @@ export class TableTypeOrmRepository implements TableRepositoryPort {
     });
 
     let section = existing?.section;
-    if (!existing) {
+    if (!section || section.id !== s.sectionId) {
       section =
         (await this.sections.findOne({ where: { id: s.sectionId } })) ??
         undefined;
-      if (!section) throw new Error('Section not found');
+      if (!section) {
+        throw new TableSectionNotFoundError(s.sectionId);
+      }
     }
 
     const entity = TableOrmMapper.toOrmEntity(table, {
@@ -55,6 +63,19 @@ export class TableTypeOrmRepository implements TableRepositoryPort {
 
   async delete(id: string): Promise<void> {
     await this.tables.delete({ id });
+  }
+
+  async findBySectionAndNumber(
+    sectionId: string,
+    number: number,
+  ): Promise<Table | null> {
+    const entity = await this.tables.findOne({ where: { sectionId, number } });
+    return entity ? TableOrmMapper.toDomain(entity) : null;
+  }
+
+  async listBySection(sectionId: string): Promise<Table[]> {
+    const entities = await this.tables.find({ where: { sectionId } });
+    return entities.map((entity) => TableOrmMapper.toDomain(entity));
   }
 
   async paginate(query: ListTablesQuery): Promise<PaginatedResult<Table>> {

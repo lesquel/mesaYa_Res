@@ -1,3 +1,4 @@
-export * from './invalid-section-data.error.js';
-export * from './section-not-found.error.js';
-export * from './section-restaurant-not-found.error.js';
+export * from './invalid-section-data.error';
+export * from './section-not-found.error';
+export * from './section-restaurant-not-found.error';
+export * from './section-name-conflict.error';

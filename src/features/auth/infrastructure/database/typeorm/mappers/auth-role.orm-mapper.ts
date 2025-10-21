@@ -1,6 +1,6 @@
-import { AuthRole } from '../../../../domain/entities/auth-role.entity.js';
-import { RoleOrmEntity } from '../entities/role.orm-entity.js';
-import { AuthPermissionOrmMapper } from './auth-permission.orm-mapper.js';
+import { AuthRole } from '../../../../domain/entities/auth-role.entity';
+import { RoleOrmEntity } from '../entities/role.orm-entity';
+import { AuthPermissionOrmMapper } from './auth-permission.orm-mapper';
 
 export class AuthRoleOrmMapper {
   static toDomain(entity: RoleOrmEntity): AuthRole {

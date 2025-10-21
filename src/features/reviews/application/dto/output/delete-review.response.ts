@@ -1,4 +1,4 @@
-import type { ReviewResponseDto } from './review.response.dto.js';
+import type { ReviewResponseDto } from './review.response.dto';
 
 export interface DeleteReviewResponseDto {
   ok: boolean;

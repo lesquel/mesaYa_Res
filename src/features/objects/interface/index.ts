@@ -1,1 +1,1 @@
-export * from './controllers/v1/objects.controller.js';
+export * from './controllers/v1/objects.controller';

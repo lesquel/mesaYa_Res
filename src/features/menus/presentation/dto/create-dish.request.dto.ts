@@ -9,7 +9,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import type { CreateDishDto } from '../../application/dtos/input/create-dish.dto.js';
+import type { CreateDishDto } from '../../application/dtos/input/create-dish.dto';
 
 export class CreateDishRequestDto implements CreateDishDto {
   @ApiProperty({ description: 'Identificador del restaurante', example: 1001 })

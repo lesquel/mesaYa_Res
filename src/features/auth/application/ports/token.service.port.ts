@@ -1,4 +1,4 @@
-import { AuthUser } from '../../domain/entities/auth-user.entity.js';
+import { AuthUser } from '../../domain/entities/auth-user.entity';
 
 export const AUTH_TOKEN_SERVICE = Symbol('AUTH_TOKEN_SERVICE');
 

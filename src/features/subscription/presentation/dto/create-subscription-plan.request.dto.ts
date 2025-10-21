@@ -7,7 +7,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import type { CreateSubscriptionPlanDto } from '../../application/dtos/input/create-subscription-plan.dto.js';
+import type { CreateSubscriptionPlanDto } from '../../application/dtos/input/create-subscription-plan.dto';
 
 export class CreateSubscriptionPlanRequestDto
   implements CreateSubscriptionPlanDto

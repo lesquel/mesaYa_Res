@@ -6,7 +6,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import type { UpdateDishDto } from '../../application/dtos/input/update-dish.dto.js';
+import type { UpdateDishDto } from '../../application/dtos/input/update-dish.dto';
 
 export class UpdateDishRequestDto implements UpdateDishDto {
   @ApiPropertyOptional({

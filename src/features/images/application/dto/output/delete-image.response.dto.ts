@@ -1,4 +1,4 @@
-import type { ImageResponseDto } from './image.response.dto.js';
+import type { ImageResponseDto } from './image.response.dto';
 
 export interface DeleteImageResponseDto {
   ok: boolean;

@@ -1,1 +1,1 @@
-export * from './review.orm-entity.js';
+export * from './review.orm-entity';

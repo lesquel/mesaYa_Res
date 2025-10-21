@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import { FindUserByIdUseCase } from '../../application/use-cases/find-user-by-id.use-case.js';
+import { FindUserByIdUseCase } from '../../application/use-cases/find-user-by-id.use-case';
 
 export interface JwtPayload {
   sub: string;

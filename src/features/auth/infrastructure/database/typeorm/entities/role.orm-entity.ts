@@ -6,7 +6,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PermissionOrmEntity } from './permission.orm-entity.js';
+import { PermissionOrmEntity } from './permission.orm-entity';
 
 @Entity({ name: 'role' })
 export class RoleOrmEntity {

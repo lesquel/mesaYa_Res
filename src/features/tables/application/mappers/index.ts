@@ -1,1 +1,1 @@
-export * from './table.mapper.js';
+export * from './table.mapper';

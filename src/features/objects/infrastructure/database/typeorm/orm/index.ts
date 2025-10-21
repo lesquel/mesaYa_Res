@@ -1,1 +1,1 @@
-export * from './graphic-object.orm-entity.js';
+export * from './graphic-object.orm-entity';

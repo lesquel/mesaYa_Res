@@ -1,1 +1,1 @@
-export * from './image.orm-mapper.js';
+export * from './image.orm-mapper';

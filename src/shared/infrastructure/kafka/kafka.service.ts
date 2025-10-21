@@ -10,7 +10,7 @@ import {
 } from '@nestjs/microservices';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import type { Observable } from 'rxjs';
-import type { KafkaConsumerMetadata } from './kafka.constants.js';
+import type { KafkaConsumerMetadata } from './kafka.constants';
 
 interface KafkaConsumerDefinition extends KafkaConsumerMetadata {
   handler: KafkaConsumerHandler;

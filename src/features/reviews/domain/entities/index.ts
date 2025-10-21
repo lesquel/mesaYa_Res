@@ -1,2 +1,2 @@
-export * from './review.entity.js';
-export * from './values/index.js';
+export * from './review.entity';
+export * from './values/index';

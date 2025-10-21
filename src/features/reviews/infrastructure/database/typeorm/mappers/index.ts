@@ -1,1 +1,1 @@
-export * from './review.orm-mapper.js';
+export * from './review.orm-mapper';

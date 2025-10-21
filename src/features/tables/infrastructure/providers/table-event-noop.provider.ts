@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   type TableEventPayload,
   type TableEventPublisherPort,
-} from '../../application/ports/index.js';
+} from '../../application/ports/index';
 
 @Injectable()
 export class TableEventNoopProvider implements TableEventPublisherPort {

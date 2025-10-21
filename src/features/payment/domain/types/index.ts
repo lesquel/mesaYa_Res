@@ -1,2 +1,3 @@
-export * from './paymentCreate.js';
-export * from './paymentUpdate.js';
+export * from './paymentCreate';
+export * from './paymentUpdate';
+export * from './payment-registration.types';

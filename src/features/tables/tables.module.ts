@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { TablesController } from './interface/index';
 import {
   TableOrmEntity,
   SectionTypeOrmTableProvider,
   TableTypeOrmRepository,
   TableEventNoopProvider,
-} from './infrastructure/index.js';
-import { TablesService } from './application/services/index.js';
+} from './infrastructure/index';
+import { TablesService } from './application/services/index';
 import {
   CreateTableUseCase,
   ListTablesUseCase,
@@ -15,20 +16,23 @@ import {
   FindTableUseCase,
   UpdateTableUseCase,
   DeleteTableUseCase,
-} from './application/use-cases/index.js';
+} from './application/use-cases/index';
 import {
   TABLE_REPOSITORY,
   SECTION_TABLE_READER,
   TABLE_EVENT_PUBLISHER,
-} from './application/ports/index.js';
-import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index.js';
+} from './application/ports/index';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
 import type {
   TableRepositoryPort,
-  SectionTableReaderPort,
   TableEventPublisherPort,
-} from './application/ports/index.js';
-import { KafkaService } from '@shared/infrastructure/kafka/index.js';
-import { TablesController } from './interface/controllers/v1/tables.controller.js';
+} from './application/ports/index';
+import { KafkaService } from '@shared/infrastructure/kafka/index';
+import {
+  TableDomainService,
+  ITableDomainRepositoryPort,
+  ITableSectionPort,
+} from './domain/index';
 
 @Module({
   imports: [
@@ -41,13 +45,25 @@ import { TablesController } from './interface/controllers/v1/tables.controller.j
     { provide: SECTION_TABLE_READER, useClass: SectionTypeOrmTableProvider },
     { provide: TABLE_EVENT_PUBLISHER, useClass: TableEventNoopProvider },
     {
+      provide: ITableDomainRepositoryPort,
+      useExisting: TableTypeOrmRepository,
+    },
+    { provide: ITableSectionPort, useExisting: SectionTypeOrmTableProvider },
+    {
+      provide: TableDomainService,
+      useFactory: (
+        repo: ITableDomainRepositoryPort,
+        sectionPort: ITableSectionPort,
+      ) => new TableDomainService(repo, sectionPort),
+      inject: [ITableDomainRepositoryPort, ITableSectionPort],
+    },
+    {
       provide: CreateTableUseCase,
       useFactory: (
-        repo: TableRepositoryPort,
-        sectionReader: SectionTableReaderPort,
+        tableService: TableDomainService,
         events: TableEventPublisherPort,
-      ) => new CreateTableUseCase(repo, sectionReader, events),
-      inject: [TABLE_REPOSITORY, SECTION_TABLE_READER, TABLE_EVENT_PUBLISHER],
+      ) => new CreateTableUseCase(tableService, events),
+      inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
       provide: ListTablesUseCase,
@@ -68,18 +84,18 @@ import { TablesController } from './interface/controllers/v1/tables.controller.j
     {
       provide: UpdateTableUseCase,
       useFactory: (
-        repo: TableRepositoryPort,
+        tableService: TableDomainService,
         events: TableEventPublisherPort,
-      ) => new UpdateTableUseCase(repo, events),
-      inject: [TABLE_REPOSITORY, TABLE_EVENT_PUBLISHER],
+      ) => new UpdateTableUseCase(tableService, events),
+      inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
       provide: DeleteTableUseCase,
       useFactory: (
-        repo: TableRepositoryPort,
+        tableService: TableDomainService,
         events: TableEventPublisherPort,
-      ) => new DeleteTableUseCase(repo, events),
-      inject: [TABLE_REPOSITORY, TABLE_EVENT_PUBLISHER],
+      ) => new DeleteTableUseCase(tableService, events),
+      inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
       provide: TablesService,

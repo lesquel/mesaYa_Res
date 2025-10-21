@@ -1,5 +1,5 @@
-import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error.js';
-import { assertRestaurantDay, type RestaurantDay } from './restaurant-day.js';
+import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error';
+import { assertRestaurantDay, type RestaurantDay } from './restaurant-day';
 
 export class RestaurantDaysOpen {
   private readonly internal: RestaurantDay[];

@@ -1,4 +1,4 @@
-import { ListRestaurantsQuery } from './list-restaurants.query.js';
+import { ListRestaurantsQuery } from './list-restaurants.query';
 
 export interface ListOwnerRestaurantsQuery extends ListRestaurantsQuery {
   ownerId: string;

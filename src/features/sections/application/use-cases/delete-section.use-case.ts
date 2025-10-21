@@ -1,29 +1,21 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import {
-  DeleteSectionCommand,
-  DeleteSectionResponseDto,
-} from '../dto/index.js';
-import { SectionMapper } from '../mappers/index.js';
-import { type SectionRepositoryPort } from '../ports/index.js';
-import { SectionNotFoundError } from '../../domain/index.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { SectionDomainService } from '../../domain/index';
+import { DeleteSectionCommand, DeleteSectionResponseDto } from '../dto/index';
+import { SectionMapper } from '../mappers/index';
 
 export class DeleteSectionUseCase
   implements UseCase<DeleteSectionCommand, DeleteSectionResponseDto>
 {
-  constructor(private readonly sectionRepository: SectionRepositoryPort) {}
+  constructor(private readonly sectionDomainService: SectionDomainService) {}
 
   async execute(
     command: DeleteSectionCommand,
   ): Promise<DeleteSectionResponseDto> {
-    const section = await this.sectionRepository.findById(command.sectionId);
+    const removed = await this.sectionDomainService.deleteSection({
+      sectionId: command.sectionId,
+    });
 
-    if (!section) {
-      throw new SectionNotFoundError(command.sectionId);
-    }
-
-    const sectionResponse = SectionMapper.toResponse(section);
-
-    await this.sectionRepository.delete(command.sectionId);
+    const sectionResponse = SectionMapper.toResponse(removed);
 
     return { ok: true, section: sectionResponse };
   }

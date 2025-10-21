@@ -1,4 +1,4 @@
-import type { SectionResponseDto } from './section.response.dto.js';
+import type { SectionResponseDto } from './section.response.dto';
 
 export interface DeleteSectionResponseDto {
   ok: boolean;
