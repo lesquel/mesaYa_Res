@@ -62,7 +62,9 @@ export class AuthAnalyticsRequestDto {
       endDate,
       role: this.role,
       active:
-        this.active !== undefined ? this.active.toLowerCase() === 'true' : undefined,
+        this.active !== undefined
+          ? this.active.toLowerCase() === 'true'
+          : undefined,
     };
   }
 

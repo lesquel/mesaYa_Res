@@ -36,12 +36,18 @@ export class AuthAnalyticsTypeOrmRepository
     private readonly users: Repository<UserOrmEntity>,
   ) {}
 
-  async compute(query: AuthAnalyticsQuery): Promise<AuthAnalyticsRepositoryResult> {
+  async compute(
+    query: AuthAnalyticsQuery,
+  ): Promise<AuthAnalyticsRepositoryResult> {
     const totalsPromise = this.buildTotalsQuery(query).getRawOne<TotalsRaw>();
-    const rolesPromise = this.buildRolesDistributionQuery(query).getRawMany<DistributionRaw>();
+    const rolesPromise =
+      this.buildRolesDistributionQuery(query).getRawMany<DistributionRaw>();
     const permissionsPromise =
-      this.buildPermissionsDistributionQuery(query).getRawMany<DistributionRaw>();
-    const trendPromise = this.buildRegistrationTrendQuery(query).getRawMany<TrendRaw>();
+      this.buildPermissionsDistributionQuery(
+        query,
+      ).getRawMany<DistributionRaw>();
+    const trendPromise =
+      this.buildRegistrationTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, rolesRaw, permissionsRaw, trendRaw] = await Promise.all([
       totalsPromise,
