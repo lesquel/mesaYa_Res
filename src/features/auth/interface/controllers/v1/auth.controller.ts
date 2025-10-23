@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UnauthorizedException,
   UseGuards,
   ValidationPipe,
@@ -18,6 +19,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -43,7 +45,10 @@ import { LoginCommand } from '../../../application/dto/commands/login.command';
 import { UpdateUserRolesCommand } from '../../../application/dto/commands/update-user-roles.command';
 import { UpdateRolePermissionsCommand } from '../../../application/dto/commands/update-role-permissions.command';
 import { FindUserByIdUseCase } from '../../../application/use-cases/find-user-by-id.use-case';
+import { GetAuthAnalyticsUseCase } from '../../../application/use-cases/get-auth-analytics.use-case';
 import { AuthRoleName } from '../../../domain/entities/auth-role.entity';
+import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
+import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -56,6 +61,7 @@ export class AuthController {
     private readonly listRolesUseCase: ListRolesUseCase,
     private readonly listPermissionsUseCase: ListPermissionsUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
+    private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
   ) {}
 
   @Post('signup')
@@ -119,6 +125,49 @@ export class AuthController {
   @ApiOkResponse({ description: 'Usuario con rol ADMIN' })
   adminCheck(): { ok: true } {
     return { ok: true };
+  }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(AuthRoleName.ADMIN)
+  @ApiOperation({ summary: 'Indicadores analíticos de usuarios (ADMIN)' })
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Datos agregados para dashboards de autenticación',
+    type: AuthAnalyticsResponseDto,
+  })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'Fecha inicial (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'Fecha final (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'role',
+    required: false,
+    type: String,
+    description: 'Filtra por nombre de rol',
+  })
+  @ApiQuery({
+    name: 'active',
+    required: false,
+    type: Boolean,
+    description: 'Filtra por estado del usuario (true/false)',
+  })
+  async getAnalytics(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    query: AuthAnalyticsRequestDto,
+  ): Promise<AuthAnalyticsResponseDto> {
+    const analytics = await this.getAuthAnalyticsUseCase.execute(
+      query.toQuery(),
+    );
+    return AuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Patch('admin/users/:id/roles')
