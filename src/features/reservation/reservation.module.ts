@@ -52,7 +52,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
   controllers: [ReservationsController],
   providers: [
     ReservationTypeOrmRepository,
-  ReservationAnalyticsTypeOrmRepository,
+    ReservationAnalyticsTypeOrmRepository,
     RestaurantTypeOrmReservationProvider,
     UserTypeOrmReservationProvider,
     TableTypeOrmReservationProvider,
