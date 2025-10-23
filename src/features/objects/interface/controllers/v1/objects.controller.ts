@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -30,12 +31,20 @@ import {
   UpdateGraphicObjectDto,
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
+  GetGraphicObjectAnalyticsUseCase,
 } from '../../../application/index';
+import {
+  GraphicObjectAnalyticsRequestDto,
+  GraphicObjectAnalyticsResponseDto,
+} from '../../dto/index';
 
 @ApiTags('Objects')
 @Controller({ path: 'object', version: '1' })
 export class ObjectsController {
-  constructor(private readonly objects: ObjectsService) {}
+  constructor(
+    private readonly objects: ObjectsService,
+    private readonly getGraphicObjectAnalytics: GetGraphicObjectAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -56,6 +65,17 @@ export class ObjectsController {
     query: ListGraphicObjectsQuery,
   ) {
     return this.objects.list(query);
+  }
+
+  @Get('analytics')
+  @ApiOperation({ summary: 'Datos analíticos de objetos gráficos' })
+  async analytics(
+    @Query() query: GraphicObjectAnalyticsRequestDto,
+  ): Promise<GraphicObjectAnalyticsResponseDto> {
+    const analytics = await this.getGraphicObjectAnalytics.execute(
+      query.toQuery(),
+    );
+    return GraphicObjectAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':id')
