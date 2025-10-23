@@ -34,10 +34,16 @@ export class ImageAnalyticsTypeOrmRepository
     private readonly repository: Repository<ImageOrmEntity>,
   ) {}
 
-  async compute(query: ImageAnalyticsQuery): Promise<ImageAnalyticsRepositoryResult> {
+  async compute(
+    query: ImageAnalyticsQuery,
+  ): Promise<ImageAnalyticsRepositoryResult> {
     const totalsPromise = this.buildTotalsQuery(query).getRawOne<TotalsRaw>();
-    const entitiesPromise = this.buildEntitiesDistributionQuery(query).getRawMany<EntityDistributionRaw>();
-    const trendPromise = this.buildUploadsTrendQuery(query).getRawMany<TrendRaw>();
+    const entitiesPromise =
+      this.buildEntitiesDistributionQuery(
+        query,
+      ).getRawMany<EntityDistributionRaw>();
+    const trendPromise =
+      this.buildUploadsTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, entitiesRaw, trendRaw] = await Promise.all([
       totalsPromise,
@@ -101,9 +107,10 @@ export class ImageAnalyticsTypeOrmRepository
     const connection = this.repository.manager.connection;
     const dialect = connection.options.type;
 
-    const dateExpression = dialect === 'postgres'
-      ? "TO_CHAR(image.createdAt, 'YYYY-MM-DD')"
-      : "strftime('%Y-%m-%d', image.createdAt)";
+    const dateExpression =
+      dialect === 'postgres'
+        ? "TO_CHAR(image.createdAt, 'YYYY-MM-DD')"
+        : "strftime('%Y-%m-%d', image.createdAt)";
 
     qb.select(dateExpression, 'date')
       .addSelect('COUNT(image.id)', 'count')

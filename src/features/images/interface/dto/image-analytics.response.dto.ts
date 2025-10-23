@@ -49,7 +49,9 @@ export class ImageAnalyticsResponseDto {
   @ApiProperty({ type: [ImageAnalyticsEntityDistributionItemDto] })
   entities: ImageAnalyticsEntityDistributionItemDto[];
 
-  static fromApplication(response: ImageAnalyticsResponse): ImageAnalyticsResponseDto {
+  static fromApplication(
+    response: ImageAnalyticsResponse,
+  ): ImageAnalyticsResponseDto {
     const dto = new ImageAnalyticsResponseDto();
     dto.summary = {
       totalImages: response.summary.totalImages,

@@ -32,7 +32,9 @@ export class ImageAnalyticsRequestDto {
       : undefined;
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
-      throw new BadRequestException('startDate debe ser menor o igual que endDate');
+      throw new BadRequestException(
+        'startDate debe ser menor o igual que endDate',
+      );
     }
 
     return {

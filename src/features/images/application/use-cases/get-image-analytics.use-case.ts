@@ -55,7 +55,9 @@ export class GetImageAnalyticsUseCase {
     }
 
     return Number(
-      (analytics.totals.totalImages / analytics.totals.uniqueEntities).toFixed(2),
+      (analytics.totals.totalImages / analytics.totals.uniqueEntities).toFixed(
+        2,
+      ),
     );
   }
 
