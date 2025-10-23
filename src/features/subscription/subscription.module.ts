@@ -29,6 +29,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
+import { KafkaService } from '@shared/infrastructure/kafka';
 
 @Module({
   imports: [
@@ -71,13 +72,15 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
         logger: ILoggerPort,
         subscriptionRepository: ISubscriptionRepositoryPort,
         subscriptionMapper: SubscriptionMapper,
+        kafkaService: KafkaService,
       ) =>
         new SubscriptionService(
           logger,
           subscriptionRepository,
           subscriptionMapper,
+          kafkaService,
         ),
-      inject: [LOGGER, ISubscriptionRepositoryPort, SubscriptionMapper],
+      inject: [LOGGER, ISubscriptionRepositoryPort, SubscriptionMapper, KafkaService],
     },
     {
       provide: SubscriptionPlanService,
@@ -85,13 +88,20 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
         logger: ILoggerPort,
         subscriptionPlanRepository: ISubscriptionPlanRepositoryPort,
         subscriptionPlanMapper: SubscriptionPlanMapper,
+        kafkaService: KafkaService,
       ) =>
         new SubscriptionPlanService(
           logger,
           subscriptionPlanRepository,
           subscriptionPlanMapper,
+          kafkaService,
         ),
-      inject: [LOGGER, ISubscriptionPlanRepositoryPort, SubscriptionPlanMapper],
+      inject: [
+        LOGGER,
+        ISubscriptionPlanRepositoryPort,
+        SubscriptionPlanMapper,
+        KafkaService,
+      ],
     },
   ],
   exports: [SubscriptionService, SubscriptionPlanService],
