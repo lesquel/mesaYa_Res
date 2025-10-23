@@ -47,7 +47,9 @@ export class MenuAnalyticsRequestDto {
       : undefined;
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
-      throw new BadRequestException('startDate debe ser menor o igual que endDate');
+      throw new BadRequestException(
+        'startDate debe ser menor o igual que endDate',
+      );
     }
 
     if (
@@ -55,7 +57,9 @@ export class MenuAnalyticsRequestDto {
       typeof this.maxPrice === 'number' &&
       this.minPrice > this.maxPrice
     ) {
-      throw new BadRequestException('minPrice debe ser menor o igual que maxPrice');
+      throw new BadRequestException(
+        'minPrice debe ser menor o igual que maxPrice',
+      );
     }
 
     return {
