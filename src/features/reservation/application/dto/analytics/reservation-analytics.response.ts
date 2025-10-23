@@ -55,6 +55,9 @@ export interface ReservationAnalyticsRepositoryResult {
     count: number;
   }>;
   readonly guestDistribution: Array<{ segment: string; count: number }>;
-  readonly restaurantDistribution: Array<{ restaurantId: string; count: number }>;
+  readonly restaurantDistribution: Array<{
+    restaurantId: string;
+    count: number;
+  }>;
   readonly hourDistribution: Array<{ hour: number; count: number }>;
 }
