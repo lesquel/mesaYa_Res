@@ -24,13 +24,15 @@ import {
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
   controllers: [ObjectsController],
   providers: [
+    GraphicObjectTypeOrmRepository,
+    GraphicObjectEventNoopProvider,
     {
       provide: GRAPHIC_OBJECT_REPOSITORY,
-      useClass: GraphicObjectTypeOrmRepository,
+      useExisting: GraphicObjectTypeOrmRepository,
     },
     {
       provide: GRAPHIC_OBJECT_EVENT_PUBLISHER,
-      useClass: GraphicObjectEventNoopProvider,
+      useExisting: GraphicObjectEventNoopProvider,
     },
     {
       provide: IGraphicObjectDomainRepositoryPort,
