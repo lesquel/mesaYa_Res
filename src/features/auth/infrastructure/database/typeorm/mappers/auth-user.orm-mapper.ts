@@ -14,6 +14,8 @@ export class AuthUserOrmMapper {
         AuthRoleOrmMapper.toDomain(role),
       ),
       active: entity.active,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 
@@ -28,6 +30,12 @@ export class AuthUserOrmMapper {
     entity.passwordHash = user.passwordHash;
     entity.roles = user.roles.map((role) => AuthRoleOrmMapper.toOrm(role));
     entity.active = user.active;
+    if (user.createdAt) {
+      entity.createdAt = user.createdAt;
+    }
+    if (user.updatedAt) {
+      entity.updatedAt = user.updatedAt;
+    }
     return entity;
   }
 }
