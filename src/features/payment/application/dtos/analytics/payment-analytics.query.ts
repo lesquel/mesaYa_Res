@@ -1,7 +1,4 @@
-import type {
-  PaymentStatusEnum,
-  PaymentTypeEnum,
-} from '../../../domain/enums';
+import type { PaymentStatusEnum, PaymentTypeEnum } from '../../../domain/enums';
 
 export interface PaymentAnalyticsQuery {
   readonly startDate?: Date;
