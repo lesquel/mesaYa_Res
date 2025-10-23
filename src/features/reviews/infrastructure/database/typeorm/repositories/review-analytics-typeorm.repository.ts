@@ -45,16 +45,17 @@ export class ReviewAnalyticsTypeOrmRepository
     const ratingPromise =
       this.buildRatingDistributionQuery(query).getRawMany<DistributionRaw>();
     const restaurantPromise =
-      this.buildRestaurantDistributionQuery(query).getRawMany<DistributionRaw>();
+      this.buildRestaurantDistributionQuery(
+        query,
+      ).getRawMany<DistributionRaw>();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
-    const [totalsRaw, ratingRaw, restaurantRaw, trendRaw] =
-      await Promise.all([
-        totalsPromise,
-        ratingPromise,
-        restaurantPromise,
-        trendPromise,
-      ]);
+    const [totalsRaw, ratingRaw, restaurantRaw, trendRaw] = await Promise.all([
+      totalsPromise,
+      ratingPromise,
+      restaurantPromise,
+      trendPromise,
+    ]);
 
     const totals: ReviewAnalyticsRepositoryTotals = {
       totalReviews: this.toNumber(totalsRaw?.totalReviews),
