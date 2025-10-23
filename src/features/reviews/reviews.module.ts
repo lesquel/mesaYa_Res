@@ -49,17 +49,14 @@ import { RestaurantOrmEntity } from '../restaurants/index';
     UserTypeOrmReviewProvider,
     {
       provide: REVIEW_REPOSITORY,
-      useClass: ReviewTypeOrmRepository,
       useExisting: ReviewTypeOrmRepository,
     },
     {
       provide: RESTAURANT_REVIEW_READER,
-      useClass: RestaurantTypeOrmReviewProvider,
       useExisting: RestaurantTypeOrmReviewProvider,
     },
     {
       provide: USER_REVIEW_READER,
-      useClass: UserTypeOrmReviewProvider,
       useExisting: UserTypeOrmReviewProvider,
     },
     {
