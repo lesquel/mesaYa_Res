@@ -20,7 +20,10 @@ import type {
   DeleteMenuDto,
   DeleteMenuResponseDto,
 } from '@features/menus/application';
-import { MenuService, GetMenuAnalyticsUseCase } from '@features/menus/application';
+import {
+  MenuService,
+  GetMenuAnalyticsUseCase,
+} from '@features/menus/application';
 import {
   CreateMenuRequestDto,
   MenuAnalyticsRequestDto,
