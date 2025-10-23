@@ -16,7 +16,10 @@ export interface ImageAnalyticsResponse {
     readonly total: number;
     readonly byDate: ImageAnalyticsTrendPoint[];
   };
-  readonly entities: Array<{ readonly entityId: number; readonly count: number }>;
+  readonly entities: Array<{
+    readonly entityId: number;
+    readonly count: number;
+  }>;
 }
 
 export interface ImageAnalyticsRepositoryTotals {
