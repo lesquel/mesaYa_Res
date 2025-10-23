@@ -9,6 +9,7 @@ import {
   RestaurantTypeOrmReservationProvider,
   UserTypeOrmReservationProvider,
   TableTypeOrmReservationProvider,
+  ReservationAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   CreateReservationUseCase,
@@ -21,6 +22,8 @@ import {
   RESTAURANT_RESERVATION_READER,
   USER_RESERVATION_READER,
   RESERVATION_EVENT_PUBLISHER,
+  RESERVATION_ANALYTICS_REPOSITORY,
+  GetReservationAnalyticsUseCase,
 } from './application/index';
 import { RestaurantOrmEntity } from '../restaurants/index';
 import { ReservationService } from './application/index';
@@ -49,6 +52,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
   controllers: [ReservationsController],
   providers: [
     ReservationTypeOrmRepository,
+    ReservationAnalyticsTypeOrmRepository,
     RestaurantTypeOrmReservationProvider,
     UserTypeOrmReservationProvider,
     TableTypeOrmReservationProvider,
@@ -68,6 +72,10 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     {
       provide: RESERVATION_EVENT_PUBLISHER,
       useExisting: ReservationEventNoopProvider,
+    },
+    {
+      provide: RESERVATION_ANALYTICS_REPOSITORY,
+      useExisting: ReservationAnalyticsTypeOrmRepository,
     },
     {
       provide: IReservationRepositoryPort,
@@ -113,6 +121,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     FindReservationUseCase,
     UpdateReservationUseCase,
     DeleteReservatioUseCase,
+    GetReservationAnalyticsUseCase,
   ],
   exports: [
     CreateReservationUseCase,
@@ -121,6 +130,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     FindReservationUseCase,
     UpdateReservationUseCase,
     DeleteReservatioUseCase,
+    GetReservationAnalyticsUseCase,
   ],
 })
 export class ReservationModule {}

@@ -39,18 +39,16 @@ export class SubscriptionService {
   private readonly updateSubscriptionUseCase: UpdateSubscriptionUseCase;
   private readonly updateSubscriptionStateUseCase: UpdateSubscriptionStateUseCase;
   private readonly deleteSubscriptionUseCase: DeleteSubscriptionUseCase;
-  private readonly kafkaService: KafkaService;
 
   constructor(
     private readonly logger: ILoggerPort,
     subscriptionRepository: ISubscriptionRepositoryPort,
     subscriptionMapper: SubscriptionMapper,
-    kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {
     this.subscriptionDomainService = new SubscriptionDomainService(
       subscriptionRepository,
     );
-    this.kafkaService = kafkaService;
 
     this.createSubscriptionUseCase = new CreateSubscriptionUseCase(
       this.logger,

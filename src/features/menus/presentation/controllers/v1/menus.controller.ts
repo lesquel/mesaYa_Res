@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -19,9 +20,14 @@ import type {
   DeleteMenuDto,
   DeleteMenuResponseDto,
 } from '@features/menus/application';
-import { MenuService } from '@features/menus/application';
+import {
+  MenuService,
+  GetMenuAnalyticsUseCase,
+} from '@features/menus/application';
 import {
   CreateMenuRequestDto,
+  MenuAnalyticsRequestDto,
+  MenuAnalyticsResponseDto,
   DeleteMenuResponseSwaggerDto,
   MenuResponseSwaggerDto,
   UpdateMenuRequestDto,
@@ -30,7 +36,10 @@ import {
 @ApiTags('Menus')
 @Controller({ path: 'menus', version: '1' })
 export class MenusController {
-  constructor(private readonly menuService: MenuService) {}
+  constructor(
+    private readonly menuService: MenuService,
+    private readonly getMenuAnalyticsUseCase: GetMenuAnalyticsUseCase,
+  ) {}
 
   @Post()
   @ApiBody({ type: CreateMenuRequestDto })
@@ -50,6 +59,18 @@ export class MenusController {
   })
   findAll(): Promise<MenuListResponseDto> {
     return this.menuService.findAll();
+  }
+
+  @Get('analytics')
+  @ApiOkResponse({
+    description: 'Resumen analítico de menús',
+    type: MenuAnalyticsResponseDto,
+  })
+  async getAnalytics(
+    @Query() dto: MenuAnalyticsRequestDto,
+  ): Promise<MenuAnalyticsResponseDto> {
+    const analytics = await this.getMenuAnalyticsUseCase.execute(dto.toQuery());
+    return MenuAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':menuId')
