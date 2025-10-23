@@ -42,10 +42,18 @@ export class MenuAnalyticsTypeOrmRepository
     private readonly repository: Repository<MenuOrmEntity>,
   ) {}
 
-  async compute(query: MenuAnalyticsQuery): Promise<MenuAnalyticsRepositoryResult> {
+  async compute(
+    query: MenuAnalyticsQuery,
+  ): Promise<MenuAnalyticsRepositoryResult> {
     const totalsPromise = this.buildTotalsQuery(query).getRawOne<TotalsRaw>();
-    const restaurantsPromise = this.buildRestaurantsDistributionQuery(query).getRawMany<RestaurantDistributionRaw>();
-    const priceDistributionPromise = this.buildPriceDistributionQuery(query).getRawMany<PriceDistributionRaw>();
+    const restaurantsPromise =
+      this.buildRestaurantsDistributionQuery(
+        query,
+      ).getRawMany<RestaurantDistributionRaw>();
+    const priceDistributionPromise =
+      this.buildPriceDistributionQuery(
+        query,
+      ).getRawMany<PriceDistributionRaw>();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, restaurantsRaw, priceRaw, trendRaw] = await Promise.all([
@@ -143,9 +151,10 @@ export class MenuAnalyticsTypeOrmRepository
     const connection = this.repository.manager.connection;
     const dialect = connection.options.type;
 
-    const dateExpression = dialect === 'postgres'
-      ? "TO_CHAR(menu.createdAt, 'YYYY-MM-DD')"
-      : "strftime('%Y-%m-%d', menu.createdAt)";
+    const dateExpression =
+      dialect === 'postgres'
+        ? "TO_CHAR(menu.createdAt, 'YYYY-MM-DD')"
+        : "strftime('%Y-%m-%d', menu.createdAt)";
 
     qb.select(dateExpression, 'date')
       .addSelect('COUNT(menu.id)', 'count')
@@ -160,7 +169,9 @@ export class MenuAnalyticsTypeOrmRepository
     filters: MenuAnalyticsQuery,
   ): void {
     if (filters.startDate) {
-      qb.andWhere('menu.createdAt >= :startDate', { startDate: filters.startDate });
+      qb.andWhere('menu.createdAt >= :startDate', {
+        startDate: filters.startDate,
+      });
     }
 
     if (filters.endDate) {
