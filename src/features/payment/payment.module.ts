@@ -41,14 +41,13 @@ import { KafkaService } from '@shared/infrastructure/kafka';
         paymentRepository: IPaymentRepositoryPort,
         mapper: PaymentEntityDTOMapper,
         kafkaService: KafkaService,
-      ) =>
-        new PaymentService(
-          logger,
-          paymentRepository,
-          mapper,
-          kafkaService,
-        ),
-      inject: [LOGGER, IPaymentRepositoryPort, PaymentEntityDTOMapper, KafkaService],
+      ) => new PaymentService(logger, paymentRepository, mapper, kafkaService),
+      inject: [
+        LOGGER,
+        IPaymentRepositoryPort,
+        PaymentEntityDTOMapper,
+        KafkaService,
+      ],
     },
   ],
   exports: [PaymentService],
