@@ -32,13 +32,15 @@ import type { RestaurantRepositoryPort } from './application/index';
   ],
   controllers: [RestaurantsController],
   providers: [
+    RestaurantTypeOrmRepository,
+    OwnerTypeOrmProvider,
     {
       provide: RESTAURANT_REPOSITORY,
-      useClass: RestaurantTypeOrmRepository,
+      useExisting: RestaurantTypeOrmRepository,
     },
     {
       provide: OWNER_READER,
-      useClass: OwnerTypeOrmProvider,
+      useExisting: OwnerTypeOrmProvider,
     },
     {
       provide: IRestaurantDomainRepositoryPort,
