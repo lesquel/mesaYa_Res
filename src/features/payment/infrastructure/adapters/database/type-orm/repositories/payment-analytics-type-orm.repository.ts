@@ -9,7 +9,10 @@ import type {
 } from '@features/payment/application/dtos/analytics/payment-analytics.response';
 import type { PaymentAnalyticsRepositoryPort } from '@features/payment/application/ports/payment-analytics.repository.port';
 import { PaymentOrmEntity } from '../orm/payment.type-orm.entity';
-import { PaymentStatusEnum, PaymentTypeEnum } from '@features/payment/domain/enums';
+import {
+  PaymentStatusEnum,
+  PaymentTypeEnum,
+} from '@features/payment/domain/enums';
 
 interface TotalsRaw {
   totalPayments: string | number | null;
@@ -58,18 +61,18 @@ export class PaymentAnalyticsTypeOrmRepository
     query: PaymentAnalyticsQuery,
   ): Promise<PaymentAnalyticsRepositoryResult> {
     const totalsPromise = this.buildTotalsQuery(query).getRawOne<TotalsRaw>();
-    const statusPromise = this.buildStatusDistributionQuery(
-      query,
-    ).getRawMany<StatusDistributionRaw>();
-    const typesPromise = this.buildTypeDistributionQuery(
-      query,
-    ).getRawMany<TypeDistributionRaw>();
-    const restaurantsPromise = this.buildRestaurantDistributionQuery(
-      query,
-    ).getRawMany<RestaurantDistributionRaw>();
-    const revenueTrendPromise = this.buildRevenueTrendQuery(
-      query,
-    ).getRawMany<RevenueTrendRaw>();
+    const statusPromise =
+      this.buildStatusDistributionQuery(
+        query,
+      ).getRawMany<StatusDistributionRaw>();
+    const typesPromise =
+      this.buildTypeDistributionQuery(query).getRawMany<TypeDistributionRaw>();
+    const restaurantsPromise =
+      this.buildRestaurantDistributionQuery(
+        query,
+      ).getRawMany<RestaurantDistributionRaw>();
+    const revenueTrendPromise =
+      this.buildRevenueTrendQuery(query).getRawMany<RevenueTrendRaw>();
 
     const [totalsRaw, statusRaw, typesRaw, restaurantsRaw, revenueRaw] =
       await Promise.all([

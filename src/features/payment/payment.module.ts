@@ -6,11 +6,14 @@ import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
   PaymentOrmMapper,
+  PaymentAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   PaymentService,
   PaymentEntityDTOMapper,
   PAYMENT_ORM_MAPPER,
+  GetPaymentAnalyticsUseCase,
+  PAYMENT_ANALYTICS_REPOSITORY,
 } from './application/index';
 import { IPaymentRepositoryPort } from './domain/index';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
@@ -35,6 +38,10 @@ import { KafkaService } from '@shared/infrastructure/kafka';
       useClass: PaymentTypeOrmRepository,
     },
     {
+      provide: PAYMENT_ANALYTICS_REPOSITORY,
+      useClass: PaymentAnalyticsTypeOrmRepository,
+    },
+    {
       provide: PaymentService,
       useFactory: (
         logger: ILoggerPort,
@@ -49,7 +56,8 @@ import { KafkaService } from '@shared/infrastructure/kafka';
         KafkaService,
       ],
     },
+    GetPaymentAnalyticsUseCase,
   ],
-  exports: [PaymentService],
+  exports: [PaymentService, GetPaymentAnalyticsUseCase],
 })
 export class PaymentModule {}
