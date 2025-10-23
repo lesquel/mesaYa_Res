@@ -63,7 +63,9 @@ export class MenuAnalyticsResponseDto {
   @ApiProperty({ type: () => [MenuAnalyticsPriceRangeItemDto] })
   priceRanges!: MenuAnalyticsPriceRangeItemDto[];
 
-  static fromApplication(response: MenuAnalyticsResponse): MenuAnalyticsResponseDto {
+  static fromApplication(
+    response: MenuAnalyticsResponse,
+  ): MenuAnalyticsResponseDto {
     const dto = new MenuAnalyticsResponseDto();
     dto.summary = {
       totalMenus: response.summary.totalMenus,
