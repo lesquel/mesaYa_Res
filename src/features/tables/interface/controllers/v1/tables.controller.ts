@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,10 +22,8 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import {
-  CreateTableDto,
-  UpdateTableDto,
-} from '@features/tables/application/dto/index';
+import { CreateTableDto, UpdateTableDto } from '@features/tables/application/dto/index';
+import { GetTableAnalyticsUseCase } from '@features/tables/application/use-cases/get-table-analytics.use-case';
 import type {
   CreateTableCommand,
   DeleteTableCommand,
@@ -37,11 +36,16 @@ import type {
   DeleteTableResponseDto,
 } from '@features/tables/application/dto/index';
 import { TablesService } from '@features/tables/application/services/index';
+import { TableAnalyticsRequestDto } from '@features/tables/interface/dto/table-analytics.request.dto';
+import { TableAnalyticsResponseDto } from '@features/tables/interface/dto/table-analytics.response.dto';
 
 @ApiTags('Tables')
 @Controller({ path: 'table', version: '1' })
 export class TablesController {
-  constructor(private readonly tablesService: TablesService) {}
+  constructor(
+    private readonly tablesService: TablesService,
+    private readonly getTableAnalytics: GetTableAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -78,6 +82,15 @@ export class TablesController {
       ...pagination,
     };
     return this.tablesService.listSection(query);
+  }
+
+  @Get('analytics')
+  @ApiOperation({ summary: 'Indicadores analíticos de mesas' })
+  async analytics(
+    @Query() query: TableAnalyticsRequestDto,
+  ): Promise<TableAnalyticsResponseDto> {
+    const analytics = await this.getTableAnalytics.execute(query.toQuery());
+    return TableAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':id')

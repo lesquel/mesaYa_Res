@@ -38,10 +38,18 @@ export class TableAnalyticsTypeOrmRepository
   async compute(
     query: TableAnalyticsQuery,
   ): Promise<TableAnalyticsRepositoryResult> {
-    const totalsPromise = this.buildTotalsQuery(query).getRawOne<TableTotalsRaw>();
-    const capacityPromise = this.buildCapacityDistributionQuery(query).getRawMany<CapacityBucketRaw>();
-    const sectionPromise = this.buildSectionDistributionQuery(query).getRawMany<DistributionRaw>();
-    const restaurantPromise = this.buildRestaurantDistributionQuery(query).getRawMany<DistributionRaw>();
+    const totalsPromise =
+      this.buildTotalsQuery(query).getRawOne<TableTotalsRaw>();
+    const capacityPromise =
+      this.buildCapacityDistributionQuery(
+        query,
+      ).getRawMany<CapacityBucketRaw>();
+    const sectionPromise =
+      this.buildSectionDistributionQuery(query).getRawMany<DistributionRaw>();
+    const restaurantPromise =
+      this.buildRestaurantDistributionQuery(
+        query,
+      ).getRawMany<DistributionRaw>();
 
     const [totalsRaw, capacityRaw, sectionRaw, restaurantRaw] =
       await Promise.all([

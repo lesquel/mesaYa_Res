@@ -7,6 +7,7 @@ import {
   SectionTypeOrmTableProvider,
   TableTypeOrmRepository,
   TableEventNoopProvider,
+  TableAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import { TablesService } from './application/services/index';
 import {
@@ -16,16 +17,19 @@ import {
   FindTableUseCase,
   UpdateTableUseCase,
   DeleteTableUseCase,
+  GetTableAnalyticsUseCase,
 } from './application/use-cases/index';
 import {
   TABLE_REPOSITORY,
   SECTION_TABLE_READER,
   TABLE_EVENT_PUBLISHER,
+  TABLE_ANALYTICS_REPOSITORY,
 } from './application/ports/index';
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
 import type {
   TableRepositoryPort,
   TableEventPublisherPort,
+  TableAnalyticsRepositoryPort,
 } from './application/ports/index';
 import { KafkaService } from '@shared/infrastructure/kafka/index';
 import {
@@ -44,9 +48,14 @@ import {
     TableTypeOrmRepository,
     SectionTypeOrmTableProvider,
     TableEventNoopProvider,
+    TableAnalyticsTypeOrmRepository,
     { provide: TABLE_REPOSITORY, useExisting: TableTypeOrmRepository },
     { provide: SECTION_TABLE_READER, useExisting: SectionTypeOrmTableProvider },
     { provide: TABLE_EVENT_PUBLISHER, useExisting: TableEventNoopProvider },
+    {
+      provide: TABLE_ANALYTICS_REPOSITORY,
+      useExisting: TableAnalyticsTypeOrmRepository,
+    },
     {
       provide: ITableDomainRepositoryPort,
       useExisting: TableTypeOrmRepository,
@@ -101,6 +110,13 @@ import {
       inject: [TableDomainService, TABLE_EVENT_PUBLISHER],
     },
     {
+      provide: GetTableAnalyticsUseCase,
+      useFactory: (
+        analyticsRepository: TableAnalyticsRepositoryPort,
+      ) => new GetTableAnalyticsUseCase(analyticsRepository),
+      inject: [TABLE_ANALYTICS_REPOSITORY],
+    },
+    {
       provide: TablesService,
       useFactory: (
         createTable: CreateTableUseCase,
@@ -139,6 +155,7 @@ import {
     UpdateTableUseCase,
     DeleteTableUseCase,
     TablesService,
+    GetTableAnalyticsUseCase,
   ],
 })
 export class TablesModule {}
