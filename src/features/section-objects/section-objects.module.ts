@@ -41,21 +41,25 @@ import {
   ],
   controllers: [SectionObjectsController],
   providers: [
+    SectionObjectTypeOrmRepository,
+    SectionTypeOrmReaderForSectionObject,
+    ObjectTypeOrmReaderForSectionObject,
+    SectionObjectEventNoopProvider,
     {
       provide: SECTION_OBJECT_REPOSITORY,
-      useClass: SectionObjectTypeOrmRepository,
+      useExisting: SectionObjectTypeOrmRepository,
     },
     {
       provide: SECTION_READER_FOR_SECTION_OBJECT,
-      useClass: SectionTypeOrmReaderForSectionObject,
+      useExisting: SectionTypeOrmReaderForSectionObject,
     },
     {
       provide: OBJECT_READER_FOR_SECTION_OBJECT,
-      useClass: ObjectTypeOrmReaderForSectionObject,
+      useExisting: ObjectTypeOrmReaderForSectionObject,
     },
     {
       provide: SECTION_OBJECT_EVENT_PUBLISHER,
-      useClass: SectionObjectEventNoopProvider,
+      useExisting: SectionObjectEventNoopProvider,
     },
     {
       provide: ISectionObjectDomainRepositoryPort,
