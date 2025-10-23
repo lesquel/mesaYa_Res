@@ -1,18 +1,23 @@
 import { ILoggerPort } from '@shared/application/ports/logger.port';
 import {
+  KafkaEmit,
+  KafkaService,
+  KAFKA_TOPICS,
+} from '@shared/infrastructure/kafka';
+import {
   CreateDishUseCase,
   GetDishByIdUseCase,
   ListDishesUseCase,
   UpdateDishUseCase,
   DeleteDishUseCase,
 } from '../use-cases';
-import {
+import type {
   CreateDishDto,
   GetDishByIdDto,
   UpdateDishDto,
   DeleteDishDto,
 } from '../dtos/input';
-import {
+import type {
   DishResponseDto,
   DishListResponseDto,
   DeleteDishResponseDto,
@@ -28,13 +33,16 @@ export class DishService {
   private readonly listDishesUseCase: ListDishesUseCase;
   private readonly updateDishUseCase: UpdateDishUseCase;
   private readonly deleteDishUseCase: DeleteDishUseCase;
+  private readonly kafkaService: KafkaService;
 
   constructor(
     logger: ILoggerPort,
     dishRepository: IDishRepositoryPort,
     dishMapper: DishMapper,
+    kafkaService: KafkaService,
   ) {
     this.dishDomainService = new DishDomainService(dishRepository);
+    this.kafkaService = kafkaService;
 
     this.createDishUseCase = new CreateDishUseCase(
       logger,
@@ -66,6 +74,20 @@ export class DishService {
     );
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.DISH_CREATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [CreateDishDto];
+      const entity = toPlain(result ?? {});
+      const entityId = (entity as { dishId?: string }).dishId ?? null;
+      return {
+        action: 'dish.created',
+        entityId,
+        restaurantId: command?.restaurantId ?? null,
+        entity,
+      };
+    },
+  })
   async create(dto: CreateDishDto): Promise<DishResponseDto> {
     return this.createDishUseCase.execute(dto);
   }
@@ -78,10 +100,40 @@ export class DishService {
     return this.listDishesUseCase.execute();
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.DISH_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateDishDto];
+      const entity = toPlain(result ?? {});
+      const entityId =
+        (command?.dishId as string | undefined) ||
+        (entity as { dishId?: string }).dishId ||
+        null;
+      return {
+        action: 'dish.updated',
+        entityId,
+        entity,
+      };
+    },
+  })
   async update(dto: UpdateDishDto): Promise<DishResponseDto> {
     return this.updateDishUseCase.execute(dto);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.DISH_DELETED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [DeleteDishDto];
+      const deletion = toPlain(result ?? {});
+      const entityId =
+        (deletion as { dishId?: string }).dishId || command?.dishId || null;
+      return {
+        action: 'dish.deleted',
+        entityId,
+        entity: deletion,
+      };
+    },
+  })
   async delete(dto: DeleteDishDto): Promise<DeleteDishResponseDto> {
     return this.deleteDishUseCase.execute(dto);
   }
