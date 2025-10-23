@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
-import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query';
+import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query.js';
 import type {
   AuthAnalyticsRepositoryResult,
   AuthAnalyticsTrendPoint,
-} from '../../../../application/dto/responses/auth-analytics.response';
+} from '../../../../application/dto/responses/auth-analytics.response.js';
 import type { AuthAnalyticsRepositoryPort } from '../../../../application/ports/auth-analytics.repository.port';
 import { UserOrmEntity } from '../entities/user.orm-entity';
 
@@ -63,11 +63,11 @@ export class AuthAnalyticsTypeOrmRepository
         inactiveUsers: this.toNumber(totalsRaw?.inactiveUsers),
       },
       roleDistribution: rolesRaw.map((row) => ({
-        role: row.role ?? 'unknown',
+        role: row.role as string,
         count: this.toNumber(row.count),
       })),
       permissionDistribution: permissionsRaw.map((row) => ({
-        permission: row.permission ?? 'unknown',
+        permission: row.permission as string,
         count: this.toNumber(row.count),
       })),
       registrationsByDate: trendRaw.map<AuthAnalyticsTrendPoint>((row) => ({

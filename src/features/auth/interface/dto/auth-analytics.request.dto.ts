@@ -7,7 +7,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import type { AuthAnalyticsQuery } from '../../application/dto/queries/auth-analytics.query';
+import type { AuthAnalyticsQuery } from '../../application/dto/queries/auth-analytics.query.js';
 
 export class AuthAnalyticsRequestDto {
   @ApiPropertyOptional({

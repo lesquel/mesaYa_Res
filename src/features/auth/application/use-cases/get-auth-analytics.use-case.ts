@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuthAnalyticsQuery } from '../dto/queries/auth-analytics.query';
+import type { AuthAnalyticsQuery } from '../dto/queries/auth-analytics.query.js';
 import type {
   AuthAnalyticsRepositoryResult,
   AuthAnalyticsResponse,
   AuthAnalyticsTrendPoint,
-} from '../dto/responses/auth-analytics.response';
+} from '../dto/responses/auth-analytics.response.js';
 import {
   AUTH_ANALYTICS_REPOSITORY,
   type AuthAnalyticsRepositoryPort,
