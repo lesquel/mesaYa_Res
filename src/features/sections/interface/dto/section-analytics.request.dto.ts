@@ -3,7 +3,10 @@ import { IsOptional, IsUUID } from 'class-validator';
 import type { SectionAnalyticsQuery } from '../../application/dto/analytics/section-analytics.query';
 
 export class SectionAnalyticsRequestDto {
-  @ApiPropertyOptional({ description: 'Filtrar por restaurante', format: 'uuid' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por restaurante',
+    format: 'uuid',
+  })
   @IsOptional()
   @IsUUID()
   restaurantId?: string;

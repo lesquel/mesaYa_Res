@@ -139,9 +139,8 @@ import {
     },
     {
       provide: GetSectionAnalyticsUseCase,
-      useFactory: (
-        analyticsRepository: SectionAnalyticsRepositoryPort,
-      ) => new GetSectionAnalyticsUseCase(analyticsRepository),
+      useFactory: (analyticsRepository: SectionAnalyticsRepositoryPort) =>
+        new GetSectionAnalyticsUseCase(analyticsRepository),
       inject: [SECTION_ANALYTICS_REPOSITORY],
     },
   ],
