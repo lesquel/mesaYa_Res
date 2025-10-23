@@ -33,16 +33,14 @@ export class MenuService {
   private readonly listMenusUseCase: ListMenusUseCase;
   private readonly updateMenuUseCase: UpdateMenuUseCase;
   private readonly deleteMenuUseCase: DeleteMenuUseCase;
-  private readonly kafkaService: KafkaService;
 
   constructor(
     logger: ILoggerPort,
     menuRepository: IMenuRepositoryPort,
     menuMapper: MenuMapper,
-    kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {
     this.menuDomainService = new MenuDomainService(menuRepository);
-    this.kafkaService = kafkaService;
 
     this.createMenuUseCase = new CreateMenuUseCase(
       logger,

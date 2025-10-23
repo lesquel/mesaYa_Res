@@ -33,16 +33,14 @@ export class DishService {
   private readonly listDishesUseCase: ListDishesUseCase;
   private readonly updateDishUseCase: UpdateDishUseCase;
   private readonly deleteDishUseCase: DeleteDishUseCase;
-  private readonly kafkaService: KafkaService;
 
   constructor(
     logger: ILoggerPort,
     dishRepository: IDishRepositoryPort,
     dishMapper: DishMapper,
-    kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {
     this.dishDomainService = new DishDomainService(dishRepository);
-    this.kafkaService = kafkaService;
 
     this.createDishUseCase = new CreateDishUseCase(
       logger,
