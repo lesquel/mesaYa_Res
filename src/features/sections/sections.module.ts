@@ -34,13 +34,15 @@ import {
   ],
   controllers: [SectionsController],
   providers: [
+    SectionTypeOrmRepository,
+    RestaurantTypeOrmSectionProvider,
     {
       provide: SECTION_REPOSITORY,
-      useClass: SectionTypeOrmRepository,
+      useExisting: SectionTypeOrmRepository,
     },
     {
       provide: RESTAURANT_SECTION_READER,
-      useClass: RestaurantTypeOrmSectionProvider,
+      useExisting: RestaurantTypeOrmSectionProvider,
     },
     {
       provide: ISectionDomainRepositoryPort,
