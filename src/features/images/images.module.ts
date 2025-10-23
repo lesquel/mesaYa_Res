@@ -9,6 +9,7 @@ import {
   ListImagesUseCase,
   UpdateImageUseCase,
   ImagesService,
+  GetImageAnalyticsUseCase,
   IMAGE_EVENT_PUBLISHER,
   IMAGE_REPOSITORY,
   IMAGE_STORAGE,
@@ -22,7 +23,11 @@ import { SupabaseModule } from '@shared/infrastructure/supabase/index.js';
 import { SupabaseImageStorageProvider } from './infrastructure/providers/supabase-image-storage.provider.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ImageOrmEntity]), AuthModule, SupabaseModule],
+  imports: [
+    TypeOrmModule.forFeature([ImageOrmEntity]),
+    AuthModule,
+    SupabaseModule,
+  ],
   controllers: [ImagesController],
   providers: [
     {
@@ -55,6 +60,7 @@ import { SupabaseImageStorageProvider } from './infrastructure/providers/supabas
     FindImageUseCase,
     UpdateImageUseCase,
     DeleteImageUseCase,
+    GetImageAnalyticsUseCase,
     ImagesService,
   ],
 })

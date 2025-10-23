@@ -97,7 +97,7 @@ export class ImagesController {
         ],
       }),
     )
-  file: Multer.File,
+    file: Multer.File,
   ) {
     if (!file) throw new BadRequestException('Image file is required');
 
@@ -157,7 +157,7 @@ export class ImagesController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateImageDto,
-  @UploadedFile() file?: Multer.File,
+    @UploadedFile() file?: Multer.File,
   ) {
     let filePayload: ImageFilePayload | undefined;
 
