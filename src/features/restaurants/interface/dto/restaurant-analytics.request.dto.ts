@@ -25,7 +25,10 @@ export class RestaurantAnalyticsRequestDto {
   @IsBooleanString()
   active?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar por propietario', format: 'uuid' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por propietario',
+    format: 'uuid',
+  })
   @IsOptional()
   @IsUUID()
   ownerId?: string;

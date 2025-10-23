@@ -137,9 +137,8 @@ import type {
     },
     {
       provide: GetRestaurantAnalyticsUseCase,
-      useFactory: (
-        analyticsRepository: RestaurantAnalyticsRepositoryPort,
-      ) => new GetRestaurantAnalyticsUseCase(analyticsRepository),
+      useFactory: (analyticsRepository: RestaurantAnalyticsRepositoryPort) =>
+        new GetRestaurantAnalyticsUseCase(analyticsRepository),
       inject: [RESTAURANT_ANALYTICS_REPOSITORY],
     },
   ],

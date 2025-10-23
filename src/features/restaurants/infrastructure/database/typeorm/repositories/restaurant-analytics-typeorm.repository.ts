@@ -44,11 +44,22 @@ export class RestaurantAnalyticsTypeOrmRepository
   async compute(
     query: RestaurantAnalyticsQuery,
   ): Promise<RestaurantAnalyticsRepositoryResult> {
-    const totalsPromise = this.buildTotalsQuery(query).getRawOne<RestaurantTotalsRaw>();
-    const capacityPromise = this.buildCapacityQuery(query).getRawMany<CapacityBucketRaw>();
-    const locationPromise = this.buildLocationDistributionQuery(query).getRawMany<DistributionRaw<string>>();
-    const ownerPromise = this.buildOwnerDistributionQuery(query).getRawMany<DistributionRaw<string | null>>();
-    const subscriptionPromise = this.buildSubscriptionDistributionQuery(query).getRawMany<DistributionRaw<number>>();
+    const totalsPromise =
+      this.buildTotalsQuery(query).getRawOne<RestaurantTotalsRaw>();
+    const capacityPromise =
+      this.buildCapacityQuery(query).getRawMany<CapacityBucketRaw>();
+    const locationPromise =
+      this.buildLocationDistributionQuery(query).getRawMany<
+        DistributionRaw<string>
+      >();
+    const ownerPromise =
+      this.buildOwnerDistributionQuery(query).getRawMany<
+        DistributionRaw<string | null>
+      >();
+    const subscriptionPromise =
+      this.buildSubscriptionDistributionQuery(query).getRawMany<
+        DistributionRaw<number>
+      >();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [
@@ -108,11 +119,11 @@ export class RestaurantAnalyticsTypeOrmRepository
 
     qb.select('COUNT(restaurant.id)', 'totalRestaurants')
       .addSelect(
-        "SUM(CASE WHEN restaurant.active = true THEN 1 ELSE 0 END)",
+        'SUM(CASE WHEN restaurant.active = true THEN 1 ELSE 0 END)',
         'activeRestaurants',
       )
       .addSelect(
-        "SUM(CASE WHEN restaurant.active = false THEN 1 ELSE 0 END)",
+        'SUM(CASE WHEN restaurant.active = false THEN 1 ELSE 0 END)',
         'inactiveRestaurants',
       )
       .addSelect('AVG(restaurant.totalCapacity)', 'averageCapacity');
@@ -186,8 +197,10 @@ export class RestaurantAnalyticsTypeOrmRepository
 
     this.applyFilters(qb, filters);
 
-    qb.groupBy('restaurant.subscriptionId')
-      .orderBy('COUNT(restaurant.id)', 'DESC');
+    qb.groupBy('restaurant.subscriptionId').orderBy(
+      'COUNT(restaurant.id)',
+      'DESC',
+    );
 
     return qb;
   }

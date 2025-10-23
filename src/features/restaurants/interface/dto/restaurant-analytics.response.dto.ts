@@ -80,11 +80,12 @@ export class RestaurantAnalyticsResponseDto {
       key: item.key,
       count: item.count,
     }));
-    dto.subscriptionDistribution =
-      response.subscriptionDistribution.map((item) => ({
+    dto.subscriptionDistribution = response.subscriptionDistribution.map(
+      (item) => ({
         key: item.key,
         count: item.count,
-      }));
+      }),
+    );
     dto.creationTrend = response.creationTrend.map((point) => ({
       date: point.date,
       count: point.count,
