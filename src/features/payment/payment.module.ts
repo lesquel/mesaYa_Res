@@ -16,6 +16,7 @@ import { IPaymentRepositoryPort } from './domain/index';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
+import { KafkaService } from '@shared/infrastructure/kafka';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PaymentOrmEntity]), LoggerModule],
@@ -39,8 +40,15 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
         logger: ILoggerPort,
         paymentRepository: IPaymentRepositoryPort,
         mapper: PaymentEntityDTOMapper,
-      ) => new PaymentService(logger, paymentRepository, mapper),
-      inject: [LOGGER, IPaymentRepositoryPort, PaymentEntityDTOMapper],
+        kafkaService: KafkaService,
+      ) =>
+        new PaymentService(
+          logger,
+          paymentRepository,
+          mapper,
+          kafkaService,
+        ),
+      inject: [LOGGER, IPaymentRepositoryPort, PaymentEntityDTOMapper, KafkaService],
     },
   ],
   exports: [PaymentService],
