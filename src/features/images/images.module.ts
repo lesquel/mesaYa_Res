@@ -12,9 +12,11 @@ import {
   IMAGE_EVENT_PUBLISHER,
   IMAGE_REPOSITORY,
   IMAGE_STORAGE,
+  IMAGE_ANALYTICS_REPOSITORY,
 } from './application/index.js';
 import { ImageOrmEntity } from './infrastructure/database/typeorm/orm/index.js';
 import { ImageTypeOrmRepository } from './infrastructure/database/typeorm/repositories/image-typeorm.repository.js';
+import { ImageAnalyticsTypeOrmRepository } from './infrastructure/database/typeorm/repositories/image-analytics-typeorm.repository.js';
 import { ImageEventNoopProvider } from './infrastructure/providers/image-event-noop.provider.js';
 import { SupabaseModule } from '@shared/infrastructure/supabase/index.js';
 import { SupabaseImageStorageProvider } from './infrastructure/providers/supabase-image-storage.provider.js';
@@ -26,6 +28,10 @@ import { SupabaseImageStorageProvider } from './infrastructure/providers/supabas
     {
       provide: IMAGE_REPOSITORY,
       useClass: ImageTypeOrmRepository,
+    },
+    {
+      provide: IMAGE_ANALYTICS_REPOSITORY,
+      useClass: ImageAnalyticsTypeOrmRepository,
     },
     {
       provide: IMAGE_EVENT_PUBLISHER,
@@ -40,6 +46,7 @@ import { SupabaseImageStorageProvider } from './infrastructure/providers/supabas
     FindImageUseCase,
     UpdateImageUseCase,
     DeleteImageUseCase,
+    GetImageAnalyticsUseCase,
     ImagesService,
   ],
   exports: [
