@@ -48,22 +48,26 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
   ],
   controllers: [ReservationsController],
   providers: [
+    ReservationTypeOrmRepository,
+    RestaurantTypeOrmReservationProvider,
+    UserTypeOrmReservationProvider,
+    TableTypeOrmReservationProvider,
+    ReservationEventNoopProvider,
     {
       provide: RESERVATION_REPOSITORY,
-      useClass: ReservationTypeOrmRepository,
+      useExisting: ReservationTypeOrmRepository,
     },
     {
       provide: RESTAURANT_RESERVATION_READER,
-      useClass: RestaurantTypeOrmReservationProvider,
+      useExisting: RestaurantTypeOrmReservationProvider,
     },
     {
       provide: USER_RESERVATION_READER,
-      useClass: UserTypeOrmReservationProvider,
+      useExisting: UserTypeOrmReservationProvider,
     },
-    TableTypeOrmReservationProvider,
     {
       provide: RESERVATION_EVENT_PUBLISHER,
-      useClass: ReservationEventNoopProvider,
+      useExisting: ReservationEventNoopProvider,
     },
     {
       provide: IReservationRepositoryPort,
