@@ -20,6 +20,7 @@ import { IDishRepositoryPort, IMenuRepositoryPort } from './domain/index';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { KafkaService } from '@shared/infrastructure/kafka';
 
 const menuMapperProvider = {
   provide: MenuMapper,
@@ -33,8 +34,9 @@ const dishServiceProvider = {
     logger: ILoggerPort,
     dishRepository: IDishRepositoryPort,
     dishMapper: DishMapper,
-  ) => new DishService(logger, dishRepository, dishMapper),
-  inject: [LOGGER, IDishRepositoryPort, DishMapper],
+    kafkaService: KafkaService,
+  ) => new DishService(logger, dishRepository, dishMapper, kafkaService),
+  inject: [LOGGER, IDishRepositoryPort, DishMapper, KafkaService],
 };
 
 const menuServiceProvider = {
@@ -43,8 +45,9 @@ const menuServiceProvider = {
     logger: ILoggerPort,
     menuRepository: IMenuRepositoryPort,
     menuMapper: MenuMapper,
-  ) => new MenuService(logger, menuRepository, menuMapper),
-  inject: [LOGGER, IMenuRepositoryPort, MenuMapper],
+    kafkaService: KafkaService,
+  ) => new MenuService(logger, menuRepository, menuMapper, kafkaService),
+  inject: [LOGGER, IMenuRepositoryPort, MenuMapper, KafkaService],
 };
 
 @Module({
