@@ -10,7 +10,9 @@ export interface RestaurantAnalyticsTrendPoint {
   readonly count: number;
 }
 
-export interface RestaurantAnalyticsDistributionItem<K extends string | number | null = string> {
+export interface RestaurantAnalyticsDistributionItem<
+  K extends string | number | null = string,
+> {
   readonly key: K;
   readonly count: number;
 }
@@ -24,7 +26,9 @@ export interface RestaurantAnalyticsResponse {
   readonly summary: RestaurantAnalyticsSummary;
   readonly capacityBuckets: RestaurantAnalyticsCapacityBucket[];
   readonly locationDistribution: RestaurantAnalyticsDistributionItem[];
-  readonly ownerDistribution: RestaurantAnalyticsDistributionItem<string | null>[];
+  readonly ownerDistribution: RestaurantAnalyticsDistributionItem<
+    string | null
+  >[];
   readonly subscriptionDistribution: RestaurantAnalyticsDistributionItem<number>[];
   readonly creationTrend: RestaurantAnalyticsTrendPoint[];
 }
@@ -41,7 +45,9 @@ export interface RestaurantAnalyticsRepositoryCapacityBucket {
   readonly count: number;
 }
 
-export interface RestaurantAnalyticsRepositoryDistribution<K extends string | number | null = string> {
+export interface RestaurantAnalyticsRepositoryDistribution<
+  K extends string | number | null = string,
+> {
   readonly key: K;
   readonly count: number;
 }
@@ -50,7 +56,9 @@ export interface RestaurantAnalyticsRepositoryResult {
   readonly totals: RestaurantAnalyticsRepositoryTotals;
   readonly capacityDistribution: RestaurantAnalyticsRepositoryCapacityBucket[];
   readonly locationDistribution: RestaurantAnalyticsRepositoryDistribution[];
-  readonly ownerDistribution: RestaurantAnalyticsRepositoryDistribution<string | null>[];
+  readonly ownerDistribution: RestaurantAnalyticsRepositoryDistribution<
+    string | null
+  >[];
   readonly subscriptionDistribution: RestaurantAnalyticsRepositoryDistribution<number>[];
   readonly creationTrend: RestaurantAnalyticsTrendPoint[];
 }

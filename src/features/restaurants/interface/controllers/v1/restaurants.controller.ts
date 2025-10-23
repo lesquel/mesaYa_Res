@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -30,6 +31,7 @@ import {
   RestaurantsService,
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
+  GetRestaurantAnalyticsUseCase,
 } from '@features/restaurants/application/index';
 import type {
   ListOwnerRestaurantsQuery,
@@ -38,11 +40,16 @@ import type {
   PaginatedRestaurantResponse,
   DeleteRestaurantResponseDto,
 } from '@features/restaurants/application/index';
+import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
+import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
 
 @ApiTags('Restaurants')
 @Controller({ path: 'restaurant', version: '1' })
 export class RestaurantsController {
-  constructor(private readonly restaurantsService: RestaurantsService) {}
+  constructor(
+    private readonly restaurantsService: RestaurantsService,
+    private readonly getRestaurantAnalytics: GetRestaurantAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -87,6 +94,20 @@ export class RestaurantsController {
       ownerId: user.userId,
     };
     return this.restaurantsService.listByOwner(query);
+  }
+
+  @Get('analytics')
+  @Permissions('restaurant:read')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiOperation({ summary: 'Indicadores analíticos de restaurantes' })
+  @ApiBearerAuth()
+  async analytics(
+    @Query() query: RestaurantAnalyticsRequestDto,
+  ): Promise<RestaurantAnalyticsResponseDto> {
+    const analytics = await this.getRestaurantAnalytics.execute(
+      query.toQuery(),
+    );
+    return RestaurantAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':id')
