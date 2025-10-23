@@ -96,6 +96,17 @@ export class ReservationsController {
     return this.reservationsService.listByRestaurant(query);
   }
 
+  @Get('analytics')
+  @ApiOperation({ summary: 'Datos analíticos de reservas' })
+  async getAnalytics(
+    @Query() query: ReservationAnalyticsRequestDto,
+  ): Promise<ReservationAnalyticsResponseDto> {
+    const analytics = await this.getReservationAnalytics.execute(
+      query.toQuery(),
+    );
+    return ReservationAnalyticsResponseDto.fromApplication(analytics);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una reserva por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
@@ -126,17 +137,6 @@ export class ReservationsController {
       userId: user.userId,
     };
     return this.reservationsService.update(command);
-  }
-
-  @Get('analytics/overview')
-  @ApiOperation({ summary: 'Datos analíticos de reservas' })
-  async getAnalytics(
-    @Query() query: ReservationAnalyticsRequestDto,
-  ): Promise<ReservationAnalyticsResponseDto> {
-    const analytics = await this.getReservationAnalytics.execute(
-      query.toQuery(),
-    );
-    return ReservationAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Delete(':id')
