@@ -105,7 +105,9 @@ export class GraphicObjectAnalyticsRequestDto {
   ): void {
     if (typeof minValue === 'number' && typeof maxValue === 'number') {
       if (minValue > maxValue) {
-        throw new BadRequestException(`${minLabel} debe ser menor o igual que ${maxLabel}`);
+        throw new BadRequestException(
+          `${minLabel} debe ser menor o igual que ${maxLabel}`,
+        );
       }
     }
   }

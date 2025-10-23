@@ -49,5 +49,8 @@ export interface GraphicObjectAnalyticsRepositoryResult {
   readonly objectsByDate: GraphicObjectAnalyticsTrendPoint[];
   readonly objectsByImage: Array<{ imageId: number; count: number }>;
   readonly sizeDistribution: Array<{ bucket: string; count: number }>;
-  readonly orientationDistribution: Array<{ orientation: string; count: number }>;
+  readonly orientationDistribution: Array<{
+    orientation: string;
+    count: number;
+  }>;
 }

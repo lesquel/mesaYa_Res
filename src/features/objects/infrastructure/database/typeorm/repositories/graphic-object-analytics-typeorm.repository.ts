@@ -53,15 +53,16 @@ export class GraphicObjectAnalyticsTypeOrmRepository
     query: GraphicObjectAnalyticsQuery,
   ): Promise<GraphicObjectAnalyticsRepositoryResult> {
     const totalsPromise = this.buildTotalsQuery(query).getRawOne<TotalsRaw>();
-    const imagesPromise = this.buildImagesDistributionQuery(
-      query,
-    ).getRawMany<ImageDistributionRaw>();
-    const sizePromise = this.buildSizeDistributionQuery(
-      query,
-    ).getRawMany<SizeDistributionRaw>();
-    const orientationPromise = this.buildOrientationDistributionQuery(
-      query,
-    ).getRawMany<OrientationDistributionRaw>();
+    const imagesPromise =
+      this.buildImagesDistributionQuery(
+        query,
+      ).getRawMany<ImageDistributionRaw>();
+    const sizePromise =
+      this.buildSizeDistributionQuery(query).getRawMany<SizeDistributionRaw>();
+    const orientationPromise =
+      this.buildOrientationDistributionQuery(
+        query,
+      ).getRawMany<OrientationDistributionRaw>();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, imagesRaw, sizeRaw, orientationRaw, trendRaw] =
