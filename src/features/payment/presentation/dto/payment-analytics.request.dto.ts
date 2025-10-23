@@ -38,7 +38,10 @@ export class PaymentAnalyticsRequestDto {
   @IsEnum(PaymentTypeEnum)
   type?: PaymentTypeEnum;
 
-  @ApiPropertyOptional({ description: 'Filtrar por restaurante', format: 'uuid' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por restaurante',
+    format: 'uuid',
+  })
   @IsOptional()
   @IsUUID()
   restaurantId?: string;
