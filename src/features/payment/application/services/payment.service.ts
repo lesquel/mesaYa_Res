@@ -35,16 +35,14 @@ export class PaymentService {
   private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
   private deletePaymentUseCase: DeletePaymentUseCase;
   private readonly paymentDomainService: PaymentDomainService;
-  private readonly kafkaService: KafkaService;
 
   constructor(
     private readonly logger: ILoggerPort,
     paymentRepository: IPaymentRepositoryPort,
     paymentEntityToMapper: PaymentEntityDTOMapper,
-    kafkaService: KafkaService,
+    private readonly kafkaService: KafkaService,
   ) {
     this.paymentDomainService = new PaymentDomainService(paymentRepository);
-    this.kafkaService = kafkaService;
     this.createPaymentUseCase = new CreatePaymentUseCase(
       this.logger,
       this.paymentDomainService,
