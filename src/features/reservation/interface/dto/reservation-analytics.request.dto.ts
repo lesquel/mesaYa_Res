@@ -24,7 +24,10 @@ export class ReservationAnalyticsRequestDto {
   @IsDateString()
   endDate?: string;
 
-  @ApiPropertyOptional({ description: 'Identificador del restaurante', format: 'uuid' })
+  @ApiPropertyOptional({
+    description: 'Identificador del restaurante',
+    format: 'uuid',
+  })
   @IsOptional()
   @IsUUID()
   restaurantId?: string;

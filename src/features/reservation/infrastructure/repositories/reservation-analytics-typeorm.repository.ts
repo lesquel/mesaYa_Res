@@ -58,18 +58,20 @@ export class ReservationAnalyticsTypeOrmRepository
     query: ReservationAnalyticsQuery,
   ): Promise<ReservationAnalyticsRepositoryResult> {
     const totalsPromise = this.buildTotalsQuery(query).getRawOne<TotalsRaw>();
-    const statusPromise = this.buildStatusDistributionQuery(
-      query,
-    ).getRawMany<StatusDistributionRaw>();
-    const guestPromise = this.buildGuestDistributionQuery(
-      query,
-    ).getRawMany<GuestDistributionRaw>();
-    const restaurantPromise = this.buildRestaurantDistributionQuery(
-      query,
-    ).getRawMany<RestaurantDistributionRaw>();
-    const hourPromise = this.buildHourDistributionQuery(
-      query,
-    ).getRawMany<HourDistributionRaw>();
+    const statusPromise =
+      this.buildStatusDistributionQuery(
+        query,
+      ).getRawMany<StatusDistributionRaw>();
+    const guestPromise =
+      this.buildGuestDistributionQuery(
+        query,
+      ).getRawMany<GuestDistributionRaw>();
+    const restaurantPromise =
+      this.buildRestaurantDistributionQuery(
+        query,
+      ).getRawMany<RestaurantDistributionRaw>();
+    const hourPromise =
+      this.buildHourDistributionQuery(query).getRawMany<HourDistributionRaw>();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, statusRaw, guestRaw, restaurantRaw, hourRaw, trendRaw] =
@@ -85,12 +87,8 @@ export class ReservationAnalyticsTypeOrmRepository
     return {
       totals: {
         totalReservations: this.toNumber(totalsRaw?.totalReservations),
-        confirmedReservations: this.toNumber(
-          totalsRaw?.confirmedReservations,
-        ),
-        cancelledReservations: this.toNumber(
-          totalsRaw?.cancelledReservations,
-        ),
+        confirmedReservations: this.toNumber(totalsRaw?.confirmedReservations),
+        cancelledReservations: this.toNumber(totalsRaw?.cancelledReservations),
         pendingReservations: this.toNumber(totalsRaw?.pendingReservations),
         upcomingReservations: this.toNumber(totalsRaw?.upcomingReservations),
         averageGuestsPerReservation: this.toNumber(
@@ -113,11 +111,13 @@ export class ReservationAnalyticsTypeOrmRepository
         hour: this.toNumber(row.hour),
         count: this.toNumber(row.count),
       })),
-      reservationsByDate: trendRaw.map<ReservationAnalyticsTrendPoint>((row) => ({
-        date: row.date,
-        count: this.toNumber(row.count),
-        guests: this.toNumber(row.guests),
-      })),
+      reservationsByDate: trendRaw.map<ReservationAnalyticsTrendPoint>(
+        (row) => ({
+          date: row.date,
+          count: this.toNumber(row.count),
+          guests: this.toNumber(row.guests),
+        }),
+      ),
     };
   }
 
@@ -142,10 +142,13 @@ export class ReservationAnalyticsTypeOrmRepository
         'pendingReservations',
       )
       .addSelect(
-        "SUM(CASE WHEN reservation.reservationDate >= CURRENT_DATE THEN 1 ELSE 0 END)",
+        'SUM(CASE WHEN reservation.reservationDate >= CURRENT_DATE THEN 1 ELSE 0 END)',
         'upcomingReservations',
       )
-      .addSelect('AVG(reservation.numberOfGuests)', 'averageGuestsPerReservation');
+      .addSelect(
+        'AVG(reservation.numberOfGuests)',
+        'averageGuestsPerReservation',
+      );
 
     return qb;
   }
