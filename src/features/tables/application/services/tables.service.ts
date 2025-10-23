@@ -1,5 +1,6 @@
 import {
   KafkaEmit,
+  KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
 } from '@shared/infrastructure/kafka/index';
@@ -31,7 +32,7 @@ export class TablesService {
     private readonly findTable: FindTableUseCase,
     private readonly updateTable: UpdateTableUseCase,
     private readonly deleteTable: DeleteTableUseCase,
-    private readonly kafkaService: KafkaService,
+    @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
   @KafkaEmit({
