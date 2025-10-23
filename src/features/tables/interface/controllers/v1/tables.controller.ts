@@ -22,7 +22,10 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { CreateTableDto, UpdateTableDto } from '@features/tables/application/dto/index';
+import {
+  CreateTableDto,
+  UpdateTableDto,
+} from '@features/tables/application/dto/index';
 import { GetTableAnalyticsUseCase } from '@features/tables/application/use-cases/get-table-analytics.use-case';
 import type {
   CreateTableCommand,

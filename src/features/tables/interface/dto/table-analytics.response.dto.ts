@@ -44,7 +44,9 @@ export class TableAnalyticsResponseDto {
   @ApiProperty({ type: [TableAnalyticsDistributionItemDto] })
   restaurantDistribution!: TableAnalyticsDistributionItemDto[];
 
-  static fromApplication(response: TableAnalyticsResponse): TableAnalyticsResponseDto {
+  static fromApplication(
+    response: TableAnalyticsResponse,
+  ): TableAnalyticsResponseDto {
     const dto = new TableAnalyticsResponseDto();
     dto.summary = {
       totalTables: response.summary.totalTables,

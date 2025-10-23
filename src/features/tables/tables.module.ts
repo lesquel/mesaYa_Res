@@ -111,9 +111,8 @@ import {
     },
     {
       provide: GetTableAnalyticsUseCase,
-      useFactory: (
-        analyticsRepository: TableAnalyticsRepositoryPort,
-      ) => new GetTableAnalyticsUseCase(analyticsRepository),
+      useFactory: (analyticsRepository: TableAnalyticsRepositoryPort) =>
+        new GetTableAnalyticsUseCase(analyticsRepository),
       inject: [TABLE_ANALYTICS_REPOSITORY],
     },
     {
