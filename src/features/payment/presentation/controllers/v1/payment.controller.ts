@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -16,7 +17,10 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaymentService } from '@features/payment/application';
+import {
+  PaymentService,
+  GetPaymentAnalyticsUseCase,
+} from '@features/payment/application';
 import type {
   PaymentResponseDto,
   PaymentListResponseDto,
@@ -31,12 +35,17 @@ import {
   DeletePaymentResponseSwaggerDto,
   PaymentResponseSwaggerDto,
   UpdatePaymentStatusRequestDto,
+  PaymentAnalyticsRequestDto,
+  PaymentAnalyticsResponseDto,
 } from '@features/payment/presentation/dto/index';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly getPaymentAnalyticsUseCase: GetPaymentAnalyticsUseCase,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a payment' })
@@ -106,5 +115,20 @@ export class PaymentController {
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
   ): Promise<DeletePaymentResponseDto> {
     return this.paymentService.deletePayment({ paymentId });
+  }
+
+  @Get('analytics')
+  @ApiOperation({ summary: 'Payment analytics overview' })
+  @ApiOkResponse({
+    description: 'Dashboard analytics for payments',
+    type: PaymentAnalyticsResponseDto,
+  })
+  async getAnalytics(
+    @Query() query: PaymentAnalyticsRequestDto,
+  ): Promise<PaymentAnalyticsResponseDto> {
+    const analytics = await this.getPaymentAnalyticsUseCase.execute(
+      query.toQuery(),
+    );
+    return PaymentAnalyticsResponseDto.fromApplication(analytics);
   }
 }
