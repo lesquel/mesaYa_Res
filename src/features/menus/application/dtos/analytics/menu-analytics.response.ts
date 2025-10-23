@@ -17,8 +17,14 @@ export interface MenuAnalyticsResponse {
     readonly total: number;
     readonly byDate: MenuAnalyticsTrendPoint[];
   };
-  readonly restaurants: Array<{ readonly restaurantId: number; readonly count: number }>;
-  readonly priceRanges: Array<{ readonly label: string; readonly count: number }>;
+  readonly restaurants: Array<{
+    readonly restaurantId: number;
+    readonly count: number;
+  }>;
+  readonly priceRanges: Array<{
+    readonly label: string;
+    readonly count: number;
+  }>;
 }
 
 export interface MenuAnalyticsRepositoryTotals {
