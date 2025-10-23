@@ -10,7 +10,7 @@ import type {
   SectionAnalyticsDimensionExtremes,
 } from '../../../../application/dto/analytics/section-analytics.response';
 import type { SectionAnalyticsRepositoryPort } from '../../../../application/ports/section-analytics.repository.port';
-import { SectionOrmEntity } from '../../orm/index';
+import { SectionOrmEntity } from '../orm/index';
 
 interface SectionTotalsRaw {
   totalSections: string | number | null;
@@ -48,17 +48,20 @@ export class SectionAnalyticsTypeOrmRepository
   async compute(
     query: SectionAnalyticsQuery,
   ): Promise<SectionAnalyticsRepositoryResult> {
-    const totalsPromise = this.buildTotalsQuery(query).getRawOne<SectionTotalsRaw>();
-    const areaPromise = this.buildAreaDistributionQuery(query).getRawMany<AreaBucketRaw>();
-    const restaurantPromise = this.buildRestaurantDistributionQuery(query).getRawMany<DistributionRaw>();
-    const dimensionPromise = this.buildDimensionExtremesQuery(query).getRawOne<DimensionExtremesRaw>();
+    const totalsPromise =
+      this.buildTotalsQuery(query).getRawOne<SectionTotalsRaw>();
+    const areaPromise =
+      this.buildAreaDistributionQuery(query).getRawMany<AreaBucketRaw>();
+    const restaurantPromise =
+      this.buildRestaurantDistributionQuery(
+        query,
+      ).getRawMany<DistributionRaw>();
+    const dimensionPromise =
+      this.buildDimensionExtremesQuery(query).getRawOne<DimensionExtremesRaw>();
 
-    const [totalsRaw, areaRaw, restaurantRaw, dimensionRaw] = await Promise.all([
-      totalsPromise,
-      areaPromise,
-      restaurantPromise,
-      dimensionPromise,
-    ]);
+    const [totalsRaw, areaRaw, restaurantRaw, dimensionRaw] = await Promise.all(
+      [totalsPromise, areaPromise, restaurantPromise, dimensionPromise],
+    );
 
     const totals: SectionAnalyticsRepositoryTotals = {
       totalSections: this.toNumber(totalsRaw?.totalSections),
