@@ -1,6 +1,11 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
+  KafkaEmit,
+  KafkaService,
+  KAFKA_TOPICS,
+} from '@shared/infrastructure/kafka';
+import {
   CreateSubscriptionUseCase,
   DeleteSubscriptionUseCase,
   GetSubscriptionByIdUseCase,
@@ -8,14 +13,14 @@ import {
   UpdateSubscriptionStateUseCase,
   UpdateSubscriptionUseCase,
 } from '../use-cases';
-import {
+import type {
   CreateSubscriptionDto,
   DeleteSubscriptionDto,
   GetSubscriptionByIdDto,
   UpdateSubscriptionDto,
   UpdateSubscriptionStateDto,
 } from '../dtos/input';
-import {
+import type {
   DeleteSubscriptionResponseDto,
   SubscriptionListResponseDto,
   SubscriptionResponseDto,
@@ -34,15 +39,18 @@ export class SubscriptionService {
   private readonly updateSubscriptionUseCase: UpdateSubscriptionUseCase;
   private readonly updateSubscriptionStateUseCase: UpdateSubscriptionStateUseCase;
   private readonly deleteSubscriptionUseCase: DeleteSubscriptionUseCase;
+  private readonly kafkaService: KafkaService;
 
   constructor(
     private readonly logger: ILoggerPort,
     subscriptionRepository: ISubscriptionRepositoryPort,
     subscriptionMapper: SubscriptionMapper,
+    kafkaService: KafkaService,
   ) {
     this.subscriptionDomainService = new SubscriptionDomainService(
       subscriptionRepository,
     );
+    this.kafkaService = kafkaService;
 
     this.createSubscriptionUseCase = new CreateSubscriptionUseCase(
       this.logger,
@@ -80,6 +88,19 @@ export class SubscriptionService {
     );
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SUBSCRIPTION_CREATED,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result ?? {});
+      const entityId =
+        (entity as { subscriptionId?: string }).subscriptionId ?? null;
+      return {
+        action: 'subscription.created',
+        entityId,
+        entity,
+      };
+    },
+  })
   async create(dto: CreateSubscriptionDto): Promise<SubscriptionResponseDto> {
     return this.createSubscriptionUseCase.execute(dto);
   }
@@ -96,16 +117,68 @@ export class SubscriptionService {
     return this.listSubscriptionsUseCase.execute(params);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SUBSCRIPTION_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateSubscriptionDto];
+      const entity = toPlain(result ?? {});
+      const entityId =
+        (command?.subscriptionId as string | undefined) ||
+        (entity as { subscriptionId?: string }).subscriptionId ||
+        null;
+      return {
+        action: 'subscription.updated',
+        entityId,
+        entity,
+      };
+    },
+  })
   async update(dto: UpdateSubscriptionDto): Promise<SubscriptionResponseDto> {
     return this.updateSubscriptionUseCase.execute(dto);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SUBSCRIPTION_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateSubscriptionStateDto];
+      const entity = toPlain(result ?? {});
+      const entityId =
+        (command?.subscriptionId as string | undefined) ||
+        (entity as { subscriptionId?: string }).subscriptionId ||
+        null;
+      return {
+        action: 'subscription.state.updated',
+        entityId,
+        state:
+          (entity as { stateSubscription?: unknown }).stateSubscription ??
+          command?.stateSubscription ??
+          null,
+        entity,
+      };
+    },
+  })
   async updateState(
     dto: UpdateSubscriptionStateDto,
   ): Promise<SubscriptionResponseDto> {
     return this.updateSubscriptionStateUseCase.execute(dto);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.SUBSCRIPTION_DELETED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [DeleteSubscriptionDto];
+      const deletion = toPlain(result ?? {});
+      const entityId =
+        (deletion as { subscriptionId?: string }).subscriptionId ||
+        command?.subscriptionId ||
+        null;
+      return {
+        action: 'subscription.deleted',
+        entityId,
+        entity: deletion,
+      };
+    },
+  })
   async delete(
     dto: DeleteSubscriptionDto,
   ): Promise<DeleteSubscriptionResponseDto> {
