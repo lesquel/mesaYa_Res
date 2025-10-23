@@ -196,12 +196,12 @@ export class ReservationAnalyticsTypeOrmRepository
   ): SelectQueryBuilder<ReservationOrmEntity> {
     const qb = this.repository
       .createQueryBuilder('reservation')
-      .select('reservation.restaurantId', 'restaurantId')
+      .select('reservation.restaurant_id', 'restaurantId')
       .addSelect('COUNT(reservation.id)', 'count');
 
     this.applyFilters(qb, filters);
 
-    qb.groupBy('reservation.restaurantId').orderBy('count', 'DESC');
+    qb.groupBy('reservation.restaurant_id').orderBy('count', 'DESC');
 
     return qb;
   }
@@ -270,7 +270,7 @@ export class ReservationAnalyticsTypeOrmRepository
     }
 
     if (filters.restaurantId) {
-      qb.andWhere('reservation.restaurantId = :restaurantId', {
+      qb.andWhere('reservation.restaurant_id = :restaurantId', {
         restaurantId: filters.restaurantId,
       });
     }
