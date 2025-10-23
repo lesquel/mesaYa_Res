@@ -41,9 +41,12 @@ import {
   ],
   controllers: [TablesController],
   providers: [
-    { provide: TABLE_REPOSITORY, useClass: TableTypeOrmRepository },
-    { provide: SECTION_TABLE_READER, useClass: SectionTypeOrmTableProvider },
-    { provide: TABLE_EVENT_PUBLISHER, useClass: TableEventNoopProvider },
+    TableTypeOrmRepository,
+    SectionTypeOrmTableProvider,
+    TableEventNoopProvider,
+    { provide: TABLE_REPOSITORY, useExisting: TableTypeOrmRepository },
+    { provide: SECTION_TABLE_READER, useExisting: SectionTypeOrmTableProvider },
+    { provide: TABLE_EVENT_PUBLISHER, useExisting: TableEventNoopProvider },
     {
       provide: ITableDomainRepositoryPort,
       useExisting: TableTypeOrmRepository,
