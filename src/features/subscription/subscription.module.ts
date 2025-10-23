@@ -80,7 +80,12 @@ import { KafkaService } from '@shared/infrastructure/kafka';
           subscriptionMapper,
           kafkaService,
         ),
-      inject: [LOGGER, ISubscriptionRepositoryPort, SubscriptionMapper, KafkaService],
+      inject: [
+        LOGGER,
+        ISubscriptionRepositoryPort,
+        SubscriptionMapper,
+        KafkaService,
+      ],
     },
     {
       provide: SubscriptionPlanService,
