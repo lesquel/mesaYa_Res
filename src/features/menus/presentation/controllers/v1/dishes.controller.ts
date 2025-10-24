@@ -6,13 +6,18 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import type {
   DishResponseDto,
   DishListResponseDto,
@@ -33,6 +38,9 @@ export class DishesController {
   constructor(private readonly dishService: DishService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('dish:create')
+  @ApiBearerAuth()
   @ApiBody({ type: CreateDishRequestDto })
   @ApiCreatedResponse({
     description: 'Dish created',
@@ -43,6 +51,9 @@ export class DishesController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('dish:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Dishes list',
     type: DishResponseSwaggerDto,
@@ -53,6 +64,9 @@ export class DishesController {
   }
 
   @Get(':dishId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('dish:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Dish details',
     type: DishResponseSwaggerDto,
@@ -62,6 +76,9 @@ export class DishesController {
   }
 
   @Patch(':dishId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('dish:update')
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateDishRequestDto })
   @ApiOkResponse({
     description: 'Dish updated',
@@ -75,6 +92,9 @@ export class DishesController {
   }
 
   @Delete(':dishId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('dish:delete')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Dish deleted',
     type: DeleteDishResponseSwaggerDto,

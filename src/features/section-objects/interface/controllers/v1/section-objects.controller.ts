@@ -53,7 +53,10 @@ export class SectionObjectsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('section-object:read')
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
+  @ApiBearerAuth()
   @ApiPaginationQuery()
   async list(
     @PaginationParams({ defaultRoute: '/section-object' })
@@ -63,8 +66,11 @@ export class SectionObjectsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('section-object:read')
   @ApiOperation({ summary: 'Obtener relación por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
+  @ApiBearerAuth()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const query: FindSectionObjectQuery = { sectionObjectId: id };
     return this.service.findOne(query);

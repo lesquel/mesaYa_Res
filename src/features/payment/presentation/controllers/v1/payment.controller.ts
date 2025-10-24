@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -15,8 +16,12 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
   PaymentService,
   GetPaymentAnalyticsUseCase,
@@ -48,6 +53,9 @@ export class PaymentController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:create')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a payment' })
   @ApiBody({ type: CreatePaymentRequestDto })
   @ApiCreatedResponse({
@@ -61,6 +69,9 @@ export class PaymentController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'List payments' })
   @PaginatedEndpoint()
   @ApiPaginatedResponse({
@@ -74,6 +85,9 @@ export class PaymentController {
   }
 
   @Get(':paymentId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get payment by ID' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
@@ -87,6 +101,9 @@ export class PaymentController {
   }
 
   @Patch(':paymentId/status')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:update')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update payment status' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdatePaymentStatusRequestDto })
@@ -105,6 +122,9 @@ export class PaymentController {
   }
 
   @Delete(':paymentId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:delete')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete payment' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
@@ -118,6 +138,9 @@ export class PaymentController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Payment analytics overview' })
   @ApiOkResponse({
     description: 'Dashboard analytics for payments',

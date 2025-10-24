@@ -13,12 +13,12 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import type {
   MenuResponseDto,
   MenuListResponseDto,

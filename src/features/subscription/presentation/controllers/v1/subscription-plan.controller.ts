@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -14,8 +15,12 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 
 import { SubscriptionPlanService } from '@features/subscription/application';
 import type {
@@ -42,6 +47,9 @@ export class SubscriptionPlanController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription-plan:create')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create subscription plan' })
   @ApiBody({ type: CreateSubscriptionPlanRequestDto })
   @ApiCreatedResponse({
@@ -55,6 +63,9 @@ export class SubscriptionPlanController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription-plan:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'List subscription plans' })
   @PaginatedEndpoint()
   @ApiOkResponse({
@@ -69,6 +80,9 @@ export class SubscriptionPlanController {
   }
 
   @Get(':subscriptionPlanId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription-plan:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find subscription plan by ID' })
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
@@ -84,6 +98,9 @@ export class SubscriptionPlanController {
   }
 
   @Patch(':subscriptionPlanId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription-plan:update')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update subscription plan' })
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdateSubscriptionPlanRequestDto })
@@ -102,6 +119,9 @@ export class SubscriptionPlanController {
   }
 
   @Delete(':subscriptionPlanId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription-plan:delete')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete subscription plan' })
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
