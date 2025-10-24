@@ -69,6 +69,9 @@ export class PaymentService {
     );
   }
 
+  /**
+   * Emits `mesa-ya.payments.created` with `{ action, entityId, entity }` and returns the created payment DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.PAYMENT_CREATED,
     payload: ({ result, toPlain }) => {
@@ -95,6 +98,9 @@ export class PaymentService {
     return await this.getAllPaymentsUseCase.execute(params);
   }
 
+  /**
+   * Emits `mesa-ya.payments.updated` with `{ action, entityId, status, entity }` and returns the updated payment DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.PAYMENT_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -121,6 +127,9 @@ export class PaymentService {
     return await this.updatePaymentStatusUseCase.execute(dto);
   }
 
+  /**
+   * Emits `mesa-ya.payments.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.PAYMENT_DELETED,
     payload: ({ result, args, toPlain }) => {

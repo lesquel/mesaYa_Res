@@ -38,6 +38,10 @@ export const KAFKA_TOPICS = {
   SUBSCRIPTION_PLAN_CREATED: 'mesa-ya.subscription-plans.created',
   SUBSCRIPTION_PLAN_UPDATED: 'mesa-ya.subscription-plans.updated',
   SUBSCRIPTION_PLAN_DELETED: 'mesa-ya.subscription-plans.deleted',
+  AUTH_USER_SIGNED_UP: 'mesa-ya.auth.user-signed-up',
+  AUTH_USER_LOGGED_IN: 'mesa-ya.auth.user-logged-in',
+  AUTH_USER_ROLES_UPDATED: 'mesa-ya.auth.user-roles-updated',
+  AUTH_ROLE_PERMISSIONS_UPDATED: 'mesa-ya.auth.role-permissions-updated',
 } as const;
 
 export type KafkaTopic = (typeof KAFKA_TOPICS)[keyof typeof KAFKA_TOPICS];

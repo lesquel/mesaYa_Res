@@ -34,6 +34,9 @@ export class ImagesService {
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  /**
+   * Emits `mesa-ya.images.created` with `{ action, entity }` and returns the created image DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.IMAGE_CREATED,
     payload: ({ result, toPlain }) => ({
@@ -53,6 +56,9 @@ export class ImagesService {
     return this.findImage.execute(query);
   }
 
+  /**
+   * Emits `mesa-ya.images.updated` with `{ action, entityId, entity }` and returns the updated image DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.IMAGE_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -68,6 +74,9 @@ export class ImagesService {
     return this.updateImage.execute(command);
   }
 
+  /**
+   * Emits `mesa-ya.images.deleted` with `{ action, entityId, entity }` and returns the deleted image snapshot.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.IMAGE_DELETED,
     payload: ({ result, toPlain }) => {

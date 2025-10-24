@@ -32,6 +32,7 @@ import { RolesGuard } from './interface/guards/roles.guard';
 import { PermissionsGuard } from './interface/guards/permissions.guard';
 import { JwtAuthGuard } from './interface/guards/jwt-auth.guard';
 import { AuthAnalyticsTypeOrmRepository } from './infrastructure/database/typeorm/repositories/auth-analytics-typeorm.repository';
+import { AuthService } from './application/services/auth.service';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { AuthAnalyticsTypeOrmRepository } from './infrastructure/database/typeor
     ListPermissionsUseCase,
     FindUserByIdUseCase,
     GetAuthAnalyticsUseCase,
+    AuthService,
     JwtStrategy,
     RbacSeeder,
     RolesGuard,
@@ -102,6 +104,7 @@ import { AuthAnalyticsTypeOrmRepository } from './infrastructure/database/typeor
     AUTH_USER_REPOSITORY,
     AUTH_ROLE_REPOSITORY,
     AUTH_PERMISSION_REPOSITORY,
+    AuthService,
   ],
 })
 export class AuthModule {}

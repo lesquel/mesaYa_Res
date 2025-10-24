@@ -35,6 +35,9 @@ export class TablesService {
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  /**
+   * Emits `mesa-ya.tables.created` with `{ action, entity }` and returns the created table DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.TABLE_CREATED,
     payload: ({ result, toPlain }) => ({
@@ -60,6 +63,9 @@ export class TablesService {
     return this.findTable.execute(query);
   }
 
+  /**
+   * Emits `mesa-ya.tables.updated` with `{ action, entityId, entity }` and returns the updated table DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.TABLE_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -75,6 +81,9 @@ export class TablesService {
     return this.updateTable.execute(command);
   }
 
+  /**
+   * Emits `mesa-ya.tables.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.TABLE_DELETED,
     payload: ({ result, toPlain }) => {

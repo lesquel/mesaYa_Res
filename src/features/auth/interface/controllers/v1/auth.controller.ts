@@ -26,12 +26,7 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { Roles } from '../../decorators/roles.decorator';
 import { CurrentUser } from '../../decorators/current-user.decorator';
-import { SignUpUseCase } from '../../../application/use-cases/sign-up.use-case';
-import { LoginUseCase } from '../../../application/use-cases/login.use-case';
-import { UpdateUserRolesUseCase } from '../../../application/use-cases/update-user-roles.use-case';
-import { UpdateRolePermissionsUseCase } from '../../../application/use-cases/update-role-permissions.use-case';
-import { ListRolesUseCase } from '../../../application/use-cases/list-roles.use-case';
-import { ListPermissionsUseCase } from '../../../application/use-cases/list-permissions.use-case';
+import { AuthService } from '../../../application/services/auth.service';
 import { SignUpRequestDto } from '../../dto/sign-up.request.dto';
 import { AuthTokenResponseDto } from '../../dto/auth-token.response.dto';
 import { LoginRequestDto } from '../../dto/login.request.dto';
@@ -44,8 +39,6 @@ import { SignUpCommand } from '../../../application/dto/commands/sign-up.command
 import { LoginCommand } from '../../../application/dto/commands/login.command';
 import { UpdateUserRolesCommand } from '../../../application/dto/commands/update-user-roles.command';
 import { UpdateRolePermissionsCommand } from '../../../application/dto/commands/update-role-permissions.command';
-import { FindUserByIdUseCase } from '../../../application/use-cases/find-user-by-id.use-case';
-import { GetAuthAnalyticsUseCase } from '../../../application/use-cases/get-auth-analytics.use-case';
 import { AuthRoleName } from '../../../domain/entities/auth-role.entity';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
@@ -53,16 +46,7 @@ import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto'
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(
-    private readonly signUpUseCase: SignUpUseCase,
-    private readonly loginUseCase: LoginUseCase,
-    private readonly updateUserRolesUseCase: UpdateUserRolesUseCase,
-    private readonly updateRolePermissionsUseCase: UpdateRolePermissionsUseCase,
-    private readonly listRolesUseCase: ListRolesUseCase,
-    private readonly listPermissionsUseCase: ListPermissionsUseCase,
-    private readonly findUserByIdUseCase: FindUserByIdUseCase,
-    private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
   @ApiOperation({ summary: 'Registro de usuario' })
@@ -75,7 +59,7 @@ export class AuthController {
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
     dto: SignUpRequestDto,
   ): Promise<AuthTokenResponseDto> {
-    const response = await this.signUpUseCase.execute(
+    const response = await this.authService.signup(
       new SignUpCommand(dto.email, dto.password, dto.name, dto.phone),
     );
 
@@ -93,7 +77,7 @@ export class AuthController {
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
     dto: LoginRequestDto,
   ): Promise<AuthTokenResponseDto> {
-    const response = await this.loginUseCase.execute(
+    const response = await this.authService.login(
       new LoginCommand(dto.email, dto.password),
     );
     return AuthTokenResponseDto.fromApplication(response);
@@ -110,7 +94,7 @@ export class AuthController {
   async me(
     @CurrentUser() currentUser: { userId: string },
   ): Promise<AuthUserResponseDto> {
-    const user = await this.findUserByIdUseCase.execute(currentUser.userId);
+    const user = await this.authService.getCurrentUser(currentUser.userId);
     if (!user) {
       throw new UnauthorizedException('Authenticated user not found');
     }
@@ -164,9 +148,7 @@ export class AuthController {
     @Query(new ValidationPipe({ transform: true, whitelist: true }))
     query: AuthAnalyticsRequestDto,
   ): Promise<AuthAnalyticsResponseDto> {
-    const analytics = await this.getAuthAnalyticsUseCase.execute(
-      query.toQuery(),
-    );
+    const analytics = await this.authService.getAnalytics(query.toQuery());
     return AuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
@@ -187,7 +169,7 @@ export class AuthController {
     @Body(new ValidationPipe({ whitelist: true }))
     dto: UpdateUserRolesRequestDto,
   ): Promise<AuthUserResponseDto> {
-    const user = await this.updateUserRolesUseCase.execute(
+    const user = await this.authService.updateUserRoles(
       new UpdateUserRolesCommand(id, dto.roles),
     );
 
@@ -211,7 +193,7 @@ export class AuthController {
     @Body(new ValidationPipe({ whitelist: true }))
     dto: UpdateRolePermissionsRequestDto,
   ): Promise<RoleResponseDto> {
-    const role = await this.updateRolePermissionsUseCase.execute(
+    const role = await this.authService.updateRolePermissions(
       new UpdateRolePermissionsCommand(name, dto.permissions),
     );
 
@@ -228,7 +210,7 @@ export class AuthController {
     type: [RoleResponseDto],
   })
   async listRoles(): Promise<RoleResponseDto[]> {
-    const roles = await this.listRolesUseCase.execute();
+    const roles = await this.authService.listRoles();
     return roles.map((role) => RoleResponseDto.fromDomain(role));
   }
 
@@ -242,7 +224,7 @@ export class AuthController {
     type: [PermissionResponseDto],
   })
   async listPermissions(): Promise<PermissionResponseDto[]> {
-    const permissions = await this.listPermissionsUseCase.execute();
+    const permissions = await this.authService.listPermissions();
     return permissions.map((permission) =>
       PermissionResponseDto.fromDomain(permission),
     );

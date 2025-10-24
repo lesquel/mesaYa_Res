@@ -77,6 +77,9 @@ export class SubscriptionPlanService {
     );
   }
 
+  /**
+   * Emits `mesa-ya.subscription-plans.created` with `{ action, entityId, entity }` and returns the created plan DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.SUBSCRIPTION_PLAN_CREATED,
     payload: ({ result, toPlain }) => {
@@ -108,6 +111,9 @@ export class SubscriptionPlanService {
     return this.listSubscriptionPlansUseCase.execute(params);
   }
 
+  /**
+   * Emits `mesa-ya.subscription-plans.updated` with `{ action, entityId, entity }` and returns the updated plan DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.SUBSCRIPTION_PLAN_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -130,6 +136,9 @@ export class SubscriptionPlanService {
     return this.updateSubscriptionPlanUseCase.execute(dto);
   }
 
+  /**
+   * Emits `mesa-ya.subscription-plans.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.SUBSCRIPTION_PLAN_DELETED,
     payload: ({ result, args, toPlain }) => {
