@@ -8,22 +8,32 @@ import {
 } from '@features/subscription/domain/enums';
 
 export class SubscriptionPlanAnalyticsRequestDto {
-  @ApiPropertyOptional({ description: 'Filtrar por estado del plan', enum: SubscriptionPlanStatesEnum })
+  @ApiPropertyOptional({
+    description: 'Filtrar por estado del plan',
+    enum: SubscriptionPlanStatesEnum,
+  })
   @IsOptional()
   @IsEnum(SubscriptionPlanStatesEnum)
   state?: SubscriptionPlanStatesEnum;
 
-  @ApiPropertyOptional({ description: 'Filtrar por periodo del plan', enum: SubscriptionPlanPeriodsEnum })
+  @ApiPropertyOptional({
+    description: 'Filtrar por periodo del plan',
+    enum: SubscriptionPlanPeriodsEnum,
+  })
   @IsOptional()
   @IsEnum(SubscriptionPlanPeriodsEnum)
   period?: SubscriptionPlanPeriodsEnum;
 
-  @ApiPropertyOptional({ description: 'Fecha inicial de creación del plan (ISO 8601)' })
+  @ApiPropertyOptional({
+    description: 'Fecha inicial de creación del plan (ISO 8601)',
+  })
   @IsOptional()
   @IsDateString()
   startDate?: string;
 
-  @ApiPropertyOptional({ description: 'Fecha final de creación del plan (ISO 8601)' })
+  @ApiPropertyOptional({
+    description: 'Fecha final de creación del plan (ISO 8601)',
+  })
   @IsOptional()
   @IsDateString()
   endDate?: string;

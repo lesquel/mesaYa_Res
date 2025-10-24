@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,7 +23,10 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 
-import { SubscriptionPlanService } from '@features/subscription/application';
+import {
+  GetSubscriptionPlanAnalyticsUseCase,
+  SubscriptionPlanService,
+} from '@features/subscription/application';
 import type {
   SubscriptionPlanResponseDto,
   SubscriptionPlanListResponseDto,
@@ -35,6 +39,8 @@ import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoi
 import {
   CreateSubscriptionPlanRequestDto,
   DeleteSubscriptionPlanResponseSwaggerDto,
+  SubscriptionPlanAnalyticsRequestDto,
+  SubscriptionPlanAnalyticsResponseDto,
   SubscriptionPlanResponseSwaggerDto,
   UpdateSubscriptionPlanRequestDto,
 } from '@features/subscription/presentation/dto/index';
@@ -44,7 +50,24 @@ import {
 export class SubscriptionPlanController {
   constructor(
     private readonly subscriptionPlanService: SubscriptionPlanService,
+    private readonly getSubscriptionPlanAnalytics: GetSubscriptionPlanAnalyticsUseCase,
   ) {}
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription-plan:read')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Resumen analítico de planes de suscripción',
+    type: SubscriptionPlanAnalyticsResponseDto,
+  })
+  async analytics(
+    @Query() query: SubscriptionPlanAnalyticsRequestDto,
+  ): Promise<SubscriptionPlanAnalyticsResponseDto> {
+    const analytics = await this.getSubscriptionPlanAnalytics.execute(
+      query.toQuery(),
+    );
+    return SubscriptionPlanAnalyticsResponseDto.fromApplication(analytics);
+  }
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)

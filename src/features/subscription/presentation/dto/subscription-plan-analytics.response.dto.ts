@@ -76,7 +76,9 @@ class SubscriptionPlanAnalyticsTrendPointDto {
   @ApiProperty({ description: 'Planes creados en la fecha' })
   count!: number;
 
-  @ApiProperty({ description: 'Precio promedio de los planes creados en la fecha' })
+  @ApiProperty({
+    description: 'Precio promedio de los planes creados en la fecha',
+  })
   averagePrice!: number;
 }
 
