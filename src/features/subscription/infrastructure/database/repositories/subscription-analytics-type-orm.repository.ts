@@ -62,11 +62,15 @@ export class SubscriptionAnalyticsTypeOrmRepository
     const totalsPromise =
       this.buildTotalsQuery(query).getRawOne<SubscriptionTotalsRaw>();
     const statePromise =
-      this.buildStateDistributionQuery(query).getRawMany<StateDistributionRaw>();
+      this.buildStateDistributionQuery(
+        query,
+      ).getRawMany<StateDistributionRaw>();
     const planPromise =
       this.buildPlanPerformanceQuery(query).getRawMany<PlanPerformanceRaw>();
     const periodPromise =
-      this.buildPeriodDistributionQuery(query).getRawMany<PeriodDistributionRaw>();
+      this.buildPeriodDistributionQuery(
+        query,
+      ).getRawMany<PeriodDistributionRaw>();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, stateRaw, planRaw, periodRaw, trendRaw] =

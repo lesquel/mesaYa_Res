@@ -70,11 +70,14 @@ export class SubscriptionPlanAnalyticsTypeOrmRepository
     const pricePromise =
       this.buildPriceDistributionQuery(query).getRawMany<PriceBucketRaw>();
     const periodPromise =
-      this.buildPeriodDistributionQuery(query).getRawMany<PeriodDistributionRaw>();
+      this.buildPeriodDistributionQuery(
+        query,
+      ).getRawMany<PeriodDistributionRaw>();
     const statePromise =
-      this.buildStateDistributionQuery(query).getRawMany<StateDistributionRaw>();
-    const usagePromise =
-      this.buildUsageQuery(query).getRawMany<UsageRaw>();
+      this.buildStateDistributionQuery(
+        query,
+      ).getRawMany<StateDistributionRaw>();
+    const usagePromise = this.buildUsageQuery(query).getRawMany<UsageRaw>();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, priceRaw, periodRaw, stateRaw, usageRaw, trendRaw] =

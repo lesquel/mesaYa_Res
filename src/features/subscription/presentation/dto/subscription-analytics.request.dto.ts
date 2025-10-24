@@ -8,22 +8,34 @@ import {
 } from '@features/subscription/domain/enums';
 
 export class SubscriptionAnalyticsRequestDto {
-  @ApiPropertyOptional({ description: 'Filtrar por plan de suscripción', format: 'uuid' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por plan de suscripción',
+    format: 'uuid',
+  })
   @IsOptional()
   @IsUUID()
   subscriptionPlanId?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar por restaurante', format: 'uuid' })
+  @ApiPropertyOptional({
+    description: 'Filtrar por restaurante',
+    format: 'uuid',
+  })
   @IsOptional()
   @IsUUID()
   restaurantId?: string;
 
-  @ApiPropertyOptional({ description: 'Filtrar por estado de la suscripción', enum: SubscriptionStatesEnum })
+  @ApiPropertyOptional({
+    description: 'Filtrar por estado de la suscripción',
+    enum: SubscriptionStatesEnum,
+  })
   @IsOptional()
   @IsEnum(SubscriptionStatesEnum)
   state?: SubscriptionStatesEnum;
 
-  @ApiPropertyOptional({ description: 'Filtrar por periodo del plan', enum: SubscriptionPlanPeriodsEnum })
+  @ApiPropertyOptional({
+    description: 'Filtrar por periodo del plan',
+    enum: SubscriptionPlanPeriodsEnum,
+  })
   @IsOptional()
   @IsEnum(SubscriptionPlanPeriodsEnum)
   subscriptionPeriod?: SubscriptionPlanPeriodsEnum;
