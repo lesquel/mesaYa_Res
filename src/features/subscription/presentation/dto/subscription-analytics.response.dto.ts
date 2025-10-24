@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import type { SubscriptionAnalyticsResponse } from '@features/subscription/application';
-import { SubscriptionPlanPeriodsEnum } from '@features/subscription/domain/enums';
-import { SubscriptionStatesEnum } from '@features/subscription/domain/enums/subscription-states.enum';
+import {
+  SubscriptionPlanPeriodsEnum,
+  SubscriptionStatesEnum,
+} from '@features/subscription/domain/enums';
 
 class SubscriptionAnalyticsSummaryDto {
   @ApiProperty({ description: 'Total de suscripciones registradas' })
