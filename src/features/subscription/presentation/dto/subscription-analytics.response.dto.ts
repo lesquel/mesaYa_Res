@@ -15,7 +15,9 @@ class SubscriptionAnalyticsSummaryDto {
   @ApiProperty({ description: 'Suscripciones inactivas' })
   inactiveSubscriptions!: number;
 
-  @ApiProperty({ description: 'Ingresos totales asociados a las suscripciones' })
+  @ApiProperty({
+    description: 'Ingresos totales asociados a las suscripciones',
+  })
   totalRevenue!: number;
 
   @ApiProperty({ description: 'Ingreso promedio por suscripción' })
