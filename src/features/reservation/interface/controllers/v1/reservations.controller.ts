@@ -97,7 +97,10 @@ export class ReservationsController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('reservation:read')
   @ApiOperation({ summary: 'Datos analíticos de reservas' })
+  @ApiBearerAuth()
   async getAnalytics(
     @Query() query: ReservationAnalyticsRequestDto,
   ): Promise<ReservationAnalyticsResponseDto> {

@@ -194,7 +194,10 @@ export class ImagesController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('image:read')
   @ApiOperation({ summary: 'Datos analíticos de imágenes' })
+  @ApiBearerAuth()
   @ApiQuery({
     name: 'startDate',
     required: false,

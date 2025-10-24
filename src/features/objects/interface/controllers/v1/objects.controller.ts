@@ -68,7 +68,10 @@ export class ObjectsController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('object:read')
   @ApiOperation({ summary: 'Datos analíticos de objetos gráficos' })
+  @ApiBearerAuth()
   async analytics(
     @Query() query: GraphicObjectAnalyticsRequestDto,
   ): Promise<GraphicObjectAnalyticsResponseDto> {

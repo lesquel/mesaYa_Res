@@ -79,7 +79,10 @@ export class ReviewsController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('review:read')
   @ApiOperation({ summary: 'Indicadores analíticos de reseñas' })
+  @ApiBearerAuth()
   async analytics(
     @Query() query: ReviewAnalyticsRequestDto,
   ): Promise<ReviewAnalyticsResponseDto> {

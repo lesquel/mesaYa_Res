@@ -107,7 +107,10 @@ export class SectionsController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('section:read')
   @ApiOperation({ summary: 'Indicadores analíticos de secciones' })
+  @ApiBearerAuth()
   async analytics(
     @Query() query: SectionAnalyticsRequestDto,
   ): Promise<SectionAnalyticsResponseDto> {

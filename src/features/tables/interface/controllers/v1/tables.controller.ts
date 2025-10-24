@@ -88,7 +88,10 @@ export class TablesController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('table:read')
   @ApiOperation({ summary: 'Indicadores analíticos de mesas' })
+  @ApiBearerAuth()
   async analytics(
     @Query() query: TableAnalyticsRequestDto,
   ): Promise<TableAnalyticsResponseDto> {
