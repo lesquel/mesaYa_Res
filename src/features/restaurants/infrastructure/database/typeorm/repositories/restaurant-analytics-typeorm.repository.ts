@@ -8,7 +8,7 @@ import type {
   RestaurantAnalyticsTrendPoint,
 } from '../../../../application/dto/analytics/restaurant-analytics.response';
 import type { RestaurantAnalyticsRepositoryPort } from '../../../../application/ports/restaurant-analytics.repository.port';
-import { RestaurantOrmEntity } from '../../orm/index';
+import { RestaurantOrmEntity } from '../../typeorm/orm/restaurant.orm-entity';
 
 interface RestaurantTotalsRaw {
   totalRestaurants: string | number | null;
