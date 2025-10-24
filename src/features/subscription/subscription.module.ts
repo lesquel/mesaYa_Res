@@ -8,6 +8,10 @@ import {
   SUBSCRIPTION_PLAN_ORM_MAPPER,
   SubscriptionMapper,
   SubscriptionPlanMapper,
+  GetSubscriptionAnalyticsUseCase,
+  GetSubscriptionPlanAnalyticsUseCase,
+  SUBSCRIPTION_ANALYTICS_REPOSITORY,
+  SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
 } from './application/index';
 import {
   SubscriptionPlanOrmMapper,
@@ -16,6 +20,8 @@ import {
   SubscriptionTypeOrmRepository,
   SubscriptionPlanOrmEntity,
   SubscriptionOrmEntity,
+  SubscriptionAnalyticsTypeOrmRepository,
+  SubscriptionPlanAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   SubscriptionPlanController,
@@ -57,6 +63,14 @@ import { KafkaService } from '@shared/infrastructure/kafka';
     {
       provide: ISubscriptionPlanRepositoryPort,
       useClass: SubscriptionPlanTypeOrmRepository,
+    },
+    {
+      provide: SUBSCRIPTION_ANALYTICS_REPOSITORY,
+      useClass: SubscriptionAnalyticsTypeOrmRepository,
+    },
+    {
+      provide: SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
+      useClass: SubscriptionPlanAnalyticsTypeOrmRepository,
     },
     {
       provide: SubscriptionMapper,
@@ -108,7 +122,14 @@ import { KafkaService } from '@shared/infrastructure/kafka';
         KafkaService,
       ],
     },
+    GetSubscriptionAnalyticsUseCase,
+    GetSubscriptionPlanAnalyticsUseCase,
   ],
-  exports: [SubscriptionService, SubscriptionPlanService],
+  exports: [
+    SubscriptionService,
+    SubscriptionPlanService,
+    GetSubscriptionAnalyticsUseCase,
+    GetSubscriptionPlanAnalyticsUseCase,
+  ],
 })
 export class SubscriptionModule {}
