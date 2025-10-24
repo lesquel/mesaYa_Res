@@ -4,3 +4,4 @@ export * from './find-restaurant.use-case';
 export * from './list-owner-restaurants.use-case';
 export * from './list-restaurants.use-case';
 export * from './update-restaurant.use-case';
+export * from './get-restaurant-analytics.use-case';

@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -28,6 +29,7 @@ import {
   CreateSectionDto,
   SectionsService,
   UpdateSectionDto,
+  GetSectionAnalyticsUseCase,
 } from '../../../application/index';
 import type {
   CreateSectionCommand,
@@ -43,12 +45,17 @@ import type {
 import {
   DeleteSectionResponseSwaggerDto,
   SectionResponseSwaggerDto,
+  SectionAnalyticsRequestDto,
+  SectionAnalyticsResponseDto,
 } from '@features/sections/interface/dto/index';
 
 @ApiTags('Sections')
 @Controller({ path: 'section', version: '1' })
 export class SectionsController {
-  constructor(private readonly sectionsService: SectionsService) {}
+  constructor(
+    private readonly sectionsService: SectionsService,
+    private readonly getSectionAnalytics: GetSectionAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -97,6 +104,15 @@ export class SectionsController {
     query: ListSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
     return this.sectionsService.list(query);
+  }
+
+  @Get('analytics')
+  @ApiOperation({ summary: 'Indicadores analíticos de secciones' })
+  async analytics(
+    @Query() query: SectionAnalyticsRequestDto,
+  ): Promise<SectionAnalyticsResponseDto> {
+    const analytics = await this.getSectionAnalytics.execute(query.toQuery());
+    return SectionAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':id')
