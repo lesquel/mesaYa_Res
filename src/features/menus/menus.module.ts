@@ -7,6 +7,8 @@ import {
   MenuMapper,
   GetMenuAnalyticsUseCase,
   MENU_ANALYTICS_REPOSITORY,
+  GetDishAnalyticsUseCase,
+  DISH_ANALYTICS_REPOSITORY,
 } from './application/index';
 import {
   DishesController,
@@ -18,6 +20,7 @@ import {
   DishTypeOrmRepository,
   MenuTypeOrmRepository,
   MenuAnalyticsTypeOrmRepository,
+  DishAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import { IDishRepositoryPort, IMenuRepositoryPort } from './domain/index';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
@@ -76,8 +79,18 @@ const menuServiceProvider = {
       provide: MENU_ANALYTICS_REPOSITORY,
       useClass: MenuAnalyticsTypeOrmRepository,
     },
+    {
+      provide: DISH_ANALYTICS_REPOSITORY,
+      useClass: DishAnalyticsTypeOrmRepository,
+    },
     GetMenuAnalyticsUseCase,
+    GetDishAnalyticsUseCase,
   ],
-  exports: [DishService, MenuService, GetMenuAnalyticsUseCase],
+  exports: [
+    DishService,
+    MenuService,
+    GetMenuAnalyticsUseCase,
+    GetDishAnalyticsUseCase,
+  ],
 })
 export class MenusModule {}

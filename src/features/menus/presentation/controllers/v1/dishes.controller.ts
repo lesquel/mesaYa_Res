@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -24,18 +25,23 @@ import type {
   DeleteDishDto,
   DeleteDishResponseDto,
 } from '@features/menus/application';
-import { DishService } from '@features/menus/application';
+import { DishService, GetDishAnalyticsUseCase } from '@features/menus/application';
 import {
   CreateDishRequestDto,
   DeleteDishResponseSwaggerDto,
   DishResponseSwaggerDto,
+  DishAnalyticsRequestDto,
+  DishAnalyticsResponseDto,
   UpdateDishRequestDto,
 } from '@features/menus/presentation/dto/index';
 
 @ApiTags('Dishes')
 @Controller({ path: 'dishes', version: '1' })
 export class DishesController {
-  constructor(private readonly dishService: DishService) {}
+  constructor(
+    private readonly dishService: DishService,
+    private readonly getDishAnalytics: GetDishAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -61,6 +67,21 @@ export class DishesController {
   })
   findAll(): Promise<DishListResponseDto> {
     return this.dishService.findAll();
+  }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('dish:read')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Resumen analítico de platos',
+    type: DishAnalyticsResponseDto,
+  })
+  async analytics(
+    @Query() query: DishAnalyticsRequestDto,
+  ): Promise<DishAnalyticsResponseDto> {
+    const analytics = await this.getDishAnalytics.execute(query.toQuery());
+    return DishAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':dishId')
