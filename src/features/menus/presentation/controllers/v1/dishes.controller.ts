@@ -25,7 +25,10 @@ import type {
   DeleteDishDto,
   DeleteDishResponseDto,
 } from '@features/menus/application';
-import { DishService, GetDishAnalyticsUseCase } from '@features/menus/application';
+import {
+  DishService,
+  GetDishAnalyticsUseCase,
+} from '@features/menus/application';
 import {
   CreateDishRequestDto,
   DeleteDishResponseSwaggerDto,
