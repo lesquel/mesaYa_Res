@@ -62,8 +62,7 @@ export class DishAnalyticsTypeOrmRepository
       ).getRawMany<RestaurantDistributionRaw>();
     const topDishesPromise =
       this.buildTopDishesQuery(query).getRawMany<TopDishRaw>();
-    const trendPromise =
-      this.buildTrendQuery(query).getRawMany<TrendRaw>();
+    const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
     const [totalsRaw, priceRaw, restaurantRaw, topDishesRaw, trendRaw] =
       await Promise.all([
@@ -155,9 +154,7 @@ export class DishAnalyticsTypeOrmRepository
 
     this.applyFilters(qb, filters);
 
-    qb.groupBy('dish.restaurantId')
-      .orderBy('COUNT(dish.id)', 'DESC')
-      .limit(10);
+    qb.groupBy('dish.restaurantId').orderBy('COUNT(dish.id)', 'DESC').limit(10);
 
     return qb;
   }
