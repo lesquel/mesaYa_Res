@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -14,6 +15,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import type {
   MenuResponseDto,
   MenuListResponseDto,
@@ -42,6 +47,9 @@ export class MenusController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:create')
+  @ApiBearerAuth()
   @ApiBody({ type: CreateMenuRequestDto })
   @ApiCreatedResponse({
     description: 'Menu created',
@@ -52,6 +60,9 @@ export class MenusController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menus list',
     type: MenuResponseSwaggerDto,
@@ -62,6 +73,9 @@ export class MenusController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Resumen analítico de menús',
     type: MenuAnalyticsResponseDto,
@@ -74,6 +88,9 @@ export class MenusController {
   }
 
   @Get(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menu details',
     type: MenuResponseSwaggerDto,
@@ -83,6 +100,9 @@ export class MenusController {
   }
 
   @Patch(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:update')
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateMenuRequestDto })
   @ApiOkResponse({
     description: 'Menu updated',
@@ -96,6 +116,9 @@ export class MenusController {
   }
 
   @Delete(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:delete')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menu deleted',
     type: DeleteMenuResponseSwaggerDto,
