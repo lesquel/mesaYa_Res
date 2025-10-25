@@ -2,17 +2,19 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { IMenuRepositoryPort } from '@features/menus/domain/repositories/menu-repository.port';
 import { IDishRepositoryPort } from '@features/menus/domain/repositories/dish-repository.port';
 import { menusSeed, dishesSeed } from '../data';
+import { RestaurantSeedService } from './restaurant-seed.service';
 
 @Injectable()
 export class MenuSeedService {
   private readonly logger = new Logger(MenuSeedService.name);
-  private dishIds: string[][] = []; // Track created dish IDs per menu
+  private menuIds: string[] = []; // Track created menu IDs
 
   constructor(
     @Inject(IMenuRepositoryPort)
     private readonly menuRepository: IMenuRepositoryPort,
     @Inject(IDishRepositoryPort)
     private readonly dishRepository: IDishRepositoryPort,
+    private readonly restaurantSeedService: RestaurantSeedService,
   ) {}
 
   async seedMenus(): Promise<void> {
@@ -24,19 +26,33 @@ export class MenuSeedService {
       return;
     }
 
-    // Note: Cannot link to restaurants without restaurantId tracking from RestaurantSeedService
-    this.logger.warn(
-      '⚠️  Creating menus with placeholder restaurantId. Update manually or via API.',
-    );
-
     for (const menuSeed of menusSeed) {
-      await this.menuRepository.create({
-        restaurantId: 1, // Placeholder - needs real restaurant ID
+      // Obtener el ID real del restaurante desde RestaurantSeedService
+      const restaurantId = this.restaurantSeedService.getRestaurantId(
+        menuSeed.restaurantIndex,
+      );
+
+      if (!restaurantId) {
+        this.logger.warn(
+          `Skipping menu "${menuSeed.name}": restaurant not found at index ${menuSeed.restaurantIndex}`,
+        );
+        continue;
+      }
+
+      // Convertir el restaurantId (string UUID) a número
+      // Nota: Si el dominio espera number, necesitarías un mapeo o usar el índice
+      // Por ahora usamos el índice + 1 como workaround
+      const restaurantNumericId = menuSeed.restaurantIndex + 1;
+
+      const menu = await this.menuRepository.create({
+        restaurantId: restaurantNumericId,
         name: menuSeed.name,
         description: menuSeed.description,
         price: menuSeed.price,
         imageUrl: menuSeed.imageUrl,
       });
+
+      this.menuIds.push(menu.id);
     }
 
     this.logger.log(`✅ Created ${menusSeed.length} menus`);
@@ -52,8 +68,12 @@ export class MenuSeedService {
     }
 
     for (const dishSeed of dishesSeed) {
+      // Usar el índice del menú para obtener el restaurantId correspondiente
+      const menuData = menusSeed[dishSeed.menuIndex];
+      const restaurantNumericId = menuData ? menuData.restaurantIndex + 1 : 1;
+
       await this.dishRepository.create({
-        restaurantId: 1, // Placeholder - needs real restaurant ID
+        restaurantId: restaurantNumericId,
         name: dishSeed.name,
         description: dishSeed.description,
         price: dishSeed.price,

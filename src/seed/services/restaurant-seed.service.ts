@@ -155,4 +155,24 @@ export class RestaurantSeedService {
 
     this.logger.log(`✅ Created ${tablesSeed.length} tables`);
   }
+
+  /**
+   * Obtiene el ID del restaurante creado según su índice.
+   * Útil para que otros servicios de seed puedan referenciar restaurantes.
+   *
+   * @param {number} index - Índice del restaurante (0-based)
+   * @returns {string | undefined} - ID del restaurante o undefined si no existe
+   */
+  getRestaurantId(index: number): string | undefined {
+    return this.restaurantIds[index];
+  }
+
+  /**
+   * Obtiene todos los IDs de restaurantes creados.
+   *
+   * @returns {string[]} - Array de IDs de restaurantes
+   */
+  getRestaurantIds(): string[] {
+    return [...this.restaurantIds];
+  }
 }
