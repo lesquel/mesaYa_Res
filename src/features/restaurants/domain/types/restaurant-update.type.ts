@@ -1,6 +1,7 @@
 import type { RestaurantDay } from '../entities/values/restaurant-day';
 
 export interface RestaurantUpdate {
+  id: string;
   name?: string;
   description?: string | null;
   location?: string;

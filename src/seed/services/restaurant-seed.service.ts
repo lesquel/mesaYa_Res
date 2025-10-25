@@ -67,7 +67,7 @@ export class RestaurantSeedService {
           closeTime: restaurantSeed.closeTime,
           daysOpen: restaurantSeed.daysOpen as RestaurantDay[],
           totalCapacity: restaurantSeed.totalCapacity,
-          subscriptionId: 'subscription-placeholder', // Placeholder UUID - will be updated after subscriptions
+          subscriptionId: '00000000-0000-0000-0000-000000000000', // Placeholder UUID - will be updated after subscriptions
           ownerId: owner.id,
           active: restaurantSeed.active,
         },

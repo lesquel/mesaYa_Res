@@ -8,23 +8,30 @@ import {
 } from '../../../../domain';
 import { ListRestaurantsQuery } from '../../../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { type RestaurantRepositoryPort } from '../../../../application/ports';
+import { RestaurantRepositoryPort } from '../../../../application/ports';
 import { RestaurantOrmEntity } from '../orm';
 import { RestaurantOrmMapper } from '../mappers';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { IRestaurantDomainRepositoryPort } from '../../../../domain/repositories/restaurant-domain-repository.port';
+import type {
+  RestaurantCreate,
+  RestaurantUpdate,
+} from '../../../../domain/types';
 
 @Injectable()
 export class RestaurantTypeOrmRepository
-  implements RestaurantRepositoryPort, IRestaurantDomainRepositoryPort
+  extends RestaurantRepositoryPort
+  implements IRestaurantDomainRepositoryPort
 {
   constructor(
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurantRepository: Repository<RestaurantOrmEntity>,
     @InjectRepository(UserOrmEntity)
     private readonly userRepository: Repository<UserOrmEntity>,
-  ) {}
+  ) {
+    super();
+  }
 
   async save(restaurant: RestaurantEntity): Promise<RestaurantEntity> {
     if (!restaurant.ownerId) {
@@ -44,6 +51,30 @@ export class RestaurantTypeOrmRepository
     return RestaurantOrmMapper.toDomain(saved);
   }
 
+  async create(data: RestaurantCreate): Promise<RestaurantEntity> {
+    const owner = await this.userRepository.findOne({
+      where: { id: data.ownerId },
+    });
+
+    if (!owner) {
+      throw new RestaurantOwnerNotFoundError(data.ownerId);
+    }
+
+    const restaurant = RestaurantEntity.create(data);
+    return this.save(restaurant);
+  }
+
+  async update(data: RestaurantUpdate): Promise<RestaurantEntity | null> {
+    const existing = await this.findById(data.id);
+
+    if (!existing) {
+      return null;
+    }
+
+    existing.update(data);
+    return this.save(existing);
+  }
+
   async findById(id: string): Promise<RestaurantEntity | null> {
     const entity = await this.restaurantRepository.findOne({
       where: { id },
@@ -57,11 +88,20 @@ export class RestaurantTypeOrmRepository
     return RestaurantOrmMapper.toDomain(entity);
   }
 
-  async delete(id: string): Promise<void> {
+  async findAll(): Promise<RestaurantEntity[]> {
+    const entities = await this.restaurantRepository.find({
+      relations: ['owner'],
+    });
+
+    return entities.map((entity) => RestaurantOrmMapper.toDomain(entity));
+  }
+
+  async delete(id: string): Promise<boolean> {
     const result = await this.restaurantRepository.delete({ id });
     if (!result.affected) {
       throw new RestaurantNotFoundError(id);
     }
+    return true;
   }
 
   async paginate(

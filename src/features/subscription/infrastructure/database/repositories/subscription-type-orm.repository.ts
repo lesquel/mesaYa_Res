@@ -57,7 +57,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
   async update(data: SubscriptionUpdate): Promise<SubscriptionEntity | null> {
     const entity = await this.subscriptions.findOne({
       where: { id: data.subscriptionId },
-      relations: ['plan', 'restaurant'],
+      relations: ['subscriptionPlan', 'restaurant'],
     });
 
     if (!entity) {
@@ -94,7 +94,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
   async findById(id: string): Promise<SubscriptionEntity | null> {
     const entity = await this.subscriptions.findOne({
       where: { id },
-      relations: ['plan', 'restaurant'],
+      relations: ['subscriptionPlan', 'restaurant'],
     });
 
     return entity ? this.mapper.toDomain(entity) : null;
@@ -102,7 +102,7 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
 
   async findAll(): Promise<SubscriptionEntity[]> {
     const entities = await this.subscriptions.find({
-      relations: ['plan', 'restaurant'],
+      relations: ['subscriptionPlan', 'restaurant'],
     });
 
     return this.mapper.toDomainList(entities);

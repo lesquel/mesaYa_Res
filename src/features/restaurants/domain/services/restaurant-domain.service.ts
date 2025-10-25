@@ -50,6 +50,7 @@ export class RestaurantDomainService {
     this.ensureOwnership(restaurant, ownerId);
 
     const updatePayload: RestaurantUpdate = {
+      id: request.restaurantId,
       name: request.name,
       description: request.description,
       location: request.location,
