@@ -1,0 +1,17 @@
+
+
+// Repositories
+export const SECTION_OBJECT_REPOSITORY = Symbol('SECTION_OBJECT_REPOSITORY');
+
+// Services & Adapters
+export const SECTION_OBJECT_EVENT_PUBLISHER = Symbol(
+  'SECTION_OBJECT_EVENT_PUBLISHER',
+);
+
+// External Readers
+export const SECTION_READER_FOR_SECTION_OBJECT = Symbol(
+  'SECTION_READER_FOR_SECTION_OBJECT',
+);
+export const OBJECT_READER_FOR_SECTION_OBJECT = Symbol(
+  'OBJECT_READER_FOR_SECTION_OBJECT',
+);

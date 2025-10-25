@@ -9,10 +9,8 @@ import {
   PaymentUpdate,
   PaymentCreationFailedError,
 } from '@features/payment/domain';
-import {
-  PaymentOrmMapperPort,
-  PAYMENT_ORM_MAPPER,
-} from '@features/payment/application';
+import { PaymentOrmMapperPort } from '@features/payment/application';
+import { PAYMENT_ORM_MAPPER } from '@features/payment/payment.tokens';
 import { PaymentOrmEntity } from '../orm/payment.type-orm.entity';
 
 @Injectable()

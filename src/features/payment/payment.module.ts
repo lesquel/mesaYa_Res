@@ -11,13 +11,15 @@ import {
 import {
   PaymentService,
   PaymentEntityDTOMapper,
-  PAYMENT_ORM_MAPPER,
   GetPaymentAnalyticsUseCase,
-  PAYMENT_ANALYTICS_REPOSITORY,
 } from './application/index';
 import { IPaymentRepositoryPort } from './domain/index';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import {
+  PAYMENT_ORM_MAPPER,
+  PAYMENT_ANALYTICS_REPOSITORY,
+} from './payment.tokens';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { KafkaService } from '@shared/infrastructure/kafka';
 

@@ -1,0 +1,10 @@
+
+
+// Repositories
+export const SECTION_REPOSITORY = Symbol('SECTION_REPOSITORY');
+export const SECTION_ANALYTICS_REPOSITORY = Symbol(
+  'SECTION_ANALYTICS_REPOSITORY',
+);
+
+// External Readers
+export const RESTAURANT_SECTION_READER = Symbol('RESTAURANT_SECTION_READER');

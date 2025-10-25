@@ -10,12 +10,14 @@ import { PermissionOrmEntity } from './infrastructure/database/typeorm/entities/
 import { AuthUserTypeOrmRepository } from './infrastructure/database/typeorm/repositories/auth-user-typeorm.repository';
 import { AuthRoleTypeOrmRepository } from './infrastructure/database/typeorm/repositories/auth-role-typeorm.repository';
 import { AuthPermissionTypeOrmRepository } from './infrastructure/database/typeorm/repositories/auth-permission-typeorm.repository';
-import { AUTH_USER_REPOSITORY } from './application/ports/user.repository.port';
-import { AUTH_ROLE_REPOSITORY } from './application/ports/role.repository.port';
-import { AUTH_PERMISSION_REPOSITORY } from './application/ports/permission.repository.port';
-import { AUTH_PASSWORD_HASHER } from './application/ports/password-hasher.port';
-import { AUTH_TOKEN_SERVICE } from './application/ports/token.service.port';
-import { AUTH_ANALYTICS_REPOSITORY } from './application/ports/auth-analytics.repository.port';
+import {
+  AUTH_USER_REPOSITORY,
+  AUTH_ROLE_REPOSITORY,
+  AUTH_PERMISSION_REPOSITORY,
+  AUTH_PASSWORD_HASHER,
+  AUTH_TOKEN_SERVICE,
+  AUTH_ANALYTICS_REPOSITORY,
+} from './auth.tokens';
 import { BcryptPasswordHasherAdapter } from './infrastructure/security/bcrypt-password-hasher.adapter';
 import { JwtTokenServiceAdapter } from './infrastructure/security/jwt-token-service.adapter';
 import { SignUpUseCase } from './application/use-cases/sign-up.use-case';

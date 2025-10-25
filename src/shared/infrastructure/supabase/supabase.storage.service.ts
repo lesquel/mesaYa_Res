@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { randomUUID } from 'node:crypto';
@@ -50,8 +54,13 @@ export class SupabaseStorageService {
       });
 
     if (error) {
-      this.logger.error(`Supabase upload failed: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to upload image to storage');
+      this.logger.error(
+        `Supabase upload failed: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to upload image to storage',
+      );
     }
 
     const { data } = this.client.storage
@@ -59,7 +68,9 @@ export class SupabaseStorageService {
       .getPublicUrl(path, { transform: { width: 0, height: 0 } });
 
     if (!data?.publicUrl) {
-      throw new InternalServerErrorException('Unable to resolve public URL for uploaded file');
+      throw new InternalServerErrorException(
+        'Unable to resolve public URL for uploaded file',
+      );
     }
 
     return { path, publicUrl: data.publicUrl };
@@ -67,16 +78,26 @@ export class SupabaseStorageService {
 
   async remove(path: string): Promise<void> {
     if (!path) return;
-    const { error } = await this.client.storage.from(this.bucket).remove([path]);
+    const { error } = await this.client.storage
+      .from(this.bucket)
+      .remove([path]);
     if (error) {
-      this.logger.error(`Supabase remove failed: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to remove file from storage');
+      this.logger.error(
+        `Supabase remove failed: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to remove file from storage',
+      );
     }
   }
 
   private configOrThrow(key: string): string {
     const value = this.config.get<string>(key);
-    if (!value) throw new InternalServerErrorException(`Missing configuration for ${key}`);
+    if (!value)
+      throw new InternalServerErrorException(
+        `Missing configuration for ${key}`,
+      );
     return value;
   }
 

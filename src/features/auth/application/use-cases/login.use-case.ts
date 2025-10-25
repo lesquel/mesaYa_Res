@@ -4,16 +4,12 @@ import { LoginCommand } from '../dto/commands/login.command';
 import { AuthTokenResponse } from '../dto/responses/auth-token.response';
 import {
   AUTH_USER_REPOSITORY,
-  type AuthUserRepositoryPort,
-} from '../ports/user.repository.port';
-import {
   AUTH_PASSWORD_HASHER,
-  type AuthPasswordHasherPort,
-} from '../ports/password-hasher.port';
-import {
   AUTH_TOKEN_SERVICE,
-  type AuthTokenServicePort,
-} from '../ports/token.service.port';
+} from '@features/auth/auth.tokens';
+import type { AuthUserRepositoryPort } from '../ports/user.repository.port';
+import type { AuthPasswordHasherPort } from '../ports/password-hasher.port';
+import type { AuthTokenServicePort } from '../ports/token.service.port';
 
 @Injectable()
 export class LoginUseCase {
