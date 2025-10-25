@@ -11,8 +11,8 @@ import {
   DISH_ANALYTICS_REPOSITORY,
 } from './application';
 import {
-  DishesController,
-  MenusController,
+  AdminDishesController,
+  AdminMenusController,
   PublicDishesController,
   PublicMenusController,
 } from './presentation/controllers/v1';
@@ -64,8 +64,8 @@ const menuServiceProvider = {
     LoggerModule,
   ],
   controllers: [
-    DishesController,
-    MenusController,
+    AdminDishesController,
+    AdminMenusController,
     PublicDishesController,
     PublicMenusController,
   ],

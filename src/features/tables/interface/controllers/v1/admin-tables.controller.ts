@@ -45,7 +45,7 @@ import { TableAnalyticsResponseDto } from '@features/tables/interface/dto/table-
 @Controller({ path: 'admin/table', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class TablesController {
+export class AdminTablesController {
   constructor(
     private readonly tablesService: TablesService,
     private readonly getTableAnalytics: GetTableAnalyticsUseCase,

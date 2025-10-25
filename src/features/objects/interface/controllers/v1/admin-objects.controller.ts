@@ -43,7 +43,7 @@ import {
 @Controller({ path: 'admin/object', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class ObjectsController {
+export class AdminObjectsController {
   constructor(
     private readonly objects: ObjectsService,
     private readonly getGraphicObjectAnalytics: GetGraphicObjectAnalyticsUseCase,

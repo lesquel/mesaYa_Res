@@ -52,7 +52,7 @@ import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/
 @Controller({ path: 'admin/restaurant', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class RestaurantsController {
+export class AdminRestaurantsController {
   constructor(
     private readonly restaurantsService: RestaurantsService,
     private readonly getRestaurantAnalytics: GetRestaurantAnalyticsUseCase,

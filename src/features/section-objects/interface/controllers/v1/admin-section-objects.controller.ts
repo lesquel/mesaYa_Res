@@ -41,7 +41,7 @@ import type {
 
 @ApiTags('SectionObjects')
 @Controller({ path: 'section-object', version: '1' })
-export class SectionObjectsController {
+export class AdminSectionObjectsController {
   constructor(private readonly service: SectionObjectsService) {}
 
   @Post()

@@ -51,7 +51,7 @@ import {
 @Controller({ path: 'admin/section', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class SectionsController {
+export class AdminSectionsController {
   constructor(
     private readonly sectionsService: SectionsService,
     private readonly getSectionAnalytics: GetSectionAnalyticsUseCase,

@@ -38,7 +38,7 @@ import {
 @Controller({ path: 'admin/menus', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class MenusController {
+export class AdminMenusController {
   constructor(private readonly menuService: MenuService) {}
 
   @Post()

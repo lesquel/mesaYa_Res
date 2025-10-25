@@ -52,7 +52,7 @@ import {
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })
-export class PaymentController {
+export class AdminPaymentController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly getPaymentAnalyticsUseCase: GetPaymentAnalyticsUseCase,

@@ -48,7 +48,7 @@ import {
 @Controller({ path: 'admin/reservations', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class ReservationsController {
+export class AdminReservationsController {
   constructor(
     private readonly reservationsService: ReservationService,
     private readonly getReservationAnalytics: GetReservationAnalyticsUseCase,

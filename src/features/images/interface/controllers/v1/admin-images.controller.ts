@@ -62,7 +62,7 @@ const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 @ApiTags('Images')
 @Controller({ path: 'image', version: '1' })
-export class ImagesController {
+export class AdminImagesController {
   constructor(
     private readonly images: ImagesService,
     private readonly getImageAnalytics: GetImageAnalyticsUseCase,

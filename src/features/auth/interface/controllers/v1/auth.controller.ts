@@ -35,11 +35,11 @@ import { UpdateRolePermissionsRequestDto } from '../../dto/update-role-permissio
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
 import { RoleResponseDto } from '../../dto/role.response.dto';
 import { PermissionResponseDto } from '../../dto/permission.response.dto';
-import { SignUpCommand } from '../../../application/dto/commands/sign-up.command';
-import { LoginCommand } from '../../../application/dto/commands/login.command';
-import { UpdateUserRolesCommand } from '../../../application/dto/commands/update-user-roles.command';
-import { UpdateRolePermissionsCommand } from '../../../application/dto/commands/update-role-permissions.command';
-import { AuthRoleName } from '../../../domain/entities/auth-role.entity';
+import { SignUpCommand } from '@features/auth/application/dto/commands/sign-up.command';
+import { LoginCommand } from '@features/auth/application/dto/commands/login.command';
+import { UpdateUserRolesCommand } from '@features/auth/application/dto/commands/update-user-roles.command';
+import { UpdateRolePermissionsCommand } from '@features/auth/application/dto/commands/update-role-permissions.command';
+import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
 import { ThrottleAuth, ThrottleRead } from '@shared/infrastructure/decorators';

@@ -46,7 +46,7 @@ import { ReviewAnalyticsResponseDto } from '@features/reviews/interface/dto/revi
 @Controller({ path: 'admin/review', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class ReviewsController {
+export class AdminReviewsController {
   constructor(
     private readonly reviewsService: ReviewsService,
     private readonly getReviewAnalytics: GetReviewAnalyticsUseCase,
