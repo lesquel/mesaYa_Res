@@ -130,6 +130,8 @@ import { KafkaService } from '@shared/infrastructure/kafka';
     SubscriptionPlanService,
     GetSubscriptionAnalyticsUseCase,
     GetSubscriptionPlanAnalyticsUseCase,
+    ISubscriptionRepositoryPort,
+    ISubscriptionPlanRepositoryPort,
   ],
 })
 export class SubscriptionModule {}
