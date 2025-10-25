@@ -5,8 +5,8 @@ export interface TableSeedData {
   posX: number;
   posY: number;
   width: number;
-  tableImageId: string;
-  chairImageId: string;
+  tableImageIndex: number; // Index to reference table graphic object
+  chairImageIndex: number; // Index to reference chair graphic object
 }
 
 export const tablesSeed: TableSeedData[] = [
@@ -18,8 +18,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 50,
     posY: 50,
     width: 100,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0, // Reference to first graphic object
+    chairImageIndex: 1, // Reference to second graphic object
   },
   {
     sectionIndex: 0,
@@ -28,8 +28,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 200,
     posY: 50,
     width: 100,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   {
     sectionIndex: 0,
@@ -38,8 +38,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 350,
     posY: 50,
     width: 120,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   {
     sectionIndex: 0,
@@ -48,8 +48,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 50,
     posY: 200,
     width: 80,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   // Tables for Section 1 (Terraza)
   {
@@ -59,8 +59,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 50,
     posY: 50,
     width: 100,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   {
     sectionIndex: 1,
@@ -69,8 +69,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 200,
     posY: 50,
     width: 80,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   // Tables for Section 2 (Salón VIP)
   {
@@ -80,8 +80,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 100,
     posY: 100,
     width: 150,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   {
     sectionIndex: 2,
@@ -90,8 +90,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 300,
     posY: 100,
     width: 120,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   // Tables for Section 3 (Jardín)
   {
@@ -101,8 +101,8 @@ export const tablesSeed: TableSeedData[] = [
     posX: 50,
     posY: 50,
     width: 100,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
   {
     sectionIndex: 3,
@@ -111,7 +111,7 @@ export const tablesSeed: TableSeedData[] = [
     posX: 200,
     posY: 50,
     width: 100,
-    tableImageId: 'table-image-1',
-    chairImageId: 'chair-image-1',
+    tableImageIndex: 0,
+    chairImageIndex: 1,
   },
 ];

@@ -5,8 +5,11 @@ import type { ReviewRepositoryPort } from '@features/reviews/application/ports/r
 import { REVIEW_REPOSITORY } from '@features/reviews/application/ports/review-repository.port';
 import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
 import { AUTH_USER_REPOSITORY } from '@features/auth/application/ports/user.repository.port';
+import { ReservationEntity } from '@features/reservation/domain/entities/reservation.entity';
+import { Review } from '@features/reviews/domain/entities/review.entity';
 import { reservationsSeed, reviewsSeed } from '../data';
 import { randomUUID } from 'node:crypto';
+import { RestaurantSeedService } from './restaurant-seed.service';
 
 @Injectable()
 export class CustomerSeedService {
@@ -19,6 +22,7 @@ export class CustomerSeedService {
     private readonly reviewRepository: ReviewRepositoryPort,
     @Inject(AUTH_USER_REPOSITORY)
     private readonly userRepository: AuthUserRepositoryPort,
+    private readonly restaurantSeedService: RestaurantSeedService,
   ) {}
 
   async seedReservations(): Promise<void> {
@@ -42,26 +46,45 @@ export class CustomerSeedService {
         continue;
       }
 
-      // NOTE: In a real scenario, you'd need to properly resolve restaurant and table IDs
-      // For seeding purposes, we'll use placeholder IDs that should be replaced
-      const reservationId = randomUUID();
+      // Get restaurant and table IDs from tracked lists
+      const restaurantId = this.restaurantSeedService.getRestaurantId(
+        reservationSeed.restaurantIndex,
+      );
+      const tableId = this.restaurantSeedService.getTableId(
+        reservationSeed.tableIndex,
+      );
 
-      // Simplified reservation creation - adjust based on actual ReservationEntity structure
+      if (!restaurantId || !tableId) {
+        this.logger.warn(
+          'Skipping reservation: restaurant or table not found in tracked IDs',
+        );
+        continue;
+      }
+
+      // Build reservation date/time
       const reservationDateTime = new Date(reservationSeed.reservationDate);
       const [hours, minutes] = reservationSeed.reservationTime.split(':');
       reservationDateTime.setHours(Number.parseInt(hours, 10));
       reservationDateTime.setMinutes(Number.parseInt(minutes, 10));
 
-      // This will need to be adjusted based on your actual Reservation entity create method
-      // Skipping actual save due to missing dependencies (restaurant, table)
-      this.logger.warn(
-        `Reservation for ${user.email} - needs proper restaurant/table resolution`,
-      );
+      // Create reservation entity
+      const reservationId = randomUUID();
+      const reservation = ReservationEntity.create(reservationId, {
+        userId: user.id,
+        restaurantId,
+        tableId,
+        reservationTime: reservationDateTime,
+        reservationDate: reservationSeed.reservationDate,
+        numberOfGuests: reservationSeed.numberOfGuests,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: reservationSeed.status,
+      });
+
+      await this.reservationRepository.save(reservation);
     }
 
-    this.logger.log(
-      `⏭️ Skipped ${reservationsSeed.length} reservations (need proper entity setup)`,
-    );
+    this.logger.log(`✅ Created ${reservationsSeed.length} reservations`);
   }
 
   async seedReviews(): Promise<void> {
@@ -83,15 +106,34 @@ export class CustomerSeedService {
         continue;
       }
 
-      // NOTE: Similar to reservations, this needs proper restaurant ID resolution
-      // Skipping actual save due to missing restaurant dependency
-      this.logger.warn(
-        `Review from ${user.email} - needs proper restaurant resolution`,
+      // Get restaurant ID from tracked list
+      const restaurantId = this.restaurantSeedService.getRestaurantId(
+        reviewSeed.restaurantIndex,
       );
+
+      if (!restaurantId) {
+        this.logger.warn(
+          'Skipping review: restaurant not found in tracked IDs',
+        );
+        continue;
+      }
+
+      // Create review entity
+      const reviewId = randomUUID();
+      const review = Review.create(
+        {
+          userId: user.id,
+          restaurantId,
+          rating: reviewSeed.rating,
+          comment: reviewSeed.comment,
+          createdAt: reviewSeed.createdAt,
+        },
+        reviewId,
+      );
+
+      await this.reviewRepository.save(review);
     }
 
-    this.logger.log(
-      `⏭️ Skipped ${reviewsSeed.length} reviews (need proper entity setup)`,
-    );
+    this.logger.log(`✅ Created ${reviewsSeed.length} reviews`);
   }
 }

@@ -23,7 +23,7 @@ interface PriceBucketRaw {
 }
 
 interface RestaurantDistributionRaw {
-  restaurantId: string | number | null;
+  restaurantId: string | null;
   count: string | number | null;
 }
 
@@ -88,14 +88,14 @@ export class DishAnalyticsTypeOrmRepository
         count: this.toNumber(bucket.count),
       })),
       restaurantDistribution: restaurantRaw.map((row) => ({
-        restaurantId: Number(row.restaurantId ?? 0),
+        restaurantId: row.restaurantId ?? '',
         count: this.toNumber(row.count),
       })),
       topDishes: topDishesRaw.map((row) => ({
         id: row.id,
         name: row.name,
         price: this.toNumber(row.price),
-        restaurantId: Number(row.restaurantId ?? 0),
+        restaurantId: String(row.restaurantId ?? ''),
       })),
       creationTrend: trendRaw.map((row) => ({
         date: row.date,

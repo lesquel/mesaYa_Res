@@ -12,12 +12,14 @@ import { Section } from '@features/sections/domain/entities/section.entity';
 import { Table } from '@features/tables/domain/entities/table.entity';
 import { restaurantsSeed, sectionsSeed, tablesSeed } from '../data';
 import { randomUUID } from 'node:crypto';
+import { MediaSeedService } from './media-seed.service';
 
 @Injectable()
 export class RestaurantSeedService {
   private readonly logger = new Logger(RestaurantSeedService.name);
   private restaurantIds: string[] = []; // Track created restaurant IDs
   private sectionIds: string[] = []; // Track created section IDs
+  private tableIds: string[] = []; // Track created table IDs
 
   constructor(
     @Inject(RESTAURANT_REPOSITORY)
@@ -28,6 +30,7 @@ export class RestaurantSeedService {
     private readonly sectionRepository: SectionRepositoryPort,
     @Inject(TABLE_REPOSITORY)
     private readonly tableRepository: TableRepositoryPort,
+    private readonly mediaSeedService: MediaSeedService,
   ) {}
 
   async seedRestaurants(): Promise<void> {
@@ -138,6 +141,21 @@ export class RestaurantSeedService {
         continue;
       }
 
+      // Get graphic object IDs for table and chair images
+      const tableImageId = this.mediaSeedService.getGraphicObjectId(
+        tableSeed.tableImageIndex,
+      );
+      const chairImageId = this.mediaSeedService.getGraphicObjectId(
+        tableSeed.chairImageIndex,
+      );
+
+      if (!tableImageId || !chairImageId) {
+        this.logger.warn(
+          'Skipping table: graphic objects not found in tracked IDs',
+        );
+        continue;
+      }
+
       const tableId = randomUUID();
       const table = Table.create(tableId, {
         sectionId,
@@ -146,11 +164,12 @@ export class RestaurantSeedService {
         posX: tableSeed.posX,
         posY: tableSeed.posY,
         width: tableSeed.width,
-        tableImageId: tableSeed.tableImageId,
-        chairImageId: tableSeed.chairImageId,
+        tableImageId,
+        chairImageId,
       });
 
       await this.tableRepository.save(table);
+      this.tableIds.push(tableId); // Track the created table ID
     }
 
     this.logger.log(`✅ Created ${tablesSeed.length} tables`);
@@ -174,5 +193,25 @@ export class RestaurantSeedService {
    */
   getRestaurantIds(): string[] {
     return [...this.restaurantIds];
+  }
+
+  /**
+   * Obtiene el ID de la mesa creada según su índice.
+   * Útil para que otros servicios de seed puedan referenciar mesas.
+   *
+   * @param {number} index - Índice de la mesa (0-based)
+   * @returns {string | undefined} - ID de la mesa o undefined si no existe
+   */
+  getTableId(index: number): string | undefined {
+    return this.tableIds[index];
+  }
+
+  /**
+   * Obtiene todos los IDs de mesas creadas.
+   *
+   * @returns {string[]} - Array de IDs de mesas
+   */
+  getTableIds(): string[] {
+    return [...this.tableIds];
   }
 }

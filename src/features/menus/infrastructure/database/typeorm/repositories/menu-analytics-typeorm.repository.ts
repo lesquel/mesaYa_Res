@@ -19,7 +19,7 @@ type TotalsRaw = {
 };
 
 type RestaurantDistributionRaw = {
-  restaurantId: number;
+  restaurantId: string;
   count: string | number | null;
 };
 

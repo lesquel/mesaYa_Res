@@ -8,10 +8,13 @@ export class MenuResponseSwaggerDto implements MenuDto {
     format: 'uuid',
     required: false,
   })
-  menuId?: string;
+  menuId: string;
 
-  @ApiProperty({ description: 'Identificador del restaurante', example: 1001 })
-  restaurantId: number;
+  @ApiProperty({
+    description: 'Identificador del restaurante',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  restaurantId: string;
 
   @ApiProperty({ description: 'Nombre del menú' })
   name: string;

@@ -4,5 +4,5 @@ export interface GraphicObjectResponseDto {
   posY: number;
   width: number;
   height: number;
-  imageId: number;
+  imageId: string;
 }
