@@ -11,9 +11,14 @@ import {
   UpdateGraphicObjectUseCase,
   GRAPHIC_OBJECT_REPOSITORY,
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
+  GetGraphicObjectAnalyticsUseCase,
+  GRAPHIC_OBJECT_ANALYTICS_REPOSITORY,
 } from './application/index';
 import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index';
-import { GraphicObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/graphic-object-typeorm.repository';
+import {
+  GraphicObjectTypeOrmRepository,
+  GraphicObjectAnalyticsTypeOrmRepository,
+} from './infrastructure/database/typeorm/repositories/index';
 import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider';
 import {
   GraphicObjectDomainService,
@@ -24,13 +29,19 @@ import {
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
   controllers: [ObjectsController],
   providers: [
+    GraphicObjectTypeOrmRepository,
+    GraphicObjectEventNoopProvider,
     {
       provide: GRAPHIC_OBJECT_REPOSITORY,
-      useClass: GraphicObjectTypeOrmRepository,
+      useExisting: GraphicObjectTypeOrmRepository,
     },
     {
       provide: GRAPHIC_OBJECT_EVENT_PUBLISHER,
-      useClass: GraphicObjectEventNoopProvider,
+      useExisting: GraphicObjectEventNoopProvider,
+    },
+    {
+      provide: GRAPHIC_OBJECT_ANALYTICS_REPOSITORY,
+      useClass: GraphicObjectAnalyticsTypeOrmRepository,
     },
     {
       provide: IGraphicObjectDomainRepositoryPort,
@@ -47,6 +58,7 @@ import {
     FindGraphicObjectUseCase,
     UpdateGraphicObjectUseCase,
     DeleteGraphicObjectUseCase,
+    GetGraphicObjectAnalyticsUseCase,
     ObjectsService,
   ],
   exports: [
@@ -55,6 +67,7 @@ import {
     FindGraphicObjectUseCase,
     UpdateGraphicObjectUseCase,
     DeleteGraphicObjectUseCase,
+    GetGraphicObjectAnalyticsUseCase,
     ObjectsService,
   ],
 })

@@ -8,6 +8,7 @@ import {
   ReviewTypeOrmRepository,
   RestaurantTypeOrmReviewProvider,
   UserTypeOrmReviewProvider,
+  ReviewAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   CreateReviewUseCase,
@@ -20,7 +21,10 @@ import {
   REVIEW_REPOSITORY,
   RESTAURANT_REVIEW_READER,
   USER_REVIEW_READER,
+  GetReviewAnalyticsUseCase,
+  REVIEW_ANALYTICS_REPOSITORY,
   type ReviewRepositoryPort,
+  type ReviewAnalyticsRepositoryPort,
 } from './application/index';
 import {
   ReviewDomainService,
@@ -44,17 +48,25 @@ import { RestaurantOrmEntity } from '../restaurants/index';
   ],
   controllers: [ReviewsController],
   providers: [
+    ReviewTypeOrmRepository,
+    RestaurantTypeOrmReviewProvider,
+    UserTypeOrmReviewProvider,
+    ReviewAnalyticsTypeOrmRepository,
     {
       provide: REVIEW_REPOSITORY,
-      useClass: ReviewTypeOrmRepository,
+      useExisting: ReviewTypeOrmRepository,
     },
     {
       provide: RESTAURANT_REVIEW_READER,
-      useClass: RestaurantTypeOrmReviewProvider,
+      useExisting: RestaurantTypeOrmReviewProvider,
     },
     {
       provide: USER_REVIEW_READER,
-      useClass: UserTypeOrmReviewProvider,
+      useExisting: UserTypeOrmReviewProvider,
+    },
+    {
+      provide: REVIEW_ANALYTICS_REPOSITORY,
+      useExisting: ReviewAnalyticsTypeOrmRepository,
     },
     {
       provide: IReviewDomainRepositoryPort,
@@ -118,6 +130,12 @@ import { RestaurantOrmEntity } from '../restaurants/index';
       inject: [ReviewDomainService],
     },
     {
+      provide: GetReviewAnalyticsUseCase,
+      useFactory: (analyticsRepository: ReviewAnalyticsRepositoryPort) =>
+        new GetReviewAnalyticsUseCase(analyticsRepository),
+      inject: [REVIEW_ANALYTICS_REPOSITORY],
+    },
+    {
       provide: ReviewsService,
       useFactory: (
         createReviewUseCase: CreateReviewUseCase,
@@ -156,6 +174,7 @@ import { RestaurantOrmEntity } from '../restaurants/index';
     UpdateReviewUseCase,
     DeleteReviewUseCase,
     ReviewsService,
+    GetReviewAnalyticsUseCase,
   ],
 })
 export class ReviewsModule {}

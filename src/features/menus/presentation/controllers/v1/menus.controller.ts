@@ -6,22 +6,33 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import type {
   MenuResponseDto,
   MenuListResponseDto,
   DeleteMenuDto,
   DeleteMenuResponseDto,
 } from '@features/menus/application';
-import { MenuService } from '@features/menus/application';
+import {
+  MenuService,
+  GetMenuAnalyticsUseCase,
+} from '@features/menus/application';
 import {
   CreateMenuRequestDto,
+  MenuAnalyticsRequestDto,
+  MenuAnalyticsResponseDto,
   DeleteMenuResponseSwaggerDto,
   MenuResponseSwaggerDto,
   UpdateMenuRequestDto,
@@ -30,9 +41,15 @@ import {
 @ApiTags('Menus')
 @Controller({ path: 'menus', version: '1' })
 export class MenusController {
-  constructor(private readonly menuService: MenuService) {}
+  constructor(
+    private readonly menuService: MenuService,
+    private readonly getMenuAnalyticsUseCase: GetMenuAnalyticsUseCase,
+  ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:create')
+  @ApiBearerAuth()
   @ApiBody({ type: CreateMenuRequestDto })
   @ApiCreatedResponse({
     description: 'Menu created',
@@ -43,6 +60,9 @@ export class MenusController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menus list',
     type: MenuResponseSwaggerDto,
@@ -52,7 +72,25 @@ export class MenusController {
     return this.menuService.findAll();
   }
 
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:read')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Resumen analítico de menús',
+    type: MenuAnalyticsResponseDto,
+  })
+  async getAnalytics(
+    @Query() dto: MenuAnalyticsRequestDto,
+  ): Promise<MenuAnalyticsResponseDto> {
+    const analytics = await this.getMenuAnalyticsUseCase.execute(dto.toQuery());
+    return MenuAnalyticsResponseDto.fromApplication(analytics);
+  }
+
   @Get(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:read')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menu details',
     type: MenuResponseSwaggerDto,
@@ -62,6 +100,9 @@ export class MenusController {
   }
 
   @Patch(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:update')
+  @ApiBearerAuth()
   @ApiBody({ type: UpdateMenuRequestDto })
   @ApiOkResponse({
     description: 'Menu updated',
@@ -75,6 +116,9 @@ export class MenusController {
   }
 
   @Delete(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('menu:delete')
+  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menu deleted',
     type: DeleteMenuResponseSwaggerDto,

@@ -1,18 +1,23 @@
 import { ILoggerPort } from '@shared/application/ports/logger.port';
 import {
+  KafkaEmit,
+  KafkaService,
+  KAFKA_TOPICS,
+} from '@shared/infrastructure/kafka';
+import {
   CreateMenuUseCase,
   GetMenuByIdUseCase,
   ListMenusUseCase,
   UpdateMenuUseCase,
   DeleteMenuUseCase,
 } from '../use-cases';
-import {
+import type {
   CreateMenuDto,
   GetMenuByIdDto,
   UpdateMenuDto,
   DeleteMenuDto,
 } from '../dtos/input';
-import {
+import type {
   MenuResponseDto,
   MenuListResponseDto,
   DeleteMenuResponseDto,
@@ -33,6 +38,7 @@ export class MenuService {
     logger: ILoggerPort,
     menuRepository: IMenuRepositoryPort,
     menuMapper: MenuMapper,
+    private readonly kafkaService: KafkaService,
   ) {
     this.menuDomainService = new MenuDomainService(menuRepository);
 
@@ -66,6 +72,18 @@ export class MenuService {
     );
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.MENU_CREATED,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result ?? {});
+      const entityId = (entity as { menuId?: string }).menuId ?? null;
+      return {
+        action: 'menu.created',
+        entityId,
+        entity,
+      };
+    },
+  })
   async create(dto: CreateMenuDto): Promise<MenuResponseDto> {
     return this.createMenuUseCase.execute(dto);
   }
@@ -78,10 +96,40 @@ export class MenuService {
     return this.listMenusUseCase.execute();
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.MENU_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateMenuDto];
+      const entity = toPlain(result ?? {});
+      const entityId =
+        (command?.menuId as string | undefined) ||
+        (entity as { menuId?: string }).menuId ||
+        null;
+      return {
+        action: 'menu.updated',
+        entityId,
+        entity,
+      };
+    },
+  })
   async update(dto: UpdateMenuDto): Promise<MenuResponseDto> {
     return this.updateMenuUseCase.execute(dto);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.MENU_DELETED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [DeleteMenuDto];
+      const deletion = toPlain(result ?? {});
+      const entityId =
+        (deletion as { menuId?: string }).menuId || command?.menuId || null;
+      return {
+        action: 'menu.deleted',
+        entityId,
+        entity: deletion,
+      };
+    },
+  })
   async delete(dto: DeleteMenuDto): Promise<DeleteMenuResponseDto> {
     return this.deleteMenuUseCase.execute(dto);
   }

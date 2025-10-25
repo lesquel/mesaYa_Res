@@ -6,16 +6,20 @@ import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
   PaymentOrmMapper,
+  PaymentAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   PaymentService,
   PaymentEntityDTOMapper,
   PAYMENT_ORM_MAPPER,
+  GetPaymentAnalyticsUseCase,
+  PAYMENT_ANALYTICS_REPOSITORY,
 } from './application/index';
 import { IPaymentRepositoryPort } from './domain/index';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
+import { KafkaService } from '@shared/infrastructure/kafka';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PaymentOrmEntity]), LoggerModule],
@@ -34,15 +38,26 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
       useClass: PaymentTypeOrmRepository,
     },
     {
+      provide: PAYMENT_ANALYTICS_REPOSITORY,
+      useClass: PaymentAnalyticsTypeOrmRepository,
+    },
+    {
       provide: PaymentService,
       useFactory: (
         logger: ILoggerPort,
         paymentRepository: IPaymentRepositoryPort,
         mapper: PaymentEntityDTOMapper,
-      ) => new PaymentService(logger, paymentRepository, mapper),
-      inject: [LOGGER, IPaymentRepositoryPort, PaymentEntityDTOMapper],
+        kafkaService: KafkaService,
+      ) => new PaymentService(logger, paymentRepository, mapper, kafkaService),
+      inject: [
+        LOGGER,
+        IPaymentRepositoryPort,
+        PaymentEntityDTOMapper,
+        KafkaService,
+      ],
     },
+    GetPaymentAnalyticsUseCase,
   ],
-  exports: [PaymentService],
+  exports: [PaymentService, GetPaymentAnalyticsUseCase],
 })
 export class PaymentModule {}

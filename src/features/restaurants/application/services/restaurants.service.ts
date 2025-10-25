@@ -37,6 +37,9 @@ export class RestaurantsService {
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  /**
+   * Emits `mesa-ya.restaurants.created` with `{ action, entity, performedBy }` and returns the created restaurant DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.RESTAURANT_CREATED,
     payload: ({ result, args, toPlain }) => {
@@ -70,6 +73,9 @@ export class RestaurantsService {
     return this.findRestaurantUseCase.execute(query);
   }
 
+  /**
+   * Emits `mesa-ya.restaurants.updated` with `{ action, entity, performedBy }` and returns the updated restaurant DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -87,6 +93,9 @@ export class RestaurantsService {
     return this.updateRestaurantUseCase.execute(command);
   }
 
+  /**
+   * Emits `mesa-ya.restaurants.deleted` with `{ action, entityId, entity, performedBy }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.RESTAURANT_DELETED,
     payload: ({ result, args, toPlain }) => {

@@ -5,6 +5,10 @@ import {
   MenuService,
   DishMapper,
   MenuMapper,
+  GetMenuAnalyticsUseCase,
+  MENU_ANALYTICS_REPOSITORY,
+  GetDishAnalyticsUseCase,
+  DISH_ANALYTICS_REPOSITORY,
 } from './application/index';
 import {
   DishesController,
@@ -15,11 +19,14 @@ import {
   MenuOrmEntity,
   DishTypeOrmRepository,
   MenuTypeOrmRepository,
+  MenuAnalyticsTypeOrmRepository,
+  DishAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import { IDishRepositoryPort, IMenuRepositoryPort } from './domain/index';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { KafkaService } from '@shared/infrastructure/kafka';
 
 const menuMapperProvider = {
   provide: MenuMapper,
@@ -33,8 +40,9 @@ const dishServiceProvider = {
     logger: ILoggerPort,
     dishRepository: IDishRepositoryPort,
     dishMapper: DishMapper,
-  ) => new DishService(logger, dishRepository, dishMapper),
-  inject: [LOGGER, IDishRepositoryPort, DishMapper],
+    kafkaService: KafkaService,
+  ) => new DishService(logger, dishRepository, dishMapper, kafkaService),
+  inject: [LOGGER, IDishRepositoryPort, DishMapper, KafkaService],
 };
 
 const menuServiceProvider = {
@@ -43,8 +51,9 @@ const menuServiceProvider = {
     logger: ILoggerPort,
     menuRepository: IMenuRepositoryPort,
     menuMapper: MenuMapper,
-  ) => new MenuService(logger, menuRepository, menuMapper),
-  inject: [LOGGER, IMenuRepositoryPort, MenuMapper],
+    kafkaService: KafkaService,
+  ) => new MenuService(logger, menuRepository, menuMapper, kafkaService),
+  inject: [LOGGER, IMenuRepositoryPort, MenuMapper, KafkaService],
 };
 
 @Module({
@@ -66,7 +75,22 @@ const menuServiceProvider = {
       provide: IMenuRepositoryPort,
       useClass: MenuTypeOrmRepository,
     },
+    {
+      provide: MENU_ANALYTICS_REPOSITORY,
+      useClass: MenuAnalyticsTypeOrmRepository,
+    },
+    {
+      provide: DISH_ANALYTICS_REPOSITORY,
+      useClass: DishAnalyticsTypeOrmRepository,
+    },
+    GetMenuAnalyticsUseCase,
+    GetDishAnalyticsUseCase,
   ],
-  exports: [DishService, MenuService],
+  exports: [
+    DishService,
+    MenuService,
+    GetMenuAnalyticsUseCase,
+    GetDishAnalyticsUseCase,
+  ],
 })
 export class MenusModule {}

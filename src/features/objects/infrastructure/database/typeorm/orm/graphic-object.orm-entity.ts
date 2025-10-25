@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm/index';
 
@@ -30,4 +32,10 @@ export class GraphicObjectOrmEntity {
   @ManyToOne(() => ImageOrmEntity, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'imagen_id' })
   image?: ImageOrmEntity;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date;
 }

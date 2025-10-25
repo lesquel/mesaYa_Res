@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -27,6 +28,7 @@ import {
   ReviewsService,
   UpdateReviewDto,
 } from '@features/reviews/application/index';
+import { GetReviewAnalyticsUseCase } from '@features/reviews/application/use-cases/get-review-analytics.use-case';
 import type {
   CreateReviewCommand,
   DeleteReviewCommand,
@@ -38,11 +40,16 @@ import type {
   PaginatedReviewResponse,
   DeleteReviewResponseDto,
 } from '@features/reviews/application/index';
+import { ReviewAnalyticsRequestDto } from '@features/reviews/interface/dto/review-analytics.request.dto';
+import { ReviewAnalyticsResponseDto } from '@features/reviews/interface/dto/review-analytics.response.dto';
 
 @ApiTags('Reviews')
 @Controller({ path: 'review', version: '1' })
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(
+    private readonly reviewsService: ReviewsService,
+    private readonly getReviewAnalytics: GetReviewAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -69,6 +76,18 @@ export class ReviewsController {
     query: ListReviewsQuery,
   ): Promise<PaginatedReviewResponse> {
     return this.reviewsService.list(query);
+  }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('review:read')
+  @ApiOperation({ summary: 'Indicadores analíticos de reseñas' })
+  @ApiBearerAuth()
+  async analytics(
+    @Query() query: ReviewAnalyticsRequestDto,
+  ): Promise<ReviewAnalyticsResponseDto> {
+    const analytics = await this.getReviewAnalytics.execute(query.toQuery());
+    return ReviewAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get('restaurant/:restaurantId')

@@ -4,3 +4,4 @@ export * from './list-restaurant-reservation.use-case';
 export * from './find-reservation.use-case';
 export * from './update-reservation.use-case';
 export * from './delete-reservation.use-case';
+export * from './get-reservation-analytics.use-case';

@@ -6,3 +6,7 @@ export * from './create-dish.request.dto';
 export * from './create-menu.request.dto';
 export * from './update-dish.request.dto';
 export * from './update-menu.request.dto';
+export * from './menu-analytics.request.dto';
+export * from './menu-analytics.response.dto';
+export * from './dish-analytics.request.dto';
+export * from './dish-analytics.response.dto';

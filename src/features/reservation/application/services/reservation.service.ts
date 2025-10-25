@@ -37,6 +37,9 @@ export class ReservationService {
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  /**
+   * Emits `mesa-ya.reservations.created` with `{ action, entity, performedBy }` and returns the created reservation DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.RESERVATION_CREATED,
     payload: ({ result, args, toPlain }) => {
@@ -70,6 +73,9 @@ export class ReservationService {
     return this.findReservationUseCase.execute(query);
   }
 
+  /**
+   * Emits `mesa-ya.reservations.updated` with `{ action, entityId, entity, performedBy }` and returns the updated reservation DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.RESERVATION_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -88,6 +94,9 @@ export class ReservationService {
     return this.updateReservationUseCase.execute(command);
   }
 
+  /**
+   * Emits `mesa-ya.reservations.deleted` with `{ action, entityId, entity, performedBy }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.RESERVATION_DELETED,
     payload: ({ result, args, toPlain }) => {

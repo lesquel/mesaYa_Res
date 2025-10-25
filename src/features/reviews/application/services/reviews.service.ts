@@ -37,6 +37,9 @@ export class ReviewsService {
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  /**
+   * Emits `mesa-ya.reviews.created` with `{ action, entity, performedBy }` and returns the created review DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.REVIEW_CREATED,
     payload: ({ result, args, toPlain }) => {
@@ -66,6 +69,9 @@ export class ReviewsService {
     return this.findReviewUseCase.execute(query);
   }
 
+  /**
+   * Emits `mesa-ya.reviews.updated` with `{ action, entity, performedBy }` and returns the updated review DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.REVIEW_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -81,6 +87,9 @@ export class ReviewsService {
     return this.updateReviewUseCase.execute(command);
   }
 
+  /**
+   * Emits `mesa-ya.reviews.deleted` with `{ action, entityId, entity, performedBy }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.REVIEW_DELETED,
     payload: ({ result, args, toPlain }) => {

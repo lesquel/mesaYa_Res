@@ -8,6 +8,10 @@ import {
   SUBSCRIPTION_PLAN_ORM_MAPPER,
   SubscriptionMapper,
   SubscriptionPlanMapper,
+  GetSubscriptionAnalyticsUseCase,
+  GetSubscriptionPlanAnalyticsUseCase,
+  SUBSCRIPTION_ANALYTICS_REPOSITORY,
+  SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
 } from './application/index';
 import {
   SubscriptionPlanOrmMapper,
@@ -16,6 +20,8 @@ import {
   SubscriptionTypeOrmRepository,
   SubscriptionPlanOrmEntity,
   SubscriptionOrmEntity,
+  SubscriptionAnalyticsTypeOrmRepository,
+  SubscriptionPlanAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   SubscriptionPlanController,
@@ -29,6 +35,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
+import { KafkaService } from '@shared/infrastructure/kafka';
 
 @Module({
   imports: [
@@ -58,6 +65,14 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
       useClass: SubscriptionPlanTypeOrmRepository,
     },
     {
+      provide: SUBSCRIPTION_ANALYTICS_REPOSITORY,
+      useClass: SubscriptionAnalyticsTypeOrmRepository,
+    },
+    {
+      provide: SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
+      useClass: SubscriptionPlanAnalyticsTypeOrmRepository,
+    },
+    {
       provide: SubscriptionMapper,
       useFactory: () => new SubscriptionMapper(),
     },
@@ -71,13 +86,20 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
         logger: ILoggerPort,
         subscriptionRepository: ISubscriptionRepositoryPort,
         subscriptionMapper: SubscriptionMapper,
+        kafkaService: KafkaService,
       ) =>
         new SubscriptionService(
           logger,
           subscriptionRepository,
           subscriptionMapper,
+          kafkaService,
         ),
-      inject: [LOGGER, ISubscriptionRepositoryPort, SubscriptionMapper],
+      inject: [
+        LOGGER,
+        ISubscriptionRepositoryPort,
+        SubscriptionMapper,
+        KafkaService,
+      ],
     },
     {
       provide: SubscriptionPlanService,
@@ -85,15 +107,29 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
         logger: ILoggerPort,
         subscriptionPlanRepository: ISubscriptionPlanRepositoryPort,
         subscriptionPlanMapper: SubscriptionPlanMapper,
+        kafkaService: KafkaService,
       ) =>
         new SubscriptionPlanService(
           logger,
           subscriptionPlanRepository,
           subscriptionPlanMapper,
+          kafkaService,
         ),
-      inject: [LOGGER, ISubscriptionPlanRepositoryPort, SubscriptionPlanMapper],
+      inject: [
+        LOGGER,
+        ISubscriptionPlanRepositoryPort,
+        SubscriptionPlanMapper,
+        KafkaService,
+      ],
     },
+    GetSubscriptionAnalyticsUseCase,
+    GetSubscriptionPlanAnalyticsUseCase,
   ],
-  exports: [SubscriptionService, SubscriptionPlanService],
+  exports: [
+    SubscriptionService,
+    SubscriptionPlanService,
+    GetSubscriptionAnalyticsUseCase,
+    GetSubscriptionPlanAnalyticsUseCase,
+  ],
 })
 export class SubscriptionModule {}

@@ -7,3 +7,7 @@ export * from './update-subscription.request.dto';
 export * from './update-subscription-state.request.dto';
 export * from './create-subscription-plan.request.dto';
 export * from './update-subscription-plan.request.dto';
+export * from './subscription-analytics.request.dto';
+export * from './subscription-analytics.response.dto';
+export * from './subscription-plan-analytics.request.dto';
+export * from './subscription-plan-analytics.response.dto';

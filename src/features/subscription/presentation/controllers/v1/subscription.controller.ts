@@ -7,6 +7,8 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -14,10 +16,17 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 
-import { SubscriptionService } from '@features/subscription/application';
+import {
+  GetSubscriptionAnalyticsUseCase,
+  SubscriptionService,
+} from '@features/subscription/application';
 import type {
   SubscriptionResponseDto,
   SubscriptionListResponseDto,
@@ -30,6 +39,8 @@ import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoi
 import {
   CreateSubscriptionRequestDto,
   DeleteSubscriptionResponseSwaggerDto,
+  SubscriptionAnalyticsRequestDto,
+  SubscriptionAnalyticsResponseDto,
   SubscriptionResponseSwaggerDto,
   UpdateSubscriptionRequestDto,
   UpdateSubscriptionStateRequestDto,
@@ -38,9 +49,31 @@ import {
 @ApiTags('Subscriptions')
 @Controller({ path: 'subscriptions', version: '1' })
 export class SubscriptionController {
-  constructor(private readonly subscriptionService: SubscriptionService) {}
+  constructor(
+    private readonly subscriptionService: SubscriptionService,
+    private readonly getSubscriptionAnalytics: GetSubscriptionAnalyticsUseCase,
+  ) {}
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:read')
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Resumen analítico de suscripciones',
+    type: SubscriptionAnalyticsResponseDto,
+  })
+  async analytics(
+    @Query() query: SubscriptionAnalyticsRequestDto,
+  ): Promise<SubscriptionAnalyticsResponseDto> {
+    const analytics = await this.getSubscriptionAnalytics.execute(
+      query.toQuery(),
+    );
+    return SubscriptionAnalyticsResponseDto.fromApplication(analytics);
+  }
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:create')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create subscription' })
   @ApiBody({ type: CreateSubscriptionRequestDto })
   @ApiCreatedResponse({
@@ -54,6 +87,9 @@ export class SubscriptionController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'List subscriptions' })
   @PaginatedEndpoint()
   @ApiOkResponse({
@@ -68,6 +104,9 @@ export class SubscriptionController {
   }
 
   @Get(':subscriptionId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find subscription by ID' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
@@ -81,6 +120,9 @@ export class SubscriptionController {
   }
 
   @Patch(':subscriptionId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:update')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update subscription' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdateSubscriptionRequestDto })
@@ -99,6 +141,9 @@ export class SubscriptionController {
   }
 
   @Patch(':subscriptionId/state')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:update')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update subscription state' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdateSubscriptionStateRequestDto })
@@ -117,6 +162,9 @@ export class SubscriptionController {
   }
 
   @Delete(':subscriptionId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('subscription:delete')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete subscription' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiOkResponse({

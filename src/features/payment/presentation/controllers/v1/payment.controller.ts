@@ -7,6 +7,8 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -14,9 +16,16 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaymentService } from '@features/payment/application';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import {
+  PaymentService,
+  GetPaymentAnalyticsUseCase,
+} from '@features/payment/application';
 import type {
   PaymentResponseDto,
   PaymentListResponseDto,
@@ -31,14 +40,22 @@ import {
   DeletePaymentResponseSwaggerDto,
   PaymentResponseSwaggerDto,
   UpdatePaymentStatusRequestDto,
+  PaymentAnalyticsRequestDto,
+  PaymentAnalyticsResponseDto,
 } from '@features/payment/presentation/dto/index';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly getPaymentAnalyticsUseCase: GetPaymentAnalyticsUseCase,
+  ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:create')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a payment' })
   @ApiBody({ type: CreatePaymentRequestDto })
   @ApiCreatedResponse({
@@ -52,6 +69,9 @@ export class PaymentController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'List payments' })
   @PaginatedEndpoint()
   @ApiPaginatedResponse({
@@ -65,6 +85,9 @@ export class PaymentController {
   }
 
   @Get(':paymentId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get payment by ID' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
@@ -78,6 +101,9 @@ export class PaymentController {
   }
 
   @Patch(':paymentId/status')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:update')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update payment status' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdatePaymentStatusRequestDto })
@@ -96,6 +122,9 @@ export class PaymentController {
   }
 
   @Delete(':paymentId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:delete')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete payment' })
   @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
@@ -106,5 +135,23 @@ export class PaymentController {
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
   ): Promise<DeletePaymentResponseDto> {
     return this.paymentService.deletePayment({ paymentId });
+  }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Payment analytics overview' })
+  @ApiOkResponse({
+    description: 'Dashboard analytics for payments',
+    type: PaymentAnalyticsResponseDto,
+  })
+  async getAnalytics(
+    @Query() query: PaymentAnalyticsRequestDto,
+  ): Promise<PaymentAnalyticsResponseDto> {
+    const analytics = await this.getPaymentAnalyticsUseCase.execute(
+      query.toQuery(),
+    );
+    return PaymentAnalyticsResponseDto.fromApplication(analytics);
   }
 }

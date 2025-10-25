@@ -7,6 +7,7 @@ import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
   OwnerTypeOrmProvider,
+  RestaurantAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   CreateRestaurantUseCase,
@@ -18,12 +19,17 @@ import {
   RestaurantsService,
   OWNER_READER,
   RESTAURANT_REPOSITORY,
+  RESTAURANT_ANALYTICS_REPOSITORY,
+  GetRestaurantAnalyticsUseCase,
 } from './application/index';
 import { RestaurantDomainService } from './domain/services/restaurant-domain.service';
 import { IRestaurantDomainRepositoryPort } from './domain/repositories/restaurant-domain-repository.port';
 import { IRestaurantOwnerPort } from './domain/ports/restaurant-owner.port';
 import { KafkaService } from '@shared/infrastructure/kafka/index';
-import type { RestaurantRepositoryPort } from './application/index';
+import type {
+  RestaurantRepositoryPort,
+  RestaurantAnalyticsRepositoryPort,
+} from './application/index';
 
 @Module({
   imports: [
@@ -32,13 +38,20 @@ import type { RestaurantRepositoryPort } from './application/index';
   ],
   controllers: [RestaurantsController],
   providers: [
+    RestaurantTypeOrmRepository,
+    OwnerTypeOrmProvider,
+    RestaurantAnalyticsTypeOrmRepository,
     {
       provide: RESTAURANT_REPOSITORY,
-      useClass: RestaurantTypeOrmRepository,
+      useExisting: RestaurantTypeOrmRepository,
     },
     {
       provide: OWNER_READER,
-      useClass: OwnerTypeOrmProvider,
+      useExisting: OwnerTypeOrmProvider,
+    },
+    {
+      provide: RESTAURANT_ANALYTICS_REPOSITORY,
+      useExisting: RestaurantAnalyticsTypeOrmRepository,
     },
     {
       provide: IRestaurantDomainRepositoryPort,
@@ -122,6 +135,12 @@ import type { RestaurantRepositoryPort } from './application/index';
         KafkaService,
       ],
     },
+    {
+      provide: GetRestaurantAnalyticsUseCase,
+      useFactory: (analyticsRepository: RestaurantAnalyticsRepositoryPort) =>
+        new GetRestaurantAnalyticsUseCase(analyticsRepository),
+      inject: [RESTAURANT_ANALYTICS_REPOSITORY],
+    },
   ],
   exports: [
     CreateRestaurantUseCase,
@@ -131,6 +150,7 @@ import type { RestaurantRepositoryPort } from './application/index';
     UpdateRestaurantUseCase,
     DeleteRestaurantUseCase,
     RestaurantsService,
+    GetRestaurantAnalyticsUseCase,
   ],
 })
 export class RestaurantsModule {}

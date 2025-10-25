@@ -7,6 +7,7 @@ import {
   SectionOrmEntity,
   SectionTypeOrmRepository,
   RestaurantTypeOrmSectionProvider,
+  SectionAnalyticsTypeOrmRepository,
 } from './infrastructure/index';
 import {
   CreateSectionUseCase,
@@ -18,8 +19,13 @@ import {
   SectionsService,
   SECTION_REPOSITORY,
   RESTAURANT_SECTION_READER,
+  SECTION_ANALYTICS_REPOSITORY,
+  GetSectionAnalyticsUseCase,
 } from './application/index';
-import type { SectionRepositoryPort } from './application/index';
+import type {
+  SectionRepositoryPort,
+  SectionAnalyticsRepositoryPort,
+} from './application/index';
 import { KafkaService } from '@shared/infrastructure/kafka/index';
 import {
   SectionDomainService,
@@ -34,13 +40,20 @@ import {
   ],
   controllers: [SectionsController],
   providers: [
+    SectionTypeOrmRepository,
+    RestaurantTypeOrmSectionProvider,
+    SectionAnalyticsTypeOrmRepository,
     {
       provide: SECTION_REPOSITORY,
-      useClass: SectionTypeOrmRepository,
+      useExisting: SectionTypeOrmRepository,
     },
     {
       provide: RESTAURANT_SECTION_READER,
-      useClass: RestaurantTypeOrmSectionProvider,
+      useExisting: RestaurantTypeOrmSectionProvider,
+    },
+    {
+      provide: SECTION_ANALYTICS_REPOSITORY,
+      useExisting: SectionAnalyticsTypeOrmRepository,
     },
     {
       provide: ISectionDomainRepositoryPort,
@@ -124,6 +137,12 @@ import {
         KafkaService,
       ],
     },
+    {
+      provide: GetSectionAnalyticsUseCase,
+      useFactory: (analyticsRepository: SectionAnalyticsRepositoryPort) =>
+        new GetSectionAnalyticsUseCase(analyticsRepository),
+      inject: [SECTION_ANALYTICS_REPOSITORY],
+    },
   ],
   exports: [
     CreateSectionUseCase,
@@ -133,6 +152,7 @@ import {
     UpdateSectionUseCase,
     DeleteSectionUseCase,
     SectionsService,
+    GetSectionAnalyticsUseCase,
   ],
 })
 export class SectionsModule {}

@@ -9,11 +9,13 @@ import {
   ParseFilePipe,
   Patch,
   Post,
+  Query,
   FileTypeValidator,
   MaxFileSizeValidator,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,6 +23,7 @@ import {
   ApiConsumes,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -39,16 +42,24 @@ import {
   type FindImageQuery,
   type ListImagesQuery,
   type UpdateImageCommand,
+  GetImageAnalyticsUseCase,
 } from '../../../application/index.js';
 import type { ImageFilePayload } from '../../../application/dto/input/create-image.dto.js';
 import type { Multer } from 'multer';
+import {
+  ImageAnalyticsRequestDto,
+  ImageAnalyticsResponseDto,
+} from '../../dto/index.js';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 @ApiTags('Images')
 @Controller({ path: 'image', version: '1' })
 export class ImagesController {
-  constructor(private readonly images: ImagesService) {}
+  constructor(
+    private readonly images: ImagesService,
+    private readonly getImageAnalytics: GetImageAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -86,7 +97,7 @@ export class ImagesController {
         ],
       }),
     )
-  file: Multer.File,
+    file: Multer.File,
   ) {
     if (!file) throw new BadRequestException('Image file is required');
 
@@ -146,7 +157,7 @@ export class ImagesController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateImageDto,
-  @UploadedFile() file?: Multer.File,
+    @UploadedFile() file?: Multer.File,
   ) {
     let filePayload: ImageFilePayload | undefined;
 
@@ -180,5 +191,36 @@ export class ImagesController {
   async remove(@Param('id', ParseIntPipe) id: number) {
     const command: DeleteImageCommand = { imageId: id };
     return this.images.delete(command);
+  }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('image:read')
+  @ApiOperation({ summary: 'Datos analíticos de imágenes' })
+  @ApiBearerAuth()
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'Fecha inicial (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'Fecha final (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'entityId',
+    required: false,
+    type: Number,
+    description: 'Filtra por entidad asociada',
+  })
+  async analytics(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    query: ImageAnalyticsRequestDto,
+  ): Promise<ImageAnalyticsResponseDto> {
+    const analytics = await this.getImageAnalytics.execute(query.toQuery());
+    return ImageAnalyticsResponseDto.fromApplication(analytics);
   }
 }

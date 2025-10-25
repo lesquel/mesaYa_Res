@@ -38,6 +38,9 @@ export class SectionObjectsService {
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
+  /**
+   * Emits `mesa-ya.section-objects.created` with `{ action, entity }` and returns the created section-object DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.SECTION_OBJECT_CREATED,
     payload: ({ result, toPlain }) => ({
@@ -77,6 +80,9 @@ export class SectionObjectsService {
     return this.findUseCase.execute(query);
   }
 
+  /**
+   * Emits `mesa-ya.section-objects.updated` with `{ action, entityId, entity }` and returns the updated section-object DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.SECTION_OBJECT_UPDATED,
     payload: ({ result, args, toPlain }) => {
@@ -94,6 +100,9 @@ export class SectionObjectsService {
     return this.updateUseCase.execute(command);
   }
 
+  /**
+   * Emits `mesa-ya.section-objects.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   */
   @KafkaEmit({
     topic: KAFKA_TOPICS.SECTION_OBJECT_DELETED,
     payload: ({ result, toPlain }) => {

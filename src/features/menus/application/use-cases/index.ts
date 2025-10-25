@@ -8,3 +8,5 @@ export * from './get-menu-by-id.use-case';
 export * from './list-menus.use-case';
 export * from './update-menu.use-case';
 export * from './delete-menu.use-case';
+export * from './get-menu-analytics.use-case';
+export * from './get-dish-analytics.use-case';

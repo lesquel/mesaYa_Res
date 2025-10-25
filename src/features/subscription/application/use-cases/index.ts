@@ -4,6 +4,8 @@ export * from './delete-subscription-plan.use-case';
 export * from './delete-subscription.use-case';
 export * from './get-subscription-by-id.use-case';
 export * from './get-subscription-plan-by-id.use-case';
+export * from './get-subscription-analytics.use-case';
+export * from './get-subscription-plan-analytics.use-case';
 export * from './list-subscription-plans.use-case';
 export * from './list-subscriptions.use-case';
 export * from './update-subscription-plan.use-case';

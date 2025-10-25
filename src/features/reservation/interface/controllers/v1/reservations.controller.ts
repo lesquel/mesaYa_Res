@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -35,12 +36,22 @@ import {
   type PaginatedReservationResponse,
   type DeleteReservationResponseDto,
 } from '@features/reservation/application/dto/index';
-import { ReservationService } from '@features/reservation/application/services/index';
+import {
+  ReservationService,
+  GetReservationAnalyticsUseCase,
+} from '@features/reservation/application';
+import {
+  ReservationAnalyticsRequestDto,
+  ReservationAnalyticsResponseDto,
+} from '@features/reservation/interface/dto';
 
 @ApiTags('Reservations')
 @Controller({ path: 'reservations', version: '1' })
 export class ReservationsController {
-  constructor(private readonly reservationsService: ReservationService) {}
+  constructor(
+    private readonly reservationsService: ReservationService,
+    private readonly getReservationAnalytics: GetReservationAnalyticsUseCase,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -83,6 +94,20 @@ export class ReservationsController {
       ...pagination,
     };
     return this.reservationsService.listByRestaurant(query);
+  }
+
+  @Get('analytics')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('reservation:read')
+  @ApiOperation({ summary: 'Datos analíticos de reservas' })
+  @ApiBearerAuth()
+  async getAnalytics(
+    @Query() query: ReservationAnalyticsRequestDto,
+  ): Promise<ReservationAnalyticsResponseDto> {
+    const analytics = await this.getReservationAnalytics.execute(
+      query.toQuery(),
+    );
+    return ReservationAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':id')
