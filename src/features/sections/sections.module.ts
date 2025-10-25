@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { RestaurantOrmEntity } from '../restaurants/index';
-import { SectionsController } from './interface/index';
+import { RestaurantOrmEntity } from '../restaurants';
+import { SectionsController } from './interface';
 import {
   SectionOrmEntity,
   SectionTypeOrmRepository,
   RestaurantTypeOrmSectionProvider,
   SectionAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
+} from './infrastructure';
 import {
   CreateSectionUseCase,
   ListSectionsUseCase,
@@ -21,17 +21,17 @@ import {
   RESTAURANT_SECTION_READER,
   SECTION_ANALYTICS_REPOSITORY,
   GetSectionAnalyticsUseCase,
-} from './application/index';
+} from './application';
 import type {
   SectionRepositoryPort,
   SectionAnalyticsRepositoryPort,
-} from './application/index';
-import { KafkaService } from '@shared/infrastructure/kafka/index';
+} from './application';
+import { KafkaService } from '@shared/infrastructure/kafka';
 import {
   SectionDomainService,
   ISectionDomainRepositoryPort,
   ISectionRestaurantPort,
-} from './domain/index';
+} from './domain';
 
 @Module({
   imports: [

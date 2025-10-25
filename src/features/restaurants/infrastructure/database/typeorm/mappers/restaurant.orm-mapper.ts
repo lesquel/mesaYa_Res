@@ -1,5 +1,5 @@
-import { RestaurantEntity, type RestaurantDay } from '../../../../domain/index';
-import { RestaurantOrmEntity } from '../orm/index';
+import { RestaurantEntity, type RestaurantDay } from '../../../../domain';
+import { RestaurantOrmEntity } from '../orm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
 export class RestaurantOrmMapper {

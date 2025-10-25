@@ -13,17 +13,17 @@ import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   GetGraphicObjectAnalyticsUseCase,
   GRAPHIC_OBJECT_ANALYTICS_REPOSITORY,
-} from './application/index';
-import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index';
+} from './application';
+import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm';
 import {
   GraphicObjectTypeOrmRepository,
   GraphicObjectAnalyticsTypeOrmRepository,
-} from './infrastructure/database/typeorm/repositories/index';
+} from './infrastructure/database/typeorm/repositories';
 import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider';
 import {
   GraphicObjectDomainService,
   IGraphicObjectDomainRepositoryPort,
-} from './domain/index';
+} from './domain';
 
 @Module({
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],

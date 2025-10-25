@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { SectionDomainService } from '../../domain/index';
-import { DeleteSectionCommand, DeleteSectionResponseDto } from '../dto/index';
-import { SectionMapper } from '../mappers/index';
+import { SectionDomainService } from '../../domain';
+import { DeleteSectionCommand, DeleteSectionResponseDto } from '../dto';
+import { SectionMapper } from '../mappers';
 
 export class DeleteSectionUseCase
   implements UseCase<DeleteSectionCommand, DeleteSectionResponseDto>

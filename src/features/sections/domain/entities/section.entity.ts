@@ -5,12 +5,12 @@ import {
   SectionName,
   SectionRestaurantId,
   SectionWidth,
-} from './values/index';
+} from './values';
 import {
   type SectionCreate,
   type SectionSnapshot,
   type SectionUpdate,
-} from '../types/index';
+} from '../types';
 
 interface SectionProps {
   restaurantId: SectionRestaurantId;

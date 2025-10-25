@@ -41,7 +41,7 @@ import {
   type ReservationResponseDto,
   type PaginatedReservationResponse,
   type DeleteReservationResponseDto,
-} from '@features/reservation/application/dto/index';
+} from '@features/reservation/application/dto';
 import {
   ReservationService,
   GetReservationAnalyticsUseCase,

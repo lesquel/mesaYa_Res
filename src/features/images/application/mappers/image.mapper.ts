@@ -1,5 +1,5 @@
-import { Image } from '../../domain/index';
-import { ImageResponseDto } from '../dto/index';
+import { Image } from '../../domain';
+import { ImageResponseDto } from '../dto';
 
 export class ImageMapper {
   static toResponse(image: Image): ImageResponseDto {

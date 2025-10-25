@@ -1,6 +1,6 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 import { MenuCreate, MenuEntity, MenuUpdate } from '@features/menus/domain';
-import { MenuOrmEntity, DishOrmEntity } from '../orm/index';
+import { MenuOrmEntity, DishOrmEntity } from '../orm';
 import { DishOrmMapper } from './dish.orm-mapper';
 
 export class MenuOrmMapper {

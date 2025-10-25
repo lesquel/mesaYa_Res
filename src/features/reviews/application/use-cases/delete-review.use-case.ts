@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { ReviewDomainService } from '../../domain/index';
-import { DeleteReviewCommand, DeleteReviewResponseDto } from '../dto/index';
-import { ReviewMapper } from '../mappers/index';
+import { ReviewDomainService } from '../../domain';
+import { DeleteReviewCommand, DeleteReviewResponseDto } from '../dto';
+import { ReviewMapper } from '../mappers';
 export class DeleteReviewUseCase
   implements UseCase<DeleteReviewCommand, DeleteReviewResponseDto>
 {

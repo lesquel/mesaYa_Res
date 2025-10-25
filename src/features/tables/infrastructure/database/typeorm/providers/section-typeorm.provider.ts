@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
-import { type SectionTableReaderPort } from '../../../../application/ports/index';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
+import { type SectionTableReaderPort } from '../../../../application/ports';
 import {
   ITableSectionPort,
   type TableSectionSnapshot,
-} from '../../../../domain/ports/index';
+} from '../../../../domain/ports';
 
 @Injectable()
 export class SectionTypeOrmTableProvider

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { type OwnerReaderPort } from '../../../../application/ports/index';
+import { type OwnerReaderPort } from '../../../../application/ports';
 import { IRestaurantOwnerPort } from '../../../../domain/ports/restaurant-owner.port';
 
 @Injectable()

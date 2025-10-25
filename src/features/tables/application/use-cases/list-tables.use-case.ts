@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { PaginatedTableResponse, ListTablesQuery } from '../dto/index';
-import { TableMapper } from '../mappers/index';
-import { type TableRepositoryPort } from '../ports/index';
+import { PaginatedTableResponse, ListTablesQuery } from '../dto';
+import { TableMapper } from '../mappers';
+import { type TableRepositoryPort } from '../ports';
 
 export class ListTablesUseCase
   implements UseCase<ListTablesQuery, PaginatedTableResponse>

@@ -4,13 +4,13 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import {
   SectionObject,
   ISectionObjectDomainRepositoryPort,
-} from '../../../../domain/index';
-import { SectionObjectOrmEntity } from '../orm/index';
-import { SectionObjectOrmMapper } from '../mappers/index';
+} from '../../../../domain';
+import { SectionObjectOrmEntity } from '../orm';
+import { SectionObjectOrmMapper } from '../mappers';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { ListSectionObjectsQuery } from '../../../../application/dto/index';
-import { type SectionObjectRepositoryPort } from '../../../../application/ports/index';
+import { ListSectionObjectsQuery } from '../../../../application/dto';
+import { type SectionObjectRepositoryPort } from '../../../../application/ports';
 
 @Injectable()
 export class SectionObjectTypeOrmRepository

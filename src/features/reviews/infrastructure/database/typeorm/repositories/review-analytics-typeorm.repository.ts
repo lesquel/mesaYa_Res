@@ -7,7 +7,7 @@ import type {
   ReviewAnalyticsRepositoryTotals,
 } from '../../../../application/dto/analytics/review-analytics.response';
 import type { ReviewAnalyticsRepositoryPort } from '../../../../application/ports/review-analytics.repository.port';
-import { ReviewOrmEntity } from '../orm/index';
+import { ReviewOrmEntity } from '../orm';
 
 interface ReviewTotalsRaw {
   totalReviews: string | number | null;

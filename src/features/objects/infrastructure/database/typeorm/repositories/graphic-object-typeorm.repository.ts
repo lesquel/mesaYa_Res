@@ -1,14 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { GraphicObject } from '../../../../domain/index';
+import { GraphicObject } from '../../../../domain';
 import { IGraphicObjectDomainRepositoryPort } from '../../../../domain/repositories';
-import { GraphicObjectOrmEntity } from '../orm/index';
-import { GraphicObjectOrmMapper } from '../mappers/index';
+import { GraphicObjectOrmEntity } from '../orm';
+import { GraphicObjectOrmMapper } from '../mappers';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { ListGraphicObjectsQuery } from '../../../../application/dto/index';
-import { type GraphicObjectRepositoryPort } from '../../../../application/ports/index';
+import { ListGraphicObjectsQuery } from '../../../../application/dto';
+import { type GraphicObjectRepositoryPort } from '../../../../application/ports';
 
 @Injectable()
 export class GraphicObjectTypeOrmRepository

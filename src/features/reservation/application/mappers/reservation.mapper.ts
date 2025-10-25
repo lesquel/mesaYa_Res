@@ -1,5 +1,5 @@
-import { ReservationEntity } from '../../domain/index';
-import { ReservationResponseDto as ReservationResponseDto } from '../dto/index';
+import { ReservationEntity } from '../../domain';
+import { ReservationResponseDto as ReservationResponseDto } from '../dto';
 
 export class ReservationMapper {
   static toResponse(reservation: ReservationEntity): ReservationResponseDto {

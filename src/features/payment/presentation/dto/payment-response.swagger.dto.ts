@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentStatusEnum } from '@features/payment/domain/enums/index';
+import { PaymentStatusEnum } from '@features/payment/domain/enums';
 import type { PaymentDto } from '../../application/dtos/output/payment.dto';
 
 export class PaymentResponseSwaggerDto implements PaymentDto {

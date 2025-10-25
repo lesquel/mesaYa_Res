@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { SectionDomainService } from '../../domain/index';
-import { SectionMapper } from '../mappers/index';
-import { SectionResponseDto, CreateSectionCommand } from '../dto/index';
+import { SectionDomainService } from '../../domain';
+import { SectionMapper } from '../mappers';
+import { SectionResponseDto, CreateSectionCommand } from '../dto';
 
 export class CreateSectionUseCase
   implements UseCase<CreateSectionCommand, SectionResponseDto>

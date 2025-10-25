@@ -1,5 +1,5 @@
-import { Section } from '../../domain/index';
-import { SectionResponseDto } from '../dto/index';
+import { Section } from '../../domain';
+import { SectionResponseDto } from '../dto';
 
 export class SectionMapper {
   static toResponse(section: Section): SectionResponseDto {

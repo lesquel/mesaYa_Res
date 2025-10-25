@@ -1,16 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { GraphicObject } from '../../domain/index';
-import { GraphicObjectMapper } from '../mappers/index';
-import {
-  ListGraphicObjectsQuery,
-  GraphicObjectResponseDto,
-} from '../dto/index';
+import { GraphicObject } from '../../domain';
+import { GraphicObjectMapper } from '../mappers';
+import { ListGraphicObjectsQuery, GraphicObjectResponseDto } from '../dto';
 import {
   GRAPHIC_OBJECT_REPOSITORY,
   type GraphicObjectRepositoryPort,
-} from '../ports/index';
+} from '../ports';
 
 export type PaginatedGraphicObjectResponse =
   PaginatedResult<GraphicObjectResponseDto>;

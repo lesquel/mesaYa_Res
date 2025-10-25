@@ -38,11 +38,11 @@ import {
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
   GetGraphicObjectAnalyticsUseCase,
-} from '../../../application/index';
+} from '../../../application';
 import {
   GraphicObjectAnalyticsRequestDto,
   GraphicObjectAnalyticsResponseDto,
-} from '../../dto/index';
+} from '../../dto';
 
 @ApiTags('Objects')
 @Controller({ path: 'object', version: '1' })

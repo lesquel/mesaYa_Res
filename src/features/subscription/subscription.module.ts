@@ -12,7 +12,7 @@ import {
   GetSubscriptionPlanAnalyticsUseCase,
   SUBSCRIPTION_ANALYTICS_REPOSITORY,
   SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
-} from './application/index';
+} from './application';
 import {
   SubscriptionPlanOrmMapper,
   SubscriptionOrmMapper,
@@ -22,15 +22,15 @@ import {
   SubscriptionOrmEntity,
   SubscriptionAnalyticsTypeOrmRepository,
   SubscriptionPlanAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
+} from './infrastructure';
 import {
   SubscriptionPlanController,
   SubscriptionController,
-} from './presentation/index';
+} from './presentation';
 import {
   ISubscriptionPlanRepositoryPort,
   ISubscriptionRepositoryPort,
-} from './domain/index';
+} from './domain';
 import { RestaurantOrmEntity } from '@features/restaurants';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';

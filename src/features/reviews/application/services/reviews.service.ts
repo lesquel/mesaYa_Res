@@ -4,7 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '@shared/infrastructure/kafka/index';
+} from '@shared/infrastructure/kafka';
 import type {
   CreateReviewCommand,
   DeleteReviewCommand,
@@ -15,7 +15,7 @@ import type {
   PaginatedReviewResponse,
   ReviewResponseDto,
   UpdateReviewCommand,
-} from '../dto/index';
+} from '../dto';
 import {
   CreateReviewUseCase,
   DeleteReviewUseCase,
@@ -23,7 +23,7 @@ import {
   ListRestaurantReviewsUseCase,
   ListReviewsUseCase,
   UpdateReviewUseCase,
-} from '../use-cases/index';
+} from '../use-cases';
 
 @Injectable()
 export class ReviewsService {

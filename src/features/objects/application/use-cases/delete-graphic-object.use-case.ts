@@ -3,13 +3,13 @@ import { UseCase } from '@shared/application/ports/use-case.port';
 import {
   DeleteGraphicObjectCommand,
   DeleteGraphicObjectResponseDto,
-} from '../dto/index';
-import { GraphicObjectMapper } from '../mappers/index';
+} from '../dto';
+import { GraphicObjectMapper } from '../mappers';
 import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   type GraphicObjectEventPublisherPort,
-} from '../ports/index';
-import { GraphicObjectDomainService } from '../../domain/index';
+} from '../ports';
+import { GraphicObjectDomainService } from '../../domain';
 
 @Injectable()
 export class DeleteGraphicObjectUseCase

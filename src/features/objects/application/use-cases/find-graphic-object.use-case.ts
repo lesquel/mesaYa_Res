@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { GraphicObjectNotFoundError } from '../../domain/index';
-import { GraphicObjectMapper } from '../mappers/index';
-import { FindGraphicObjectQuery, GraphicObjectResponseDto } from '../dto/index';
+import { GraphicObjectNotFoundError } from '../../domain';
+import { GraphicObjectMapper } from '../mappers';
+import { FindGraphicObjectQuery, GraphicObjectResponseDto } from '../dto';
 import {
   GRAPHIC_OBJECT_REPOSITORY,
   type GraphicObjectRepositoryPort,
-} from '../ports/index';
+} from '../ports';
 
 @Injectable()
 export class FindGraphicObjectUseCase

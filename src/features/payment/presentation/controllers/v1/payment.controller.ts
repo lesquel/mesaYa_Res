@@ -48,7 +48,7 @@ import {
   UpdatePaymentStatusRequestDto,
   PaymentAnalyticsRequestDto,
   PaymentAnalyticsResponseDto,
-} from '@features/payment/presentation/dto/index';
+} from '@features/payment/presentation/dto';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })

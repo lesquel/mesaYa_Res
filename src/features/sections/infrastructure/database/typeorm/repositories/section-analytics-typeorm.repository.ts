@@ -10,7 +10,7 @@ import type {
   SectionAnalyticsDimensionExtremes,
 } from '../../../../application/dto/analytics/section-analytics.response';
 import type { SectionAnalyticsRepositoryPort } from '../../../../application/ports/section-analytics.repository.port';
-import { SectionOrmEntity } from '../orm/index';
+import { SectionOrmEntity } from '../orm';
 
 interface SectionTotalsRaw {
   totalSections: string | number | null;

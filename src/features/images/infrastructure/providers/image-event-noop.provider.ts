@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   type ImageEventPayload,
   type ImageEventPublisherPort,
-} from '../../application/ports/index';
+} from '../../application/ports';
 
 @Injectable()
 export class ImageEventNoopProvider implements ImageEventPublisherPort {

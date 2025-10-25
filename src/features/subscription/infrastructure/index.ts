@@ -1,3 +1,3 @@
-export * from './database/mappers/index';
-export * from './database/orm/index';
-export * from './database/repositories/index';
+export * from './database/mappers';
+export * from './database/orm';
+export * from './database/repositories';

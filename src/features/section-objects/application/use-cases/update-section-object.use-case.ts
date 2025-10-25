@@ -1,15 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { SectionObjectDomainService } from '../../domain/index';
-import {
-  UpdateSectionObjectCommand,
-  SectionObjectResponseDto,
-} from '../dto/index';
-import { SectionObjectMapper } from '../mappers/index';
+import { SectionObjectDomainService } from '../../domain';
+import { UpdateSectionObjectCommand, SectionObjectResponseDto } from '../dto';
+import { SectionObjectMapper } from '../mappers';
 import {
   SECTION_OBJECT_EVENT_PUBLISHER,
   type SectionObjectEventPublisherPort,
-} from '../ports/index';
+} from '../ports';
 
 @Injectable()
 export class UpdateSectionObjectUseCase

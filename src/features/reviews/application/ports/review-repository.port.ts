@@ -1,5 +1,5 @@
-import { Review } from '../../domain/index';
-import { ListReviewsQuery, ListRestaurantReviewsQuery } from '../dto/index';
+import { Review } from '../../domain';
+import { ListReviewsQuery, ListRestaurantReviewsQuery } from '../dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 
 export const REVIEW_REPOSITORY = Symbol('REVIEW_REPOSITORY');

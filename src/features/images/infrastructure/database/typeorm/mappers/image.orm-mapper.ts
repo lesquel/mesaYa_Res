@@ -1,5 +1,5 @@
-import { Image } from '../../../../domain/index';
-import { ImageOrmEntity } from '../orm/index';
+import { Image } from '../../../../domain';
+import { ImageOrmEntity } from '../orm';
 
 export class ImageOrmMapper {
   static toOrmEntity(image: Image): ImageOrmEntity {

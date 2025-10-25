@@ -1,8 +1,5 @@
 import { MoneyVO } from '@shared/domain/entities/values';
-import {
-  SubscriptionPlanPeriodVO,
-  SubscriptionPlanStateVO,
-} from './values/index';
+import { SubscriptionPlanPeriodVO, SubscriptionPlanStateVO } from './values';
 
 export interface SubscriptionPlanProps {
   name: string;

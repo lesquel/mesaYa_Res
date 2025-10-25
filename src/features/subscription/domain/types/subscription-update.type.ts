@@ -1,4 +1,4 @@
-import { SubscriptionStateVO } from '../entities/values/index';
+import { SubscriptionStateVO } from '../entities/values';
 
 export interface SubscriptionUpdate {
   subscriptionId: string;

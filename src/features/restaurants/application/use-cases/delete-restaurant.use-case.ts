@@ -1,10 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
-import {
-  DeleteRestaurantCommand,
-  DeleteRestaurantResponseDto,
-} from '../dto/index';
-import { RestaurantMapper } from '../mappers/index';
+import { DeleteRestaurantCommand, DeleteRestaurantResponseDto } from '../dto';
+import { RestaurantMapper } from '../mappers';
 
 export class DeleteRestaurantUseCase
   implements UseCase<DeleteRestaurantCommand, DeleteRestaurantResponseDto>

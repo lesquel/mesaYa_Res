@@ -1,2 +1,2 @@
-export * from './controllers/index';
-export * from './dto/index';
+export * from './controllers';
+export * from './dto';

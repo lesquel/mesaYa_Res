@@ -4,7 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '@shared/infrastructure/kafka/index';
+} from '@shared/infrastructure/kafka';
 import type {
   CreateReservationCommand,
   DeleteReservationCommand,
@@ -15,7 +15,7 @@ import type {
   DeleteReservationResponseDto,
   PaginatedReservationResponse,
   UpdateReservationCommand,
-} from '../dto/index';
+} from '../dto';
 import {
   CreateReservationUseCase,
   DeleteReservatioUseCase,
@@ -23,7 +23,7 @@ import {
   ListReservationsUseCase,
   ListRestaurantReservationsUseCase,
   UpdateReservationUseCase,
-} from '../use-cases/index';
+} from '../use-cases';
 
 @Injectable()
 export class ReservationService {

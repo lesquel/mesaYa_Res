@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { ReservationsController } from './interface/index';
+import { ReservationsController } from './interface';
 import {
   ReservationOrmEntity,
   ReservationTypeOrmRepository,
@@ -10,7 +10,7 @@ import {
   UserTypeOrmReservationProvider,
   TableTypeOrmReservationProvider,
   ReservationAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
+} from './infrastructure';
 import {
   CreateReservationUseCase,
   ListReservationsUseCase,
@@ -24,17 +24,17 @@ import {
   RESERVATION_EVENT_PUBLISHER,
   RESERVATION_ANALYTICS_REPOSITORY,
   GetReservationAnalyticsUseCase,
-} from './application/index';
-import { RestaurantOrmEntity } from '../restaurants/index';
-import { ReservationService } from './application/index';
-import { ReservationEventNoopProvider } from './infrastructure/index';
+} from './application';
+import { RestaurantOrmEntity } from '../restaurants';
+import { ReservationService } from './application';
+import { ReservationEventNoopProvider } from './infrastructure';
 import {
   ReservationDomainService,
   IReservationRepositoryPort,
   IReservationRestaurantPort,
   IReservationUserPort,
   IReservationTablePort,
-} from './domain/index';
+} from './domain';
 import { TableOrmEntity } from '../tables/infrastructure/database/typeorm/orm/table.orm-entity';
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/section.orm-entity';
 

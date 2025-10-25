@@ -3,12 +3,12 @@ import { UseCase } from '@shared/application/ports/use-case.port';
 import {
   ListRestaurantReservationsQuery,
   PaginatedReservationResponse,
-} from '../dto/index';
-import { ReservationMapper } from '../mappers/index';
+} from '../dto';
+import { ReservationMapper } from '../mappers';
 import {
   RESERVATION_REPOSITORY,
   type ReservationRepositoryPort,
-} from '../ports/index';
+} from '../ports';
 
 @Injectable()
 export class ListRestaurantReservationsUseCase

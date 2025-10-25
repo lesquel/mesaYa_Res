@@ -7,8 +7,8 @@ import {
   DishCreate,
   DishUpdate,
 } from '@features/menus/domain';
-import { DishOrmEntity } from '../orm/index';
-import { DishOrmMapper } from '../mappers/index';
+import { DishOrmEntity } from '../orm';
+import { DishOrmMapper } from '../mappers';
 
 @Injectable()
 export class DishTypeOrmRepository extends IDishRepositoryPort {

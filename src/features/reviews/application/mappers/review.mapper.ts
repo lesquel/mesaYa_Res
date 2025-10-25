@@ -1,5 +1,5 @@
-import { Review } from '../../domain/index';
-import { ReviewResponseDto } from '../dto/index';
+import { Review } from '../../domain';
+import { ReviewResponseDto } from '../dto';
 
 export class ReviewMapper {
   static toResponse(review: Review): ReviewResponseDto {

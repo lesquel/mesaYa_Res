@@ -42,7 +42,7 @@ import {
   DishAnalyticsRequestDto,
   DishAnalyticsResponseDto,
   UpdateDishRequestDto,
-} from '@features/menus/presentation/dto/index';
+} from '@features/menus/presentation/dto';
 
 @ApiTags('Dishes')
 @Controller({ path: 'dishes', version: '1' })

@@ -1,6 +1,6 @@
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { SectionObject } from '../../domain/index';
-import { ListSectionObjectsQuery } from '../dto/index';
+import { SectionObject } from '../../domain';
+import { ListSectionObjectsQuery } from '../dto';
 
 export const SECTION_OBJECT_REPOSITORY = Symbol('SECTION_OBJECT_REPOSITORY');
 

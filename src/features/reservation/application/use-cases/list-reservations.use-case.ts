@@ -1,14 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import {
-  ListReservationsQuery,
-  PaginatedReservationResponse,
-} from '../dto/index';
-import { ReservationMapper } from '../mappers/index';
+import { ListReservationsQuery, PaginatedReservationResponse } from '../dto';
+import { ReservationMapper } from '../mappers';
 import {
   RESERVATION_REPOSITORY,
   type ReservationRepositoryPort,
-} from '../ports/index';
+} from '../ports';
 
 @Injectable()
 export class ListReservationsUseCase

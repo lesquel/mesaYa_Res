@@ -1,6 +1,6 @@
-import { Image } from '../../domain/index';
+import { Image } from '../../domain';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { ListImagesQuery } from '../dto/index';
+import { ListImagesQuery } from '../dto';
 
 export const IMAGE_REPOSITORY = Symbol('IMAGE_REPOSITORY');
 

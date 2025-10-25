@@ -1,10 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import {
-  ListRestaurantSectionsQuery,
-  PaginatedSectionResponse,
-} from '../dto/index';
-import { SectionMapper } from '../mappers/index';
-import { type SectionRepositoryPort } from '../ports/index';
+import { ListRestaurantSectionsQuery, PaginatedSectionResponse } from '../dto';
+import { SectionMapper } from '../mappers';
+import { type SectionRepositoryPort } from '../ports';
 
 export class ListRestaurantSectionsUseCase
   implements UseCase<ListRestaurantSectionsQuery, PaginatedSectionResponse>

@@ -1,8 +1,5 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
-import {
-  ListReservationsQuery,
-  ListRestaurantReservationsQuery,
-} from '../dto/index';
+import { ListReservationsQuery, ListRestaurantReservationsQuery } from '../dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 
 export const RESERVATION_REPOSITORY = Symbol('RESERVATION_REPOSITORY');

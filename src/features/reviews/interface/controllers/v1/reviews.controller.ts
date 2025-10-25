@@ -33,7 +33,7 @@ import {
   CreateReviewDto,
   ReviewsService,
   UpdateReviewDto,
-} from '@features/reviews/application/index';
+} from '@features/reviews/application';
 import { GetReviewAnalyticsUseCase } from '@features/reviews/application/use-cases/get-review-analytics.use-case';
 import type {
   CreateReviewCommand,
@@ -45,7 +45,7 @@ import type {
   ReviewResponseDto,
   PaginatedReviewResponse,
   DeleteReviewResponseDto,
-} from '@features/reviews/application/index';
+} from '@features/reviews/application';
 import { ReviewAnalyticsRequestDto } from '@features/reviews/interface/dto/review-analytics.request.dto';
 import { ReviewAnalyticsResponseDto } from '@features/reviews/interface/dto/review-analytics.response.dto';
 

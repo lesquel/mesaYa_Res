@@ -1,5 +1,5 @@
-import { GraphicObject } from '../../domain/index';
-import { GraphicObjectResponseDto } from '../dto/index';
+import { GraphicObject } from '../../domain';
+import { GraphicObjectResponseDto } from '../dto';
 
 export class GraphicObjectMapper {
   static toResponse(entity: GraphicObject): GraphicObjectResponseDto {

@@ -1,8 +1,8 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { TableNotFoundError } from '../../domain/index';
-import { FindTableQuery, TableResponseDto } from '../dto/index';
-import { TableMapper } from '../mappers/index';
-import { type TableRepositoryPort } from '../ports/index';
+import { TableNotFoundError } from '../../domain';
+import { FindTableQuery, TableResponseDto } from '../dto';
+import { TableMapper } from '../mappers';
+import { type TableRepositoryPort } from '../ports';
 
 export class FindTableUseCase
   implements UseCase<FindTableQuery, TableResponseDto>

@@ -1,8 +1,8 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { TableDomainService } from '../../domain/index';
-import { UpdateTableCommand, TableResponseDto } from '../dto/index';
-import { TableMapper } from '../mappers/index';
-import { type TableEventPublisherPort } from '../ports/index';
+import { TableDomainService } from '../../domain';
+import { UpdateTableCommand, TableResponseDto } from '../dto';
+import { TableMapper } from '../mappers';
+import { type TableEventPublisherPort } from '../ports';
 
 export class UpdateTableUseCase
   implements UseCase<UpdateTableCommand, TableResponseDto>

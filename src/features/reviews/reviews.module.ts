@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { ReviewsController } from './interface/index';
+import { ReviewsController } from './interface';
 import {
   ReviewOrmEntity,
   ReviewTypeOrmRepository,
   RestaurantTypeOrmReviewProvider,
   UserTypeOrmReviewProvider,
   ReviewAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
+} from './infrastructure';
 import {
   CreateReviewUseCase,
   ListReviewsUseCase,
@@ -25,17 +25,17 @@ import {
   REVIEW_ANALYTICS_REPOSITORY,
   type ReviewRepositoryPort,
   type ReviewAnalyticsRepositoryPort,
-} from './application/index';
+} from './application';
 import {
   ReviewDomainService,
   IReviewDomainRepositoryPort,
   type ReviewRestaurantPort,
   type ReviewUserPort,
-} from './domain/index';
+} from './domain';
 import { REVIEW_RESTAURANT_PORT } from './domain/ports/review-restaurant.port';
 import { REVIEW_USER_PORT } from './domain/ports/review-user.port';
-import { KafkaService } from '@shared/infrastructure/kafka/index';
-import { RestaurantOrmEntity } from '../restaurants/index';
+import { KafkaService } from '@shared/infrastructure/kafka';
+import { RestaurantOrmEntity } from '../restaurants';
 
 @Module({
   imports: [

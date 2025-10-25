@@ -1,6 +1,6 @@
-import { Table } from '../../../../domain/index';
-import { TableOrmEntity } from '../orm/index';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
+import { Table } from '../../../../domain';
+import { TableOrmEntity } from '../orm';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 
 export class TableOrmMapper {
   static toOrmEntity(

@@ -1,3 +1,3 @@
-export * from './input/index';
-export * from './output/index';
-export * from './analytics/index';
+export * from './input';
+export * from './output';
+export * from './analytics';

@@ -1,4 +1,4 @@
-import { InvalidReservationDataError } from '../errors/index';
+import { InvalidReservationDataError } from '../errors';
 
 export interface ReservartionProps {
   userId: string;

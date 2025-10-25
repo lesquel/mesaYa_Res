@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
-import { type RestaurantSectionReaderPort } from '../../../../application/ports/index';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
+import { type RestaurantSectionReaderPort } from '../../../../application/ports';
 import {
   ISectionRestaurantPort,
   type SectionRestaurantSnapshot,
-} from '../../../../domain/ports/index';
+} from '../../../../domain/ports';
 
 @Injectable()
 export class RestaurantTypeOrmSectionProvider

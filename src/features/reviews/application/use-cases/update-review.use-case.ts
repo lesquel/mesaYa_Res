@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { ReviewDomainService } from '../../domain/index';
-import { UpdateReviewCommand, ReviewResponseDto } from '../dto/index';
-import { ReviewMapper } from '../mappers/index';
+import { ReviewDomainService } from '../../domain';
+import { UpdateReviewCommand, ReviewResponseDto } from '../dto';
+import { ReviewMapper } from '../mappers';
 export class UpdateReviewUseCase
   implements UseCase<UpdateReviewCommand, ReviewResponseDto>
 {

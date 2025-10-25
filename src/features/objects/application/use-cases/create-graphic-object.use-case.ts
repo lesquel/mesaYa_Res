@@ -1,16 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { randomUUID } from 'crypto';
-import { GraphicObjectMapper } from '../mappers/index';
-import {
-  CreateGraphicObjectCommand,
-  GraphicObjectResponseDto,
-} from '../dto/index';
+import { GraphicObjectMapper } from '../mappers';
+import { CreateGraphicObjectCommand, GraphicObjectResponseDto } from '../dto';
 import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   type GraphicObjectEventPublisherPort,
-} from '../ports/index';
-import { GraphicObjectDomainService } from '../../domain/index';
+} from '../ports';
+import { GraphicObjectDomainService } from '../../domain';
 
 @Injectable()
 export class CreateGraphicObjectUseCase

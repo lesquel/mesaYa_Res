@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 
 @Entity({ name: 'section' })
 export class SectionOrmEntity {

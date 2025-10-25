@@ -1,5 +1,5 @@
-import { Table } from '../../domain/index';
-import { TableResponseDto } from '../dto/index';
+import { Table } from '../../domain';
+import { TableResponseDto } from '../dto';
 
 export class TableMapper {
   static toResponse(table: Table): TableResponseDto {

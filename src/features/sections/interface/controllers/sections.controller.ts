@@ -28,7 +28,7 @@ import {
   CreateSectionDto,
   SectionsService,
   UpdateSectionDto,
-} from '../../application/index';
+} from '../../application';
 import type {
   CreateSectionCommand,
   DeleteSectionCommand,
@@ -39,11 +39,11 @@ import type {
   PaginatedSectionResponse,
   SectionResponseDto,
   UpdateSectionCommand,
-} from '../../application/index';
+} from '../../application';
 import {
   DeleteSectionResponseSwaggerDto,
   SectionResponseSwaggerDto,
-} from '@features/sections/interface/dto/index';
+} from '@features/sections/interface/dto';
 
 @ApiTags('Sections')
 @Controller({ path: 'section', version: '1' })

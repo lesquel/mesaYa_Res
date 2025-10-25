@@ -5,17 +5,17 @@ import {
   Table,
   TableSectionNotFoundError,
   ITableDomainRepositoryPort,
-} from '../../../../domain/index';
-import { TableOrmEntity } from '../orm/index';
-import { TableOrmMapper } from '../mappers/index';
+} from '../../../../domain';
+import { TableOrmEntity } from '../orm';
+import { TableOrmMapper } from '../mappers';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import {
   ListTablesQuery,
   ListSectionTablesQuery,
-} from '../../../../application/dto/index';
-import { type TableRepositoryPort } from '../../../../application/ports/index';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
+} from '../../../../application/dto';
+import { type TableRepositoryPort } from '../../../../application/ports';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 
 @Injectable()
 export class TableTypeOrmRepository

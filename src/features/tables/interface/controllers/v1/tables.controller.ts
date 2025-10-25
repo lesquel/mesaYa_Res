@@ -31,7 +31,7 @@ import {
 import {
   CreateTableDto,
   UpdateTableDto,
-} from '@features/tables/application/dto/index';
+} from '@features/tables/application/dto';
 import { GetTableAnalyticsUseCase } from '@features/tables/application/use-cases/get-table-analytics.use-case';
 import type {
   CreateTableCommand,
@@ -43,8 +43,8 @@ import type {
   TableResponseDto,
   PaginatedTableResponse,
   DeleteTableResponseDto,
-} from '@features/tables/application/dto/index';
-import { TablesService } from '@features/tables/application/services/index';
+} from '@features/tables/application/dto';
+import { TablesService } from '@features/tables/application/services';
 import { TableAnalyticsRequestDto } from '@features/tables/interface/dto/table-analytics.request.dto';
 import { TableAnalyticsResponseDto } from '@features/tables/interface/dto/table-analytics.response.dto';
 

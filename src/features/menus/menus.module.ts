@@ -9,11 +9,11 @@ import {
   MENU_ANALYTICS_REPOSITORY,
   GetDishAnalyticsUseCase,
   DISH_ANALYTICS_REPOSITORY,
-} from './application/index';
+} from './application';
 import {
   DishesController,
   MenusController,
-} from './presentation/controllers/v1/index';
+} from './presentation/controllers/v1';
 import {
   DishOrmEntity,
   MenuOrmEntity,
@@ -21,8 +21,8 @@ import {
   MenuTypeOrmRepository,
   MenuAnalyticsTypeOrmRepository,
   DishAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
-import { IDishRepositoryPort, IMenuRepositoryPort } from './domain/index';
+} from './infrastructure';
+import { IDishRepositoryPort, IMenuRepositoryPort } from './domain';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';

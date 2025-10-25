@@ -7,18 +7,18 @@ import {
   ReviewNotFoundError,
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
-} from '../../../../domain/index';
+} from '../../../../domain';
 import {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
-} from '../../../../application/dto/index';
+} from '../../../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { type ReviewRepositoryPort } from '../../../../application/ports/index';
+import { type ReviewRepositoryPort } from '../../../../application/ports';
 import { IReviewDomainRepositoryPort } from '../../../../domain/repositories';
-import { ReviewOrmEntity } from '../orm/index';
-import { ReviewOrmMapper } from '../mappers/index';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
+import { ReviewOrmEntity } from '../orm';
+import { ReviewOrmMapper } from '../mappers';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 
 @Injectable()
 export class ReviewTypeOrmRepository

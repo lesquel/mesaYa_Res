@@ -49,7 +49,7 @@ import {
   SubscriptionPlanAnalyticsResponseDto,
   SubscriptionPlanResponseSwaggerDto,
   UpdateSubscriptionPlanRequestDto,
-} from '@features/subscription/presentation/dto/index';
+} from '@features/subscription/presentation/dto';
 
 @ApiTags('Subscription plans')
 @Controller({ path: 'subscription-plans', version: '1' })

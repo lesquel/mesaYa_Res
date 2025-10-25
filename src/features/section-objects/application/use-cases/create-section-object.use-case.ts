@@ -1,16 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { randomUUID } from 'crypto';
-import { SectionObjectDomainService } from '../../domain/index';
-import {
-  CreateSectionObjectCommand,
-  SectionObjectResponseDto,
-} from '../dto/index';
-import { SectionObjectMapper } from '../mappers/index';
+import { SectionObjectDomainService } from '../../domain';
+import { CreateSectionObjectCommand, SectionObjectResponseDto } from '../dto';
+import { SectionObjectMapper } from '../mappers';
 import {
   SECTION_OBJECT_EVENT_PUBLISHER,
   type SectionObjectEventPublisherPort,
-} from '../ports/index';
+} from '../ports';
 
 @Injectable()
 export class CreateSectionObjectUseCase

@@ -3,7 +3,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '@shared/infrastructure/kafka/index';
+} from '@shared/infrastructure/kafka';
 import type {
   CreateTableCommand,
   DeleteTableCommand,
@@ -14,7 +14,7 @@ import type {
   DeleteTableResponseDto,
   PaginatedTableResponse,
   UpdateTableCommand,
-} from '../dto/index';
+} from '../dto';
 import {
   CreateTableUseCase,
   DeleteTableUseCase,
@@ -22,7 +22,7 @@ import {
   ListTablesUseCase,
   ListSectionTablesUseCase,
   UpdateTableUseCase,
-} from '../use-cases/index';
+} from '../use-cases';
 
 export class TablesService {
   constructor(

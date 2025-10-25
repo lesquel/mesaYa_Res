@@ -1,6 +1,6 @@
-import { Section } from '../../../../domain/index';
-import { SectionOrmEntity } from '../orm/index';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
+import { Section } from '../../../../domain';
+import { SectionOrmEntity } from '../orm';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 
 export interface SectionOrmMapperOptions {
   existing?: SectionOrmEntity;

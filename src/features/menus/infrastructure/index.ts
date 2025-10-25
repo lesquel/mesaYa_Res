@@ -1,3 +1,3 @@
-export * from './database/typeorm/mappers/index';
-export * from './database/typeorm/orm/index';
-export * from './database/typeorm/repositories/index';
+export * from './database/typeorm/mappers';
+export * from './database/typeorm/orm';
+export * from './database/typeorm/repositories';

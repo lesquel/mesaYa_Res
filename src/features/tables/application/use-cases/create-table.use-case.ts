@@ -1,9 +1,9 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { randomUUID } from 'crypto';
-import { TableDomainService } from '../../domain/index';
-import { TableMapper } from '../mappers/index';
-import { CreateTableCommand, TableResponseDto } from '../dto/index';
-import { type TableEventPublisherPort } from '../ports/index';
+import { TableDomainService } from '../../domain';
+import { TableMapper } from '../mappers';
+import { CreateTableCommand, TableResponseDto } from '../dto';
+import { type TableEventPublisherPort } from '../ports';
 
 export class CreateTableUseCase
   implements UseCase<CreateTableCommand, TableResponseDto>

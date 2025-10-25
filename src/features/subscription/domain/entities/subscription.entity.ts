@@ -1,4 +1,4 @@
-import { SubscriptionStateVO } from './values/index';
+import { SubscriptionStateVO } from './values';
 
 export interface SubscriptionProps {
   // We store only identifiers to keep the aggregate decoupled from other aggregates.

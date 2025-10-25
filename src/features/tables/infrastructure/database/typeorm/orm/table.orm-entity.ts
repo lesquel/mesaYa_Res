@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm/index';
+import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 
 @Entity({ name: 'table' })
 export class TableOrmEntity {

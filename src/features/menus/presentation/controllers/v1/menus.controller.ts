@@ -42,7 +42,7 @@ import {
   DeleteMenuResponseSwaggerDto,
   MenuResponseSwaggerDto,
   UpdateMenuRequestDto,
-} from '@features/menus/presentation/dto/index';
+} from '@features/menus/presentation/dto';
 
 @ApiTags('Menus')
 @Controller({ path: 'menus', version: '1' })

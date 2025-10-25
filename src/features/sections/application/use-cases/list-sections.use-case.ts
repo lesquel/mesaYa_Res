@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { ListSectionsQuery, PaginatedSectionResponse } from '../dto/index';
-import { SectionMapper } from '../mappers/index';
-import { type SectionRepositoryPort } from '../ports/index';
+import { ListSectionsQuery, PaginatedSectionResponse } from '../dto';
+import { SectionMapper } from '../mappers';
+import { type SectionRepositoryPort } from '../ports';
 
 export class ListSectionsUseCase
   implements UseCase<ListSectionsQuery, PaginatedSectionResponse>

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   type ReservationEventPayload,
   type ReservationEventPublisherPort,
-} from '../../application/ports/index';
+} from '../../application/ports';
 
 @Injectable()
 export class ReservationEventNoopProvider

@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { RestaurantsController } from './interface/index';
+import { RestaurantsController } from './interface';
 import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
   OwnerTypeOrmProvider,
   RestaurantAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
+} from './infrastructure';
 import {
   CreateRestaurantUseCase,
   ListRestaurantsUseCase,
@@ -21,15 +21,15 @@ import {
   RESTAURANT_REPOSITORY,
   RESTAURANT_ANALYTICS_REPOSITORY,
   GetRestaurantAnalyticsUseCase,
-} from './application/index';
+} from './application';
 import { RestaurantDomainService } from './domain/services/restaurant-domain.service';
 import { IRestaurantDomainRepositoryPort } from './domain/repositories/restaurant-domain-repository.port';
 import { IRestaurantOwnerPort } from './domain/ports/restaurant-owner.port';
-import { KafkaService } from '@shared/infrastructure/kafka/index';
+import { KafkaService } from '@shared/infrastructure/kafka';
 import type {
   RestaurantRepositoryPort,
   RestaurantAnalyticsRepositoryPort,
-} from './application/index';
+} from './application';
 
 @Module({
   imports: [

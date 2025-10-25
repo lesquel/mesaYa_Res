@@ -7,8 +7,8 @@ import {
   MenuCreate,
   MenuUpdate,
 } from '@features/menus/domain';
-import { MenuOrmEntity, DishOrmEntity } from '../orm/index';
-import { MenuOrmMapper, DishOrmMapper } from '../mappers/index';
+import { MenuOrmEntity, DishOrmEntity } from '../orm';
+import { MenuOrmMapper, DishOrmMapper } from '../mappers';
 
 @Injectable()
 export class MenuTypeOrmRepository extends IMenuRepositoryPort {

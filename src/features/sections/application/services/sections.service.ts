@@ -2,7 +2,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
-} from '@shared/infrastructure/kafka/index';
+} from '@shared/infrastructure/kafka';
 import type {
   CreateSectionCommand,
   DeleteSectionCommand,
@@ -13,7 +13,7 @@ import type {
   PaginatedSectionResponse,
   SectionResponseDto,
   UpdateSectionCommand,
-} from '../dto/index';
+} from '../dto';
 import {
   CreateSectionUseCase,
   DeleteSectionUseCase,
@@ -21,7 +21,7 @@ import {
   ListRestaurantSectionsUseCase,
   ListSectionsUseCase,
   UpdateSectionUseCase,
-} from '../use-cases/index';
+} from '../use-cases';
 
 export class SectionsService {
   constructor(

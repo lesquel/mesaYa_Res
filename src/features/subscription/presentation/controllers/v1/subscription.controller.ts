@@ -50,7 +50,7 @@ import {
   SubscriptionResponseSwaggerDto,
   UpdateSubscriptionRequestDto,
   UpdateSubscriptionStateRequestDto,
-} from '@features/subscription/presentation/dto/index';
+} from '@features/subscription/presentation/dto';
 
 @ApiTags('Subscriptions')
 @Controller({ path: 'subscriptions', version: '1' })

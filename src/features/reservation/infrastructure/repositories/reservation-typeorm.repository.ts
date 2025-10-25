@@ -7,19 +7,19 @@ import {
   ReservationNotFoundError,
   ReservationRestaurantNotFoundError,
   ReservationUserNotFoundError,
-} from '../../domain/index';
+} from '../../domain';
 import {
   ListReservationsQuery,
   ListRestaurantReservationsQuery,
-} from '../../application/dto/index';
+} from '../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { type ReservationRepositoryPort } from '../../application/ports/index';
+import { type ReservationRepositoryPort } from '../../application/ports';
 import { IReservationRepositoryPort } from '../../domain/repositories';
 import type { ReservationWindowQuery } from '../../domain/types';
-import { ReservationOrmEntity } from '../orm/index';
-import { ReservationOrmMapper } from '../mappers/index';
-import { RestaurantOrmEntity } from '../../../restaurants/index';
+import { ReservationOrmEntity } from '../orm';
+import { ReservationOrmMapper } from '../mappers';
+import { RestaurantOrmEntity } from '../../../restaurants';
 
 @Injectable()
 export class ReservationTypeOrmRepository

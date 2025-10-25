@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { SectionObjectsController } from './interface/index';
-import { SectionObjectsService } from './application/index';
-import { SectionObjectOrmEntity } from './infrastructure/index';
+import { SectionObjectsController } from './interface';
+import { SectionObjectsService } from './application';
+import { SectionObjectOrmEntity } from './infrastructure';
 import { SectionObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/section-object-typeorm.repository';
 import { SectionTypeOrmReaderForSectionObject } from './infrastructure/providers/section-typeorm.provider';
 import { ObjectTypeOrmReaderForSectionObject } from './infrastructure/providers/object-typeorm.provider';
@@ -20,15 +20,15 @@ import {
   FindSectionObjectUseCase,
   UpdateSectionObjectUseCase,
   DeleteSectionObjectUseCase,
-} from './application/index';
-import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
-import { GraphicObjectOrmEntity } from '../objects/infrastructure/database/typeorm/orm/index';
+} from './application';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm';
+import { GraphicObjectOrmEntity } from '../objects/infrastructure/database/typeorm/orm';
 import {
   SectionObjectDomainService,
   ISectionObjectDomainRepositoryPort,
   ISectionObjectSectionReaderPort,
   ISectionObjectObjectReaderPort,
-} from './domain/index';
+} from './domain';
 
 @Module({
   imports: [

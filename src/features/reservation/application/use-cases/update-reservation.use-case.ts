@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { UpdateReservationCommand, ReservationResponseDto } from '../dto/index';
-import { ReservationMapper } from '../mappers/index';
+import { UpdateReservationCommand, ReservationResponseDto } from '../dto';
+import { ReservationMapper } from '../mappers';
 import {
   RESERVATION_EVENT_PUBLISHER,
   type ReservationEventPublisherPort,
-} from '../ports/index';
+} from '../ports';
 import { ReservationDomainService } from '../../domain/services/reservation-domain.service';
 
 @Injectable()

@@ -1,1 +1,1 @@
-export * from './controllers/v1/index';
+export * from './controllers/v1';

@@ -38,14 +38,14 @@ import {
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
   GetRestaurantAnalyticsUseCase,
-} from '@features/restaurants/application/index';
+} from '@features/restaurants/application';
 import type {
   ListOwnerRestaurantsQuery,
   ListRestaurantsQuery,
   RestaurantResponseDto,
   PaginatedRestaurantResponse,
   DeleteRestaurantResponseDto,
-} from '@features/restaurants/application/index';
+} from '@features/restaurants/application';
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
 

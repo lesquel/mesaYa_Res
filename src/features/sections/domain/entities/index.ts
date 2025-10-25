@@ -1,2 +1,2 @@
 export * from './section.entity';
-export * from './values/index';
+export * from './values';

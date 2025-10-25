@@ -4,12 +4,12 @@ import {
   ReviewRating,
   ReviewRestaurantId,
   ReviewUserId,
-} from './values/index';
+} from './values';
 import {
   type ReviewCreate,
   type ReviewSnapshot,
   type ReviewUpdate,
-} from '../types/index';
+} from '../types';
 
 interface ReviewProps {
   restaurantId: ReviewRestaurantId;

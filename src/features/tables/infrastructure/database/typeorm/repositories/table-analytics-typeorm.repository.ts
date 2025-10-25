@@ -7,7 +7,7 @@ import type {
   TableAnalyticsRepositoryTotals,
 } from '../../../../application/dto/analytics/table-analytics.response';
 import type { TableAnalyticsRepositoryPort } from '../../../../application/ports/table-analytics.repository.port';
-import { TableOrmEntity } from '../orm/index';
+import { TableOrmEntity } from '../orm';
 
 interface TableTotalsRaw {
   totalTables: string | number | null;

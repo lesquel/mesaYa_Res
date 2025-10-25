@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm/index';
+import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm';
 
 @Entity({ name: 'object' })
 export class GraphicObjectOrmEntity {

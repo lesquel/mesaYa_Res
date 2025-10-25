@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PaymentController } from './presentation/index';
+import { PaymentController } from './presentation';
 import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
   PaymentOrmMapper,
   PaymentAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
+} from './infrastructure';
 import {
   PaymentService,
   PaymentEntityDTOMapper,
   GetPaymentAnalyticsUseCase,
-} from './application/index';
-import { IPaymentRepositoryPort } from './domain/index';
+} from './application';
+import { IPaymentRepositoryPort } from './domain';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import {

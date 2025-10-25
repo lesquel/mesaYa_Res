@@ -8,7 +8,7 @@ import type {
   ReservationAnalyticsTrendPoint,
 } from '../../application/dto/analytics/reservation-analytics.response';
 import type { ReservationAnalyticsRepositoryPort } from '../../application/ports/reservation-analytics.repository.port';
-import { ReservationOrmEntity } from '../orm/index';
+import { ReservationOrmEntity } from '../orm';
 
 interface TotalsRaw {
   totalReservations: string | number | null;

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { SectionObjectNotFoundError } from '../../domain/index';
-import { FindSectionObjectQuery, SectionObjectResponseDto } from '../dto/index';
-import { SectionObjectMapper } from '../mappers/index';
+import { SectionObjectNotFoundError } from '../../domain';
+import { FindSectionObjectQuery, SectionObjectResponseDto } from '../dto';
+import { SectionObjectMapper } from '../mappers';
 import {
   SECTION_OBJECT_REPOSITORY,
   type SectionObjectRepositoryPort,
-} from '../ports/index';
+} from '../ports';
 
 @Injectable()
 export class FindSectionObjectUseCase

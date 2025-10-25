@@ -5,7 +5,7 @@ import {
   type RestaurantAnalyticsRepositoryResult,
   RESTAURANT_ANALYTICS_REPOSITORY,
   type RestaurantAnalyticsRepositoryPort,
-} from '../index';
+} from '..';
 
 export class GetRestaurantAnalyticsUseCase {
   constructor(

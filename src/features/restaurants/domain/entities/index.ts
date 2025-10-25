@@ -1,2 +1,2 @@
 export * from './restaurant.entity';
-export * from './values/index';
+export * from './values';

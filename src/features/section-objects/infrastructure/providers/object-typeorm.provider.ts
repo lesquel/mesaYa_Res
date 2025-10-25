@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GraphicObjectOrmEntity } from '../../../objects/infrastructure/database/typeorm/orm/index';
-import { type ObjectReaderForSectionObjectPort } from '../../application/ports/index';
-import { ISectionObjectObjectReaderPort } from '../../domain/index';
+import { GraphicObjectOrmEntity } from '../../../objects/infrastructure/database/typeorm/orm';
+import { type ObjectReaderForSectionObjectPort } from '../../application/ports';
+import { ISectionObjectObjectReaderPort } from '../../domain';
 
 @Injectable()
 export class ObjectTypeOrmReaderForSectionObject

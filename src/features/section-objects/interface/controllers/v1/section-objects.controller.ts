@@ -26,18 +26,18 @@ import {
   ThrottleRead,
   ThrottleModify,
 } from '@shared/infrastructure/decorators';
-import { SectionObjectsService } from '../../../application/services/index';
+import { SectionObjectsService } from '../../../application/services';
 import {
   CreateSectionObjectDto,
   UpdateSectionObjectDto,
-} from '../../../application/dto/index';
+} from '../../../application/dto';
 import type {
   CreateSectionObjectCommand,
   DeleteSectionObjectCommand,
   FindSectionObjectQuery,
   ListSectionObjectsQuery,
   UpdateSectionObjectCommand,
-} from '../../../application/dto/index';
+} from '../../../application/dto';
 
 @ApiTags('SectionObjects')
 @Controller({ path: 'section-object', version: '1' })

@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { TablesController } from './interface/index';
+import { TablesController } from './interface';
 import {
   TableOrmEntity,
   SectionTypeOrmTableProvider,
   TableTypeOrmRepository,
   TableEventNoopProvider,
   TableAnalyticsTypeOrmRepository,
-} from './infrastructure/index';
-import { TablesService } from './application/services/index';
+} from './infrastructure';
+import { TablesService } from './application/services';
 import {
   CreateTableUseCase,
   ListTablesUseCase,
@@ -18,25 +18,25 @@ import {
   UpdateTableUseCase,
   DeleteTableUseCase,
   GetTableAnalyticsUseCase,
-} from './application/use-cases/index';
+} from './application/use-cases';
 import {
   TABLE_REPOSITORY,
   SECTION_TABLE_READER,
   TABLE_EVENT_PUBLISHER,
   TABLE_ANALYTICS_REPOSITORY,
-} from './application/ports/index';
-import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/index';
+} from './application/ports';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm';
 import type {
   TableRepositoryPort,
   TableEventPublisherPort,
   TableAnalyticsRepositoryPort,
-} from './application/ports/index';
-import { KafkaService } from '@shared/infrastructure/kafka/index';
+} from './application/ports';
+import { KafkaService } from '@shared/infrastructure/kafka';
 import {
   TableDomainService,
   ITableDomainRepositoryPort,
   ITableSectionPort,
-} from './domain/index';
+} from './domain';
 
 @Module({
   imports: [

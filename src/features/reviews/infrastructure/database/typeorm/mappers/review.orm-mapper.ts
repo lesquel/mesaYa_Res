@@ -1,6 +1,6 @@
-import { Review } from '../../../../domain/index';
-import { ReviewOrmEntity } from '../orm/index';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure/index';
+import { Review } from '../../../../domain';
+import { ReviewOrmEntity } from '../orm';
+import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
 export class ReviewOrmMapper {

@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { RestaurantDay } from '../../../domain/index';
+import { RestaurantDay } from '../../../domain';
 
 const trim = () =>
   Transform(({ value }) => (typeof value === 'string' ? value.trim() : value));

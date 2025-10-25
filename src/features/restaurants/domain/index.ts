@@ -1,3 +1,3 @@
-export * from './entities/index';
-export * from './errors/index';
-export * from './types/index';
+export * from './entities';
+export * from './errors';
+export * from './types';
