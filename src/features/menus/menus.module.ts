@@ -91,6 +91,8 @@ const menuServiceProvider = {
     MenuService,
     GetMenuAnalyticsUseCase,
     GetDishAnalyticsUseCase,
+    IDishRepositoryPort,
+    IMenuRepositoryPort,
   ],
 })
 export class MenusModule {}
