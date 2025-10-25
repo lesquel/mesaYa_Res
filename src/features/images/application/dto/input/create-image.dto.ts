@@ -1,6 +1,12 @@
 import type { Buffer } from 'node:buffer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsPositive, IsString, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateImageDto {
   @ApiProperty({ example: 'Banner' })

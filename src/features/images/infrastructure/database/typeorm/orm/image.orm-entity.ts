@@ -13,7 +13,12 @@ export class ImageOrmEntity {
   @Column({ type: 'varchar', length: 255, name: 'url', nullable: false })
   url!: string;
 
-  @Column({ type: 'varchar', length: 255, name: 'storage_path', nullable: false })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'storage_path',
+    nullable: false,
+  })
   storagePath!: string;
 
   @CreateDateColumn({
@@ -26,7 +31,12 @@ export class ImageOrmEntity {
   @Column({ type: 'varchar', length: 20, name: 'titulo', nullable: false })
   title!: string;
 
-  @Column({ type: 'varchar', length: 100, name: 'descripcion', nullable: false })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    name: 'descripcion',
+    nullable: false,
+  })
   description!: string;
 
   @Column({ type: 'int', name: 'entidad_id', nullable: false })

@@ -2,10 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { ImageNotFoundError } from '../../domain/index.js';
 import { ImageMapper } from '../mappers/index.js';
-import {
-  DeleteImageCommand,
-  DeleteImageResponseDto,
-} from '../dto/index.js';
+import { DeleteImageCommand, DeleteImageResponseDto } from '../dto/index.js';
 import {
   IMAGE_EVENT_PUBLISHER,
   IMAGE_REPOSITORY,

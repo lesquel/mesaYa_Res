@@ -10,10 +10,7 @@ import {
   type ImageRepositoryPort,
   type ImageStoragePort,
 } from '../ports/index.js';
-import {
-  ImageResponseDto,
-  UpdateImageCommand,
-} from '../dto/index.js';
+import { ImageResponseDto, UpdateImageCommand } from '../dto/index.js';
 
 @Injectable()
 export class UpdateImageUseCase
@@ -47,7 +44,9 @@ export class UpdateImageUseCase
     }
 
     image.update({
-      ...(uploadResult ? { url: uploadResult.url, storagePath: uploadResult.path } : {}),
+      ...(uploadResult
+        ? { url: uploadResult.url, storagePath: uploadResult.path }
+        : {}),
       title: command.title,
       description: command.description,
       entityId: command.entityId,
