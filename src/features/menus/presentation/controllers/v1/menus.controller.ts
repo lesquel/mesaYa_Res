@@ -19,6 +19,12 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
 import type {
   MenuResponseDto,
   MenuListResponseDto,
@@ -47,6 +53,7 @@ export class MenusController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:create')
   @ApiBearerAuth()
@@ -60,6 +67,7 @@ export class MenusController {
   }
 
   @Get()
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:read')
   @ApiBearerAuth()
@@ -73,6 +81,7 @@ export class MenusController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:read')
   @ApiBearerAuth()
@@ -88,6 +97,7 @@ export class MenusController {
   }
 
   @Get(':menuId')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:read')
   @ApiBearerAuth()
@@ -100,6 +110,7 @@ export class MenusController {
   }
 
   @Patch(':menuId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:update')
   @ApiBearerAuth()
@@ -116,6 +127,7 @@ export class MenusController {
   }
 
   @Delete(':menuId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:delete')
   @ApiBearerAuth()

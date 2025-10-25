@@ -24,6 +24,12 @@ import { CurrentUser } from '@features/auth/interface/decorators/current-user.de
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   CreateRestaurantCommand,
   CreateRestaurantDto,
   DeleteRestaurantCommand,
@@ -52,6 +58,7 @@ export class RestaurantsController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:create')
   @ApiOperation({ summary: 'Crear restaurante (permiso restaurant:create)' })
@@ -69,6 +76,7 @@ export class RestaurantsController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar restaurantes (paginado)' })
   @ApiPaginationQuery()
   async findAll(
@@ -79,6 +87,7 @@ export class RestaurantsController {
   }
 
   @Get('me')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:read')
   @ApiOperation({ summary: 'Listar mis restaurantes (owner actual)' })
@@ -97,6 +106,7 @@ export class RestaurantsController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @Permissions('restaurant:read')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @ApiOperation({ summary: 'Indicadores analíticos de restaurantes' })
@@ -111,6 +121,7 @@ export class RestaurantsController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener un restaurante por ID' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   async findOne(
@@ -121,6 +132,7 @@ export class RestaurantsController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:update')
   @ApiOperation({
@@ -143,6 +155,7 @@ export class RestaurantsController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:delete')
   @ApiOperation({ summary: 'Eliminar restaurante (permiso restaurant:delete)' })

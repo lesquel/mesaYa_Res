@@ -24,6 +24,12 @@ import { CurrentUser } from '@features/auth/interface/decorators/current-user.de
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   CreateReservationDto,
   CreateReservationCommand,
   UpdateReservationDto,
@@ -54,6 +60,7 @@ export class ReservationsController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('reservation:create')
   @ApiOperation({ summary: 'Crear una reserva (permiso reservation:create)' })
@@ -71,6 +78,7 @@ export class ReservationsController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar reservas (paginado)' })
   @ApiPaginationQuery()
   async findAll(
@@ -81,6 +89,7 @@ export class ReservationsController {
   }
 
   @Get('restaurant/:restaurantId')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar reservas por restaurante' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiPaginationQuery()
@@ -97,6 +106,7 @@ export class ReservationsController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('reservation:read')
   @ApiOperation({ summary: 'Datos analíticos de reservas' })
@@ -111,6 +121,7 @@ export class ReservationsController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener una reserva por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async findOne(
@@ -121,6 +132,7 @@ export class ReservationsController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('reservation:update')
   @ApiOperation({
@@ -143,6 +155,7 @@ export class ReservationsController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('reservation:delete')
   @ApiOperation({

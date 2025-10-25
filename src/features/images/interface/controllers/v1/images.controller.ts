@@ -35,6 +35,12 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   ImagesService,
   CreateImageDto,
   UpdateImageDto,
@@ -63,6 +69,7 @@ export class ImagesController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:create')
   @ApiOperation({ summary: 'Crear imagen (permiso image:create)' })
@@ -113,6 +120,7 @@ export class ImagesController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar imágenes (paginado)' })
   @ApiPaginationQuery()
   async list(
@@ -121,7 +129,40 @@ export class ImagesController {
     return this.images.list(query);
   }
 
+  @Get('analytics')
+  @ThrottleSearch()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('image:read')
+  @ApiOperation({ summary: 'Datos analíticos de imágenes' })
+  @ApiBearerAuth()
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'Fecha inicial (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'Fecha final (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'entityId',
+    required: false,
+    type: String,
+    description: 'Filtra por entidad asociada',
+  })
+  async analytics(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    query: ImageAnalyticsRequestDto,
+  ): Promise<ImageAnalyticsResponseDto> {
+    const analytics = await this.getImageAnalytics.execute(query.toQuery());
+    return ImageAnalyticsResponseDto.fromApplication(analytics);
+  }
+
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener imagen por ID' })
   @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
   async findOne(@Param('uuid') id: string) {
@@ -130,6 +171,7 @@ export class ImagesController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:update')
   @ApiOperation({ summary: 'Actualizar imagen (permiso image:update)' })
@@ -184,6 +226,7 @@ export class ImagesController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:delete')
   @ApiOperation({ summary: 'Eliminar imagen (permiso image:delete)' })
@@ -192,36 +235,5 @@ export class ImagesController {
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const command: DeleteImageCommand = { imageId: id };
     return this.images.delete(command);
-  }
-
-  @Get('analytics')
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('image:read')
-  @ApiOperation({ summary: 'Datos analíticos de imágenes' })
-  @ApiBearerAuth()
-  @ApiQuery({
-    name: 'startDate',
-    required: false,
-    type: String,
-    description: 'Fecha inicial (ISO 8601)',
-  })
-  @ApiQuery({
-    name: 'endDate',
-    required: false,
-    type: String,
-    description: 'Fecha final (ISO 8601)',
-  })
-  @ApiQuery({
-    name: 'entityId',
-    required: false,
-    type: String,
-    description: 'Filtra por entidad asociada',
-  })
-  async analytics(
-    @Query(new ValidationPipe({ transform: true, whitelist: true }))
-    query: ImageAnalyticsRequestDto,
-  ): Promise<ImageAnalyticsResponseDto> {
-    const analytics = await this.getImageAnalytics.execute(query.toQuery());
-    return ImageAnalyticsResponseDto.fromApplication(analytics);
   }
 }

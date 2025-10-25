@@ -23,6 +23,12 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   PaymentService,
   GetPaymentAnalyticsUseCase,
 } from '@features/payment/application';
@@ -53,6 +59,7 @@ export class PaymentController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('payment:create')
   @ApiBearerAuth()
@@ -69,6 +76,7 @@ export class PaymentController {
   }
 
   @Get()
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('payment:read')
   @ApiBearerAuth()
@@ -84,7 +92,27 @@ export class PaymentController {
     return this.paymentService.getAllPayments(params);
   }
 
+  @Get('analytics')
+  @ThrottleSearch()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('payment:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Payment analytics overview' })
+  @ApiOkResponse({
+    description: 'Dashboard analytics for payments',
+    type: PaymentAnalyticsResponseDto,
+  })
+  async getAnalytics(
+    @Query() query: PaymentAnalyticsRequestDto,
+  ): Promise<PaymentAnalyticsResponseDto> {
+    const analytics = await this.getPaymentAnalyticsUseCase.execute(
+      query.toQuery(),
+    );
+    return PaymentAnalyticsResponseDto.fromApplication(analytics);
+  }
+
   @Get(':paymentId')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('payment:read')
   @ApiBearerAuth()
@@ -101,6 +129,7 @@ export class PaymentController {
   }
 
   @Patch(':paymentId/status')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('payment:update')
   @ApiBearerAuth()
@@ -122,6 +151,7 @@ export class PaymentController {
   }
 
   @Delete(':paymentId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('payment:delete')
   @ApiBearerAuth()
@@ -135,23 +165,5 @@ export class PaymentController {
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
   ): Promise<DeletePaymentResponseDto> {
     return this.paymentService.deletePayment({ paymentId });
-  }
-
-  @Get('analytics')
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('payment:read')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Payment analytics overview' })
-  @ApiOkResponse({
-    description: 'Dashboard analytics for payments',
-    type: PaymentAnalyticsResponseDto,
-  })
-  async getAnalytics(
-    @Query() query: PaymentAnalyticsRequestDto,
-  ): Promise<PaymentAnalyticsResponseDto> {
-    const analytics = await this.getPaymentAnalyticsUseCase.execute(
-      query.toQuery(),
-    );
-    return PaymentAnalyticsResponseDto.fromApplication(analytics);
   }
 }

@@ -23,6 +23,12 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   ObjectsService,
   type CreateGraphicObjectCommand,
   type DeleteGraphicObjectCommand,
@@ -47,6 +53,7 @@ export class ObjectsController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:create')
   @ApiOperation({ summary: 'Crear objeto gráfico (permiso object:create)' })
@@ -58,6 +65,7 @@ export class ObjectsController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar objetos gráficos (paginado)' })
   @ApiPaginationQuery()
   async list(
@@ -68,6 +76,7 @@ export class ObjectsController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:read')
   @ApiOperation({ summary: 'Datos analíticos de objetos gráficos' })
@@ -82,6 +91,7 @@ export class ObjectsController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener objeto por ID' })
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
@@ -90,6 +100,7 @@ export class ObjectsController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:update')
   @ApiOperation({ summary: 'Actualizar objeto (permiso object:update)' })
@@ -105,6 +116,7 @@ export class ObjectsController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:delete')
   @ApiOperation({ summary: 'Eliminar objeto (permiso object:delete)' })

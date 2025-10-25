@@ -23,6 +23,12 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   CreateTableDto,
   UpdateTableDto,
 } from '@features/tables/application/dto/index';
@@ -51,6 +57,7 @@ export class TablesController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('table:create')
   @ApiOperation({ summary: 'Crear mesa (permiso table:create)' })
@@ -62,6 +69,7 @@ export class TablesController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar mesas (paginado)' })
   @ApiPaginationQuery()
   async findAll(
@@ -72,6 +80,7 @@ export class TablesController {
   }
 
   @Get('section/:sectionId')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar mesas por sección' })
   @ApiParam({ name: 'sectionId', description: 'UUID de la sección' })
   @ApiPaginationQuery()
@@ -88,6 +97,7 @@ export class TablesController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('table:read')
   @ApiOperation({ summary: 'Indicadores analíticos de mesas' })
@@ -100,6 +110,7 @@ export class TablesController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener mesa por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   async findOne(
@@ -110,6 +121,7 @@ export class TablesController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('table:update')
   @ApiOperation({ summary: 'Actualizar mesa (permiso table:update)' })
@@ -125,6 +137,7 @@ export class TablesController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('table:delete')
   @ApiOperation({ summary: 'Eliminar mesa (permiso table:delete)' })

@@ -24,6 +24,12 @@ import { CurrentUser } from '@features/auth/interface/decorators/current-user.de
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   CreateReviewDto,
   ReviewsService,
   UpdateReviewDto,
@@ -52,6 +58,7 @@ export class ReviewsController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('review:create')
   @ApiOperation({ summary: 'Crear una reseña (permiso review:create)' })
@@ -69,6 +76,7 @@ export class ReviewsController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar reseñas (paginado)' })
   @ApiPaginationQuery()
   async findAll(
@@ -79,6 +87,7 @@ export class ReviewsController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('review:read')
   @ApiOperation({ summary: 'Indicadores analíticos de reseñas' })
@@ -91,6 +100,7 @@ export class ReviewsController {
   }
 
   @Get('restaurant/:restaurantId')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar reseñas por restaurante' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiPaginationQuery()
@@ -107,6 +117,7 @@ export class ReviewsController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener una reseña por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
   async findOne(
@@ -117,6 +128,7 @@ export class ReviewsController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('review:update')
   @ApiOperation({ summary: 'Actualizar reseña propia (permiso review:update)' })
@@ -137,6 +149,7 @@ export class ReviewsController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('review:delete')
   @ApiOperation({ summary: 'Eliminar reseña propia (permiso review:delete)' })

@@ -19,6 +19,12 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
 import type {
   DishResponseDto,
   DishListResponseDto,
@@ -47,6 +53,7 @@ export class DishesController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:create')
   @ApiBearerAuth()
@@ -60,6 +67,7 @@ export class DishesController {
   }
 
   @Get()
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:read')
   @ApiBearerAuth()
@@ -73,6 +81,7 @@ export class DishesController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:read')
   @ApiBearerAuth()
@@ -88,6 +97,7 @@ export class DishesController {
   }
 
   @Get(':dishId')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:read')
   @ApiBearerAuth()
@@ -100,6 +110,7 @@ export class DishesController {
   }
 
   @Patch(':dishId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:update')
   @ApiBearerAuth()
@@ -116,6 +127,7 @@ export class DishesController {
   }
 
   @Delete(':dishId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:delete')
   @ApiBearerAuth()

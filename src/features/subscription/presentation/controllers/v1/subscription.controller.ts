@@ -22,6 +22,12 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
 
 import {
   GetSubscriptionAnalyticsUseCase,
@@ -54,6 +60,7 @@ export class SubscriptionController {
     private readonly getSubscriptionAnalytics: GetSubscriptionAnalyticsUseCase,
   ) {}
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:read')
   @ApiBearerAuth()
@@ -71,6 +78,7 @@ export class SubscriptionController {
   }
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:create')
   @ApiBearerAuth()
@@ -87,6 +95,7 @@ export class SubscriptionController {
   }
 
   @Get()
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:read')
   @ApiBearerAuth()
@@ -104,6 +113,7 @@ export class SubscriptionController {
   }
 
   @Get(':subscriptionId')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:read')
   @ApiBearerAuth()
@@ -120,6 +130,7 @@ export class SubscriptionController {
   }
 
   @Patch(':subscriptionId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:update')
   @ApiBearerAuth()
@@ -141,6 +152,7 @@ export class SubscriptionController {
   }
 
   @Patch(':subscriptionId/state')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:update')
   @ApiBearerAuth()
@@ -162,6 +174,7 @@ export class SubscriptionController {
   }
 
   @Delete(':subscriptionId')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:delete')
   @ApiBearerAuth()

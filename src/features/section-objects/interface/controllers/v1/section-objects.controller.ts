@@ -21,6 +21,11 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import { ApiPaginationQuery } from '../../../../../shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+} from '@shared/infrastructure/decorators';
 import { SectionObjectsService } from '../../../application/services/index';
 import {
   CreateSectionObjectDto,
@@ -40,6 +45,7 @@ export class SectionObjectsController {
   constructor(private readonly service: SectionObjectsService) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:create')
   @ApiOperation({
@@ -53,6 +59,7 @@ export class SectionObjectsController {
   }
 
   @Get()
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:read')
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
@@ -66,6 +73,7 @@ export class SectionObjectsController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:read')
   @ApiOperation({ summary: 'Obtener relación por ID' })
@@ -77,6 +85,7 @@ export class SectionObjectsController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:update')
   @ApiOperation({
@@ -97,6 +106,7 @@ export class SectionObjectsController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:delete')
   @ApiOperation({

@@ -26,6 +26,12 @@ import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pag
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+  ThrottleModify,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
+import {
   CreateSectionDto,
   SectionsService,
   UpdateSectionDto,
@@ -58,6 +64,7 @@ export class SectionsController {
   ) {}
 
   @Post()
+  @ThrottleCreate()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:create')
   @ApiOperation({ summary: 'Crear sección (permiso section:create)' })
@@ -73,6 +80,7 @@ export class SectionsController {
   }
 
   @Get('restaurant/:restaurantId')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar secciones por restaurante' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiPaginationQuery()
@@ -93,6 +101,7 @@ export class SectionsController {
   }
 
   @Get()
+  @ThrottleRead()
   @ApiOperation({ summary: 'Listar secciones (paginado)' })
   @ApiPaginationQuery()
   @ApiPaginatedResponse({
@@ -107,6 +116,7 @@ export class SectionsController {
   }
 
   @Get('analytics')
+  @ThrottleSearch()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:read')
   @ApiOperation({ summary: 'Indicadores analíticos de secciones' })
@@ -119,6 +129,7 @@ export class SectionsController {
   }
 
   @Get(':id')
+  @ThrottleRead()
   @ApiOperation({ summary: 'Obtener una sección por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiOkResponse({
@@ -133,6 +144,7 @@ export class SectionsController {
   }
 
   @Patch(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:update')
   @ApiOperation({ summary: 'Actualizar sección (permiso section:update)' })
@@ -155,6 +167,7 @@ export class SectionsController {
   }
 
   @Delete(':id')
+  @ThrottleModify()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:delete')
   @ApiOperation({ summary: 'Eliminar sección (permiso section:delete)' })
