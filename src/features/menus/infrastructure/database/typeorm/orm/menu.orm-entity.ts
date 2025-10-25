@@ -11,8 +11,8 @@ export class MenuOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'menu_id' })
   id: string;
 
-  @Column({ type: 'int', name: 'restaurant_id', nullable: false })
-  restaurantId: number;
+  @Column({ type: 'uuid', name: 'restaurant_id', nullable: false })
+  restaurantId: string;
 
   @Column({ type: 'varchar', length: 150, name: 'name', nullable: false })
   name: string;

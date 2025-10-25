@@ -39,13 +39,8 @@ export class MenuSeedService {
         continue;
       }
 
-      // Convertir el restaurantId (string UUID) a número
-      // Nota: Si el dominio espera number, necesitarías un mapeo o usar el índice
-      // Por ahora usamos el índice + 1 como workaround
-      const restaurantNumericId = menuSeed.restaurantIndex + 1;
-
       const menu = await this.menuRepository.create({
-        restaurantId: restaurantNumericId,
+        restaurantId: restaurantId,
         name: menuSeed.name,
         description: menuSeed.description,
         price: menuSeed.price,
@@ -70,10 +65,19 @@ export class MenuSeedService {
     for (const dishSeed of dishesSeed) {
       // Usar el índice del menú para obtener el restaurantId correspondiente
       const menuData = menusSeed[dishSeed.menuIndex];
-      const restaurantNumericId = menuData ? menuData.restaurantIndex + 1 : 1;
+      const restaurantId = menuData
+        ? this.restaurantSeedService.getRestaurantId(menuData.restaurantIndex)
+        : undefined;
+
+      if (!restaurantId) {
+        this.logger.warn(
+          `Skipping dish "${dishSeed.name}": restaurant not found`,
+        );
+        continue;
+      }
 
       await this.dishRepository.create({
-        restaurantId: restaurantNumericId,
+        restaurantId: restaurantId,
         name: dishSeed.name,
         description: dishSeed.description,
         price: dishSeed.price,

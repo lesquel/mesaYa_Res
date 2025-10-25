@@ -9,8 +9,8 @@ export interface RestaurantResponseDto {
   closeTime: string;
   daysOpen: string[];
   totalCapacity: number;
-  subscriptionId: number;
-  imageId?: number | null;
+  subscriptionId: string;
+  imageId?: string | null;
   active: boolean;
   ownerId: string | null;
   createdAt: Date;

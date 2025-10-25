@@ -1,11 +1,11 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 
 export interface DishProps {
-  restaurantId: number;
+  restaurantId: string;
   name: string;
   description: string;
   price: MoneyVO;
-  imageId?: number;
+  imageId?: string;
 }
 
 export interface DishSnapshot extends DishProps {
@@ -49,7 +49,7 @@ export class DishEntity {
     return this.dishId;
   }
 
-  get restaurantId(): number {
+  get restaurantId(): string {
     return this.props.restaurantId;
   }
 
@@ -65,7 +65,7 @@ export class DishEntity {
     return this.props.price;
   }
 
-  get imageId(): number | undefined {
+  get imageId(): string | undefined {
     return this.props.imageId;
   }
 
@@ -82,12 +82,12 @@ export class DishEntity {
       throw new Error('Dish must have a valid price value object');
     }
 
-    if (props.restaurantId <= 0) {
+    if (!props.restaurantId || !props.restaurantId.trim()) {
       throw new Error('Dish must reference a valid restaurant');
     }
 
-    if (props.imageId !== undefined && props.imageId < 0) {
-      throw new Error('Dish cannot reference a negative imageId');
+    if (props.imageId !== undefined && !props.imageId.trim()) {
+      throw new Error('Dish cannot reference an empty imageId');
     }
   }
 }

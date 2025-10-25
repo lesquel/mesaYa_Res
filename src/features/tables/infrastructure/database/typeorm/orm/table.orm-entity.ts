@@ -35,9 +35,9 @@ export class TableOrmEntity {
   @Column({ type: 'int', name: 'width', nullable: false })
   width: number;
 
-  @Column({ type: 'int', name: 'table_image_id', nullable: false })
-  tableImageId: number;
+  @Column({ type: 'uuid', name: 'table_image_id', nullable: false })
+  tableImageId: string;
 
-  @Column({ type: 'int', name: 'chair_image_id', nullable: false })
-  chairImageId: number;
+  @Column({ type: 'uuid', name: 'chair_image_id', nullable: false })
+  chairImageId: string;
 }

@@ -8,8 +8,8 @@ export interface TableResponseDto {
   posX: number;
   posY: number;
   width: number;
-  tableImageId: number;
-  chairImageId: number;
+  tableImageId: string;
+  chairImageId: string;
 }
 
 export type PaginatedTableResponse = PaginatedResult<TableResponseDto>;

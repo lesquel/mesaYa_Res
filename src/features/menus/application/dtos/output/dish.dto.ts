@@ -1,8 +1,8 @@
 export interface DishDto {
   dishId?: string;
-  restaurantId: number;
+  restaurantId: string;
   name: string;
   description: string;
   price: number;
-  imageId?: number | null;
+  imageId?: string | null;
 }

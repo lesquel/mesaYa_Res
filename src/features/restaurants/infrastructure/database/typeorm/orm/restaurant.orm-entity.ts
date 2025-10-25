@@ -37,11 +37,11 @@ export class RestaurantOrmEntity {
   @Column({ type: 'int', name: 'total_capacity', nullable: false })
   totalCapacity: number;
 
-  @Column({ type: 'int', name: 'subscription_id', nullable: false })
-  subscriptionId: number;
+  @Column({ type: 'uuid', name: 'subscription_id', nullable: false })
+  subscriptionId: string;
 
-  @Column({ type: 'int', name: 'image_id', nullable: true })
-  imageId?: number | null;
+  @Column({ type: 'uuid', name: 'image_id', nullable: true })
+  imageId?: string | null;
 
   @Column({ type: 'boolean', name: 'active', nullable: false })
   active: boolean;

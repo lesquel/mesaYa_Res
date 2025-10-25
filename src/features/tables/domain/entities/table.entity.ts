@@ -7,8 +7,8 @@ export interface TableProps {
   posX: number; // pos_x
   posY: number; // pos_y
   width: number; // ancho
-  tableImageId: number; // imagen_mesa_id
-  chairImageId: number; // imagen_silla_id
+  tableImageId: string; // imagen_mesa_id
+  chairImageId: string; // imagen_silla_id
 }
 
 export interface TableSnapshot extends TableProps {
@@ -32,8 +32,8 @@ export class Table {
       posX: this.nonNegativeInt(props.posX, 'posX'),
       posY: this.nonNegativeInt(props.posY, 'posY'),
       width: this.positiveInt(props.width, 'width'),
-      tableImageId: this.nonNegativeInt(props.tableImageId, 'tableImageId'),
-      chairImageId: this.nonNegativeInt(props.chairImageId, 'chairImageId'),
+      tableImageId: this.normalizeId(props.tableImageId, 'tableImageId'),
+      chairImageId: this.normalizeId(props.chairImageId, 'chairImageId'),
     };
 
     this.validate(normalized);
@@ -76,10 +76,10 @@ export class Table {
   get width(): number {
     return this.props.width;
   }
-  get tableImageId(): number {
+  get tableImageId(): string {
     return this.props.tableImageId;
   }
-  get chairImageId(): number {
+  get chairImageId(): string {
     return this.props.chairImageId;
   }
 
@@ -91,8 +91,15 @@ export class Table {
     if (props.width <= 0) throw new InvalidTableDataError('width must be > 0');
     if (props.posX < 0 || props.posY < 0)
       throw new InvalidTableDataError('posX/posY must be >= 0');
-    if (props.tableImageId < 0 || props.chairImageId < 0)
-      throw new InvalidTableDataError('image ids must be >= 0');
+    if (
+      !props.tableImageId ||
+      !props.tableImageId.trim() ||
+      !props.chairImageId ||
+      !props.chairImageId.trim()
+    )
+      throw new InvalidTableDataError(
+        'image ids must be valid non-empty strings',
+      );
   }
 
   private static normalizeId(value: string, label: string): string {

@@ -9,8 +9,8 @@ export interface RestaurantCreateRequest {
   closeTime: string;
   daysOpen: RestaurantDay[];
   totalCapacity: number;
-  subscriptionId: number;
-  imageId?: number | null;
+  subscriptionId: string;
+  imageId?: string | null;
   active?: boolean;
 }
 
@@ -24,8 +24,8 @@ export interface RestaurantUpdateRequest {
   closeTime?: string;
   daysOpen?: RestaurantDay[];
   totalCapacity?: number;
-  subscriptionId?: number;
-  imageId?: number | null;
+  subscriptionId?: string;
+  imageId?: string | null;
 }
 
 export interface RestaurantDeleteRequest {

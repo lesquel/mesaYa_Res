@@ -8,8 +8,8 @@ export interface RestaurantCreate {
   closeTime: string;
   daysOpen: RestaurantDay[];
   totalCapacity: number;
-  subscriptionId: number;
-  imageId?: number | null;
+  subscriptionId: string;
+  imageId?: string | null;
   active?: boolean;
   ownerId: string;
   createdAt?: Date;

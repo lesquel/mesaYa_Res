@@ -1,8 +1,8 @@
 import { DishDto } from './dish.dto';
 
-export interface MenuDto {
-  menuId?: string;
-  restaurantId: number;
+export class MenuDto {
+  menuId: string;
+  restaurantId: string;
   name: string;
   description: string;
   price: number;

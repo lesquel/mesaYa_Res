@@ -1,23 +1,23 @@
 import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error';
 
 export class RestaurantImageId {
-  private constructor(private readonly internal: number | null) {}
+  private constructor(private readonly internal: string | null) {}
 
-  static create(value: number | null | undefined): RestaurantImageId {
+  static create(value: string | null | undefined): RestaurantImageId {
     if (value === undefined || value === null) {
       return new RestaurantImageId(null);
     }
 
-    if (!Number.isInteger(value) || value <= 0) {
+    if (!value.trim()) {
       throw new InvalidRestaurantDataError(
-        'ImageId must be a positive integer when provided',
+        'ImageId must be a valid non-empty string when provided',
       );
     }
 
     return new RestaurantImageId(value);
   }
 
-  get value(): number | null {
+  get value(): string | null {
     return this.internal;
   }
 }

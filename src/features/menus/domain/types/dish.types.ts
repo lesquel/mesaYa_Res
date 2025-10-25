@@ -1,11 +1,11 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 
 export interface DishCreate {
-  restaurantId: number;
+  restaurantId: string;
   name: string;
   description: string;
   price: MoneyVO;
-  imageId?: number;
+  imageId?: string;
 }
 
 export interface DishUpdate {
@@ -13,5 +13,5 @@ export interface DishUpdate {
   name?: string;
   description?: string;
   price?: MoneyVO;
-  imageId?: number | null;
+  imageId?: string | null;
 }

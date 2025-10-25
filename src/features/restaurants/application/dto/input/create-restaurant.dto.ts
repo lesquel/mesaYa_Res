@@ -78,18 +78,14 @@ export class CreateRestaurantDto {
   @Min(1)
   totalCapacity: number;
 
-  @ApiProperty({ example: 1, minimum: 1 })
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  subscriptionId: number;
+  @ApiProperty({ example: 'abc123-uuid-subscription' })
+  @IsString()
+  subscriptionId: string;
 
-  @ApiPropertyOptional({ example: 10, minimum: 1 })
+  @ApiPropertyOptional({ example: 'abc123-uuid-image' })
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  imageId?: number;
+  @IsString()
+  imageId?: string;
 }
 
 export type CreateRestaurantCommand = CreateRestaurantDto & {

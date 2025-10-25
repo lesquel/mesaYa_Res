@@ -1,7 +1,7 @@
 import { CreateDishDto } from './create-dish.dto';
 
 export interface CreateMenuDto {
-  restaurantId: number;
+  restaurantId: string;
   name: string;
   description: string;
   price: number;

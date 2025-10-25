@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsPositive, IsUUID, Min } from 'class-validator';
+import { IsInt, IsPositive, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateTableDto {
   @ApiProperty({ description: 'Section identifier', format: 'uuid' })
@@ -31,15 +31,13 @@ export class CreateTableDto {
   @Min(1)
   width: number;
 
-  @ApiProperty({ description: 'Table image id (>= 0)' })
-  @IsInt()
-  @Min(0)
-  tableImageId: number;
+  @ApiProperty({ example: 'abc123-uuid-image' })
+  @IsString()
+  tableImageId: string;
 
-  @ApiProperty({ description: 'Chair image id (>= 0)' })
-  @IsInt()
-  @Min(0)
-  chairImageId: number;
+  @ApiProperty({ example: 'def456-uuid-image' })
+  @IsString()
+  chairImageId: string;
 }
 
 export type CreateTableCommand = CreateTableDto;

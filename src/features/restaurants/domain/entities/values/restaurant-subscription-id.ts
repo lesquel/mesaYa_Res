@@ -1,19 +1,19 @@
 import { InvalidRestaurantDataError } from '../../errors/invalid-restaurant-data.error';
 
 export class RestaurantSubscriptionId {
-  private readonly internal: number;
+  private readonly internal: string;
 
-  constructor(value: number) {
-    if (!Number.isInteger(value) || value <= 0) {
+  constructor(value: string) {
+    if (!value || !value.trim()) {
       throw new InvalidRestaurantDataError(
-        'SubscriptionId must be a positive integer',
+        'SubscriptionId must be a valid non-empty string',
       );
     }
 
     this.internal = value;
   }
 
-  get value(): number {
+  get value(): string {
     return this.internal;
   }
 }

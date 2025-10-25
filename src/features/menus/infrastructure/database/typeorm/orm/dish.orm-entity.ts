@@ -11,8 +11,8 @@ export class DishOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'dish_id' })
   id: string;
 
-  @Column({ type: 'int', name: 'restaurant_id', nullable: false })
-  restaurantId: number;
+  @Column({ type: 'uuid', name: 'restaurant_id', nullable: false })
+  restaurantId: string;
 
   @Column({ type: 'varchar', length: 150, name: 'name', nullable: false })
   name: string;
@@ -29,8 +29,8 @@ export class DishOrmEntity {
   })
   price: number;
 
-  @Column({ type: 'int', name: 'image_id', nullable: true })
-  imageId?: number | null;
+  @Column({ type: 'uuid', name: 'image_id', nullable: true })
+  imageId?: string | null;
 
   @Column({ type: 'uuid', name: 'menu_id', nullable: true })
   menuId?: string | null;

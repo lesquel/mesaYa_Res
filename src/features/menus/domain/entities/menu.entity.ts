@@ -2,7 +2,7 @@ import { MoneyVO } from '@shared/domain/entities/values';
 import { DishSnapshot } from './dish.entity';
 
 export interface MenuProps {
-  restaurantId: number;
+  restaurantId: string;
   name: string;
   description: string;
   price: MoneyVO;
@@ -58,7 +58,7 @@ export class MenuEntity {
     return this.menuId;
   }
 
-  get restaurantId(): number {
+  get restaurantId(): string {
     return this.props.restaurantId;
   }
 
@@ -99,7 +99,7 @@ export class MenuEntity {
       throw new Error('Menu must have a valid price value object');
     }
 
-    if (props.restaurantId <= 0) {
+    if (!props.restaurantId || !props.restaurantId.trim()) {
       throw new Error('Menu must reference a valid restaurant');
     }
   }

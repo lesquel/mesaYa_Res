@@ -12,7 +12,7 @@ export interface DishAnalyticsPriceBucket {
 }
 
 export interface DishAnalyticsRestaurantDistribution {
-  readonly restaurantId: number;
+  readonly restaurantId: string;
   readonly count: number;
 }
 
@@ -20,7 +20,7 @@ export interface DishAnalyticsTopDish {
   readonly id: string;
   readonly name: string;
   readonly price: number;
-  readonly restaurantId: number;
+  readonly restaurantId: string;
 }
 
 export interface DishAnalyticsTrendPoint {

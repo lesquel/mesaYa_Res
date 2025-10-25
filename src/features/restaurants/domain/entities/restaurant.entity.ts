@@ -113,11 +113,11 @@ export class RestaurantEntity {
     return this.props.totalCapacity.value;
   }
 
-  get subscriptionId(): number {
+  get subscriptionId(): string {
     return this.props.subscriptionId.value;
   }
 
-  get imageId(): number | null {
+  get imageId(): string | null {
     return this.props.imageId.value;
   }
 
