@@ -3,7 +3,7 @@ export interface ImageProps {
   storagePath: string;
   title: string;
   description: string;
-  entityId: number;
+  entityId: string;
   createdAt: Date;
 }
 
@@ -84,8 +84,6 @@ export class Image {
       throw new InvalidImageDataError(
         'description must be at most 100 characters',
       );
-    if (!Number.isInteger(props.entityId) || props.entityId <= 0)
-      throw new InvalidImageDataError('entityId must be a positive integer');
     if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
       throw new InvalidImageDataError('createdAt must be a valid Date');
   }
@@ -116,7 +114,7 @@ export class Image {
     return this.props.description;
   }
 
-  get entityId(): number {
+  get entityId(): string {
     return this.props.entityId;
   }
 

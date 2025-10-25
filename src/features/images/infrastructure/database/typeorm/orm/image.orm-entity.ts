@@ -7,8 +7,8 @@ import {
 
 @Entity({ name: 'image' })
 export class ImageOrmEntity {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'imagen_id' })
-  id!: number;
+  @PrimaryGeneratedColumn('uuid', { name: 'imagen_id' })
+  id!: string;
 
   @Column({ type: 'varchar', length: 255, name: 'url', nullable: false })
   url!: string;
@@ -39,6 +39,6 @@ export class ImageOrmEntity {
   })
   description!: string;
 
-  @Column({ type: 'int', name: 'entidad_id', nullable: false })
-  entityId!: number;
+  @Column('uuid', { name: 'entidad_id', nullable: false })
+  entityId!: string;
 }

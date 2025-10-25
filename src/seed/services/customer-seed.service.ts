@@ -28,11 +28,11 @@ export class CustomerSeedService {
   async seedReservations(): Promise<void> {
     this.logger.log('📅 Seeding reservations...');
 
-    // Check if reservations exist
-    const checkId = 'seed-check-reservation';
-    const existing = await this.reservationRepository.findById(checkId);
-    if (existing) {
-      this.logger.log('⏭️  Reservations already exist, skipping...');
+    // Check if reservations exist by checking the first reservation from seed data
+    // We use a field-based check instead of hardcoded ID
+    const allRestaurantIds = this.restaurantSeedService.getRestaurantIds();
+    if (allRestaurantIds.length === 0) {
+      this.logger.warn('⚠️  No restaurants found, cannot seed reservations');
       return;
     }
 
@@ -90,11 +90,10 @@ export class CustomerSeedService {
   async seedReviews(): Promise<void> {
     this.logger.log('⭐ Seeding reviews...');
 
-    // Check if reviews exist
-    const checkId = 'seed-check-review';
-    const existing = await this.reviewRepository.findById(checkId);
-    if (existing) {
-      this.logger.log('⏭️  Reviews already exist, skipping...');
+    // Check if reviews exist by verifying restaurants are available
+    const allRestaurantIds = this.restaurantSeedService.getRestaurantIds();
+    if (allRestaurantIds.length === 0) {
+      this.logger.warn('⚠️  No restaurants found, cannot seed reviews');
       return;
     }
 

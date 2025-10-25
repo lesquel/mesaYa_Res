@@ -28,10 +28,10 @@ export class UpdateImageDto {
   @IsOptional()
   @IsInt()
   @IsPositive()
-  entityId?: number;
+  entityId?: string;
 }
 
 export type UpdateImageCommand = UpdateImageDto & {
-  imageId: number;
+  imageId: string;
   file?: ImageFilePayload;
 };

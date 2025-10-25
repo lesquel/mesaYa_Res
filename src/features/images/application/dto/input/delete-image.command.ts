@@ -1,3 +1,3 @@
 export interface DeleteImageCommand {
-  imageId: number;
+  imageId: string;
 }

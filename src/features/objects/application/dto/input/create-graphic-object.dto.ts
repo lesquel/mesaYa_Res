@@ -23,7 +23,7 @@ export class CreateGraphicObjectDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   @IsPositive()
-  imageId: number;
+  imageId: string;
 }
 
 export type CreateGraphicObjectCommand = CreateGraphicObjectDto;

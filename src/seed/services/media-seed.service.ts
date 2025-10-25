@@ -24,11 +24,11 @@ export class MediaSeedService {
   async seedImages(): Promise<void> {
     this.logger.log('🖼️  Seeding images...');
 
-    // Check if images already exist by checking a known seed check ID
-    const checkId = 1;
-    const existing = await this.imageRepository.findById(checkId);
-    if (existing) {
-      this.logger.log('⏭️  Images already exist, skipping...');
+    // Check if images already exist by verifying if there are any images
+    // We can't use a hardcoded ID check with UUIDs
+    // Instead, we'll track in-memory or skip if images array is populated
+    if (this.imageIds.length > 0) {
+      this.logger.log('⏭️  Images already exist in this session, skipping...');
       return;
     }
 
@@ -38,7 +38,7 @@ export class MediaSeedService {
         storagePath: imageData.storagePath,
         title: imageData.title,
         description: imageData.description,
-        entityId: imageData.entityIndex, // Using entityIndex instead of hardcoded ID
+        entityId: randomUUID(), // Generate UUID for entityId since we don't have the actual entity yet
       });
       const savedImage = await this.imageRepository.save(image);
       this.imageIds.push(savedImage.id);

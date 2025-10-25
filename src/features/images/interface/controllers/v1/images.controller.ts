@@ -16,6 +16,7 @@ import {
   UseGuards,
   UseInterceptors,
   ValidationPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -123,7 +124,7 @@ export class ImagesController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener imagen por ID' })
   @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('uuid') id: string) {
     const query: FindImageQuery = { imageId: id };
     return this.images.findOne(query);
   }
@@ -155,7 +156,7 @@ export class ImagesController {
     }),
   )
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateImageDto,
     @UploadedFile() file?: Multer.File,
   ) {
@@ -188,7 +189,7 @@ export class ImagesController {
   @ApiOperation({ summary: 'Eliminar imagen (permiso image:delete)' })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     const command: DeleteImageCommand = { imageId: id };
     return this.images.delete(command);
   }
@@ -213,7 +214,7 @@ export class ImagesController {
   @ApiQuery({
     name: 'entityId',
     required: false,
-    type: Number,
+    type: String,
     description: 'Filtra por entidad asociada',
   })
   async analytics(

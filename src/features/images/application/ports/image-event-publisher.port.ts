@@ -7,7 +7,7 @@ export type ImageEventType =
 
 export interface ImageEventPayload {
   type: ImageEventType;
-  imageId: number;
+  imageId: string;
   occurredAt: Date;
   data?: Record<string, unknown>;
 }

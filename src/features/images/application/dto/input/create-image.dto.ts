@@ -24,7 +24,7 @@ export class CreateImageDto {
   @ApiProperty({ example: 1 })
   @IsInt()
   @IsPositive()
-  entityId: number;
+  entityId: string;
 }
 
 export interface ImageFilePayload {

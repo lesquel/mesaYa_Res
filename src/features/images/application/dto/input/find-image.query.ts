@@ -1,3 +1,3 @@
 export interface FindImageQuery {
-  imageId: number;
+  imageId: string;
 }

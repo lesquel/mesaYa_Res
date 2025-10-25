@@ -1,9 +1,9 @@
 export interface ImageResponseDto {
-  id: number;
+  id: string;
   url: string;
   storagePath: string;
   title: string;
   description: string;
-  entityId: number;
+  entityId: string;
   createdAt: Date;
 }

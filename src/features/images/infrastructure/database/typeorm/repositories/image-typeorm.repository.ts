@@ -28,12 +28,12 @@ export class ImageTypeOrmRepository implements ImageRepositoryPort {
     return ImageOrmMapper.toDomain(saved);
   }
 
-  async findById(id: number): Promise<Image | null> {
+  async findById(id: string): Promise<Image | null> {
     const entity = await this.images.findOne({ where: { id } });
     return entity ? ImageOrmMapper.toDomain(entity) : null;
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.images.delete({ id });
   }
 

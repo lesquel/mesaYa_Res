@@ -8,6 +8,7 @@ import { TABLE_REPOSITORY } from '@features/tables/application/ports/table-repos
 import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
 import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';
 import { RestaurantEntity } from '@features/restaurants/domain/entities/restaurant.entity';
+import type { RestaurantDay } from '@features/restaurants/domain/entities/values/restaurant-day';
 import { Section } from '@features/sections/domain/entities/section.entity';
 import { Table } from '@features/tables/domain/entities/table.entity';
 import { restaurantsSeed, sectionsSeed, tablesSeed } from '../data';
@@ -36,11 +37,11 @@ export class RestaurantSeedService {
   async seedRestaurants(): Promise<void> {
     this.logger.log('🍽️  Seeding restaurants...');
 
-    // Check if restaurants exist - use a known check or skip for clean DB
-    const checkId = 'seed-check-restaurant';
-    const existing = await this.restaurantRepository.findById(checkId);
-    if (existing) {
-      this.logger.log('⏭️  Restaurants already exist, skipping...');
+    // Check if restaurants exist by verifying if we already have IDs tracked
+    if (this.restaurantIds.length > 0) {
+      this.logger.log(
+        '⏭️  Restaurants already exist in this session, skipping...',
+      );
       return;
     }
 
@@ -64,7 +65,7 @@ export class RestaurantSeedService {
           location: restaurantSeed.location,
           openTime: restaurantSeed.openTime,
           closeTime: restaurantSeed.closeTime,
-          daysOpen: restaurantSeed.daysOpen as any, // Type conversion needed
+          daysOpen: restaurantSeed.daysOpen as RestaurantDay[],
           totalCapacity: restaurantSeed.totalCapacity,
           subscriptionId: 'subscription-placeholder', // Placeholder UUID - will be updated after subscriptions
           ownerId: owner.id,
@@ -83,11 +84,11 @@ export class RestaurantSeedService {
   async seedSections(): Promise<void> {
     this.logger.log('📐 Seeding sections...');
 
-    // Check if sections exist
-    const checkId = 'seed-check-section';
-    const existing = await this.sectionRepository.findById(checkId);
-    if (existing) {
-      this.logger.log('⏭️  Sections already exist, skipping...');
+    // Check if sections exist by verifying if we already have IDs tracked
+    if (this.sectionIds.length > 0) {
+      this.logger.log(
+        '⏭️  Sections already exist in this session, skipping...',
+      );
       return;
     }
 
@@ -124,11 +125,9 @@ export class RestaurantSeedService {
   async seedTables(): Promise<void> {
     this.logger.log('🪑 Seeding tables...');
 
-    // Check if tables exist
-    const checkId = 'seed-check-table';
-    const existing = await this.tableRepository.findById(checkId);
-    if (existing) {
-      this.logger.log('⏭️  Tables already exist, skipping...');
+    // Check if tables exist by verifying if we already have IDs tracked
+    if (this.tableIds.length > 0) {
+      this.logger.log('⏭️  Tables already exist in this session, skipping...');
       return;
     }
 
