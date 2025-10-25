@@ -1,38 +1,20 @@
-import { ThrottlerModuleOptions } from '@nestjs/throttler';
-
 /**
- * Configuración global de rate limiting
+ * Límites de rate limiting por tipo de operación
  *
- * Límites por defecto:
- * - TTL (Time To Live): 60 segundos
- * - Límite: 10 peticiones por TTL
- *
- * Esto significa: 10 peticiones por minuto por IP
+ * Cada límite define:
+ * - ttl: Tiempo de vida en milisegundos
+ * - limit: Número máximo de peticiones permitidas en ese tiempo
  */
-export const THROTTLER_CONFIG: ThrottlerModuleOptions = {
-  throttlers: [
-    {
-      name: 'short',
-      ttl: 1000, // 1 segundo
-      limit: 3, // 3 peticiones por segundo
-    },
-    {
-      name: 'medium',
-      ttl: 10000, // 10 segundos
-      limit: 20, // 20 peticiones cada 10 segundos
-    },
-    {
-      name: 'long',
-      ttl: 60000, // 60 segundos (1 minuto)
-      limit: 100, // 100 peticiones por minuto
-    },
-  ],
-};
+
+export interface ThrottlerLimit {
+  ttl: number;
+  limit: number;
+}
 
 /**
  * Límites personalizados para diferentes tipos de endpoints
  */
-export const THROTTLER_LIMITS = {
+export const THROTTLER_LIMITS: Record<string, ThrottlerLimit> = {
   // Para operaciones sensibles (login, registro, recuperación de contraseña)
   AUTH: {
     ttl: 60000, // 1 minuto

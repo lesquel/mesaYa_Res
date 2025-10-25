@@ -44,8 +44,8 @@ El guard revisa los siguientes headers en orden:
 
 ### @ThrottleAuth()
 
-**Uso:** Endpoints de autenticación  
-**Límite:** 5 peticiones por minuto  
+**Uso:** Endpoints de autenticación
+**Límite:** 5 peticiones por minuto
 **Aplicar en:** Login, registro, recuperación de contraseña
 
 ```typescript
@@ -58,8 +58,8 @@ async login(@Body() dto: LoginDto) {
 
 ### @ThrottleCreate()
 
-**Uso:** Creación de recursos  
-**Límite:** 20 peticiones por minuto  
+**Uso:** Creación de recursos
+**Límite:** 20 peticiones por minuto
 **Aplicar en:** POST endpoints
 
 ```typescript
@@ -72,8 +72,8 @@ async create(@Body() dto: CreateRestaurantDto) {
 
 ### @ThrottleRead()
 
-**Uso:** Lectura de recursos  
-**Límite:** 100 peticiones por minuto  
+**Uso:** Lectura de recursos
+**Límite:** 100 peticiones por minuto
 **Aplicar en:** GET endpoints
 
 ```typescript
@@ -86,8 +86,8 @@ async findAll() {
 
 ### @ThrottleModify()
 
-**Uso:** Modificación de recursos  
-**Límite:** 30 peticiones por minuto  
+**Uso:** Modificación de recursos
+**Límite:** 30 peticiones por minuto
 **Aplicar en:** PUT, PATCH, DELETE endpoints
 
 ```typescript
@@ -100,8 +100,8 @@ async update(@Param('id') id: string, @Body() dto: UpdateRestaurantDto) {
 
 ### @ThrottleSearch()
 
-**Uso:** Búsquedas y filtrados  
-**Límite:** 50 peticiones por minuto  
+**Uso:** Búsquedas y filtrados
+**Límite:** 50 peticiones por minuto
 **Aplicar en:** Búsquedas complejas, queries
 
 ```typescript
@@ -114,8 +114,8 @@ async search(@Query() query: SearchRestaurantDto) {
 
 ### @ThrottlePublic()
 
-**Uso:** Endpoints públicos sin autenticación  
-**Límite:** 10 peticiones por minuto  
+**Uso:** Endpoints públicos sin autenticación
+**Límite:** 10 peticiones por minuto
 **Aplicar en:** Endpoints de información pública
 
 ```typescript
@@ -128,7 +128,7 @@ async getPublicInfo() {
 
 ### @ThrottleCustom(ttl, limit)
 
-**Uso:** Límites personalizados  
+**Uso:** Límites personalizados
 **Parámetros:**
 
 - `ttl`: Tiempo en milisegundos
@@ -144,7 +144,7 @@ async customEndpoint() {
 
 ### @SkipThrottling()
 
-**Uso:** Omitir rate limiting  
+**Uso:** Omitir rate limiting
 **⚠️ Usar con precaución**
 
 ```typescript
