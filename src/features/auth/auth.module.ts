@@ -107,6 +107,7 @@ import { AuthService } from './application/services/auth.service';
     AUTH_ROLE_REPOSITORY,
     AUTH_PASSWORD_HASHER,
     AUTH_PERMISSION_REPOSITORY,
+    AUTH_PASSWORD_HASHER,
     AuthService,
   ],
 })
