@@ -80,7 +80,7 @@ export class ImageTypeOrmRepository implements ImageRepositoryPort {
     return {
       ...paginationResult,
       results: paginationResult.results.map((entity) =>
-        ImageOrmMapper.toDomain(entity as ImageOrmEntity),
+        ImageOrmMapper.toDomain(entity),
       ),
     };
   }

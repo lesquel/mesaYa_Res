@@ -42,6 +42,7 @@ import { UpdateRolePermissionsCommand } from '../../../application/dto/commands/
 import { AuthRoleName } from '../../../domain/entities/auth-role.entity';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
+import { ThrottleAuth, ThrottleRead } from '@shared/infrastructure/decorators';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -49,6 +50,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
+  @ThrottleAuth()
   @ApiOperation({ summary: 'Registro de usuario' })
   @ApiBody({ type: SignUpRequestDto })
   @ApiCreatedResponse({
@@ -67,6 +69,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @ThrottleAuth()
   @ApiOperation({ summary: 'Inicio de sesión' })
   @ApiBody({ type: LoginRequestDto })
   @ApiOkResponse({
@@ -84,6 +87,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @ThrottleRead()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Perfil del usuario autenticado' })
   @ApiBearerAuth()

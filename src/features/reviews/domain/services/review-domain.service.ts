@@ -83,8 +83,6 @@ export class ReviewDomainService {
   }
 
   private async ensureRestaurant(restaurantId: string): Promise<void> {
-    // Explicitly trust the injected port contract; ESLint can't infer the type through the DI token.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const exists = await this.restaurantPort.exists(restaurantId);
     if (!exists) {
       throw new ReviewRestaurantNotFoundError(restaurantId);
@@ -92,8 +90,6 @@ export class ReviewDomainService {
   }
 
   private async ensureUser(userId: string): Promise<void> {
-    // Explicitly trust the injected port contract; ESLint can't infer the type through the DI token.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const exists = await this.userPort.exists(userId);
     if (!exists) {
       throw new ReviewUserNotFoundError(userId);
