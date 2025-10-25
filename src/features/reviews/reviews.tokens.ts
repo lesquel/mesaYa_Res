@@ -1,4 +1,3 @@
-
 // Repositories
 export const REVIEW_REPOSITORY = Symbol('REVIEW_REPOSITORY');
 export const REVIEW_ANALYTICS_REPOSITORY = Symbol(

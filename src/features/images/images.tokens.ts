@@ -1,4 +1,3 @@
-
 // Repositories
 export const IMAGE_REPOSITORY = Symbol('IMAGE_REPOSITORY');
 export const IMAGE_ANALYTICS_REPOSITORY = Symbol('IMAGE_ANALYTICS_REPOSITORY');

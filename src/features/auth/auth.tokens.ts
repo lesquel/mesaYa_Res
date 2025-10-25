@@ -1,5 +1,3 @@
-
-
 // Repositories
 export const AUTH_USER_REPOSITORY = Symbol('AUTH_USER_REPOSITORY');
 export const AUTH_ROLE_REPOSITORY = Symbol('AUTH_ROLE_REPOSITORY');

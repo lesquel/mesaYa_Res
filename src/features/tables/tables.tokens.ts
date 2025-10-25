@@ -1,4 +1,3 @@
-
 // Repositories
 export const TABLE_REPOSITORY = Symbol('TABLE_REPOSITORY');
 export const TABLE_ANALYTICS_REPOSITORY = Symbol('TABLE_ANALYTICS_REPOSITORY');

@@ -1,5 +1,3 @@
-
-
 // Repositories
 export const SECTION_REPOSITORY = Symbol('SECTION_REPOSITORY');
 export const SECTION_ANALYTICS_REPOSITORY = Symbol(
