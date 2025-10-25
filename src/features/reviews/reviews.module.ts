@@ -175,6 +175,7 @@ import { RestaurantOrmEntity } from '../restaurants/index';
     DeleteReviewUseCase,
     ReviewsService,
     GetReviewAnalyticsUseCase,
+    REVIEW_REPOSITORY,
   ],
 })
 export class ReviewsModule {}
