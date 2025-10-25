@@ -1,10 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
-import { AUTH_USER_REPOSITORY } from '@features/auth/application/ports/user.repository.port';
 import type { AuthRoleRepositoryPort } from '@features/auth/application/ports/role.repository.port';
-import { AUTH_ROLE_REPOSITORY } from '@features/auth/application/ports/role.repository.port';
 import type { AuthPasswordHasherPort } from '@features/auth/application/ports/password-hasher.port';
-import { AUTH_PASSWORD_HASHER } from '@features/auth/application/ports/password-hasher.port';
+import {
+  AUTH_USER_REPOSITORY,
+  AUTH_ROLE_REPOSITORY,
+  AUTH_PASSWORD_HASHER,
+} from '@features/auth/auth.tokens';
 import { AuthUser } from '@features/auth/domain/entities/auth-user.entity';
 import { usersSeed } from '../data';
 

@@ -1,8 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { AuthPermissionRepositoryPort } from '@features/auth/application/ports/permission.repository.port';
-import { AUTH_PERMISSION_REPOSITORY } from '@features/auth/application/ports/permission.repository.port';
 import type { AuthRoleRepositoryPort } from '@features/auth/application/ports/role.repository.port';
-import { AUTH_ROLE_REPOSITORY } from '@features/auth/application/ports/role.repository.port';
+import {
+  AUTH_PERMISSION_REPOSITORY,
+  AUTH_ROLE_REPOSITORY,
+} from '@features/auth/auth.tokens';
 import { AuthPermission } from '@features/auth/domain/entities/auth-permission.entity';
 import { AuthRole } from '@features/auth/domain/entities/auth-role.entity';
 import { permissionsSeed, rolesSeed } from '../data';

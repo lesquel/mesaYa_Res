@@ -6,7 +6,7 @@ import { SECTION_REPOSITORY } from '@features/sections/application/ports/section
 import type { TableRepositoryPort } from '@features/tables/application/ports/table-repository.port';
 import { TABLE_REPOSITORY } from '@features/tables/application/ports/table-repository.port';
 import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
-import { AUTH_USER_REPOSITORY } from '@features/auth/application/ports/user.repository.port';
+import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';
 import { RestaurantEntity } from '@features/restaurants/domain/entities/restaurant.entity';
 import { Section } from '@features/sections/domain/entities/section.entity';
 import { Table } from '@features/tables/domain/entities/table.entity';

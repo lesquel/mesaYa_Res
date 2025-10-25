@@ -75,7 +75,7 @@ export class MediaSeedService {
         posY: objectData.posY,
         width: objectData.width,
         height: objectData.height,
-        imageId: imageId.toString(),
+        imageId: imageId,
       });
       await this.graphicObjectRepository.save(graphicObject);
       this.graphicObjectIds.push(graphicObjectId); // Track the created ID

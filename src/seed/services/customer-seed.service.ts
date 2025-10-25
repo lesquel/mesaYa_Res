@@ -4,7 +4,7 @@ import { RESERVATION_REPOSITORY } from '@features/reservation/application/ports/
 import type { ReviewRepositoryPort } from '@features/reviews/application/ports/review-repository.port';
 import { REVIEW_REPOSITORY } from '@features/reviews/application/ports/review-repository.port';
 import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
-import { AUTH_USER_REPOSITORY } from '@features/auth/application/ports/user.repository.port';
+import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';
 import { ReservationEntity } from '@features/reservation/domain/entities/reservation.entity';
 import { Review } from '@features/reviews/domain/entities/review.entity';
 import { reservationsSeed, reviewsSeed } from '../data';
