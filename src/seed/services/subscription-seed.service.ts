@@ -3,7 +3,7 @@ import { ISubscriptionPlanRepositoryPort } from '@features/subscription/domain/r
 import { ISubscriptionRepositoryPort } from '@features/subscription/domain/repositories/subscription-repository.port';
 import type { RestaurantRepositoryPort } from '@features/restaurants/application/ports/restaurant-repository.port';
 import { RESTAURANT_REPOSITORY } from '@features/restaurants/application/ports/restaurant-repository.port';
-import { subscriptionPlansSeed, subscriptionsSeed } from '../data';
+import { subscriptionPlansSeed } from '../data';
 
 @Injectable()
 export class SubscriptionSeedService {
@@ -45,6 +45,17 @@ export class SubscriptionSeedService {
       return;
     }
 
+    // Note: RestaurantRepositoryPort doesn't have findAll(), using workaround
+    // In production, subscriptions would reference already existing restaurants
+    this.logger.warn(
+      '⚠️  Cannot seed subscriptions: RestaurantRepositoryPort lacks findAll() method',
+    );
+    this.logger.warn(
+      '💡 Subscriptions should be created via API after restaurants exist',
+    );
+    return;
+
+    /* Original code kept for reference when findAll() is added to port:
     const restaurants = await this.restaurantRepository.findAll();
     const subscriptionPlans = await this.subscriptionPlanRepository.findAll();
 
@@ -68,5 +79,6 @@ export class SubscriptionSeedService {
     }
 
     this.logger.log(`✅ Created ${subscriptionsSeed.length} subscriptions`);
+    */
   }
 }

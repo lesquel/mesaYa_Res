@@ -6,7 +6,7 @@ import { menusSeed, dishesSeed } from '../data';
 @Injectable()
 export class MenuSeedService {
   private readonly logger = new Logger(MenuSeedService.name);
-  private menuIds: string[] = []; // Track created menu IDs
+  private dishIds: string[][] = []; // Track created dish IDs per menu
 
   constructor(
     @Inject(IMenuRepositoryPort)
@@ -24,16 +24,19 @@ export class MenuSeedService {
       return;
     }
 
+    // Note: Cannot link to restaurants without restaurantId tracking from RestaurantSeedService
+    this.logger.warn(
+      '⚠️  Creating menus with placeholder restaurantId. Update manually or via API.',
+    );
+
     for (const menuSeed of menusSeed) {
-      const menu = await this.menuRepository.create({
-        restaurantId: `restaurant-${menuSeed.restaurantIndex}`, // Will be updated with real IDs
+      await this.menuRepository.create({
+        restaurantId: 1, // Placeholder - needs real restaurant ID
         name: menuSeed.name,
         description: menuSeed.description,
         price: menuSeed.price,
         imageUrl: menuSeed.imageUrl,
       });
-
-      this.menuIds.push(menu.id!);
     }
 
     this.logger.log(`✅ Created ${menusSeed.length} menus`);
@@ -49,20 +52,12 @@ export class MenuSeedService {
     }
 
     for (const dishSeed of dishesSeed) {
-      const menuId = this.menuIds[dishSeed.menuIndex];
-
-      if (!menuId) {
-        this.logger.warn('Skipping dish: menu not found in tracked IDs');
-        continue;
-      }
-
       await this.dishRepository.create({
-        restaurantId: 'temp-restaurant-id', // Will need real restaurant ID
-        menuId,
+        restaurantId: 1, // Placeholder - needs real restaurant ID
         name: dishSeed.name,
         description: dishSeed.description,
         price: dishSeed.price,
-        imageId: null,
+        imageId: undefined,
       });
     }
 
