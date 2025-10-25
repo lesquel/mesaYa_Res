@@ -155,6 +155,7 @@ import {
     DeleteTableUseCase,
     TablesService,
     GetTableAnalyticsUseCase,
+    TABLE_REPOSITORY,
   ],
 })
 export class TablesModule {}
