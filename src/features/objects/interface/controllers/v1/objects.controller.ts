@@ -20,11 +20,8 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
   ThrottleCreate,
-  ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
@@ -32,8 +29,6 @@ import {
   ObjectsService,
   type CreateGraphicObjectCommand,
   type DeleteGraphicObjectCommand,
-  type FindGraphicObjectQuery,
-  type ListGraphicObjectsQuery,
   UpdateGraphicObjectDto,
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
@@ -44,8 +39,10 @@ import {
   GraphicObjectAnalyticsResponseDto,
 } from '../../dto';
 
-@ApiTags('Objects')
-@Controller({ path: 'object', version: '1' })
+@ApiTags('Admin Objects')
+@Controller({ path: 'admin/object', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class ObjectsController {
   constructor(
     private readonly objects: ObjectsService,
@@ -54,33 +51,18 @@ export class ObjectsController {
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:create')
   @ApiOperation({ summary: 'Crear objeto gráfico (permiso object:create)' })
-  @ApiBearerAuth()
   @ApiBody({ type: CreateGraphicObjectDto })
   async create(@Body() dto: CreateGraphicObjectDto) {
     const command: CreateGraphicObjectCommand = { ...dto };
     return this.objects.create(command);
   }
 
-  @Get()
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Listar objetos gráficos (paginado)' })
-  @ApiPaginationQuery()
-  async list(
-    @PaginationParams({ defaultRoute: '/object' })
-    query: ListGraphicObjectsQuery,
-  ) {
-    return this.objects.list(query);
-  }
-
   @Get('analytics')
   @ThrottleSearch()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:read')
   @ApiOperation({ summary: 'Datos analíticos de objetos gráficos' })
-  @ApiBearerAuth()
   async analytics(
     @Query() query: GraphicObjectAnalyticsRequestDto,
   ): Promise<GraphicObjectAnalyticsResponseDto> {
@@ -90,21 +72,10 @@ export class ObjectsController {
     return GraphicObjectAnalyticsResponseDto.fromApplication(analytics);
   }
 
-  @Get(':id')
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Obtener objeto por ID' })
-  @ApiParam({ name: 'id', description: 'UUID del objeto' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const query: FindGraphicObjectQuery = { objectId: id };
-    return this.objects.findOne(query);
-  }
-
   @Patch(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:update')
   @ApiOperation({ summary: 'Actualizar objeto (permiso object:update)' })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
   @ApiBody({ type: UpdateGraphicObjectDto })
   async update(
@@ -117,10 +88,8 @@ export class ObjectsController {
 
   @Delete(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('object:delete')
   @ApiOperation({ summary: 'Eliminar objeto (permiso object:delete)' })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const command: DeleteGraphicObjectCommand = { objectId: id };

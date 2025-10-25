@@ -2,11 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,42 +19,31 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
   ThrottleCreate,
-  ThrottleRead,
   ThrottleModify,
-  ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 import type {
   DishResponseDto,
-  DishListResponseDto,
   DeleteDishDto,
   DeleteDishResponseDto,
 } from '@features/menus/application';
-import {
-  DishService,
-  GetDishAnalyticsUseCase,
-} from '@features/menus/application';
+import { DishService } from '@features/menus/application';
 import {
   CreateDishRequestDto,
   DeleteDishResponseSwaggerDto,
   DishResponseSwaggerDto,
-  DishAnalyticsRequestDto,
-  DishAnalyticsResponseDto,
   UpdateDishRequestDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Dishes')
-@Controller({ path: 'dishes', version: '1' })
+@ApiTags('Admin Dishes')
+@Controller({ path: 'admin/dishes', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class DishesController {
-  constructor(
-    private readonly dishService: DishService,
-    private readonly getDishAnalytics: GetDishAnalyticsUseCase,
-  ) {}
+  constructor(private readonly dishService: DishService) {}
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:create')
-  @ApiBearerAuth()
   @ApiBody({ type: CreateDishRequestDto })
   @ApiCreatedResponse({
     description: 'Dish created',
@@ -66,54 +53,9 @@ export class DishesController {
     return this.dishService.create(dto);
   }
 
-  @Get()
-  @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('dish:read')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Dishes list',
-    type: DishResponseSwaggerDto,
-    isArray: true,
-  })
-  findAll(): Promise<DishListResponseDto> {
-    return this.dishService.findAll();
-  }
-
-  @Get('analytics')
-  @ThrottleSearch()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('dish:read')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Resumen analítico de platos',
-    type: DishAnalyticsResponseDto,
-  })
-  async analytics(
-    @Query() query: DishAnalyticsRequestDto,
-  ): Promise<DishAnalyticsResponseDto> {
-    const analytics = await this.getDishAnalytics.execute(query.toQuery());
-    return DishAnalyticsResponseDto.fromApplication(analytics);
-  }
-
-  @Get(':dishId')
-  @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('dish:read')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Dish details',
-    type: DishResponseSwaggerDto,
-  })
-  findById(@Param('dishId') dishId: string): Promise<DishResponseDto> {
-    return this.dishService.findById({ dishId });
-  }
-
   @Patch(':dishId')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:update')
-  @ApiBearerAuth()
   @ApiBody({ type: UpdateDishRequestDto })
   @ApiOkResponse({
     description: 'Dish updated',
@@ -128,9 +70,7 @@ export class DishesController {
 
   @Delete(':dishId')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('dish:delete')
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Dish deleted',
     type: DeleteDishResponseSwaggerDto,

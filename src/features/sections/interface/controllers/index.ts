@@ -1,1 +1,1 @@
-export * from './v1/sections.controller';
+export * from './v1';

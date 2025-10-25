@@ -2,11 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,42 +19,31 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
   ThrottleCreate,
-  ThrottleRead,
   ThrottleModify,
-  ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 import type {
   MenuResponseDto,
-  MenuListResponseDto,
   DeleteMenuDto,
   DeleteMenuResponseDto,
 } from '@features/menus/application';
-import {
-  MenuService,
-  GetMenuAnalyticsUseCase,
-} from '@features/menus/application';
+import { MenuService } from '@features/menus/application';
 import {
   CreateMenuRequestDto,
-  MenuAnalyticsRequestDto,
-  MenuAnalyticsResponseDto,
   DeleteMenuResponseSwaggerDto,
   MenuResponseSwaggerDto,
   UpdateMenuRequestDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Menus')
-@Controller({ path: 'menus', version: '1' })
+@ApiTags('Admin Menus')
+@Controller({ path: 'admin/menus', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class MenusController {
-  constructor(
-    private readonly menuService: MenuService,
-    private readonly getMenuAnalyticsUseCase: GetMenuAnalyticsUseCase,
-  ) {}
+  constructor(private readonly menuService: MenuService) {}
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:create')
-  @ApiBearerAuth()
   @ApiBody({ type: CreateMenuRequestDto })
   @ApiCreatedResponse({
     description: 'Menu created',
@@ -66,54 +53,9 @@ export class MenusController {
     return this.menuService.create(dto);
   }
 
-  @Get()
-  @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('menu:read')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Menus list',
-    type: MenuResponseSwaggerDto,
-    isArray: true,
-  })
-  findAll(): Promise<MenuListResponseDto> {
-    return this.menuService.findAll();
-  }
-
-  @Get('analytics')
-  @ThrottleSearch()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('menu:read')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Resumen analítico de menús',
-    type: MenuAnalyticsResponseDto,
-  })
-  async getAnalytics(
-    @Query() dto: MenuAnalyticsRequestDto,
-  ): Promise<MenuAnalyticsResponseDto> {
-    const analytics = await this.getMenuAnalyticsUseCase.execute(dto.toQuery());
-    return MenuAnalyticsResponseDto.fromApplication(analytics);
-  }
-
-  @Get(':menuId')
-  @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('menu:read')
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Menu details',
-    type: MenuResponseSwaggerDto,
-  })
-  findById(@Param('menuId') menuId: string): Promise<MenuResponseDto> {
-    return this.menuService.findById({ menuId });
-  }
-
   @Patch(':menuId')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:update')
-  @ApiBearerAuth()
   @ApiBody({ type: UpdateMenuRequestDto })
   @ApiOkResponse({
     description: 'Menu updated',
@@ -128,9 +70,7 @@ export class MenusController {
 
   @Delete(':menuId')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('menu:delete')
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Menu deleted',
     type: DeleteMenuResponseSwaggerDto,

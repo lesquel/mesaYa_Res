@@ -33,10 +33,9 @@ import {
   CreateRestaurantCommand,
   CreateRestaurantDto,
   DeleteRestaurantCommand,
-  FindRestaurantQuery,
-  RestaurantsService,
   UpdateRestaurantCommand,
   UpdateRestaurantDto,
+  RestaurantsService,
   GetRestaurantAnalyticsUseCase,
 } from '@features/restaurants/application';
 import type {
@@ -49,8 +48,10 @@ import type {
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
 
-@ApiTags('Restaurants')
-@Controller({ path: 'restaurant', version: '1' })
+@ApiTags('Admin Restaurants')
+@Controller({ path: 'admin/restaurant', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class RestaurantsController {
   constructor(
     private readonly restaurantsService: RestaurantsService,
@@ -59,10 +60,8 @@ export class RestaurantsController {
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:create')
   @ApiOperation({ summary: 'Crear restaurante (permiso restaurant:create)' })
-  @ApiBearerAuth()
   @ApiBody({ type: CreateRestaurantDto })
   async create(
     @Body() dto: CreateRestaurantDto,
@@ -75,26 +74,13 @@ export class RestaurantsController {
     return this.restaurantsService.create(command);
   }
 
-  @Get()
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Listar restaurantes (paginado)' })
-  @ApiPaginationQuery()
-  async findAll(
-    @PaginationParams({ defaultRoute: '/restaurant' })
-    query: ListRestaurantsQuery,
-  ): Promise<PaginatedRestaurantResponse> {
-    return this.restaurantsService.list(query);
-  }
-
   @Get('me')
   @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:read')
   @ApiOperation({ summary: 'Listar mis restaurantes (owner actual)' })
-  @ApiBearerAuth()
   @ApiPaginationQuery()
   async findMine(
-    @PaginationParams({ defaultRoute: '/restaurant/me' })
+    @PaginationParams({ defaultRoute: '/admin/restaurant/me' })
     pagination: ListRestaurantsQuery,
     @CurrentUser() user: { userId: string },
   ): Promise<PaginatedRestaurantResponse> {
@@ -108,9 +94,7 @@ export class RestaurantsController {
   @Get('analytics')
   @ThrottleSearch()
   @Permissions('restaurant:read')
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @ApiOperation({ summary: 'Indicadores analíticos de restaurantes' })
-  @ApiBearerAuth()
   async analytics(
     @Query() query: RestaurantAnalyticsRequestDto,
   ): Promise<RestaurantAnalyticsResponseDto> {
@@ -120,25 +104,12 @@ export class RestaurantsController {
     return RestaurantAnalyticsResponseDto.fromApplication(analytics);
   }
 
-  @Get(':id')
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Obtener un restaurante por ID' })
-  @ApiParam({ name: 'id', description: 'UUID del restaurante' })
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<RestaurantResponseDto> {
-    const query: FindRestaurantQuery = { restaurantId: id };
-    return this.restaurantsService.findOne(query);
-  }
-
   @Patch(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:update')
   @ApiOperation({
     summary: 'Actualizar restaurante (permiso restaurant:update)',
   })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiBody({ type: UpdateRestaurantDto })
   async update(
@@ -156,10 +127,8 @@ export class RestaurantsController {
 
   @Delete(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('restaurant:delete')
   @ApiOperation({ summary: 'Eliminar restaurante (permiso restaurant:delete)' })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   async remove(
     @Param('id', ParseUUIDPipe) id: string,

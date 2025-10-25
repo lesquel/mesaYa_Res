@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { ReservationsController } from './interface';
+import {
+  ReservationsController,
+  PublicReservationsController,
+} from './interface';
 import {
   ReservationOrmEntity,
   ReservationTypeOrmRepository,
@@ -49,7 +52,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     ]),
     AuthModule,
   ],
-  controllers: [ReservationsController],
+  controllers: [ReservationsController, PublicReservationsController],
   providers: [
     ReservationTypeOrmRepository,
     ReservationAnalyticsTypeOrmRepository,

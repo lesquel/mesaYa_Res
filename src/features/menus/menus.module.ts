@@ -13,6 +13,8 @@ import {
 import {
   DishesController,
   MenusController,
+  PublicDishesController,
+  PublicMenusController,
 } from './presentation/controllers/v1';
 import {
   DishOrmEntity,
@@ -61,7 +63,12 @@ const menuServiceProvider = {
     TypeOrmModule.forFeature([MenuOrmEntity, DishOrmEntity]),
     LoggerModule,
   ],
-  controllers: [DishesController, MenusController],
+  controllers: [
+    DishesController,
+    MenusController,
+    PublicDishesController,
+    PublicMenusController,
+  ],
   providers: [
     DishMapper,
     menuMapperProvider,

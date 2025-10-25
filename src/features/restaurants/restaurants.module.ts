@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { RestaurantsController } from './interface';
+import {
+  RestaurantsController,
+  PublicRestaurantsController,
+} from './interface';
 import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
@@ -36,7 +39,7 @@ import type {
     TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity]),
     AuthModule,
   ],
-  controllers: [RestaurantsController],
+  controllers: [RestaurantsController, PublicRestaurantsController],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,

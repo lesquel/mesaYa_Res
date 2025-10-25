@@ -22,12 +22,8 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
-import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import {
   ThrottleCreate,
-  ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
@@ -41,12 +37,8 @@ import type {
   CreateSectionCommand,
   DeleteSectionCommand,
   DeleteSectionResponseDto,
-  FindSectionQuery,
-  ListRestaurantSectionsQuery,
-  ListSectionsQuery,
-  PaginatedSectionResponse,
-  SectionResponseDto,
   UpdateSectionCommand,
+  SectionResponseDto,
 } from '../../../application';
 import {
   DeleteSectionResponseSwaggerDto,
@@ -55,8 +47,10 @@ import {
   SectionAnalyticsResponseDto,
 } from '@features/sections/interface/dto';
 
-@ApiTags('Sections')
-@Controller({ path: 'section', version: '1' })
+@ApiTags('Admin Sections')
+@Controller({ path: 'admin/section', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class SectionsController {
   constructor(
     private readonly sectionsService: SectionsService,
@@ -65,10 +59,8 @@ export class SectionsController {
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:create')
   @ApiOperation({ summary: 'Crear sección (permiso section:create)' })
-  @ApiBearerAuth()
   @ApiBody({ type: CreateSectionDto })
   @ApiCreatedResponse({
     description: 'Sección creada correctamente',
@@ -79,48 +71,10 @@ export class SectionsController {
     return this.sectionsService.create(command);
   }
 
-  @Get('restaurant/:restaurantId')
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Listar secciones por restaurante' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiPaginationQuery()
-  @ApiPaginatedResponse({
-    model: SectionResponseSwaggerDto,
-    description: 'Listado paginado de secciones por restaurante',
-  })
-  async findByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @PaginationParams({ defaultRoute: '/section/restaurant' })
-    pagination: ListSectionsQuery,
-  ): Promise<PaginatedSectionResponse> {
-    const query: ListRestaurantSectionsQuery = {
-      ...pagination,
-      restaurantId,
-    };
-    return this.sectionsService.listByRestaurant(query);
-  }
-
-  @Get()
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Listar secciones (paginado)' })
-  @ApiPaginationQuery()
-  @ApiPaginatedResponse({
-    model: SectionResponseSwaggerDto,
-    description: 'Listado paginado de secciones',
-  })
-  async findAll(
-    @PaginationParams({ defaultRoute: '/section' })
-    query: ListSectionsQuery,
-  ): Promise<PaginatedSectionResponse> {
-    return this.sectionsService.list(query);
-  }
-
   @Get('analytics')
   @ThrottleSearch()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:read')
   @ApiOperation({ summary: 'Indicadores analíticos de secciones' })
-  @ApiBearerAuth()
   async analytics(
     @Query() query: SectionAnalyticsRequestDto,
   ): Promise<SectionAnalyticsResponseDto> {
@@ -128,27 +82,10 @@ export class SectionsController {
     return SectionAnalyticsResponseDto.fromApplication(analytics);
   }
 
-  @Get(':id')
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Obtener una sección por ID' })
-  @ApiParam({ name: 'id', description: 'UUID de la sección' })
-  @ApiOkResponse({
-    description: 'Detalle de la sección',
-    type: SectionResponseSwaggerDto,
-  })
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<SectionResponseDto> {
-    const query: FindSectionQuery = { sectionId: id };
-    return this.sectionsService.findOne(query);
-  }
-
   @Patch(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:update')
   @ApiOperation({ summary: 'Actualizar sección (permiso section:update)' })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiBody({ type: UpdateSectionDto })
   @ApiOkResponse({
@@ -168,10 +105,8 @@ export class SectionsController {
 
   @Delete(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section:delete')
   @ApiOperation({ summary: 'Eliminar sección (permiso section:delete)' })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiOkResponse({
     description: 'Sección eliminada correctamente',

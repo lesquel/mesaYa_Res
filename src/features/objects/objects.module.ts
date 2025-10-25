@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { ObjectsController } from './interface/controllers/v1/objects.controller';
+import {
+  ObjectsController,
+  PublicObjectsController,
+} from './interface/controllers/v1';
 import { ObjectsService } from './application/services/objects.service';
 import {
   CreateGraphicObjectUseCase,
@@ -27,7 +30,7 @@ import {
 
 @Module({
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
-  controllers: [ObjectsController],
+  controllers: [ObjectsController, PublicObjectsController],
   providers: [
     GraphicObjectTypeOrmRepository,
     GraphicObjectEventNoopProvider,
