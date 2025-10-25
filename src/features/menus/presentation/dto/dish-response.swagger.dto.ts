@@ -9,8 +9,12 @@ export class DishResponseSwaggerDto implements DishDto {
   })
   dishId?: string;
 
-  @ApiProperty({ description: 'Identificador del restaurante', example: 1001 })
-  restaurantId: number;
+  @ApiProperty({
+    description: 'Identificador del restaurante',
+    format: 'uuid',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  restaurantId: string;
 
   @ApiProperty({ description: 'Nombre del plato' })
   name: string;
@@ -25,7 +29,8 @@ export class DishResponseSwaggerDto implements DishDto {
     description: 'Identificador de la imagen',
     required: false,
     nullable: true,
-    example: 5,
+    format: 'uuid',
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  imageId?: number | null;
+  imageId?: string | null;
 }

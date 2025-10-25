@@ -1,10 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   MaxLength,
   Min,
@@ -12,10 +10,12 @@ import {
 import type { CreateDishDto } from '../../application/dtos/input/create-dish.dto';
 
 export class CreateDishRequestDto implements CreateDishDto {
-  @ApiProperty({ description: 'Identificador del restaurante', example: 1001 })
-  @IsInt()
-  @IsPositive()
-  restaurantId: number;
+  @ApiProperty({
+    description: 'Identificador del restaurante',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @IsString()
+  restaurantId: string;
 
   @ApiProperty({ description: 'Nombre del plato', maxLength: 100 })
   @IsString()
@@ -35,10 +35,9 @@ export class CreateDishRequestDto implements CreateDishDto {
 
   @ApiPropertyOptional({
     description: 'Identificador de la imagen',
-    example: 10,
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  imageId?: number;
+  @IsString()
+  imageId?: string;
 }

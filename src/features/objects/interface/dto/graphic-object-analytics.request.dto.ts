@@ -2,9 +2,9 @@ import { BadRequestException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
-  IsInt,
   IsNumber,
   IsOptional,
+  IsString,
   Min,
 } from 'class-validator';
 import type { GraphicObjectAnalyticsQuery } from '../../application/dto/analytics/graphic-object-analytics.query';
@@ -22,9 +22,8 @@ export class GraphicObjectAnalyticsRequestDto {
 
   @ApiPropertyOptional({ description: 'Identificador de la imagen asociada' })
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  imageId?: number;
+  @IsString()
+  imageId?: string;
 
   @ApiPropertyOptional({ description: 'Ancho mínimo (px)' })
   @IsOptional()

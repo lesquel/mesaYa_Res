@@ -2,9 +2,9 @@ import { BadRequestException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
-  IsInt,
   IsNumber,
   IsOptional,
+  IsString,
   Min,
 } from 'class-validator';
 import type { MenuAnalyticsQuery } from '../../application/dtos/analytics/menu-analytics.query';
@@ -20,11 +20,13 @@ export class MenuAnalyticsRequestDto {
   @IsDateString()
   endDate?: string;
 
-  @ApiPropertyOptional({ description: 'Identificador del restaurante' })
+  @ApiPropertyOptional({
+    description: 'Identificador del restaurante',
+    format: 'uuid',
+  })
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  restaurantId?: number;
+  @IsString()
+  restaurantId?: string;
 
   @ApiPropertyOptional({ description: 'Precio mínimo a considerar' })
   @IsOptional()

@@ -37,7 +37,9 @@ export class UpdateDishRequestDto implements UpdateDishDto {
   @ApiPropertyOptional({
     description: 'Identificador de la imagen',
     nullable: true,
+    format: 'uuid',
   })
   @IsOptional()
-  imageId?: number | null;
+  @IsString()
+  imageId?: string | null;
 }

@@ -3,5 +3,5 @@ export interface UpdateDishDto {
   name?: string;
   description?: string;
   price?: number;
-  imageId?: number | null;
+  imageId?: string | null;
 }

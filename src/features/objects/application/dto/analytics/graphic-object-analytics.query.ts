@@ -1,7 +1,7 @@
 export interface GraphicObjectAnalyticsQuery {
   readonly startDate?: Date;
   readonly endDate?: Date;
-  readonly imageId?: number;
+  readonly imageId?: string;
   readonly minWidth?: number;
   readonly maxWidth?: number;
   readonly minHeight?: number;

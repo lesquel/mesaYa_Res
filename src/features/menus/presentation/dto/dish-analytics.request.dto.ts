@@ -1,20 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsUUID,
-  Min,
-} from 'class-validator';
+import { IsDateString, IsOptional, IsUUID } from 'class-validator';
 import type { DishAnalyticsQuery } from '../../application/dtos/analytics/dish-analytics.query';
 
 export class DishAnalyticsRequestDto {
-  @ApiPropertyOptional({ description: 'Filtrar por restaurante', minimum: 1 })
+  @ApiPropertyOptional({
+    description: 'Filtrar por restaurante',
+    format: 'uuid',
+  })
   @IsOptional()
-  @IsNumber()
-  @Min(1)
-  restaurantId?: number;
+  @IsUUID()
+  restaurantId?: string;
 
   @ApiPropertyOptional({ description: 'Filtrar por menú', format: 'uuid' })
   @IsOptional()

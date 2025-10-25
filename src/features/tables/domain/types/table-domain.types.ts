@@ -18,8 +18,8 @@ export interface TableUpdateRequest {
   posX?: number;
   posY?: number;
   width?: number;
-  tableImageId?: number;
-  chairImageId?: number;
+  tableImageId?: string;
+  chairImageId?: string;
 }
 
 export interface TableDeleteRequest {
