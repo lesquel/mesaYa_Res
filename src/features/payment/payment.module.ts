@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PaymentController } from './presentation';
+import { AdminPaymentController } from './presentation';
 import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
@@ -25,7 +25,7 @@ import { KafkaService } from '@shared/infrastructure/kafka';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PaymentOrmEntity]), LoggerModule],
-  controllers: [PaymentController],
+  controllers: [AdminPaymentController],
   providers: [
     {
       provide: PaymentEntityDTOMapper,

@@ -1,2 +1,2 @@
-export * from './tables.controller';
+export * from './admin-tables.controller';
 export * from './public-tables.controller';

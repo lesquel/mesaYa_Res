@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { ImagesController } from './interface/controllers/v1/images.controller';
+import { AdminImagesController } from './interface/controllers/v1/admin-images.controller';
 import {
   CreateImageUseCase,
   DeleteImageUseCase,
@@ -28,7 +28,7 @@ import { SupabaseImageStorageProvider } from './infrastructure/providers/supabas
     AuthModule,
     SupabaseModule,
   ],
-  controllers: [ImagesController],
+  controllers: [AdminImagesController],
   providers: [
     {
       provide: IMAGE_REPOSITORY,

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
-  RestaurantsController,
+  AdminRestaurantsController,
   PublicRestaurantsController,
 } from './interface';
 import {
@@ -39,7 +39,7 @@ import type {
     TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity]),
     AuthModule,
   ],
-  controllers: [RestaurantsController, PublicRestaurantsController],
+  controllers: [AdminRestaurantsController, PublicRestaurantsController],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,

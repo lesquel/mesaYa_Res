@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { ReviewsController, PublicReviewsController } from './interface';
+import { AdminReviewsController, PublicReviewsController } from './interface';
 import {
   ReviewOrmEntity,
   ReviewTypeOrmRepository,
@@ -46,7 +46,7 @@ import { RestaurantOrmEntity } from '../restaurants';
     ]),
     AuthModule,
   ],
-  controllers: [ReviewsController, PublicReviewsController],
+  controllers: [AdminReviewsController, PublicReviewsController],
   providers: [
     ReviewTypeOrmRepository,
     RestaurantTypeOrmReviewProvider,
