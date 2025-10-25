@@ -62,6 +62,7 @@ import { SupabaseImageStorageProvider } from './infrastructure/providers/supabas
     DeleteImageUseCase,
     GetImageAnalyticsUseCase,
     ImagesService,
+    IMAGE_REPOSITORY,
   ],
 })
 export class ImagesModule {}

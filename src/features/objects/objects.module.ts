@@ -69,6 +69,7 @@ import {
     DeleteGraphicObjectUseCase,
     GetGraphicObjectAnalyticsUseCase,
     ObjectsService,
+    GRAPHIC_OBJECT_REPOSITORY,
   ],
 })
 export class ObjectsModule {}

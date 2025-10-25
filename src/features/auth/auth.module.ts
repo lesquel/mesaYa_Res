@@ -105,6 +105,7 @@ import { AuthService } from './application/services/auth.service';
     JwtAuthGuard,
     AUTH_USER_REPOSITORY,
     AUTH_ROLE_REPOSITORY,
+    AUTH_PASSWORD_HASHER,
     AUTH_PERMISSION_REPOSITORY,
     AuthService,
   ],
