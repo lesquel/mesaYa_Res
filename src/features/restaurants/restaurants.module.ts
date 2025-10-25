@@ -151,6 +151,7 @@ import type {
     DeleteRestaurantUseCase,
     RestaurantsService,
     GetRestaurantAnalyticsUseCase,
+    RESTAURANT_REPOSITORY,
   ],
 })
 export class RestaurantsModule {}

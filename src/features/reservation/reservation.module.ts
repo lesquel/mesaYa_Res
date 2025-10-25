@@ -131,6 +131,8 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     UpdateReservationUseCase,
     DeleteReservatioUseCase,
     GetReservationAnalyticsUseCase,
+    RESERVATION_REPOSITORY,
+    IReservationRepositoryPort,
   ],
 })
 export class ReservationModule {}
