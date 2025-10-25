@@ -153,6 +153,7 @@ import {
     DeleteSectionUseCase,
     SectionsService,
     GetSectionAnalyticsUseCase,
+    SECTION_REPOSITORY,
   ],
 })
 export class SectionsModule {}
