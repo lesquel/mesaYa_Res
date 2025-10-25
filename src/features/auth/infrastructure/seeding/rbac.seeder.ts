@@ -5,14 +5,12 @@ import {
   DEFAULT_PERMISSION_NAMES,
   DEFAULT_ROLES,
 } from '../../domain/constants/rbac.constants';
+import { type AuthPermissionRepositoryPort } from '../../application/ports/permission.repository.port';
+import { type AuthRoleRepositoryPort } from '../../application/ports/role.repository.port';
 import {
   AUTH_PERMISSION_REPOSITORY,
-  type AuthPermissionRepositoryPort,
-} from '../../application/ports/permission.repository.port';
-import {
   AUTH_ROLE_REPOSITORY,
-  type AuthRoleRepositoryPort,
-} from '../../application/ports/role.repository.port';
+} from '../../auth.tokens';
 
 @Injectable()
 export class RbacSeeder implements OnModuleInit {

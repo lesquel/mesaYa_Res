@@ -3,23 +3,17 @@ import { AuthUser } from '../../domain/entities/auth-user.entity';
 import { AuthRole, AuthRoleName } from '../../domain/entities/auth-role.entity';
 import { EmailAlreadyInUseError } from '../../domain/errors/email-already-in-use.error';
 import { SignUpCommand } from '../dto/commands/sign-up.command';
-import {
-  AUTH_USER_REPOSITORY,
-  type AuthUserRepositoryPort,
-} from '../ports/user.repository.port';
-import {
-  AUTH_ROLE_REPOSITORY,
-  type AuthRoleRepositoryPort,
-} from '../ports/role.repository.port';
+import { type AuthUserRepositoryPort } from '../ports/user.repository.port';
+import { type AuthRoleRepositoryPort } from '../ports/role.repository.port';
+import { type AuthPasswordHasherPort } from '../ports/password-hasher.port';
+import { type AuthTokenServicePort } from '../ports/token.service.port';
+import { AuthTokenResponse } from '../dto/responses/auth-token.response';
 import {
   AUTH_PASSWORD_HASHER,
-  type AuthPasswordHasherPort,
-} from '../ports/password-hasher.port';
-import {
+  AUTH_ROLE_REPOSITORY,
   AUTH_TOKEN_SERVICE,
-  type AuthTokenServicePort,
-} from '../ports/token.service.port';
-import { AuthTokenResponse } from '../dto/responses/auth-token.response';
+  AUTH_USER_REPOSITORY,
+} from '@features/auth/auth.tokens';
 
 @Injectable()
 export class SignUpUseCase {

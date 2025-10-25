@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthUser } from '../../domain/entities/auth-user.entity';
-import {
-  AUTH_USER_REPOSITORY,
-  type AuthUserRepositoryPort,
-} from '../ports/user.repository.port';
+import { type AuthUserRepositoryPort } from '../ports/user.repository.port';
+import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';
 
 @Injectable()
 export class FindUserByIdUseCase {

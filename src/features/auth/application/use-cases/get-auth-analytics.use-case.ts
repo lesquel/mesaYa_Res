@@ -5,10 +5,8 @@ import type {
   AuthAnalyticsResponse,
   AuthAnalyticsTrendPoint,
 } from '../dto/responses/auth-analytics.response.js';
-import {
-  AUTH_ANALYTICS_REPOSITORY,
-  type AuthAnalyticsRepositoryPort,
-} from '../ports/auth-analytics.repository.port';
+import { type AuthAnalyticsRepositoryPort } from '../ports/auth-analytics.repository.port';
+import { AUTH_ANALYTICS_REPOSITORY } from '@features/auth/auth.tokens.js';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 

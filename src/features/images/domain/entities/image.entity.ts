@@ -13,7 +13,7 @@ export type CreateImageProps = Omit<ImageProps, 'createdAt'> & {
 
 export type UpdateImageProps = Partial<Omit<ImageProps, 'createdAt'>>;
 
-export type ImageSnapshot = ImageProps & { id: number };
+export type ImageSnapshot = ImageProps & { id: string };
 
 export class InvalidImageDataError extends Error {
   constructor(message: string) {
@@ -23,7 +23,7 @@ export class InvalidImageDataError extends Error {
 }
 
 export class ImageNotFoundError extends Error {
-  constructor(id: number) {
+  constructor(id: string) {
     super(`Image not found: ${id}`);
     this.name = 'ImageNotFoundError';
   }
@@ -31,11 +31,11 @@ export class ImageNotFoundError extends Error {
 
 export class Image {
   private constructor(
-    private _id: number | null,
+    private _id: string | null,
     private props: ImageProps,
   ) {}
 
-  static create(props: CreateImageProps, id: number | null = null): Image {
+  static create(props: CreateImageProps, id: string | null = null): Image {
     const normalized = Image.normalize({
       ...props,
       createdAt: props.createdAt ?? new Date(),
@@ -90,11 +90,11 @@ export class Image {
       throw new InvalidImageDataError('createdAt must be a valid Date');
   }
 
-  get maybeId(): number | null {
+  get maybeId(): string | null {
     return this._id;
   }
 
-  get id(): number {
+  get id(): string {
     if (this._id === null)
       throw new InvalidImageDataError('Image id has not been assigned yet');
     return this._id;

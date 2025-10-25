@@ -3,7 +3,7 @@ export type GraphicObjectProps = {
   posY: number;
   width: number;
   height: number;
-  imageId: number;
+  imageId: string;
 };
 
 export class InvalidGraphicObjectDataError extends Error {
@@ -41,10 +41,6 @@ export class GraphicObject {
     if (!isInt(height) || height <= 0)
       throw new InvalidGraphicObjectDataError(
         'height must be positive integer',
-      );
-    if (!isInt(imageId) || imageId <= 0)
-      throw new InvalidGraphicObjectDataError(
-        'imageId must be positive integer',
       );
   }
 

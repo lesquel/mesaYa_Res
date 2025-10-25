@@ -11,7 +11,7 @@ import { randomUUID } from 'node:crypto';
 @Injectable()
 export class MediaSeedService {
   private readonly logger = new Logger(MediaSeedService.name);
-  private imageIds: number[] = []; // Track created image IDs
+  private imageIds: string[] = []; // Track created image IDs
   private graphicObjectIds: string[] = []; // Track created graphic object IDs
 
   constructor(
@@ -91,7 +91,7 @@ export class MediaSeedService {
    * @param {number} index - Índice de la imagen (0-based)
    * @returns {number | undefined} - ID de la imagen o undefined si no existe
    */
-  getImageId(index: number): number | undefined {
+  getImageId(index: number): string | undefined {
     return this.imageIds[index];
   }
 
@@ -100,7 +100,7 @@ export class MediaSeedService {
    *
    * @returns {number[]} - Array de IDs de imágenes
    */
-  getImageIds(): number[] {
+  getImageIds(): string[] {
     return [...this.imageIds];
   }
 

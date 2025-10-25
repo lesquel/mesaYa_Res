@@ -4,10 +4,8 @@ import type {
   PaymentAnalyticsResponse,
   PaymentAnalyticsRepositoryResult,
 } from '../dtos/analytics/payment-analytics.response';
-import {
-  PAYMENT_ANALYTICS_REPOSITORY,
-  type PaymentAnalyticsRepositoryPort,
-} from '../ports/payment-analytics.repository.port';
+import { type PaymentAnalyticsRepositoryPort } from '../ports/payment-analytics.repository.port';
+import { PAYMENT_ANALYTICS_REPOSITORY } from '@features/payment/payment.tokens';
 
 @Injectable()
 export class GetPaymentAnalyticsUseCase {

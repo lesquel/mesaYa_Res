@@ -1,13 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserNotFoundError } from '../../domain/errors/user-not-found.error';
-import {
-  AUTH_USER_REPOSITORY,
-  type AuthUserRepositoryPort,
-} from '../ports/user.repository.port';
-import {
-  AUTH_ROLE_REPOSITORY,
-  type AuthRoleRepositoryPort,
-} from '../ports/role.repository.port';
+import { type AuthUserRepositoryPort } from '../ports/user.repository.port';
+import { type AuthRoleRepositoryPort } from '../ports/role.repository.port';
+import { AUTH_USER_REPOSITORY, AUTH_ROLE_REPOSITORY } from '../../auth.tokens';
 import { UpdateUserRolesCommand } from '../dto/commands/update-user-roles.command';
 import { AuthUser } from '../../domain/entities/auth-user.entity';
 

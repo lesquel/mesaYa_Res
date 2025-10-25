@@ -26,8 +26,8 @@ export class GraphicObjectOrmEntity {
   @Column({ type: 'int', name: 'alto', nullable: false })
   height: number;
 
-  @Column({ type: 'int', name: 'imagen_id', nullable: false })
-  imageId: number;
+  @Column({ type: 'uuid', name: 'imagen_id', nullable: false })
+  imageId: string;
 
   @ManyToOne(() => ImageOrmEntity, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'imagen_id' })

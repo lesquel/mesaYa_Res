@@ -4,7 +4,7 @@ export interface GraphicObjectCreateRequest {
   posY: number;
   width: number;
   height: number;
-  imageId: number;
+  imageId: string;
 }
 
 export interface GraphicObjectUpdateRequest {
@@ -13,7 +13,7 @@ export interface GraphicObjectUpdateRequest {
   posY?: number;
   width?: number;
   height?: number;
-  imageId?: number;
+  imageId?: string;
 }
 
 export interface GraphicObjectDeleteRequest {
