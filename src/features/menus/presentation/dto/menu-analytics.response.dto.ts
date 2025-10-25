@@ -36,7 +36,7 @@ class MenuAnalyticsMenusDto {
 
 class MenuAnalyticsRestaurantItemDto {
   @ApiProperty()
-  restaurantId!: number;
+  restaurantId!: string;
 
   @ApiProperty()
   count!: number;

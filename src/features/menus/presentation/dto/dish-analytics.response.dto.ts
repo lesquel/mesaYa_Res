@@ -28,7 +28,7 @@ class DishAnalyticsPriceBucketDto {
 
 class DishAnalyticsRestaurantDistributionDto {
   @ApiProperty({ description: 'Identificador del restaurante' })
-  restaurantId!: number;
+  restaurantId!: string;
 
   @ApiProperty({ description: 'Cantidad de platos' })
   count!: number;
@@ -45,7 +45,7 @@ class DishAnalyticsTopDishDto {
   price!: number;
 
   @ApiProperty({ description: 'Identificador del restaurante' })
-  restaurantId!: number;
+  restaurantId!: string;
 }
 
 class DishAnalyticsTrendPointDto {

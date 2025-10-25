@@ -3,7 +3,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBooleanString,
   IsDateString,
-  IsNumberString,
   IsOptional,
   IsUUID,
 } from 'class-validator';
@@ -35,7 +34,7 @@ export class RestaurantAnalyticsRequestDto {
 
   @ApiPropertyOptional({ description: 'Filtrar por plan de suscripción' })
   @IsOptional()
-  @IsNumberString()
+  @IsUUID()
   subscriptionId?: string;
 
   toQuery(): RestaurantAnalyticsQuery {
@@ -60,10 +59,7 @@ export class RestaurantAnalyticsRequestDto {
           ? this.active.toLowerCase() === 'true'
           : undefined,
       ownerId: this.ownerId,
-      subscriptionId:
-        this.subscriptionId !== undefined
-          ? Number.parseInt(this.subscriptionId, 10)
-          : undefined,
+      subscriptionId: this.subscriptionId,
     };
   }
 

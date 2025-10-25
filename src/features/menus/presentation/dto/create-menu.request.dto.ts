@@ -1,11 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   MaxLength,
   Min,
@@ -16,10 +14,13 @@ import type { CreateMenuDto } from '../../application/dtos/input/create-menu.dto
 import { CreateDishRequestDto } from './create-dish.request.dto';
 
 export class CreateMenuRequestDto implements CreateMenuDto {
-  @ApiProperty({ description: 'Identificador del restaurante', example: 1001 })
-  @IsInt()
-  @IsPositive()
-  restaurantId: number;
+  @ApiProperty({
+    description: 'Identificador del restaurante',
+    example: '1001',
+  })
+  @IsString()
+  @IsNotEmpty()
+  restaurantId: string;
 
   @ApiProperty({ description: 'Nombre del menú', maxLength: 100 })
   @IsString()
