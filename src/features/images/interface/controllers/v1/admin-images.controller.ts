@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseFilePipe,
   Patch,
   Post,
@@ -32,11 +31,8 @@ import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
-import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
 import {
   ThrottleCreate,
-  ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
@@ -46,8 +42,6 @@ import {
   UpdateImageDto,
   type CreateImageCommand,
   type DeleteImageCommand,
-  type FindImageQuery,
-  type ListImagesQuery,
   type UpdateImageCommand,
   GetImageAnalyticsUseCase,
 } from '../../../application/index.js';
@@ -60,8 +54,10 @@ import {
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
-@ApiTags('Images')
-@Controller({ path: 'image', version: '1' })
+@ApiTags('Images - Admin')
+@Controller({ path: 'admin/image', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class AdminImagesController {
   constructor(
     private readonly images: ImagesService,
@@ -70,10 +66,8 @@ export class AdminImagesController {
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:create')
-  @ApiOperation({ summary: 'Crear imagen (permiso image:create)' })
-  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Crear imagen (Admin)' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -119,22 +113,10 @@ export class AdminImagesController {
     return this.images.create(command);
   }
 
-  @Get()
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Listar imágenes (paginado)' })
-  @ApiPaginationQuery()
-  async list(
-    @PaginationParams({ defaultRoute: '/image' }) query: ListImagesQuery,
-  ) {
-    return this.images.list(query);
-  }
-
   @Get('analytics')
   @ThrottleSearch()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:read')
-  @ApiOperation({ summary: 'Datos analíticos de imágenes' })
-  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Analíticas de imágenes (Admin)' })
   @ApiQuery({
     name: 'startDate',
     required: false,
@@ -161,22 +143,11 @@ export class AdminImagesController {
     return ImageAnalyticsResponseDto.fromApplication(analytics);
   }
 
-  @Get(':id')
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Obtener imagen por ID' })
-  @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
-  async findOne(@Param('uuid') id: string) {
-    const query: FindImageQuery = { imageId: id };
-    return this.images.findOne(query);
-  }
-
   @Patch(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:update')
-  @ApiOperation({ summary: 'Actualizar imagen (permiso image:update)' })
-  @ApiBearerAuth()
-  @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
+  @ApiOperation({ summary: 'Actualizar imagen (Admin)' })
+  @ApiParam({ name: 'id', description: 'UUID de la imagen' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -227,11 +198,9 @@ export class AdminImagesController {
 
   @Delete(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('image:delete')
-  @ApiOperation({ summary: 'Eliminar imagen (permiso image:delete)' })
-  @ApiBearerAuth()
-  @ApiParam({ name: 'id', description: 'ID incremental de la imagen' })
+  @ApiOperation({ summary: 'Eliminar imagen (Admin)' })
+  @ApiParam({ name: 'id', description: 'UUID de la imagen' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const command: DeleteImageCommand = { imageId: id };
     return this.images.delete(command);

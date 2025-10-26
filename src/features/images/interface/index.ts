@@ -1,1 +1,1 @@
-export * from './controllers/v1/images.controller';
+export * from './controllers/v1/admin-images.controller';
