@@ -9,10 +9,14 @@ export interface TableProps {
   width: number; // ancho
   tableImageId: string; // imagen_mesa_id
   chairImageId: string; // imagen_silla_id
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface TableSnapshot extends TableProps {
   id: string; // mesa_id
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type CreateTableProps = TableProps;
@@ -52,7 +56,12 @@ export class Table {
   }
 
   snapshot(): TableSnapshot {
-    return { id: this._id, ...this.props };
+    return {
+      id: this._id,
+      ...this.props,
+      createdAt: this.props.createdAt ?? new Date(),
+      updatedAt: this.props.updatedAt ?? new Date(),
+    };
   }
 
   get id(): string {
@@ -81,6 +90,14 @@ export class Table {
   }
   get chairImageId(): string {
     return this.props.chairImageId;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt ?? new Date();
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt ?? new Date();
   }
 
   private static validate(props: TableProps | TableSnapshot): void {

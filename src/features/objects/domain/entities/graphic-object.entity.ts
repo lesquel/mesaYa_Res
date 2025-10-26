@@ -4,6 +4,8 @@ export type GraphicObjectProps = {
   width: number;
   height: number;
   imageId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 export class InvalidGraphicObjectDataError extends Error {
@@ -64,13 +66,30 @@ export class GraphicObject {
     return this.props.imageId;
   }
 
+  get createdAt(): Date {
+    return this.props.createdAt ?? new Date();
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt ?? new Date();
+  }
+
   update(patch: Partial<GraphicObjectProps>) {
     const next = { ...this.props, ...patch } as GraphicObjectProps;
     GraphicObject.validate(next);
     this.props = next;
   }
 
-  snapshot(): { id: string } & GraphicObjectProps {
-    return { id: this._id, ...this.props };
+  snapshot(): {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+  } & GraphicObjectProps {
+    return {
+      id: this._id,
+      ...this.props,
+      createdAt: this.props.createdAt ?? new Date(),
+      updatedAt: this.props.updatedAt ?? new Date(),
+    };
   }
 }

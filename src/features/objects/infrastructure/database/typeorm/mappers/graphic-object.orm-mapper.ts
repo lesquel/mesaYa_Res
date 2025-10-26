@@ -9,6 +9,8 @@ export class GraphicObjectOrmMapper {
       width: entity.width,
       height: entity.height,
       imageId: entity.imageId,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 

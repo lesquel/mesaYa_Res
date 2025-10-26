@@ -5,13 +5,17 @@ export interface ImageProps {
   description: string;
   entityId: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
-export type CreateImageProps = Omit<ImageProps, 'createdAt'> & {
+export type CreateImageProps = Omit<ImageProps, 'createdAt' | 'updatedAt'> & {
   createdAt?: Date;
+  updatedAt?: Date;
 };
 
-export type UpdateImageProps = Partial<Omit<ImageProps, 'createdAt'>>;
+export type UpdateImageProps = Partial<
+  Omit<ImageProps, 'createdAt' | 'updatedAt'>
+>;
 
 export type ImageSnapshot = ImageProps & { id: string };
 
@@ -36,9 +40,11 @@ export class Image {
   ) {}
 
   static create(props: CreateImageProps, id: string | null = null): Image {
+    const now = new Date();
     const normalized = Image.normalize({
       ...props,
-      createdAt: props.createdAt ?? new Date(),
+      createdAt: props.createdAt ?? now,
+      updatedAt: props.updatedAt ?? now,
     });
     return new Image(id, normalized);
   }
@@ -52,6 +58,7 @@ export class Image {
         description: snapshot.description,
         entityId: snapshot.entityId,
         createdAt: snapshot.createdAt,
+        updatedAt: snapshot.updatedAt,
       },
       snapshot.id,
     );
@@ -66,6 +73,7 @@ export class Image {
       description: props.description.trim(),
       entityId: props.entityId,
       createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
   }
 

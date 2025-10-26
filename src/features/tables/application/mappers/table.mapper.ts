@@ -14,6 +14,8 @@ export class TableMapper {
       width: s.width,
       tableImageId: s.tableImageId,
       chairImageId: s.chairImageId,
+      createdAt: s.createdAt,
+      updatedAt: s.updatedAt,
     };
   }
 }

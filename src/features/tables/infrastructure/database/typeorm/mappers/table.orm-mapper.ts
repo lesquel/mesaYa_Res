@@ -32,6 +32,8 @@ export class TableOrmMapper {
       width: entity.width,
       tableImageId: entity.tableImageId,
       chairImageId: entity.chairImageId,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 }

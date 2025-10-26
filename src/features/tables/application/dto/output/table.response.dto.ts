@@ -10,6 +10,8 @@ export interface TableResponseDto {
   width: number;
   tableImageId: string;
   chairImageId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type PaginatedTableResponse = PaginatedResult<TableResponseDto>;

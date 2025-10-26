@@ -5,4 +5,6 @@ export interface GraphicObjectResponseDto {
   width: number;
   height: number;
   imageId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
