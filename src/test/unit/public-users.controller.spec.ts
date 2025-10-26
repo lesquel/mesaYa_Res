@@ -1,6 +1,6 @@
-import { PublicUsersController } from '@features/auth/interface/controllers/v1/public-users.controller';
-import { AuthAnalyticsRequestDto } from '@features/auth/interface/dto/auth-analytics.request.dto';
-import type { AuthAnalyticsResponse } from '@features/auth/application/dto/responses/auth-analytics.response';
+import { PublicUsersController } from '../../features/auth/interface/controllers/v1/public-users.controller';
+import { AuthAnalyticsRequestDto } from '../../features/auth/interface/dto/auth-analytics.request.dto';
+import type { AuthAnalyticsResponse } from '../../features/auth/application/dto/responses/auth-analytics.response';
 
 describe('PublicUsersController (unit)', () => {
   it('analytics returns reduced public DTO', async () => {

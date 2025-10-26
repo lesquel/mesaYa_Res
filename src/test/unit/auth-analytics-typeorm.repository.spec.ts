@@ -1,5 +1,5 @@
-import { AuthAnalyticsTypeOrmRepository } from '@features/auth/infrastructure/database/typeorm/repositories/auth-analytics-typeorm.repository';
-import type { AuthAnalyticsQuery } from '@features/auth/application/dto/queries/auth-analytics.query';
+import { AuthAnalyticsTypeOrmRepository } from '../../features/auth/infrastructure/database/typeorm/repositories/auth-analytics-typeorm.repository';
+import type { AuthAnalyticsQuery } from '../../features/auth/application/dto/queries/auth-analytics.query';
 
 describe('AuthAnalyticsTypeOrmRepository (unit)', () => {
   it('compute() returns aggregated shape without restaurantId', async () => {
