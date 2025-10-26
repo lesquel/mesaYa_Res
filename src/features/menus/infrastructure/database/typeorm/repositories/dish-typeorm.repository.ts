@@ -20,7 +20,7 @@ export class DishTypeOrmRepository extends IDishRepositoryPort {
   }
 
   async create(data: DishCreate): Promise<DishEntity> {
-    const entity = DishOrmMapper.fromCreate(data);
+    const entity = DishOrmMapper.fromCreate(data, data.menuId);
     const saved = await this.dishes.save(entity);
     return DishOrmMapper.toDomain(saved);
   }
