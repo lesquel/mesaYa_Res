@@ -70,7 +70,11 @@ describe('AuthAnalyticsTypeOrmRepository (unit)', () => {
           setParameter: () => chain,
           groupBy: () => chain,
           orderBy: () => chain,
-          getRawOne: async () => ({ totalUsers: '1', activeUsers: '1', inactiveUsers: '0' }),
+          getRawOne: async () => ({
+            totalUsers: '1',
+            activeUsers: '1',
+            inactiveUsers: '0',
+          }),
           getRawMany: async () => [],
           take: () => chain,
           skip: () => chain,
@@ -81,7 +85,9 @@ describe('AuthAnalyticsTypeOrmRepository (unit)', () => {
     };
 
     const repo = new AuthAnalyticsTypeOrmRepository(fakeUsersRepo as any);
-    const result = await repo.compute({ restaurantId: 'd290f1ee-6c54-4b01-90e6-d701748f0851' } as AuthAnalyticsQuery);
+    const result = await repo.compute({
+      restaurantId: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
+    } as AuthAnalyticsQuery);
     expect(result.totals.totalUsers).toBe(1);
   });
 });

@@ -1,6 +1,7 @@
 ## Nuevos endpoints de analytics (Auth)
 
 Se añadieron endpoints para obtener analytics de usuarios con distintos scopes:
+
 - Public: GET /public/users/analytics
   - Query params: startDate, endDate, role, active, restaurantId
   - Responde: summary + registrations (no roles/permissions) — DTO: `PublicAuthAnalyticsResponseDto`
@@ -19,6 +20,7 @@ Ejemplo de request restaurant-scoped (autenticado):
 
 GET /restaurant/users/analytics/restaurant/d290f1ee-6c54-4b01-90e6-d701748f0851?role=OWNER
 Nota: `restaurantId` en los query params también puede usarse en el endpoint público para obtener agregados filtrados por restaurante; internamente se realiza un JOIN con la tabla `reservation` para contar usuarios distintos con reservas en ese restaurante.
+
 # Guía completa de Kafka en MesaYa
 
 Esta guía documenta al detalle cómo está integrada la mensajería con Apache Kafka en MesaYa. Aquí encontrarás los componentes disponibles, los pasos de configuración, ejemplos de uso de productores y consumidores, y buenas prácticas para mantener la integración al 10000000%.
