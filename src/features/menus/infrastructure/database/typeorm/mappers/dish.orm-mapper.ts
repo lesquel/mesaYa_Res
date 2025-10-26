@@ -24,7 +24,7 @@ export class DishOrmMapper {
     entity.description = data.description;
     entity.price = data.price.amount;
     entity.imageId = data.imageId ?? null;
-    entity.menuId = menuId ?? null;
+    entity.menuId = data.menuId ?? menuId ?? null;
     return entity;
   }
 
