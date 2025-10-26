@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import type { UpdateMenuDto } from '../../application/dtos/input/update-menu.dto';
-import { UpdateDishRequestDto } from './update-dish.request.dto';
+import { UpdateDishRequestDto } from './update-dish.request.swagger.dto';
 
 export class UpdateMenuRequestDto implements Omit<UpdateMenuDto, 'menuId'> {
   @ApiPropertyOptional({ description: 'Nombre del menú', maxLength: 100 })

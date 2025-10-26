@@ -9,4 +9,5 @@ export class CreateDishDto {
   description: string;
   price: number;
   imageId?: string;
+  menuId?: string;
 }

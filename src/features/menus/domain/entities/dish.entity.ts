@@ -6,6 +6,7 @@ export interface DishProps {
   description: string;
   price: MoneyVO;
   imageId?: string;
+  menuId?: string;
 }
 
 export interface DishSnapshot extends DishProps {
@@ -69,6 +70,10 @@ export class DishEntity {
     return this.props.imageId;
   }
 
+  get menuId(): string | undefined {
+    return this.props.menuId;
+  }
+
   private static validate(props: DishProps): void {
     if (!props.name || !props.name.trim()) {
       throw new Error('Dish must have a valid name');
@@ -88,6 +93,10 @@ export class DishEntity {
 
     if (props.imageId !== undefined && !props.imageId.trim()) {
       throw new Error('Dish cannot reference an empty imageId');
+    }
+
+    if (props.menuId !== undefined && !props.menuId.trim()) {
+      throw new Error('Dish cannot reference an empty menuId');
     }
   }
 }

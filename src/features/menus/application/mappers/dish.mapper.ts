@@ -12,6 +12,7 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       description: entity.description,
       price: entity.price.amount,
       imageId: entity.imageId ?? undefined,
+      menuId: entity.menuId ?? undefined,
     };
   }
 
@@ -24,6 +25,7 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       description: dto.description,
       price,
       imageId: dto.imageId ?? undefined,
+      menuId: dto.menuId ?? undefined,
     });
   }
 
@@ -36,6 +38,7 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       description: dto.description,
       price,
       imageId: dto.imageId,
+      menuId: dto.menuId,
     };
   }
 
@@ -48,6 +51,7 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
     if (dto.description !== undefined) update.description = dto.description;
     if (dto.price !== undefined) update.price = new MoneyVO(dto.price);
     if (dto.imageId !== undefined) update.imageId = dto.imageId;
+    if (dto.menuId !== undefined) update.menuId = dto.menuId;
 
     return update;
   }

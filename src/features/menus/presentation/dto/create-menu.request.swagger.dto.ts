@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import type { CreateMenuDto } from '../../application/dtos/input/create-menu.dto';
-import { CreateDishRequestDto } from './create-dish.request.dto';
+import { CreateDishRequestDto } from './create-dish.request.swagger.dto';
 
 export class CreateMenuRequestDto implements CreateMenuDto {
   @ApiProperty({

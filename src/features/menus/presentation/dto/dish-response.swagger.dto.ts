@@ -33,4 +33,13 @@ export class DishResponseSwaggerDto implements DishDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   imageId?: string | null;
+
+  @ApiProperty({
+    description: 'Identificador del menú al que pertenece',
+    required: false,
+    nullable: true,
+    format: 'uuid',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  menuId?: string | null;
 }

@@ -5,4 +5,5 @@ export interface DishDto {
   description: string;
   price: number;
   imageId?: string | null;
+  menuId?: string | null;
 }

@@ -11,6 +11,7 @@ export class DishOrmMapper {
       description: entity.description,
       price: new MoneyVO(Number(entity.price)),
       imageId: entity.imageId ?? undefined,
+      menuId: entity.menuId ?? undefined,
     });
   }
 
@@ -40,6 +41,10 @@ export class DishOrmMapper {
 
     if (data.imageId !== undefined) {
       entity.imageId = data.imageId ?? null;
+    }
+
+    if (data.menuId !== undefined) {
+      entity.menuId = data.menuId ?? null;
     }
 
     return entity;

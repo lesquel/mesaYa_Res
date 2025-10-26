@@ -6,6 +6,7 @@ export interface DishCreate {
   description: string;
   price: MoneyVO;
   imageId?: string;
+  menuId?: string;
 }
 
 export interface DishUpdate {
@@ -14,4 +15,5 @@ export interface DishUpdate {
   description?: string;
   price?: MoneyVO;
   imageId?: string | null;
+  menuId?: string | null;
 }
