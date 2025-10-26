@@ -8,6 +8,8 @@ import { subscriptionPlansSeed, subscriptionsSeed } from '../data';
 @Injectable()
 export class SubscriptionSeedService {
   private readonly logger = new Logger(SubscriptionSeedService.name);
+  private subscriptionPlanIds: string[] = []; // Track created subscription plan IDs
+  private subscriptionIds: string[] = []; // Track created subscription IDs
 
   constructor(
     @Inject(ISubscriptionPlanRepositoryPort)
@@ -21,14 +23,17 @@ export class SubscriptionSeedService {
   async seedSubscriptionPlans(): Promise<void> {
     this.logger.log('💳 Seeding subscription plans...');
 
-    const existing = await this.subscriptionPlanRepository.findAll();
-    if (existing.length > 0) {
-      this.logger.log('⏭️  Subscription plans already exist, skipping...');
+    // Check if subscription plans exist by verifying if we already have IDs tracked
+    if (this.subscriptionPlanIds.length > 0) {
+      this.logger.log(
+        '⏭️  Subscription plans already exist in this session, skipping...',
+      );
       return;
     }
 
     for (const planData of subscriptionPlansSeed) {
-      await this.subscriptionPlanRepository.create(planData);
+      const plan = await this.subscriptionPlanRepository.create(planData);
+      this.subscriptionPlanIds.push(plan.id);
     }
 
     this.logger.log(
@@ -39,34 +44,76 @@ export class SubscriptionSeedService {
   async seedSubscriptions(): Promise<void> {
     this.logger.log('📋 Seeding subscriptions...');
 
-    const existing = await this.subscriptionRepository.findAll();
-    if (existing.length > 0) {
-      this.logger.log('⏭️  Subscriptions already exist, skipping...');
+    // Check if subscriptions exist by verifying if we already have IDs tracked
+    if (this.subscriptionIds.length > 0) {
+      this.logger.log(
+        '⏭️  Subscriptions already exist in this session, skipping...',
+      );
       return;
     }
 
-    const restaurants = await this.restaurantRepository.findAll();
-    const subscriptionPlans = await this.subscriptionPlanRepository.findAll();
+    // Verificar que los planes de suscripción ya fueron creados
+    if (this.subscriptionPlanIds.length === 0) {
+      this.logger.warn(
+        '⚠️  No subscription plans found, cannot seed subscriptions',
+      );
+      return;
+    }
 
     for (const subscriptionSeed of subscriptionsSeed) {
-      const restaurant = restaurants[subscriptionSeed.restaurantIndex];
-      const subscriptionPlan = subscriptionPlans.find(
-        (plan) => plan.name === subscriptionSeed.subscriptionPlanName,
-      );
+      const restaurant = await this.restaurantRepository.findAll();
+      const targetRestaurant = restaurant[subscriptionSeed.restaurantIndex];
 
-      if (!restaurant || !subscriptionPlan) {
-        this.logger.warn('Skipping subscription: restaurant or plan not found');
+      if (!targetRestaurant) {
+        this.logger.warn(
+          `Skipping subscription: restaurant not found at index ${subscriptionSeed.restaurantIndex}`,
+        );
         continue;
       }
 
-      await this.subscriptionRepository.create({
+      // Buscar el plan de suscripción por nombre usando los IDs tracked
+      const allPlans = await this.subscriptionPlanRepository.findAll();
+      const subscriptionPlan = allPlans.find(
+        (plan) => plan.name === subscriptionSeed.subscriptionPlanName,
+      );
+
+      if (!subscriptionPlan) {
+        this.logger.warn(
+          `Skipping subscription: plan "${subscriptionSeed.subscriptionPlanName}" not found`,
+        );
+        continue;
+      }
+
+      const subscription = await this.subscriptionRepository.create({
         subscriptionPlanId: subscriptionPlan.id,
-        restaurantId: restaurant.id,
+        restaurantId: targetRestaurant.id,
         subscriptionStartDate: subscriptionSeed.subscriptionStartDate,
         stateSubscription: subscriptionSeed.stateSubscription,
       });
+
+      this.subscriptionIds.push(subscription.id);
     }
 
     this.logger.log(`✅ Created ${subscriptionsSeed.length} subscriptions`);
+  }
+
+  /**
+   * Obtiene el ID del plan de suscripción creado según su índice.
+   *
+   * @param {number} index - Índice del plan (0-based)
+   * @returns {string | undefined} - ID del plan o undefined si no existe
+   */
+  getSubscriptionPlanId(index: number): string | undefined {
+    return this.subscriptionPlanIds[index];
+  }
+
+  /**
+   * Obtiene el ID de la suscripción creada según su índice.
+   *
+   * @param {number} index - Índice de la suscripción (0-based)
+   * @returns {string | undefined} - ID de la suscripción o undefined si no existe
+   */
+  getSubscriptionId(index: number): string | undefined {
+    return this.subscriptionIds[index];
   }
 }

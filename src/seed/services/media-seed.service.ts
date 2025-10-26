@@ -50,7 +50,15 @@ export class MediaSeedService {
   async seedGraphicObjects(): Promise<void> {
     this.logger.log('🎨 Seeding graphic objects...');
 
-    // If images weren't created in this session, we can't proceed
+    // Check if graphic objects exist by verifying if we already have IDs tracked
+    if (this.graphicObjectIds.length > 0) {
+      this.logger.log(
+        '⏭️  Graphic objects already exist in this session, skipping...',
+      );
+      return;
+    }
+
+    // Verificar que las imágenes ya fueron creadas
     if (this.imageIds.length === 0) {
       this.logger.warn(
         '⚠️  No image IDs available. Images must be seeded first in the same session.',
@@ -77,8 +85,10 @@ export class MediaSeedService {
         height: objectData.height,
         imageId: imageId,
       });
-      await this.graphicObjectRepository.save(graphicObject);
-      this.graphicObjectIds.push(graphicObjectId); // Track the created ID
+
+      const savedGraphicObject =
+        await this.graphicObjectRepository.save(graphicObject);
+      this.graphicObjectIds.push(savedGraphicObject.id); // Capturar ID retornado
     }
 
     this.logger.log(`✅ Created ${graphicObjectsSeed.length} graphic objects`);

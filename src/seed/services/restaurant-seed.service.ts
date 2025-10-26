@@ -74,8 +74,8 @@ export class RestaurantSeedService {
         restaurantId,
       );
 
-      await this.restaurantRepository.save(restaurant);
-      this.restaurantIds.push(restaurantId);
+      const savedRestaurant = await this.restaurantRepository.save(restaurant);
+      this.restaurantIds.push(savedRestaurant.id); // Capturar ID retornado
     }
 
     this.logger.log(`✅ Created ${restaurantsSeed.length} restaurants`);
@@ -115,8 +115,8 @@ export class RestaurantSeedService {
         sectionId,
       );
 
-      await this.sectionRepository.save(section);
-      this.sectionIds.push(sectionId);
+      const savedSection = await this.sectionRepository.save(section);
+      this.sectionIds.push(savedSection.id); // Capturar ID retornado
     }
 
     this.logger.log(`✅ Created ${sectionsSeed.length} sections`);
@@ -167,8 +167,8 @@ export class RestaurantSeedService {
         chairImageId,
       });
 
-      await this.tableRepository.save(table);
-      this.tableIds.push(tableId); // Track the created table ID
+      const savedTable = await this.tableRepository.save(table);
+      this.tableIds.push(savedTable.id); // Capturar ID retornado
     }
 
     this.logger.log(`✅ Created ${tablesSeed.length} tables`);
