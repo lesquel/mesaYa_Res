@@ -4,4 +4,6 @@ export interface SubscriptionDto {
   restaurantId: string;
   subscriptionStartDate: string;
   stateSubscription: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

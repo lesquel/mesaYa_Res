@@ -19,4 +19,10 @@ export class SubscriptionPlanResponseSwaggerDto implements SubscriptionPlanDto {
 
   @ApiProperty({ description: 'Estado del plan', example: 'ACTIVE' })
   stateSubscriptionPlan: string;
+
+  @ApiProperty({ description: 'Fecha de creación del plan' })
+  createdAt: Date;
+
+  @ApiProperty({ description: 'Fecha de última actualización del plan' })
+  updatedAt: Date;
 }

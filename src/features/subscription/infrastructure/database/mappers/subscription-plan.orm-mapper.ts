@@ -19,6 +19,8 @@ export class SubscriptionPlanOrmMapper extends SubscriptionPlanOrmMapperPort<Sub
     entity.price = snapshot.price.amount;
     entity.subscriptionPeriod = snapshot.subscriptionPeriod.value;
     entity.stateSubscriptionPlan = snapshot.stateSubscriptionPlan.value;
+    entity.createdAt = snapshot.createdAt;
+    entity.updatedAt = snapshot.updatedAt;
 
     return entity;
   }
@@ -34,6 +36,8 @@ export class SubscriptionPlanOrmMapper extends SubscriptionPlanOrmMapperPort<Sub
       stateSubscriptionPlan: SubscriptionPlanStateVO.create(
         entity.stateSubscriptionPlan,
       ),
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 }

@@ -16,6 +16,8 @@ export class SubscriptionOrmMapper extends SubscriptionOrmMapperPort<Subscriptio
       restaurantId: entity.restaurantId,
       subscriptionStartDate: entity.subscriptionStartDate,
       stateSubscription: SubscriptionStateVO.create(entity.stateSubscription),
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 
@@ -27,6 +29,8 @@ export class SubscriptionOrmMapper extends SubscriptionOrmMapperPort<Subscriptio
     ormEntity.restaurantId = snapshot.restaurantId;
     ormEntity.subscriptionStartDate = snapshot.subscriptionStartDate;
     ormEntity.stateSubscription = snapshot.stateSubscription.value;
+    ormEntity.createdAt = snapshot.createdAt;
+    ormEntity.updatedAt = snapshot.updatedAt;
 
     return ormEntity;
   }

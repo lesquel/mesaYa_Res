@@ -28,4 +28,12 @@ export class SubscriptionResponseSwaggerDto implements SubscriptionDto {
 
   @ApiProperty({ description: 'Estado actual de la suscripción' })
   stateSubscription: string;
+
+  @ApiProperty({ description: 'Fecha de creación de la suscripción' })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Fecha de última actualización de la suscripción',
+  })
+  updatedAt: Date;
 }

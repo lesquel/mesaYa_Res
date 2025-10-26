@@ -24,6 +24,8 @@ export class SubscriptionMapper extends EntityDTOMapper<
       restaurantId: entity.restaurantId,
       subscriptionStartDate: entity.startDate.toISOString(),
       stateSubscription: entity.state.value,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 
@@ -36,6 +38,8 @@ export class SubscriptionMapper extends EntityDTOMapper<
       restaurantId: dto.restaurantId,
       subscriptionStartDate: startDate,
       stateSubscription: state,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
     });
   }
 

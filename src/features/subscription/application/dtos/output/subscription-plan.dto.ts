@@ -4,4 +4,6 @@ export interface SubscriptionPlanDto {
   price: number;
   subscriptionPeriod: string;
   stateSubscriptionPlan: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

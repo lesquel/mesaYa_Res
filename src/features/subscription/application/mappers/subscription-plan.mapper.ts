@@ -26,6 +26,8 @@ export class SubscriptionPlanMapper extends EntityDTOMapper<
       price: entity.price.amount,
       subscriptionPeriod: entity.period.value,
       stateSubscriptionPlan: entity.state.value,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 
@@ -39,6 +41,8 @@ export class SubscriptionPlanMapper extends EntityDTOMapper<
       price,
       subscriptionPeriod: period,
       stateSubscriptionPlan: state,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
     });
   }
 

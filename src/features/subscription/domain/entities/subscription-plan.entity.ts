@@ -6,6 +6,8 @@ export interface SubscriptionPlanProps {
   price: MoneyVO;
   subscriptionPeriod: SubscriptionPlanPeriodVO;
   stateSubscriptionPlan: SubscriptionPlanStateVO;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SubscriptionPlanSnapshot extends SubscriptionPlanProps {
@@ -23,7 +25,12 @@ export class SubscriptionPlanEntity {
     props: SubscriptionPlanProps,
   ): SubscriptionPlanEntity {
     this.validate(props);
-    return new SubscriptionPlanEntity(id, { ...props });
+    const now = new Date();
+    return new SubscriptionPlanEntity(id, {
+      ...props,
+      createdAt: props.createdAt ?? now,
+      updatedAt: props.updatedAt ?? now,
+    });
   }
 
   static rehydrate(snapshot: SubscriptionPlanSnapshot): SubscriptionPlanEntity {
@@ -51,12 +58,22 @@ export class SubscriptionPlanEntity {
     return this.props.stateSubscriptionPlan;
   }
 
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
   updateState(newState: SubscriptionPlanStateVO): void {
     this.props.stateSubscriptionPlan = newState;
+    this.props.updatedAt = new Date();
   }
 
   updatePrice(newPrice: MoneyVO): void {
     this.props.price = newPrice;
+    this.props.updatedAt = new Date();
   }
 
   snapshot(): SubscriptionPlanSnapshot {
@@ -79,5 +96,9 @@ export class SubscriptionPlanEntity {
     if (!props.stateSubscriptionPlan) {
       throw new Error('Subscription plan must define a state');
     }
+    if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
+      throw new Error('createdAt must be a valid Date');
+    if (!(props.updatedAt instanceof Date) || Number.isNaN(props.updatedAt))
+      throw new Error('updatedAt must be a valid Date');
   }
 }
