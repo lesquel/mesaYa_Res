@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'image' })
@@ -27,6 +28,13 @@ export class ImageOrmEntity {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt!: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamptz',
+    name: 'fecha_modificacion',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt!: Date;
 
   @Column({ type: 'varchar', length: 20, name: 'titulo', nullable: false })
   title!: string;

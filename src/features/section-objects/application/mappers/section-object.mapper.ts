@@ -7,6 +7,8 @@ export class SectionObjectMapper {
       id: entity.id,
       sectionId: entity.sectionId,
       objectId: entity.objectId,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 }

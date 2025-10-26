@@ -7,4 +7,6 @@ export interface PaymentDto {
   amount: number;
   date: string;
   paymentStatus: PaymentStatusEnum;
+  createdAt: Date;
+  updatedAt: Date;
 }

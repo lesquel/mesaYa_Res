@@ -9,6 +9,8 @@ export interface PaymentProps {
   paymentStatus: PaymentStatusVO;
   reservationId?: string;
   subscriptionId?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface PaymentSnapshot extends PaymentProps {
@@ -23,7 +25,13 @@ export class PaymentEntity {
 
   static create(id: string, props: PaymentProps): PaymentEntity {
     this.validate(props);
-    return new PaymentEntity(id, props);
+    const now = new Date();
+    const normalized: PaymentProps = {
+      ...props,
+      createdAt: props.createdAt ?? now,
+      updatedAt: props.updatedAt ?? now,
+    };
+    return new PaymentEntity(id, normalized);
   }
 
   snapshot(): PaymentSnapshot {
@@ -60,8 +68,17 @@ export class PaymentEntity {
     return this.props.subscriptionId;
   }
 
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
   updateStatus(newStatus: PaymentStatusVO): void {
     this.props.paymentStatus = newStatus;
+    this.props.updatedAt = new Date();
   }
 
   get paymentType(): PaymentTypeEnum {
@@ -76,5 +93,9 @@ export class PaymentEntity {
       throw new Error('Payment must have a valid status');
     if (!props.reservationId && !props.subscriptionId)
       throw new PaymentMustBeAssociatedError();
+    if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
+      throw new Error('createdAt must be a valid Date');
+    if (!(props.updatedAt instanceof Date) || Number.isNaN(props.updatedAt))
+      throw new Error('updatedAt must be a valid Date');
   }
 }

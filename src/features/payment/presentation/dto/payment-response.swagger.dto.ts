@@ -36,4 +36,10 @@ export class PaymentResponseSwaggerDto implements PaymentDto {
     description: 'Estado actual del pago',
   })
   paymentStatus: PaymentStatusEnum;
+
+  @ApiProperty({ description: 'Fecha de creación del pago' })
+  createdAt: Date;
+
+  @ApiProperty({ description: 'Fecha de última actualización del pago' })
+  updatedAt: Date;
 }

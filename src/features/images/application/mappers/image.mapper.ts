@@ -11,6 +11,7 @@ export class ImageMapper {
       description: image.description,
       entityId: image.entityId,
       createdAt: image.createdAt,
+      updatedAt: image.updatedAt,
     };
   }
 }

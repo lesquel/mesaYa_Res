@@ -1,6 +1,8 @@
 export type SectionObjectProps = {
   sectionId: string;
   objectId: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export class InvalidSectionObjectDataError extends Error {
@@ -39,7 +41,12 @@ export class SectionObject {
 
   static create(id: string, props: SectionObjectProps): SectionObject {
     SectionObject.validate(props);
-    return new SectionObject(id, { ...props });
+    const now = new Date();
+    return new SectionObject(id, {
+      ...props,
+      createdAt: props.createdAt ?? now,
+      updatedAt: props.updatedAt ?? now,
+    });
   }
 
   static validate(props: SectionObjectProps) {
@@ -48,6 +55,10 @@ export class SectionObject {
       throw new InvalidSectionObjectDataError('sectionId must be a uuid');
     if (!uuidLike(props.objectId))
       throw new InvalidSectionObjectDataError('objectId must be a uuid');
+    if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
+      throw new InvalidSectionObjectDataError('createdAt must be a valid Date');
+    if (!(props.updatedAt instanceof Date) || Number.isNaN(props.updatedAt))
+      throw new InvalidSectionObjectDataError('updatedAt must be a valid Date');
   }
 
   get id() {
@@ -60,8 +71,20 @@ export class SectionObject {
     return this.props.objectId;
   }
 
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
+
   update(patch: Partial<SectionObjectProps>) {
-    const next = { ...this.props, ...patch } as SectionObjectProps;
+    const next = {
+      ...this.props,
+      ...patch,
+      updatedAt: new Date(),
+    } as SectionObjectProps;
     SectionObject.validate(next);
     this.props = next;
   }

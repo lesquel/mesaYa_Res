@@ -6,4 +6,5 @@ export interface ImageResponseDto {
   description: string;
   entityId: string;
   createdAt: Date;
+  updatedAt: Date;
 }

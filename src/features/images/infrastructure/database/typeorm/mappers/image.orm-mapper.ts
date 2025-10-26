@@ -11,6 +11,7 @@ export class ImageOrmMapper {
     entity.description = image.description;
     entity.entityId = image.entityId;
     entity.createdAt = image.createdAt;
+    entity.updatedAt = image.updatedAt;
     return entity;
   }
 
@@ -23,6 +24,7 @@ export class ImageOrmMapper {
       description: entity.description,
       entityId: entity.entityId,
       createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 }

@@ -94,6 +94,8 @@ export class Image {
       );
     if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
       throw new InvalidImageDataError('createdAt must be a valid Date');
+    if (!(props.updatedAt instanceof Date) || Number.isNaN(props.updatedAt))
+      throw new InvalidImageDataError('updatedAt must be a valid Date');
   }
 
   get maybeId(): string | null {
@@ -130,11 +132,16 @@ export class Image {
     return this.props.createdAt;
   }
 
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
   update(patch: UpdateImageProps): void {
     const next: ImageProps = {
       ...this.props,
       ...patch,
       createdAt: this.props.createdAt,
+      updatedAt: new Date(),
     } as ImageProps;
     this.props = Image.normalize(next);
   }

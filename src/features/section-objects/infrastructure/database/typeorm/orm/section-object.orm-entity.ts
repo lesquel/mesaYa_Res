@@ -1,10 +1,12 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 import { GraphicObjectOrmEntity } from '../../../../../objects/infrastructure/database/typeorm/orm';
@@ -28,4 +30,18 @@ export class SectionObjectOrmEntity {
   object: GraphicObjectOrmEntity;
   @RelationId((e: SectionObjectOrmEntity) => e.object)
   objectId: string;
+
+  @CreateDateColumn({
+    type: 'timestamptz',
+    name: 'fecha_creacion',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamptz',
+    name: 'fecha_modificacion',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
 }

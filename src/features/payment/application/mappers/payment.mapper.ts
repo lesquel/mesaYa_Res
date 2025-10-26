@@ -22,6 +22,8 @@ export class PaymentEntityDTOMapper extends EntityDTOMapper<
       amount: entity.amount.amount,
       date: entity.date.toISOString(),
       paymentStatus: entity.paymentStatus.status,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 
@@ -36,6 +38,8 @@ export class PaymentEntityDTOMapper extends EntityDTOMapper<
       paymentStatus: status,
       reservationId: dto.reservationId,
       subscriptionId: dto.subscriptionId,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
     });
   }
 
