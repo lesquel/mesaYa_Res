@@ -41,7 +41,9 @@ export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {
 
   async paginate(query: ListUsersQuery) {
     const alias = 'user';
-    const qb = this.repository.createQueryBuilder(alias).leftJoinAndSelect(`${alias}.roles`, 'role');
+    const qb = this.repository
+      .createQueryBuilder(alias)
+      .leftJoinAndSelect(`${alias}.roles`, 'role');
 
     // Optional filters
     if (query.role) {
@@ -53,7 +55,12 @@ export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {
     }
 
     if (query.restaurantId) {
-      qb.innerJoin(ReservationOrmEntity, 'reservationFilter', 'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId', { restaurantId: query.restaurantId });
+      qb.innerJoin(
+        ReservationOrmEntity,
+        'reservationFilter',
+        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        { restaurantId: query.restaurantId },
+      );
     }
 
     const sortMap: Record<string, string> = {
@@ -62,21 +69,27 @@ export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {
       createdAt: `${alias}.createdAt`,
     };
 
-    const sortByColumn = query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
 
-    const paginationResult = await paginateQueryBuilder(qb as SelectQueryBuilder<UserOrmEntity>, {
-      ...query.pagination,
-      route: query.route,
-      sortBy: sortByColumn,
-      sortOrder: query.sortOrder,
-      q: query.search,
-      allowedSorts: Object.values(sortMap),
-      searchable: [`${alias}.email`, `${alias}.name`],
-    });
+    const paginationResult = await paginateQueryBuilder(
+      qb as SelectQueryBuilder<UserOrmEntity>,
+      {
+        ...query.pagination,
+        route: query.route,
+        sortBy: sortByColumn,
+        sortOrder: query.sortOrder,
+        q: query.search,
+        allowedSorts: Object.values(sortMap),
+        searchable: [`${alias}.email`, `${alias}.name`],
+      },
+    );
 
     return {
       ...paginationResult,
-      results: paginationResult.results.map((e) => AuthUserOrmMapper.toDomain(e)),
+      results: paginationResult.results.map((e) =>
+        AuthUserOrmMapper.toDomain(e),
+      ),
     };
   }
 }

@@ -32,9 +32,14 @@ export class PublicUsersController {
   @ThrottleRead()
   @ApiOperation({ summary: 'List public users (paginated)' })
   @PaginatedEndpoint()
-  @ApiOkResponse({ description: 'Paginated users list', type: AuthUserResponseDto, isArray: true })
+  @ApiOkResponse({
+    description: 'Paginated users list',
+    type: AuthUserResponseDto,
+    isArray: true,
+  })
   async list(
-    @PaginationParams({ defaultRoute: '/public/users' }) params: PaginatedQueryParams,
+    @PaginationParams({ defaultRoute: '/public/users' })
+    params: PaginatedQueryParams,
   ) {
     const query = { pagination: params, route: '/public/users' } as any;
     const paginated = await this.listUsersUseCase.execute(query);

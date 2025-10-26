@@ -6,7 +6,9 @@ import type { AuthUserRepositoryPort } from '../ports/user.repository.port';
 
 export type PaginatedUserDomainResult = PaginatedResult<AuthUser>;
 
-export class ListUsersUseCase implements UseCase<ListUsersQuery, PaginatedUserDomainResult> {
+export class ListUsersUseCase
+  implements UseCase<ListUsersQuery, PaginatedUserDomainResult>
+{
   constructor(private readonly users: AuthUserRepositoryPort) {}
 
   async execute(query: ListUsersQuery): Promise<PaginatedUserDomainResult> {
