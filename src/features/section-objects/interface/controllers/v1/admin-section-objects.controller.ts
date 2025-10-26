@@ -39,19 +39,19 @@ import type {
   UpdateSectionObjectCommand,
 } from '../../../application/dto';
 
-@ApiTags('SectionObjects')
-@Controller({ path: 'section-object', version: '1' })
+@ApiTags('Admin Section Objects')
+@Controller({ path: 'admin/section-objects', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class AdminSectionObjectsController {
   constructor(private readonly service: SectionObjectsService) {}
 
   @Post()
   @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:create')
   @ApiOperation({
     summary: 'Crear relacion sección-objeto (permiso section-object:create)',
   })
-  @ApiBearerAuth()
   @ApiBody({ type: CreateSectionObjectDto })
   async create(@Body() dto: CreateSectionObjectDto) {
     const command: CreateSectionObjectCommand = { ...dto };
@@ -60,13 +60,11 @@ export class AdminSectionObjectsController {
 
   @Get()
   @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:read')
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
-  @ApiBearerAuth()
   @ApiPaginationQuery()
   async list(
-    @PaginationParams({ defaultRoute: '/section-object' })
+    @PaginationParams({ defaultRoute: '/admin/section-objects' })
     query: ListSectionObjectsQuery,
   ) {
     return this.service.list(query);
@@ -74,11 +72,9 @@ export class AdminSectionObjectsController {
 
   @Get(':id')
   @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:read')
   @ApiOperation({ summary: 'Obtener relación por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
-  @ApiBearerAuth()
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const query: FindSectionObjectQuery = { sectionObjectId: id };
     return this.service.findOne(query);
@@ -86,12 +82,10 @@ export class AdminSectionObjectsController {
 
   @Patch(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:update')
   @ApiOperation({
     summary: 'Actualizar relación (permiso section-object:update)',
   })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
   @ApiBody({ type: UpdateSectionObjectDto })
   async update(
@@ -107,12 +101,10 @@ export class AdminSectionObjectsController {
 
   @Delete(':id')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('section-object:delete')
   @ApiOperation({
     summary: 'Eliminar relación (permiso section-object:delete)',
   })
-  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const command: DeleteSectionObjectCommand = { sectionObjectId: id };

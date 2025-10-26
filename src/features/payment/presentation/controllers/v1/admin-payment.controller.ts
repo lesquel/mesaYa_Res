@@ -6,13 +6,11 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -23,7 +21,6 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
-  ThrottleCreate,
   ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
@@ -42,7 +39,6 @@ import { PaginationParams } from '@shared/interface/decorators/pagination-params
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import {
-  CreatePaymentRequestDto,
   DeletePaymentResponseSwaggerDto,
   PaymentResponseSwaggerDto,
   UpdatePaymentStatusRequestDto,
@@ -50,30 +46,15 @@ import {
   PaymentAnalyticsResponseDto,
 } from '@features/payment/presentation/dto';
 
-@ApiTags('Payments')
-@Controller({ path: 'payments', version: '1' })
+@ApiTags('Admin Payments')
+@Controller({ path: 'admin/payments', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
 export class AdminPaymentController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly getPaymentAnalyticsUseCase: GetPaymentAnalyticsUseCase,
   ) {}
-
-  @Post()
-  @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('payment:create')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a payment' })
-  @ApiBody({ type: CreatePaymentRequestDto })
-  @ApiCreatedResponse({
-    description: 'Payment successfully created',
-    type: PaymentResponseSwaggerDto,
-  })
-  async createPayment(
-    @Body() dto: CreatePaymentRequestDto,
-  ): Promise<PaymentResponseDto> {
-    return this.paymentService.createPayment(dto);
-  }
 
   @Get()
   @ThrottleRead()

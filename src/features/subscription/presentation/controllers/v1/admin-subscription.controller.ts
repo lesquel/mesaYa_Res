@@ -6,13 +6,11 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -23,7 +21,6 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
-  ThrottleCreate,
   ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
@@ -43,7 +40,6 @@ import type { PaginatedQueryParams } from '@shared/application/types/pagination'
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import {
-  CreateSubscriptionRequestDto,
   DeleteSubscriptionResponseSwaggerDto,
   SubscriptionAnalyticsRequestDto,
   SubscriptionAnalyticsResponseDto,
@@ -52,18 +48,19 @@ import {
   UpdateSubscriptionStateRequestDto,
 } from '@features/subscription/presentation/dto';
 
-@ApiTags('Subscriptions')
-@Controller({ path: 'subscriptions', version: '1' })
-export class SubscriptionController {
+@ApiTags('Admin Subscriptions')
+@Controller({ path: 'admin/subscriptions', version: '1' })
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiBearerAuth()
+export class AdminSubscriptionController {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly getSubscriptionAnalytics: GetSubscriptionAnalyticsUseCase,
   ) {}
+
   @Get('analytics')
   @ThrottleSearch()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:read')
-  @ApiBearerAuth()
   @ApiOkResponse({
     description: 'Resumen analítico de suscripciones',
     type: SubscriptionAnalyticsResponseDto,
@@ -77,29 +74,10 @@ export class SubscriptionController {
     return SubscriptionAnalyticsResponseDto.fromApplication(analytics);
   }
 
-  @Post()
-  @ThrottleCreate()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Permissions('subscription:create')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create subscription' })
-  @ApiBody({ type: CreateSubscriptionRequestDto })
-  @ApiCreatedResponse({
-    description: 'Subscription successfully created',
-    type: SubscriptionResponseSwaggerDto,
-  })
-  async createSubscription(
-    @Body() dto: CreateSubscriptionRequestDto,
-  ): Promise<SubscriptionResponseDto> {
-    return this.subscriptionService.create(dto);
-  }
-
   @Get()
   @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:read')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'List subscriptions' })
+  @ApiOperation({ summary: 'List all subscriptions (admin)' })
   @PaginatedEndpoint()
   @ApiOkResponse({
     description: 'Array of subscriptions',
@@ -114,10 +92,8 @@ export class SubscriptionController {
 
   @Get(':subscriptionId')
   @ThrottleRead()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:read')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Find subscription by ID' })
+  @ApiOperation({ summary: 'Find subscription by ID (admin)' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
     description: 'Subscription details',
@@ -131,10 +107,8 @@ export class SubscriptionController {
 
   @Patch(':subscriptionId')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:update')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update subscription' })
+  @ApiOperation({ summary: 'Update subscription (admin)' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdateSubscriptionRequestDto })
   @ApiOkResponse({
@@ -153,10 +127,8 @@ export class SubscriptionController {
 
   @Patch(':subscriptionId/state')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:update')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update subscription state' })
+  @ApiOperation({ summary: 'Update subscription state (admin)' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdateSubscriptionStateRequestDto })
   @ApiOkResponse({
@@ -175,10 +147,8 @@ export class SubscriptionController {
 
   @Delete(':subscriptionId')
   @ThrottleModify()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @Permissions('subscription:delete')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete subscription' })
+  @ApiOperation({ summary: 'Delete subscription (admin)' })
   @ApiParam({ name: 'subscriptionId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
     description: 'Subscription deleted',
