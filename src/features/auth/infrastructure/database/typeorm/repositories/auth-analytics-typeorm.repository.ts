@@ -91,10 +91,11 @@ export class AuthAnalyticsTypeOrmRepository
 
     // If restaurantId is provided, only consider users that have at least one reservation in that restaurant
     if (filters.restaurantId) {
+      // join using the concrete table name and DB column names to avoid aliasing issues
       qb.innerJoin(
-        ReservationOrmEntity,
+        'reservation',
         'reservationFilter',
-        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        'reservationFilter.user_id = user.id AND reservationFilter.restaurant_id = :restaurantId',
         { restaurantId: filters.restaurantId },
       );
     }
@@ -132,9 +133,9 @@ export class AuthAnalyticsTypeOrmRepository
 
     if (filters.restaurantId) {
       qb.innerJoin(
-        ReservationOrmEntity,
+        'reservation',
         'reservationFilter',
-        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        'reservationFilter.user_id = user.id AND reservationFilter.restaurant_id = :restaurantId',
         { restaurantId: filters.restaurantId },
       );
     }
@@ -163,9 +164,9 @@ export class AuthAnalyticsTypeOrmRepository
 
     if (filters.restaurantId) {
       qb.innerJoin(
-        ReservationOrmEntity,
+        'reservation',
         'reservationFilter',
-        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        'reservationFilter.user_id = user.id AND reservationFilter.restaurant_id = :restaurantId',
         { restaurantId: filters.restaurantId },
       );
     }
@@ -191,9 +192,9 @@ export class AuthAnalyticsTypeOrmRepository
 
     if (filters.restaurantId) {
       qb.innerJoin(
-        ReservationOrmEntity,
+        'reservation',
         'reservationTrend',
-        'reservationTrend.userId = user.id AND reservationTrend.restaurantId = :restaurantId',
+        'reservationTrend.user_id = user.id AND reservationTrend.restaurant_id = :restaurantId',
         { restaurantId: filters.restaurantId },
       );
     }
