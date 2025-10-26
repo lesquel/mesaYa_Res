@@ -1,10 +1,12 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 
@@ -40,4 +42,10 @@ export class TableOrmEntity {
 
   @Column({ type: 'uuid', name: 'chair_image_id', nullable: false })
   chairImageId: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

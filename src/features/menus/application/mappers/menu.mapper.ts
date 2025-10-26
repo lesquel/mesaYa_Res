@@ -27,6 +27,8 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
       price: entity.price.amount,
       imageUrl: entity.imageUrl,
       dishes,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 
@@ -43,6 +45,8 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
       price,
       imageUrl: dto.imageUrl,
       dishes,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
     });
   }
 

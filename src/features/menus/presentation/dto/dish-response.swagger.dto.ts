@@ -42,4 +42,18 @@ export class DishResponseSwaggerDto implements DishDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   menuId?: string | null;
+
+  @ApiProperty({
+    description: 'Fecha de creación del plato',
+    type: Date,
+    example: '2025-01-15T10:30:00Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Fecha de última actualización del plato',
+    type: Date,
+    example: '2025-01-20T14:45:00Z',
+  })
+  updatedAt: Date;
 }

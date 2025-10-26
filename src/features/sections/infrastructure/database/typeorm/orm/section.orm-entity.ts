@@ -1,11 +1,13 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 
@@ -36,4 +38,10 @@ export class SectionOrmEntity {
 
   @Column({ type: 'int', name: 'height', nullable: false })
   height: number;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }

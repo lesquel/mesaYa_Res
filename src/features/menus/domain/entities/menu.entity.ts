@@ -8,10 +8,14 @@ export interface MenuProps {
   price: MoneyVO;
   imageUrl: string;
   dishes?: DishSnapshot[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface MenuSnapshot extends MenuProps {
   menuId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class MenuEntity {
@@ -34,6 +38,8 @@ export class MenuEntity {
     return {
       menuId: this.menuId,
       ...this.props,
+      createdAt: this.props.createdAt ?? new Date(),
+      updatedAt: this.props.updatedAt ?? new Date(),
     };
   }
 
@@ -80,6 +86,14 @@ export class MenuEntity {
 
   get dishes(): DishSnapshot[] | undefined {
     return this.props.dishes;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt ?? new Date();
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt ?? new Date();
   }
 
   private static validate(props: MenuProps): void {

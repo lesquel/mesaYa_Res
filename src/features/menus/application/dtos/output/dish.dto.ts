@@ -6,4 +6,6 @@ export interface DishDto {
   price: number;
   imageId?: string | null;
   menuId?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }

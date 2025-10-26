@@ -28,4 +28,18 @@ export class SectionResponseSwaggerDto implements SectionResponseDto {
 
   @ApiProperty({ description: 'Alto de la sección', example: 80 })
   height: number;
+
+  @ApiProperty({
+    description: 'Fecha de creación de la sección',
+    type: Date,
+    example: '2025-01-15T10:30:00Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Fecha de última actualización de la sección',
+    type: Date,
+    example: '2025-01-20T14:45:00Z',
+  })
+  updatedAt: Date;
 }

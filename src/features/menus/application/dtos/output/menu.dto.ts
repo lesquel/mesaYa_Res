@@ -8,4 +8,6 @@ export class MenuDto {
   price: number;
   imageUrl: string;
   dishes?: DishDto[];
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -35,4 +35,18 @@ export class MenuResponseSwaggerDto implements MenuDto {
     required: false,
   })
   dishes?: DishResponseSwaggerDto[];
+
+  @ApiProperty({
+    description: 'Fecha de creación del menú',
+    type: Date,
+    example: '2025-01-15T10:30:00Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Fecha de última actualización del menú',
+    type: Date,
+    example: '2025-01-20T14:45:00Z',
+  })
+  updatedAt: Date;
 }

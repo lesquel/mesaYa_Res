@@ -18,6 +18,8 @@ interface SectionProps {
   description: SectionDescription;
   width: SectionWidth;
   height: SectionHeight;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Section {
@@ -74,6 +76,14 @@ export class Section {
     return this.props.height.value;
   }
 
+  get createdAt(): Date {
+    return this.props.createdAt ?? new Date();
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt ?? new Date();
+  }
+
   update(data: SectionUpdate): void {
     const next: SectionProps = {
       restaurantId:
@@ -107,6 +117,8 @@ export class Section {
       description: this.props.description.value,
       width: this.props.width.value,
       height: this.props.height.value,
+      createdAt: this.props.createdAt ?? new Date(),
+      updatedAt: this.props.updatedAt ?? new Date(),
     };
   }
 }

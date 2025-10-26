@@ -7,6 +7,8 @@ export interface SectionResponseDto {
   description: string | null;
   width: number;
   height: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type PaginatedSectionResponse = PaginatedResult<SectionResponseDto>;

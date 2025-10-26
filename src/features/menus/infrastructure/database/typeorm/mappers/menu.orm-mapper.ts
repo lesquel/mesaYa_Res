@@ -20,6 +20,8 @@ export class MenuOrmMapper {
       price: new MoneyVO(Number(menu.price)),
       imageUrl: menu.imageUrl,
       dishes: dishSnapshots.length > 0 ? dishSnapshots : undefined,
+      createdAt: menu.createdAt,
+      updatedAt: menu.updatedAt,
     });
   }
 

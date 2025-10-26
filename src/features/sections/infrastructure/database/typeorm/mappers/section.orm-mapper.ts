@@ -16,6 +16,8 @@ export class SectionOrmMapper {
       description: entity.description ?? null,
       width: entity.width,
       height: entity.height,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 

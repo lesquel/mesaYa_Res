@@ -5,4 +5,6 @@ export interface SectionSnapshot {
   description: string | null;
   width: number;
   height: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

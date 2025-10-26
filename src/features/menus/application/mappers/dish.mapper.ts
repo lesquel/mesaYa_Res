@@ -13,6 +13,8 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       price: entity.price.amount,
       imageId: entity.imageId ?? undefined,
       menuId: entity.menuId ?? undefined,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 
@@ -26,6 +28,8 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       price,
       imageId: dto.imageId ?? undefined,
       menuId: dto.menuId ?? undefined,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
     });
   }
 

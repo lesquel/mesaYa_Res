@@ -12,6 +12,8 @@ export class DishOrmMapper {
       price: new MoneyVO(Number(entity.price)),
       imageId: entity.imageId ?? undefined,
       menuId: entity.menuId ?? undefined,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 
