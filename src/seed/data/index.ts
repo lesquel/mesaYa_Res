@@ -12,3 +12,4 @@ export * from './menus.seed';
 export * from './dishes.seed';
 export * from './reservations.seed';
 export * from './reviews.seed';
+export * from './payments.seed';

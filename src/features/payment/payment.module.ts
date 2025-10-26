@@ -68,6 +68,6 @@ import { KafkaService } from '@shared/infrastructure/kafka';
     },
     GetPaymentAnalyticsUseCase,
   ],
-  exports: [PaymentService, GetPaymentAnalyticsUseCase],
+  exports: [PaymentService, GetPaymentAnalyticsUseCase, IPaymentRepositoryPort],
 })
 export class PaymentModule {}

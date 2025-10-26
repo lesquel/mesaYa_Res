@@ -7,6 +7,7 @@ import {
   RestaurantSeedService,
   MenuSeedService,
   CustomerSeedService,
+  PaymentSeedService,
 } from './services';
 
 /**
@@ -32,6 +33,7 @@ export class SeedService {
     private readonly restaurantSeedService: RestaurantSeedService,
     private readonly menuSeedService: MenuSeedService,
     private readonly customerSeedService: CustomerSeedService,
+    private readonly paymentSeedService: PaymentSeedService,
   ) {}
 
   /**
@@ -75,6 +77,9 @@ export class SeedService {
       // Fase 5: Interacciones del cliente
       await this.customerSeedService.seedReservations();
       await this.customerSeedService.seedReviews();
+
+      // Fase 6: Pagos
+      await this.paymentSeedService.seedPayments();
 
       this.logger.log('✅ Database seeding completed successfully!');
 

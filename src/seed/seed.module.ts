@@ -11,6 +11,7 @@ import {
   RestaurantSeedService,
   MenuSeedService,
   CustomerSeedService,
+  PaymentSeedService,
 } from './services';
 
 // Feature Modules - providing abstract repositories
@@ -24,6 +25,7 @@ import { MenusModule } from '@features/menus/menus.module';
 import { SubscriptionModule } from '@features/subscription/subscription.module';
 import { ReservationModule } from '@features/reservation/reservation.module';
 import { ReviewsModule } from '@features/reviews/reviews.module';
+import { PaymentModule } from '@features/payment/payment.module';
 
 @Module({
   imports: [
@@ -39,6 +41,7 @@ import { ReviewsModule } from '@features/reviews/reviews.module';
     SubscriptionModule,
     ReservationModule,
     ReviewsModule,
+    PaymentModule,
   ],
   controllers: [SeedController],
   providers: [
@@ -50,6 +53,7 @@ import { ReviewsModule } from '@features/reviews/reviews.module';
     RestaurantSeedService,
     MenuSeedService,
     CustomerSeedService,
+    PaymentSeedService,
   ],
 })
 export class SeedModule {}
