@@ -21,6 +21,8 @@ export class PaymentOrmMapper
       amount: new MoneyVO(Number(entity.amount)),
       date: entity.createdAt,
       paymentStatus: PaymentStatusVO.create(entity.paymentStatus),
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 

@@ -29,9 +29,12 @@ export class SectionObjectDomainService {
     await this.ensureSectionExists(request.sectionId);
     await this.ensureObjectExists(request.objectId);
 
+    const now = new Date();
     const sectionObject = SectionObject.create(request.sectionObjectId, {
       sectionId: request.sectionId,
       objectId: request.objectId,
+      createdAt: now,
+      updatedAt: now,
     });
 
     return this.sectionObjectRepository.save(sectionObject);
