@@ -30,6 +30,7 @@ import { ListRolesUseCase } from './application/use-cases/list-roles.use-case';
 import { ListPermissionsUseCase } from './application/use-cases/list-permissions.use-case';
 import { FindUserByIdUseCase } from './application/use-cases/find-user-by-id.use-case';
 import { GetAuthAnalyticsUseCase } from './application/use-cases/get-auth-analytics.use-case';
+import { ListUsersUseCase } from './application/use-cases/list-users.use-case';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
 import { RbacSeeder } from './infrastructure/seeding/rbac.seeder';
 import { RolesGuard } from './interface/guards/roles.guard';
@@ -96,6 +97,7 @@ import { AuthService } from './application/services/auth.service';
     ListPermissionsUseCase,
     FindUserByIdUseCase,
     GetAuthAnalyticsUseCase,
+    ListUsersUseCase,
     AuthService,
     JwtStrategy,
     RbacSeeder,

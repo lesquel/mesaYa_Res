@@ -17,6 +17,7 @@ async function bootstrap() {
 
   await app.listen(PORT);
   console.log(`Application running on: http://${HOST}:${PORT}`);
+  console.log(`Application running on: http://${HOST}:${PORT}/docs/api`);
 }
 
 bootstrap().catch((err) => {
