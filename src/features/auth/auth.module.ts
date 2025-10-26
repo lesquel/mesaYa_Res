@@ -58,7 +58,11 @@ import { AuthService } from './application/services/auth.service';
       }),
     }),
   ],
-  controllers: [AuthController, PublicUsersController, RestaurantUsersController],
+  controllers: [
+    AuthController,
+    PublicUsersController,
+    RestaurantUsersController,
+  ],
   providers: [
     {
       provide: AUTH_USER_REPOSITORY,

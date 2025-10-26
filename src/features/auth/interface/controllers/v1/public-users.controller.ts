@@ -1,6 +1,14 @@
 import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ThrottleRead, ThrottleSearch } from '@shared/infrastructure/decorators';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  ThrottleRead,
+  ThrottleSearch,
+} from '@shared/infrastructure/decorators';
 import { GetAuthAnalyticsUseCase } from '@features/auth/application/use-cases/get-auth-analytics.use-case';
 import { FindUserByIdUseCase } from '@features/auth/application/use-cases/find-user-by-id.use-case';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
@@ -17,11 +25,18 @@ export class PublicUsersController {
 
   @Get('analytics')
   @ThrottleSearch()
-  @ApiOperation({ summary: 'Public user analytics (aggregated, non-sensitive)' })
-  @ApiOkResponse({ description: 'Public analytics about users', type: AuthAnalyticsResponseDto })
+  @ApiOperation({
+    summary: 'Public user analytics (aggregated, non-sensitive)',
+  })
+  @ApiOkResponse({
+    description: 'Public analytics about users',
+    type: AuthAnalyticsResponseDto,
+  })
   async analytics(@Query() query: AuthAnalyticsRequestDto) {
     // We reuse the same application use-case but expose it as public; consumers will only see aggregated data
-    const analytics = await this.getAuthAnalyticsUseCase.execute(query.toQuery());
+    const analytics = await this.getAuthAnalyticsUseCase.execute(
+      query.toQuery(),
+    );
     return AuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
@@ -29,7 +44,10 @@ export class PublicUsersController {
   @ThrottleRead()
   @ApiOperation({ summary: 'Obtener perfil público de un usuario por ID' })
   @ApiParam({ name: 'id', description: 'UUID del usuario' })
-  @ApiOkResponse({ description: 'Perfil público del usuario', type: AuthUserResponseDto })
+  @ApiOkResponse({
+    description: 'Perfil público del usuario',
+    type: AuthUserResponseDto,
+  })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.findUserByIdUseCase.execute(id);
     return user ? AuthUserResponseDto.fromDomain(user) : null;

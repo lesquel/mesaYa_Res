@@ -1,5 +1,18 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
@@ -13,14 +26,21 @@ import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto'
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class RestaurantUsersController {
-  constructor(private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase) {}
+  constructor(
+    private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
+  ) {}
 
   @Get('analytics/restaurant/:restaurantId')
   @ThrottleSearch()
   @Permissions('user:read')
-  @ApiOperation({ summary: 'Indicadores de usuarios para un restaurante (owner/admin)' })
+  @ApiOperation({
+    summary: 'Indicadores de usuarios para un restaurante (owner/admin)',
+  })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiOkResponse({ description: 'Analytics scoped to restaurant users', type: AuthAnalyticsResponseDto })
+  @ApiOkResponse({
+    description: 'Analytics scoped to restaurant users',
+    type: AuthAnalyticsResponseDto,
+  })
   async analyticsByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @Query() query: AuthAnalyticsRequestDto,
