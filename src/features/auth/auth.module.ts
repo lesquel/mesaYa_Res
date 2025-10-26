@@ -97,7 +97,7 @@ import { AuthService } from './application/services/auth.service';
     ListPermissionsUseCase,
     FindUserByIdUseCase,
     GetAuthAnalyticsUseCase,
-  ListUsersUseCase,
+    ListUsersUseCase,
     AuthService,
     JwtStrategy,
     RbacSeeder,
