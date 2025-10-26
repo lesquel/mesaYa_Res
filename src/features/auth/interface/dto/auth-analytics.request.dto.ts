@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  IsUUID,
 } from 'class-validator';
 import type { AuthAnalyticsQuery } from '../../application/dto/queries/auth-analytics.query.js';
 
@@ -34,6 +35,15 @@ export class AuthAnalyticsRequestDto {
   @IsString()
   @MaxLength(100)
   role?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'UUID del restaurante para filtrar usuarios que tienen reservas en él',
+    example: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
+  })
+  @IsOptional()
+  @IsUUID()
+  restaurantId?: string;
 
   @ApiPropertyOptional({
     description: 'Estado del usuario (true/false)',
@@ -65,6 +75,7 @@ export class AuthAnalyticsRequestDto {
         this.active !== undefined
           ? this.active.toLowerCase() === 'true'
           : undefined,
+      restaurantId: this.restaurantId,
     };
   }
 

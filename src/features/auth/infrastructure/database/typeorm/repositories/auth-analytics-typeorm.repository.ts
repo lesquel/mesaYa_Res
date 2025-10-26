@@ -9,6 +9,7 @@ import type {
 } from '../../../../application/dto/responses/auth-analytics.response.js';
 import type { AuthAnalyticsRepositoryPort } from '../../../../application/ports/auth-analytics.repository.port';
 import { UserOrmEntity } from '../entities/user.orm-entity';
+import { ReservationOrmEntity } from '@features/reservation/infrastructure/orm/reservation.orm-entity';
 
 type TotalsRaw = {
   totalUsers: string | number | null;
@@ -88,6 +89,16 @@ export class AuthAnalyticsTypeOrmRepository
       });
     }
 
+    // If restaurantId is provided, only consider users that have at least one reservation in that restaurant
+    if (filters.restaurantId) {
+      qb.innerJoin(
+        ReservationOrmEntity,
+        'reservationFilter',
+        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        { restaurantId: filters.restaurantId },
+      );
+    }
+
     this.applyActiveFilter(qb, filters);
     this.applyDateFilters(qb, filters);
 
@@ -119,6 +130,15 @@ export class AuthAnalyticsTypeOrmRepository
       qb.andWhere('role.name = :roleName', { roleName: filters.role });
     }
 
+    if (filters.restaurantId) {
+      qb.innerJoin(
+        ReservationOrmEntity,
+        'reservationFilter',
+        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        { restaurantId: filters.restaurantId },
+      );
+    }
+
     this.applyActiveFilter(qb, filters);
     this.applyDateFilters(qb, filters);
 
@@ -141,6 +161,15 @@ export class AuthAnalyticsTypeOrmRepository
       qb.andWhere('role.name = :roleName', { roleName: filters.role });
     }
 
+    if (filters.restaurantId) {
+      qb.innerJoin(
+        ReservationOrmEntity,
+        'reservationFilter',
+        'reservationFilter.userId = user.id AND reservationFilter.restaurantId = :restaurantId',
+        { restaurantId: filters.restaurantId },
+      );
+    }
+
     this.applyActiveFilter(qb, filters);
     this.applyDateFilters(qb, filters);
 
@@ -158,6 +187,15 @@ export class AuthAnalyticsTypeOrmRepository
       qb.innerJoin('user.roles', 'roleTrend', 'roleTrend.name = :roleName', {
         roleName: filters.role,
       });
+    }
+
+    if (filters.restaurantId) {
+      qb.innerJoin(
+        ReservationOrmEntity,
+        'reservationTrend',
+        'reservationTrend.userId = user.id AND reservationTrend.restaurantId = :restaurantId',
+        { restaurantId: filters.restaurantId },
+      );
     }
 
     this.applyActiveFilter(qb, filters);
