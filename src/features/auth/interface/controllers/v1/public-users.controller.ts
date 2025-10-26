@@ -5,6 +5,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import {
   ThrottleRead,
   ThrottleSearch,
@@ -32,10 +33,9 @@ export class PublicUsersController {
   @ThrottleRead()
   @ApiOperation({ summary: 'List public users (paginated)' })
   @PaginatedEndpoint()
-  @ApiOkResponse({
-    description: 'Paginated users list',
-    type: AuthUserResponseDto,
-    isArray: true,
+  @ApiPaginatedResponse({
+    model: AuthUserResponseDto,
+    description: 'Paginated users list (public view)',
   })
   async list(
     @PaginationParams({ defaultRoute: '/public/users' })
