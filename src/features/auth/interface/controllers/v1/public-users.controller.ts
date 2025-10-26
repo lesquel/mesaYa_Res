@@ -9,8 +9,12 @@ import {
   ThrottleRead,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { GetAuthAnalyticsUseCase } from '@features/auth/application/use-cases/get-auth-analytics.use-case';
 import { FindUserByIdUseCase } from '@features/auth/application/use-cases/find-user-by-id.use-case';
+import { ListUsersUseCase } from '@features/auth/application/use-cases/list-users.use-case';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { PublicAuthAnalyticsResponseDto } from '../../dto/public-auth-analytics.response.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
@@ -21,7 +25,24 @@ export class PublicUsersController {
   constructor(
     private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
+    private readonly listUsersUseCase: ListUsersUseCase,
   ) {}
+
+  @Get()
+  @ThrottleRead()
+  @ApiOperation({ summary: 'List public users (paginated)' })
+  @PaginatedEndpoint()
+  @ApiOkResponse({ description: 'Paginated users list', type: AuthUserResponseDto, isArray: true })
+  async list(
+    @PaginationParams({ defaultRoute: '/public/users' }) params: PaginatedQueryParams,
+  ) {
+    const query = { pagination: params, route: '/public/users' } as any;
+    const paginated = await this.listUsersUseCase.execute(query);
+    return {
+      ...paginated,
+      results: paginated.results.map((u) => AuthUserResponseDto.fromDomain(u)),
+    };
+  }
 
   @Get('analytics')
   @ThrottleSearch()
