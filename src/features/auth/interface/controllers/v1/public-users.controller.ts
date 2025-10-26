@@ -12,7 +12,7 @@ import {
 import { GetAuthAnalyticsUseCase } from '@features/auth/application/use-cases/get-auth-analytics.use-case';
 import { FindUserByIdUseCase } from '@features/auth/application/use-cases/find-user-by-id.use-case';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
-import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
+import { PublicAuthAnalyticsResponseDto } from '../../dto/public-auth-analytics.response.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
 
 @ApiTags('Public Users')
@@ -30,14 +30,14 @@ export class PublicUsersController {
   })
   @ApiOkResponse({
     description: 'Public analytics about users',
-    type: AuthAnalyticsResponseDto,
+    type: PublicAuthAnalyticsResponseDto,
   })
   async analytics(@Query() query: AuthAnalyticsRequestDto) {
-    // We reuse the same application use-case but expose it as public; consumers will only see aggregated data
+    // Reuse the application use-case but map to a reduced public DTO to avoid exposing roles/permissions
     const analytics = await this.getAuthAnalyticsUseCase.execute(
       query.toQuery(),
     );
-    return AuthAnalyticsResponseDto.fromApplication(analytics);
+    return PublicAuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get(':id')

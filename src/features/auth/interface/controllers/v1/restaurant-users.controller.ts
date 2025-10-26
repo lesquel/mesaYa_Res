@@ -32,7 +32,8 @@ export class RestaurantUsersController {
 
   @Get('analytics/restaurant/:restaurantId')
   @ThrottleSearch()
-  @Permissions('user:read')
+  // Use a restaurant-scoped permission for analytics access
+  @Permissions('restaurant:read')
   @ApiOperation({
     summary: 'Indicadores de usuarios para un restaurante (owner/admin)',
   })
@@ -45,8 +46,7 @@ export class RestaurantUsersController {
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @Query() query: AuthAnalyticsRequestDto,
   ) {
-    const q = query.toQuery();
-    q.restaurantId = restaurantId;
+    const q = { ...query.toQuery(), restaurantId };
     const analytics = await this.getAuthAnalyticsUseCase.execute(q);
     return AuthAnalyticsResponseDto.fromApplication(analytics);
   }
