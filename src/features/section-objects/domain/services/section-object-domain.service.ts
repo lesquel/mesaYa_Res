@@ -32,6 +32,8 @@ export class SectionObjectDomainService {
     const sectionObject = SectionObject.create(request.sectionObjectId, {
       sectionId: request.sectionId,
       objectId: request.objectId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return this.sectionObjectRepository.save(sectionObject);
