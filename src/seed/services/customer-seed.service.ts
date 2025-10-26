@@ -14,6 +14,8 @@ import { RestaurantSeedService } from './restaurant-seed.service';
 @Injectable()
 export class CustomerSeedService {
   private readonly logger = new Logger(CustomerSeedService.name);
+  private reservationIds: string[] = []; // Track created reservation IDs
+  private reviewIds: string[] = []; // Track created review IDs
 
   constructor(
     @Inject(RESERVATION_REPOSITORY)
@@ -28,8 +30,15 @@ export class CustomerSeedService {
   async seedReservations(): Promise<void> {
     this.logger.log('📅 Seeding reservations...');
 
-    // Check if reservations exist by checking the first reservation from seed data
-    // We use a field-based check instead of hardcoded ID
+    // Check if reservations exist by verifying if we already have IDs tracked
+    if (this.reservationIds.length > 0) {
+      this.logger.log(
+        '⏭️  Reservations already exist in this session, skipping...',
+      );
+      return;
+    }
+
+    // Verificar que los restaurantes ya fueron creados
     const allRestaurantIds = this.restaurantSeedService.getRestaurantIds();
     if (allRestaurantIds.length === 0) {
       this.logger.warn('⚠️  No restaurants found, cannot seed reservations');
@@ -67,7 +76,7 @@ export class CustomerSeedService {
       reservationDateTime.setHours(Number.parseInt(hours, 10));
       reservationDateTime.setMinutes(Number.parseInt(minutes, 10));
 
-      // Create reservation entity
+      // Create reservation entity (UUID generado en el dominio)
       const reservationId = randomUUID();
       const reservation = ReservationEntity.create(reservationId, {
         userId: user.id,
@@ -81,7 +90,9 @@ export class CustomerSeedService {
         status: reservationSeed.status,
       });
 
-      await this.reservationRepository.save(reservation);
+      const savedReservation =
+        await this.reservationRepository.save(reservation);
+      this.reservationIds.push(savedReservation.id);
     }
 
     this.logger.log(`✅ Created ${reservationsSeed.length} reservations`);
@@ -90,7 +101,13 @@ export class CustomerSeedService {
   async seedReviews(): Promise<void> {
     this.logger.log('⭐ Seeding reviews...');
 
-    // Check if reviews exist by verifying restaurants are available
+    // Check if reviews exist by verifying if we already have IDs tracked
+    if (this.reviewIds.length > 0) {
+      this.logger.log('⏭️  Reviews already exist in this session, skipping...');
+      return;
+    }
+
+    // Verificar que los restaurantes ya fueron creados
     const allRestaurantIds = this.restaurantSeedService.getRestaurantIds();
     if (allRestaurantIds.length === 0) {
       this.logger.warn('⚠️  No restaurants found, cannot seed reviews');
@@ -117,7 +134,7 @@ export class CustomerSeedService {
         continue;
       }
 
-      // Create review entity
+      // Create review entity (UUID generado en el dominio)
       const reviewId = randomUUID();
       const review = Review.create(
         {
@@ -130,9 +147,30 @@ export class CustomerSeedService {
         reviewId,
       );
 
-      await this.reviewRepository.save(review);
+      const savedReview = await this.reviewRepository.save(review);
+      this.reviewIds.push(savedReview.id);
     }
 
     this.logger.log(`✅ Created ${reviewsSeed.length} reviews`);
+  }
+
+  /**
+   * Obtiene el ID de la reservación creada según su índice.
+   *
+   * @param {number} index - Índice de la reservación (0-based)
+   * @returns {string | undefined} - ID de la reservación o undefined si no existe
+   */
+  getReservationId(index: number): string | undefined {
+    return this.reservationIds[index];
+  }
+
+  /**
+   * Obtiene el ID de la review creada según su índice.
+   *
+   * @param {number} index - Índice de la review (0-based)
+   * @returns {string | undefined} - ID de la review o undefined si no existe
+   */
+  getReviewId(index: number): string | undefined {
+    return this.reviewIds[index];
   }
 }
