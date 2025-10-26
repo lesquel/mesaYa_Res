@@ -20,17 +20,10 @@ describe('PublicUsersController (unit)', () => {
       permissions: [{ label: 'user:read', count: 10 }],
     };
 
-    const getAuthAnalyticsUseCase = {
-      execute: jest.fn().mockResolvedValue(fakeAnalytics),
-    } as any;
-    const findUserByIdUseCase = {
-      execute: jest.fn().mockResolvedValue(null),
-    } as any;
+    const getAuthAnalyticsUseCase = { execute: jest.fn().mockResolvedValue(fakeAnalytics) } as any;
+    const findUserByIdUseCase = { execute: jest.fn().mockResolvedValue(null) } as any;
 
-    const controller = new PublicUsersController(
-      getAuthAnalyticsUseCase,
-      findUserByIdUseCase,
-    );
+    const controller = new PublicUsersController(getAuthAnalyticsUseCase, findUserByIdUseCase);
 
     const dto = new AuthAnalyticsRequestDto();
     const result = await controller.analytics(dto);
@@ -38,30 +31,17 @@ describe('PublicUsersController (unit)', () => {
     // Public DTO should contain summary and registrations only
     expect(result.summary.totalUsers).toBe(10);
     expect(result.registrations.total).toBe(5);
-    expect(result.roles).toBeUndefined();
+    // roles should not be present on the public response
+    expect((result as any).roles).toBeUndefined();
     expect(getAuthAnalyticsUseCase.execute).toHaveBeenCalled();
   });
 
   it('findOne returns mapped user DTO or null', async () => {
-    const user = {
-      id: 'u1',
-      email: 'a@b.com',
-      name: 'A',
-      phone: '123',
-      roles: [],
-      active: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as any;
+    const user = { id: 'u1', email: 'a@b.com', name: 'A', phone: '123', roles: [], active: true, createdAt: new Date(), updatedAt: new Date() } as any;
     const getAuthAnalyticsUseCase = { execute: jest.fn() } as any;
-    const findUserByIdUseCase = {
-      execute: jest.fn().mockResolvedValue(user),
-    } as any;
+    const findUserByIdUseCase = { execute: jest.fn().mockResolvedValue(user) } as any;
 
-    const controller = new PublicUsersController(
-      getAuthAnalyticsUseCase,
-      findUserByIdUseCase,
-    );
+    const controller = new PublicUsersController(getAuthAnalyticsUseCase, findUserByIdUseCase);
     const res = await controller.findOne('u1');
     expect(res).not.toBeNull();
     expect(findUserByIdUseCase.execute).toHaveBeenCalledWith('u1');

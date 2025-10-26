@@ -3,7 +3,20 @@ import { AuthAnalyticsRequestDto } from '@features/auth/interface/dto/auth-analy
 
 describe('RestaurantUsersController (unit)', () => {
   it('analyticsByRestaurant forwards restaurantId to use-case', async () => {
-    const mockedExecute = jest.fn().mockResolvedValue({ summary: { totalUsers: 0, activeUsers: 0, inactiveUsers: 0, activePercentage: 0, averageRegistrationsPerDay: 0 }, registrations: { total: 0, byDate: [] }, roles: [], permissions: [] });
+    const mockedExecute = jest
+      .fn()
+      .mockResolvedValue({
+        summary: {
+          totalUsers: 0,
+          activeUsers: 0,
+          inactiveUsers: 0,
+          activePercentage: 0,
+          averageRegistrationsPerDay: 0,
+        },
+        registrations: { total: 0, byDate: [] },
+        roles: [],
+        permissions: [],
+      });
     const getAuthAnalyticsUseCase = { execute: mockedExecute } as any;
     const controller = new RestaurantUsersController(getAuthAnalyticsUseCase);
 

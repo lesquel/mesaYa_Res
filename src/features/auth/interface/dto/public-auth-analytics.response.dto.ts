@@ -41,7 +41,9 @@ export class PublicAuthAnalyticsResponseDto {
   @ApiProperty({ type: AuthAnalyticsRegistrationsDto })
   registrations: AuthAnalyticsRegistrationsDto;
 
-  static fromApplication(response: AuthAnalyticsResponse): PublicAuthAnalyticsResponseDto {
+  static fromApplication(
+    response: AuthAnalyticsResponse,
+  ): PublicAuthAnalyticsResponseDto {
     const dto = new PublicAuthAnalyticsResponseDto();
     dto.summary = {
       totalUsers: response.summary.totalUsers,
@@ -52,7 +54,10 @@ export class PublicAuthAnalyticsResponseDto {
     };
     dto.registrations = {
       total: response.registrations.total,
-      byDate: response.registrations.byDate.map((p) => ({ date: p.date, count: p.count })),
+      byDate: response.registrations.byDate.map((p) => ({
+        date: p.date,
+        count: p.count,
+      })),
     };
     return dto;
   }
