@@ -20,7 +20,7 @@ import type {
 import { SectionResponseSwaggerDto } from '@features/sections/interface/dto';
 
 @ApiTags('Sections - Public')
-@Controller({ path: 'public/section', version: '1' })
+@Controller({ path: 'public/sections', version: '1' })
 export class PublicSectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 
@@ -33,7 +33,7 @@ export class PublicSectionsController {
     description: 'Listado paginado de todas las secciones',
   })
   async findAll(
-    @PaginationParams({ defaultRoute: '/public/section' })
+    @PaginationParams({ defaultRoute: '/public/sections' })
     query: ListSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
     return this.sectionsService.list(query);
@@ -50,7 +50,7 @@ export class PublicSectionsController {
   })
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @PaginationParams({ defaultRoute: '/public/section/restaurant' })
+    @PaginationParams({ defaultRoute: '/public/sections/restaurant' })
     pagination: ListSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
     const query: ListRestaurantSectionsQuery = {

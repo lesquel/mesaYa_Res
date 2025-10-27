@@ -48,7 +48,7 @@ import {
 } from '@features/sections/interface/dto';
 
 @ApiTags('Sections - Admin')
-@Controller({ path: 'admin/section', version: '1' })
+@Controller({ path: 'admin/sections', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class AdminSectionsController {

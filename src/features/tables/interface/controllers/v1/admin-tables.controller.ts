@@ -42,7 +42,7 @@ import { TableAnalyticsRequestDto } from '@features/tables/interface/dto/table-a
 import { TableAnalyticsResponseDto } from '@features/tables/interface/dto/table-analytics.response.dto';
 
 @ApiTags('Tables - Admin')
-@Controller({ path: 'admin/table', version: '1' })
+@Controller({ path: 'admin/tables', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class AdminTablesController {

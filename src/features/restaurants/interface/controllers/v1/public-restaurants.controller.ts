@@ -14,7 +14,7 @@ import type {
 } from '@features/restaurants/application';
 
 @ApiTags('Restaurants - Public')
-@Controller({ path: 'public/restaurant', version: '1' })
+@Controller({ path: 'public/restaurants', version: '1' })
 export class PublicRestaurantsController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
@@ -23,7 +23,7 @@ export class PublicRestaurantsController {
   @ApiOperation({ summary: 'Listar restaurantes públicos (paginado)' })
   @ApiPaginationQuery()
   async findAll(
-    @PaginationParams({ defaultRoute: '/public/restaurant' })
+    @PaginationParams({ defaultRoute: '/public/restaurants' })
     query: ListRestaurantsQuery,
   ): Promise<PaginatedRestaurantResponse> {
     return this.restaurantsService.list(query);

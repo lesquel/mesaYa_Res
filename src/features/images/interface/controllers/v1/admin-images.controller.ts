@@ -55,7 +55,7 @@ import {
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 @ApiTags('Images - Admin')
-@Controller({ path: 'admin/image', version: '1' })
+@Controller({ path: 'admin/images', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class AdminImagesController {

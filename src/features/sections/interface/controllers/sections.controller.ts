@@ -46,7 +46,7 @@ import {
 } from '@features/sections/interface/dto';
 
 @ApiTags('Sections')
-@Controller({ path: 'section', version: '1' })
+@Controller({ path: 'sections', version: '1' })
 export class SectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 
@@ -75,7 +75,7 @@ export class SectionsController {
   })
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @PaginationParams({ defaultRoute: '/section/restaurant' })
+    @PaginationParams({ defaultRoute: '/sections/restaurant' })
     pagination: ListSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
     const query: ListRestaurantSectionsQuery = {
@@ -93,7 +93,7 @@ export class SectionsController {
     description: 'Listado paginado de secciones',
   })
   async findAll(
-    @PaginationParams({ defaultRoute: '/section' })
+    @PaginationParams({ defaultRoute: '/sections' })
     query: ListSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
     return this.sectionsService.list(query);

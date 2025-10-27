@@ -13,7 +13,7 @@ import type {
 import { TablesService } from '@features/tables/application/services';
 
 @ApiTags('Tables - Public')
-@Controller({ path: 'public/table', version: '1' })
+@Controller({ path: 'public/tables', version: '1' })
 export class PublicTablesController {
   constructor(private readonly tablesService: TablesService) {}
 
@@ -22,7 +22,7 @@ export class PublicTablesController {
   @ApiOperation({ summary: 'Listar mesas públicas (paginado)' })
   @ApiPaginationQuery()
   async findAll(
-    @PaginationParams({ defaultRoute: '/public/table' })
+    @PaginationParams({ defaultRoute: '/public/tables' })
     query: ListTablesQuery,
   ): Promise<PaginatedTableResponse> {
     return this.tablesService.list(query);
@@ -35,7 +35,7 @@ export class PublicTablesController {
   @ApiPaginationQuery()
   async findBySection(
     @Param('sectionId', ParseUUIDPipe) sectionId: string,
-    @PaginationParams({ defaultRoute: '/public/table/section' })
+    @PaginationParams({ defaultRoute: '/public/tables/section' })
     pagination: ListTablesQuery,
   ): Promise<PaginatedTableResponse> {
     const query: ListSectionTablesQuery = {

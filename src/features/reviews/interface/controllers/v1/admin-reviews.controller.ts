@@ -43,7 +43,7 @@ import { ReviewAnalyticsRequestDto } from '@features/reviews/interface/dto/revie
 import { ReviewAnalyticsResponseDto } from '@features/reviews/interface/dto/review-analytics.response.dto';
 
 @ApiTags('Reviews - Admin')
-@Controller({ path: 'admin/review', version: '1' })
+@Controller({ path: 'admin/reviews', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class AdminReviewsController {

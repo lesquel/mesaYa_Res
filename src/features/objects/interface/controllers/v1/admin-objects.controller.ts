@@ -40,7 +40,7 @@ import {
 } from '../../dto';
 
 @ApiTags('Objects - Admin')
-@Controller({ path: 'admin/object', version: '1' })
+@Controller({ path: 'admin/objects', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class AdminObjectsController {

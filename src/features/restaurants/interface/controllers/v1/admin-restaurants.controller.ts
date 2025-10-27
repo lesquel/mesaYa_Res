@@ -49,7 +49,7 @@ import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/d
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
 
 @ApiTags('Restaurants - Admin')
-@Controller({ path: 'admin/restaurant', version: '1' })
+@Controller({ path: 'admin/restaurants', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
 export class AdminRestaurantsController {

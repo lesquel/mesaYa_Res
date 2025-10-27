@@ -10,7 +10,7 @@ import {
 } from '../../../application';
 
 @ApiTags('Objects - Public')
-@Controller({ path: 'public/object', version: '1' })
+@Controller({ path: 'public/objects', version: '1' })
 export class PublicObjectsController {
   constructor(private readonly objects: ObjectsService) {}
 
@@ -19,7 +19,7 @@ export class PublicObjectsController {
   @ApiOperation({ summary: 'Listar objetos gráficos públicos (paginado)' })
   @ApiPaginationQuery()
   async list(
-    @PaginationParams({ defaultRoute: '/public/object' })
+    @PaginationParams({ defaultRoute: '/public/objects' })
     query: ListGraphicObjectsQuery,
   ) {
     return this.objects.list(query);

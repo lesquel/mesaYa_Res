@@ -10,7 +10,7 @@ import {
 } from '../../../application/index.js';
 
 @ApiTags('Images - Public')
-@Controller({ path: 'image', version: '1' })
+@Controller({ path: 'public/images', version: '1' })
 export class ImagesController {
   constructor(private readonly images: ImagesService) {}
 

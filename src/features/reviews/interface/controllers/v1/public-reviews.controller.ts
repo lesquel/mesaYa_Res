@@ -13,7 +13,7 @@ import type {
 } from '@features/reviews/application';
 
 @ApiTags('Reviews - Public')
-@Controller({ path: 'public/review', version: '1' })
+@Controller({ path: 'public/reviews', version: '1' })
 export class PublicReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
@@ -22,7 +22,7 @@ export class PublicReviewsController {
   @ApiOperation({ summary: 'Listar reseñas públicas (paginado)' })
   @ApiPaginationQuery()
   async findAll(
-    @PaginationParams({ defaultRoute: '/public/review' })
+    @PaginationParams({ defaultRoute: '/public/reviews' })
     query: ListReviewsQuery,
   ): Promise<PaginatedReviewResponse> {
     return this.reviewsService.list(query);
@@ -35,7 +35,7 @@ export class PublicReviewsController {
   @ApiPaginationQuery()
   async findByRestaurant(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @PaginationParams({ defaultRoute: '/public/review/restaurant' })
+    @PaginationParams({ defaultRoute: '/public/reviews/restaurant' })
     pagination: ListReviewsQuery,
   ): Promise<PaginatedReviewResponse> {
     const query: ListRestaurantReviewsQuery = {
