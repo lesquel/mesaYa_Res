@@ -29,7 +29,7 @@ import {
   PaymentResponseSwaggerDto,
 } from '@features/payment/presentation/dto';
 
-@ApiTags('User Payments')
+@ApiTags('Payments - Users')
 @Controller({ path: 'user/payments', version: '1' })
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

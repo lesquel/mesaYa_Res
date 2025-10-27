@@ -31,7 +31,7 @@ import {
   SubscriptionResponseSwaggerDto,
 } from '@features/subscription/presentation/dto';
 
-@ApiTags('Restaurant Subscriptions')
+@ApiTags('Subscriptions - Restaurant ')
 @Controller({ path: 'restaurant/subscriptions', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

@@ -64,10 +64,10 @@ const menuServiceProvider = {
     LoggerModule,
   ],
   controllers: [
-    AdminDishesController,
     AdminMenusController,
-    PublicDishesController,
     PublicMenusController,
+    AdminDishesController,
+    PublicDishesController,
   ],
   providers: [
     DishMapper,

@@ -31,7 +31,7 @@ import {
   PaymentResponseSwaggerDto,
 } from '@features/payment/presentation/dto';
 
-@ApiTags('Restaurant Payments')
+@ApiTags('Payments - Restaurants')
 @Controller({ path: 'restaurant/payments', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
