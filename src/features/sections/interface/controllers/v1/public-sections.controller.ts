@@ -19,7 +19,7 @@ import type {
 } from '../../../application';
 import { SectionResponseSwaggerDto } from '@features/sections/interface/dto';
 
-@ApiTags('Public Sections')
+@ApiTags('Sections - Public')
 @Controller({ path: 'public/section', version: '1' })
 export class PublicSectionsController {
   constructor(private readonly sectionsService: SectionsService) {}

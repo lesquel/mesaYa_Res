@@ -12,7 +12,7 @@ import {
 } from '@features/reservation/application/dto';
 import { ReservationService } from '@features/reservation/application';
 
-@ApiTags('Public Reservations')
+@ApiTags('Reservations - Public')
 @Controller({ path: 'public/reservations', version: '1' })
 export class PublicReservationsController {
   constructor(private readonly reservationsService: ReservationService) {}

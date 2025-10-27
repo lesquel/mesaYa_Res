@@ -18,7 +18,7 @@ import {
   MenuResponseSwaggerDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Public Menus')
+@ApiTags('Menus - Public')
 @Controller({ path: 'public/menus', version: '1' })
 export class PublicMenusController {
   constructor(

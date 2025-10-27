@@ -12,7 +12,7 @@ import type {
   PaginatedReviewResponse,
 } from '@features/reviews/application';
 
-@ApiTags('Public Reviews')
+@ApiTags('Reviews - Public')
 @Controller({ path: 'public/review', version: '1' })
 export class PublicReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}

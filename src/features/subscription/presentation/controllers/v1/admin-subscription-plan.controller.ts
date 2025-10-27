@@ -46,7 +46,7 @@ import {
   UpdateSubscriptionPlanRequestDto,
 } from '@features/subscription/presentation/dto';
 
-@ApiTags('Admin Subscription Plans')
+@ApiTags('Subscription Plans - Admin')
 @Controller({ path: 'admin/subscription-plans', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

@@ -46,7 +46,7 @@ import {
   PaymentAnalyticsResponseDto,
 } from '@features/payment/presentation/dto';
 
-@ApiTags('Admin Payments')
+@ApiTags('Payments - Admin')
 @Controller({ path: 'admin/payments', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

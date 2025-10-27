@@ -9,7 +9,7 @@ import {
   type ListImagesQuery,
 } from '../../../application/index.js';
 
-@ApiTags('Images')
+@ApiTags('Images - Public')
 @Controller({ path: 'image', version: '1' })
 export class ImagesController {
   constructor(private readonly images: ImagesService) {}

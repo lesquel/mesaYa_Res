@@ -41,7 +41,7 @@ import { TablesService } from '@features/tables/application/services';
 import { TableAnalyticsRequestDto } from '@features/tables/interface/dto/table-analytics.request.dto';
 import { TableAnalyticsResponseDto } from '@features/tables/interface/dto/table-analytics.response.dto';
 
-@ApiTags('Admin Tables')
+@ApiTags('Tables - Admin')
 @Controller({ path: 'admin/table', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

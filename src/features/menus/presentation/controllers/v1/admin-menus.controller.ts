@@ -34,7 +34,7 @@ import {
   UpdateMenuRequestDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Admin Menus')
+@ApiTags('Menus - Admin')
 @Controller({ path: 'admin/menus', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

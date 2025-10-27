@@ -12,7 +12,7 @@ import type {
 } from '@features/tables/application/dto';
 import { TablesService } from '@features/tables/application/services';
 
-@ApiTags('Public Tables')
+@ApiTags('Tables - Public')
 @Controller({ path: 'public/table', version: '1' })
 export class PublicTablesController {
   constructor(private readonly tablesService: TablesService) {}

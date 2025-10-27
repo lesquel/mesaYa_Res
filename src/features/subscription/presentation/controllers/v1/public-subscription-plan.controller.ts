@@ -16,7 +16,7 @@ import { PaginationParams } from '@shared/interface/decorators/pagination-params
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import { SubscriptionPlanResponseSwaggerDto } from '@features/subscription/presentation/dto';
 
-@ApiTags('Public Subscription Plans')
+@ApiTags('Subscription Plans - Public')
 @Controller({ path: 'public/subscription-plans', version: '1' })
 export class PublicSubscriptionPlanController {
   constructor(

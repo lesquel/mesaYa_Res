@@ -39,7 +39,7 @@ import type {
   UpdateSectionObjectCommand,
 } from '../../../application/dto';
 
-@ApiTags('Admin Section Objects')
+@ApiTags('Section Objects - Admin')
 @Controller({ path: 'admin/section-objects', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

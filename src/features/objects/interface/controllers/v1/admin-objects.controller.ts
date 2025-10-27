@@ -39,7 +39,7 @@ import {
   GraphicObjectAnalyticsResponseDto,
 } from '../../dto';
 
-@ApiTags('Admin Objects')
+@ApiTags('Objects - Admin')
 @Controller({ path: 'admin/object', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

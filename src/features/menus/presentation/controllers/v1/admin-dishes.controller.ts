@@ -34,7 +34,7 @@ import {
   UpdateDishRequestDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Admin Dishes')
+@ApiTags('Dishes - Admin')
 @Controller({ path: 'admin/dishes', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

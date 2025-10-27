@@ -44,7 +44,7 @@ import {
   ReservationAnalyticsResponseDto,
 } from '@features/reservation/interface/dto';
 
-@ApiTags('Admin Reservations')
+@ApiTags('Reservations - Admin')
 @Controller({ path: 'admin/reservations', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

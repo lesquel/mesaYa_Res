@@ -9,7 +9,7 @@ import {
   type ListGraphicObjectsQuery,
 } from '../../../application';
 
-@ApiTags('Public Objects')
+@ApiTags('Objects - Public')
 @Controller({ path: 'public/object', version: '1' })
 export class PublicObjectsController {
   constructor(private readonly objects: ObjectsService) {}

@@ -20,7 +20,7 @@ import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { PublicAuthAnalyticsResponseDto } from '../../dto/public-auth-analytics.response.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
 
-@ApiTags('Public Users')
+@ApiTags('Users - Public')
 @Controller({ path: 'public/users', version: '1' })
 export class PublicUsersController {
   constructor(

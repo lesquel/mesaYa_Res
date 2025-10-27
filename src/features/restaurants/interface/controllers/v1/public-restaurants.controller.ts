@@ -13,7 +13,7 @@ import type {
   PaginatedRestaurantResponse,
 } from '@features/restaurants/application';
 
-@ApiTags('Public Restaurants')
+@ApiTags('Restaurants - Public')
 @Controller({ path: 'public/restaurant', version: '1' })
 export class PublicRestaurantsController {
   constructor(private readonly restaurantsService: RestaurantsService) {}

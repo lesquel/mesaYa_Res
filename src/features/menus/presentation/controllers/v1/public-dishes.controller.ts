@@ -18,7 +18,7 @@ import {
   DishResponseSwaggerDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Public Dishes')
+@ApiTags('Dishes - Public')
 @Controller({ path: 'public/dishes', version: '1' })
 export class PublicDishesController {
   constructor(

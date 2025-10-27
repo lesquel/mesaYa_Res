@@ -47,7 +47,7 @@ import {
   SectionAnalyticsResponseDto,
 } from '@features/sections/interface/dto';
 
-@ApiTags('Admin Sections')
+@ApiTags('Sections - Admin')
 @Controller({ path: 'admin/section', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

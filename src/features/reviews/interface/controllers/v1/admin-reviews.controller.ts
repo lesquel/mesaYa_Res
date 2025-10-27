@@ -42,7 +42,7 @@ import type {
 import { ReviewAnalyticsRequestDto } from '@features/reviews/interface/dto/review-analytics.request.dto';
 import { ReviewAnalyticsResponseDto } from '@features/reviews/interface/dto/review-analytics.response.dto';
 
-@ApiTags('Admin Reviews')
+@ApiTags('Reviews - Admin')
 @Controller({ path: 'admin/review', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
