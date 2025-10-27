@@ -93,7 +93,7 @@ export class PaymentService {
   }
 
   async getAllPayments(
-    params?: PaginatedQueryParams,
+    params: PaginatedQueryParams,
   ): Promise<PaymentListResponseDto> {
     return await this.getAllPaymentsUseCase.execute(params);
   }

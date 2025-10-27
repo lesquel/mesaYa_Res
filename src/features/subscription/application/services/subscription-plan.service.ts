@@ -106,7 +106,7 @@ export class SubscriptionPlanService {
   }
 
   async findAll(
-    params?: PaginatedQueryParams,
+    params: PaginatedQueryParams,
   ): Promise<SubscriptionPlanListResponseDto> {
     return this.listSubscriptionPlansUseCase.execute(params);
   }

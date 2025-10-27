@@ -64,7 +64,7 @@ export class SubscriptionService {
 
     this.listSubscriptionsUseCase = new ListSubscriptionsUseCase(
       this.logger,
-      this.subscriptionDomainService,
+      subscriptionRepository,
       subscriptionMapper,
     );
 
@@ -113,7 +113,7 @@ export class SubscriptionService {
   }
 
   async findAll(
-    params?: PaginatedQueryParams,
+    params: PaginatedQueryParams,
   ): Promise<SubscriptionListResponseDto> {
     return this.listSubscriptionsUseCase.execute(params);
   }
