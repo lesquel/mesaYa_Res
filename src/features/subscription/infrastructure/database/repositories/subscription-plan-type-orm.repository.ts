@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { SubscriptionPlanOrmEntity } from '../orm/subscription-plan.type-orm.entity';
 import { SubscriptionPlanEntity } from '../../../domain/entities/subscription-plan.entity';
 import { ISubscriptionPlanRepositoryPort } from '@features/subscription/domain/repositories';
@@ -13,6 +13,9 @@ import {
   SubscriptionPlanOrmMapperPort,
   SUBSCRIPTION_PLAN_ORM_MAPPER,
 } from '@features/subscription/application';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { ListSubscriptionPlansQuery } from '@features/subscription/application/dtos/input/list-subscription-plans.query';
 
 @Injectable()
 export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanRepositoryPort {
@@ -78,11 +81,58 @@ export class SubscriptionPlanTypeOrmRepository extends ISubscriptionPlanReposito
     return this.mapper.toDomainList(entities);
   }
 
+  async paginate(
+    query: ListSubscriptionPlansQuery,
+  ): Promise<PaginatedResult<SubscriptionPlanEntity>> {
+    const qb = this.buildBaseQuery();
+    return this.executePagination(qb, query);
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.plans.delete({ id });
     if (!result.affected) {
       throw new SubscriptionPlanNotFoundError(id);
     }
     return true;
+  }
+
+  private buildBaseQuery(): SelectQueryBuilder<SubscriptionPlanOrmEntity> {
+    const alias = 'subscriptionPlan';
+    return this.plans.createQueryBuilder(alias);
+  }
+
+  private async executePagination(
+    qb: SelectQueryBuilder<SubscriptionPlanOrmEntity>,
+    query: ListSubscriptionPlansQuery,
+  ): Promise<PaginatedResult<SubscriptionPlanEntity>> {
+    const alias = qb.alias;
+
+    const sortMap: Record<string, string> = {
+      name: `${alias}.name`,
+      price: `${alias}.price`,
+      subscriptionPeriod: `${alias}.subscriptionPeriod`,
+      stateSubscriptionPlan: `${alias}.stateSubscriptionPlan`,
+      createdAt: `${alias}.createdAt`,
+    };
+
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [`${alias}.name`, `${alias}.stateSubscriptionPlan`],
+    });
+
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((entity) =>
+        this.mapper.toDomain(entity),
+      ),
+    };
   }
 }

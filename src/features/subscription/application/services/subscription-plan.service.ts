@@ -61,7 +61,7 @@ export class SubscriptionPlanService {
 
     this.listSubscriptionPlansUseCase = new ListSubscriptionPlansUseCase(
       this.logger,
-      this.subscriptionPlanDomainService,
+      subscriptionPlanRepository,
       subscriptionPlanMapper,
     );
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import {
   SubscriptionNotFoundError,
   SubscriptionPlanInactiveError,
@@ -21,6 +21,9 @@ import {
   SUBSCRIPTION_ORM_MAPPER,
   SubscriptionOrmMapperPort,
 } from '@features/subscription/application';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { ListSubscriptionsQuery } from '@features/subscription/application/dtos/input/list-subscriptions.query';
 
 @Injectable()
 export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
@@ -108,12 +111,66 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     return this.mapper.toDomainList(entities);
   }
 
+  async paginate(
+    query: ListSubscriptionsQuery,
+  ): Promise<PaginatedResult<SubscriptionEntity>> {
+    const qb = this.buildBaseQuery();
+    return this.executePagination(qb, query);
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.subscriptions.delete({ id });
     if (!result.affected) {
       throw new SubscriptionNotFoundError(id);
     }
     return true;
+  }
+
+  private buildBaseQuery(): SelectQueryBuilder<SubscriptionOrmEntity> {
+    const alias = 'subscription';
+    return this.subscriptions
+      .createQueryBuilder(alias)
+      .leftJoinAndSelect(`${alias}.subscriptionPlan`, 'subscriptionPlan')
+      .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant');
+  }
+
+  private async executePagination(
+    qb: SelectQueryBuilder<SubscriptionOrmEntity>,
+    query: ListSubscriptionsQuery,
+  ): Promise<PaginatedResult<SubscriptionEntity>> {
+    const alias = qb.alias;
+
+    const sortMap: Record<string, string> = {
+      subscriptionStartDate: `${alias}.subscriptionStartDate`,
+      stateSubscription: `${alias}.stateSubscription`,
+      restaurant: `restaurant.name`,
+      plan: `subscriptionPlan.name`,
+      createdAt: `${alias}.createdAt`,
+    };
+
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [
+        `${alias}.stateSubscription`,
+        `restaurant.name`,
+        `subscriptionPlan.name`,
+      ],
+    });
+
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((entity) =>
+        this.mapper.toDomain(entity),
+      ),
+    };
   }
 
   private async ensurePlanIsUsable(

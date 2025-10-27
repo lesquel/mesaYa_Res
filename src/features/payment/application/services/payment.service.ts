@@ -55,7 +55,7 @@ export class PaymentService {
     );
     this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
       this.logger,
-      this.paymentDomainService,
+      paymentRepository,
       paymentEntityToMapper,
     );
     this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(

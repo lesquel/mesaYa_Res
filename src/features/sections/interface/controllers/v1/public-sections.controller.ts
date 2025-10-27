@@ -24,6 +24,21 @@ import { SectionResponseSwaggerDto } from '@features/sections/interface/dto';
 export class PublicSectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 
+  @Get()
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Listar todas las secciones públicas (paginado)' })
+  @ApiPaginationQuery()
+  @ApiPaginatedResponse({
+    model: SectionResponseSwaggerDto,
+    description: 'Listado paginado de todas las secciones',
+  })
+  async findAll(
+    @PaginationParams({ defaultRoute: '/public/section' })
+    query: ListSectionsQuery,
+  ): Promise<PaginatedSectionResponse> {
+    return this.sectionsService.list(query);
+  }
+
   @Get('restaurant/:restaurantId')
   @ThrottleRead()
   @ApiOperation({ summary: 'Listar secciones públicas por restaurante' })

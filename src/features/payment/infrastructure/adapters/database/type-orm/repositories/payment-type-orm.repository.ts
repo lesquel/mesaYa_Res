@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import {
   IPaymentRepositoryPort,
@@ -12,6 +12,9 @@ import {
 import { PaymentOrmMapperPort } from '@features/payment/application';
 import { PAYMENT_ORM_MAPPER } from '@features/payment/payment.tokens';
 import { PaymentOrmEntity } from '../orm/payment.type-orm.entity';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { ListPaymentsQuery } from '@features/payment/application/dtos/input/list-payments.query';
 
 @Injectable()
 export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
@@ -65,6 +68,13 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     return this.mapper.toDomainList(entities);
   }
 
+  async paginate(
+    query: ListPaymentsQuery,
+  ): Promise<PaginatedResult<PaymentEntity>> {
+    const qb = this.buildBaseQuery();
+    return this.executePagination(qb, query);
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.payments.delete({ id });
     return (result.affected ?? 0) > 0;
@@ -78,5 +88,43 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
   async findBySubscriptionId(subscriptionId: string): Promise<PaymentEntity[]> {
     const entities = await this.payments.find({ where: { subscriptionId } });
     return this.mapper.toDomainList(entities);
+  }
+
+  private buildBaseQuery(): SelectQueryBuilder<PaymentOrmEntity> {
+    const alias = 'payment';
+    return this.payments.createQueryBuilder(alias);
+  }
+
+  private async executePagination(
+    qb: SelectQueryBuilder<PaymentOrmEntity>,
+    query: ListPaymentsQuery,
+  ): Promise<PaginatedResult<PaymentEntity>> {
+    const alias = qb.alias;
+
+    const sortMap: Record<string, string> = {
+      amount: `${alias}.amount`,
+      paymentStatus: `${alias}.paymentStatus`,
+      createdAt: `${alias}.createdAt`,
+    };
+
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [`${alias}.paymentStatus`, `${alias}.amount`],
+    });
+
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((entity) =>
+        this.mapper.toDomain(entity),
+      ),
+    };
   }
 }

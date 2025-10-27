@@ -4,6 +4,8 @@ export * from './delete-subscription-plan.dto';
 export * from './delete-subscription.dto';
 export * from './get-subscription-by-id.dto';
 export * from './get-subscription-plan-by-id.dto';
+export * from './list-subscriptions.query';
+export * from './list-subscription-plans.query';
 export * from './update-subscription-plan.dto';
 export * from './update-subscription-state.dto';
 export * from './update-subscription.dto';
