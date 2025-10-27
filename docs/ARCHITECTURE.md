@@ -1,396 +1,477 @@
-# MesaYa Clean Architecture Guide
+# MesaYa - Arquitectura del Sistema
 
-## Objetivo
+## Visión General
 
-Este documento define la estructura base y las reglas de arquitectura para
-MesaYa aplicando principios de Clean Architecture, diseño orientado a dominios
-(DDD) y organización por _feature_. El objetivo es poder cambiar proveedores
-externos (base de datos, colas, gateways) sin reescribir el dominio ni la lógica
-de negocio, mantener un código fácil de probar y escalar, y ofrecer una guía
-clara para la incorporación de nuevos módulos. Además, se registran iniciativas
-recientes (por ejemplo, normalización de paginación Swagger, endpoints
-parametrizados por restaurante y enriquecimiento de los _value objects_ de
-`sections`) y un backlog de mejoras futuras.
+Este documento define la arquitectura del sistema **MesaYa**, basada en:
 
-## Macrovisión de capas
+- **Clean Architecture** (capas concéntricas con dependencias hacia adentro)
+- **Domain-Driven Design (DDD)** (modelado rico del dominio)
+- **Feature-based organization** (módulos por contexto de negocio)
 
-La solución se organiza en cuatro zonas concéntricas. Cada capa solo puede
-conocer a las capas más internas y expone contratos (interfaces) que permiten a
-las capas externas interactuar sin generar dependencias cíclicas.
+**Objetivo:** Mantener un código desacoplado, testeable y escalable, permitiendo
+cambiar implementaciones externas sin afectar la lógica de negocio.
 
-| Capa               | Responsabilidad principal                                                                                       |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| **Domain**         | Modelar el negocio: entidades, _value objects_, servicios de dominio, eventos.                                  |
-| **Application**    | Casos de uso orquestan al dominio. Define DTOs, _ports_ y _mappers_.                                            |
-| **Infrastructure** | Adapta el mundo exterior: repositorios concretos, ORM, proveedores externos.                                    |
-| **Interface**      | Expone la aplicación (REST, GraphQL, WebSockets, CLI). Maneja validaciones de entrada, serialización de salida. |
+## Arquitectura de Capas
 
-**Regla de dependencia:** Las importaciones siempre apuntan hacia adentro. El
-Dominio no importa nada de Application; Application no importa nada de
-Infrastructure o Interface. Las capas externas dependen de contratos definidos
-más adentro.
+El sistema se organiza en **4 capas concéntricas**:
 
-## Estructura base por feature
+| Capa               | Responsabilidad                                                                   | Dependencias          |
+| ------------------ | --------------------------------------------------------------------------------- | --------------------- |
+| **Domain**         | Entidades, Value Objects, reglas de negocio, servicios de dominio                | Ninguna               |
+| **Application**    | Casos de uso, DTOs, Ports (interfaces), Mappers                                   | Domain                |
+| **Infrastructure** | Repositorios concretos, ORM, servicios externos, adaptadores                      | Application + Domain  |
+| **Interface**      | Controladores REST, GraphQL resolvers, CLI, validaciones de entrada              | Application + Domain  |
 
-Cada _feature_ vive en su propio directorio y replica las capas internas. Por
-consistencia usa plural para el nombre (ej.: `users`, `orders`).
+### Regla de Dependencia
 
+**Las dependencias apuntan SIEMPRE hacia adentro:**
+
+```text
+┌─────────────────────────────────────┐
+│          Interface/               │  ← HTTP, GraphQL, CLI
+│      (Controllers, Resolvers)       │
+├─────────────────────────────────────┤
+│       Infrastructure                │  ← TypeORM, Kafka, Supabase
+│  (Repositories, External Services)  │
+├─────────────────────────────────────┤
+│         Application                 │  ← Use Cases, DTOs, Ports
+│    (Business Logic Orchestration)   │
+├─────────────────────────────────────┤
+│           Domain                    │  ← Entities, Value Objects
+│       (Pure Business Logic)         │
+└─────────────────────────────────────┘
 ```
+
+- **Domain** no conoce ninguna otra capa
+- **Application** solo conoce Domain
+- **Infrastructure** e **Interface** conocen Application y Domain
+- **Inversión de dependencias:** Application define interfaces (Ports) que
+  Infrastructure implementa
+
+## Organización por Features
+
+El código se organiza por **contextos de negocio** (features), cada uno con sus
+propias capas internas.
+
+### Estructura Global
+
+```text
 src/
-├── users/
-│   ├── domain/
-│   │   ├── entities/
-│   │   ├── value-objects/
-│   │   ├── services/              # opcional: lógica de negocio pura
-│   │   └── events/                # opcional
-│   ├── application/
-│   │   ├── use-cases/
-│   │   ├── dto/
-│   │   │   ├── input/
-│   │   │   └── output/
-│   │   ├── ports/                 # interfaces de repositorio/gateway
-│   │   └── mappers/
-│   ├── infrastructure/
-│   │   ├── repositories/
-│   │   ├── orm/
-│   │   ├── mappers/
-│   │   └── providers/
-│   └── interface/
-│       ├── controllers/
-│       ├── graphql/
-│       ├── subscribers/           # eventos, sockets
-│       └── validators/
-├── orders/
-│   ├── domain/
-│   ├── application/
-│   ├── infrastructure/
-│   └── interface/
-└── shared/
-    ├── core/
-    │   ├── BaseEntity.ts
-    │   ├── DomainEvent.ts
-    │   ├── UseCase.ts
-    │   └── Result.ts
-    ├── utils/
-    ├── config/
-    ├── providers/
-    └── testing/
+├── features/                        # Módulos de negocio
+│   ├── features.module.ts           # Módulo agregador
+│   ├── auth/                        # Autenticación y autorización
+│   ├── restaurants/                 # Gestión de restaurantes
+│   ├── sections/                    # Secciones de restaurantes
+│   ├── tables/                      # Mesas
+│   ├── objects/                     # Objetos/mobiliario
+│   ├── section-objects/             # Relaciones sección-objeto
+│   ├── reviews/                     # Reseñas
+│   ├── reservation/                 # Reservas
+│   ├── menus/                       # Menús
+│   ├── payment/                     # Pagos
+│   ├── subscription/                # Suscripciones
+│   └── images/                      # Gestión de imágenes
+├── shared/                          # Código compartido
+│   ├── core/                        # Abstracciones base
+│   ├── domain/                      # Entidades compartidas
+│   ├── application/                 # Lógica compartida
+│   ├── infrastructure/              # Adaptadores compartidos
+│   └── interface/                   # Interfaces compartidas
+├── seed/                            # Datos de prueba
+└── main.ts                          # Punto de entrada
 ```
 
-> **Sugerencia:** Comienza migrando _features_ existentes una por una. Por
-> ejemplo, `auth` y `users` se pueden fusionar en un nuevo módulo `users` con
-> subcarpetas Domain/Application/Infrastructure/Interface.
+### Estructura de una Feature
 
-> **Implementado recientemente:** los módulos `restaurants`, `sections` y
-> `reviews` ya siguen el patrón con _value objects_ y repositorios aislados;
-> además, se introdujo un decorador compartido `ApiPaginationQuery` para evitar
-> duplicar metadatos Swagger en controladores REST.
+Cada feature replica las 4 capas internamente:
 
-## Convenciones por capa
-
-### Domain
-
-- Solo TypeScript puro, sin dependencias de NestJS ni TypeORM.
-- Entidades extienden `BaseEntity` del `shared/core` para tener ID, timestamps o
-  manejo de eventos de dominio (si aplica).
-- _Value Objects_ encapsulan reglas de validación inmutables.
-- Servicios de dominio orquestan reglas complejas entre entidades.
-- Exponer interfaces (`IUserRole`, `PaymentStatus`) en `/types` cuando sea útil.
-
-> **Ejemplo:** `Section` utiliza _value objects_ como `SectionWidth` y
-> `SectionHeight` para garantizar dimensiones válidas sin depender de la capa
-> de infraestructura.
-
-### Application
-
-- Cada caso de uso implementa `UseCase<InputDTO, OutputDTO>`.
-- Define _ports_ (interfaces) para repositorios, gateways, proveedores de email,
-  etc. Ej.: `UserRepositoryPort`.
-- Mappers transforman entidades ↔ DTOs.
-- Controla transacciones y consistencia, pero no ejecuta queries directas.
-- Puede usar _Result/Either_ para comunicar éxito/fracaso sin lanzar excepciones.
-
-> **Ejemplo:** `ListRestaurantSectionsUseCase` recibe un `ListRestaurantSectionsQuery`
-> y delega el filtrado al `SectionRepositoryPort` manteniendo la paginación
-> alineada con la infraestructura.
-
-### Infrastructure
-
-- Implementaciones concretas de los `ports` (TypeORM, HTTP, Redis, S3…).
-- Configuración específica (entity schemas de TypeORM, modelos Prisma, etc.).
-- Adaptadores externos se registran como `providers` en el módulo Nest
-  (`users.module.ts`).
-
-> **Ejemplo:** `SectionTypeOrmRepository` reusa un helper global de paginación y
-> expone métodos `paginate` / `paginateByRestaurant`, manteniendo la lógica de
-> query dentro de infra.
-
-> **Nuevo:** `shared/infrastructure/kafka` contiene un `KafkaModule` global que
-> centraliza la conexión utilizando `@nestjs/microservices`, expone
-> `KafkaService` como _gateway_ (`send`/`emit`) y provee los decoradores
-> `@KafkaProducer()` y `@KafkaConsumer()` para registrar productores y
-> consumidores sin acoplar la capa de dominio.
-
-### Integración con Kafka (productores y consumidores)
-
-- **Tópicos normalizados:** Los nombres viven en
-  `shared/infrastructure/kafka/kafka.topics.ts` y siguen el prefijo
-  `mesa-ya.<aggregate>.<evento>`.
-
-  | Feature     | Evento                      | Tópico Kafka            |
-  | ----------- | --------------------------- | ----------------------- |
-  | reviews     | created / updated / deleted | `mesa-ya.reviews.*`     |
-  | restaurants | created / updated / deleted | `mesa-ya.restaurants.*` |
-  | sections    | created / updated / deleted | `mesa-ya.sections.*`    |
-
-- **Inyección desacoplada:** Los servicios de aplicación reciben el gateway con
-  `@KafkaProducer()` para mantener las capas limpias:
-
-  ```ts
-  constructor(
-    private readonly createReviewUseCase: CreateReviewUseCase,
-    @KafkaProducer() private readonly kafkaService: KafkaService,
-  ) {}
-  ```
-
-- **Producción declarativa:** Usa `@KafkaEmit` en métodos de servicio para
-  publicar automáticamente después de un caso de uso exitoso. El decorador
-  recibe el tópico y un _payload builder_ con acceso a los argumentos, el
-  resultado y un helper `toPlain`:
-
-  ```ts
-  @KafkaEmit({
-    topic: KAFKA_TOPICS.REVIEW_CREATED,
-    payload: ({ args, result, toPlain }) => {
-      const [command] = args as [CreateReviewCommand];
-      return {
-        action: 'review.created',
-        entity: toPlain(result),
-        performedBy: command.userId,
-      };
-    },
-  })
-  async create(command: CreateReviewCommand) {
-    return this.createReviewUseCase.execute(command);
-  }
-  ```
-
-- **Serialización limpia:** Antes de emitir se sanitiza el payload con
-  `JSON.parse(JSON.stringify(dto))` para producir JSON plano sin referencias ni
-  objetos `Date`.
-- **Resiliencia:** Un fallo al publicar registra el error con `Logger` pero no
-  bloquea la respuesta HTTP; los endpoints de create/update/delete continúan
-  funcionando.
-- **Eventos publicados:** Cada comando exitoso emite su evento correspondiente
-  con metadatos mínimos (`action`, `entity`/`entityId`, `performedBy` cuando
-  aplica y `timestamp` ISO8601). El payload final que llega a Kafka mantiene un
-  formato consistente:
-
-  ```json
-  {
-    "action": "review.created",
-    "entity": { "id": "...", "rating": 5 },
-    "performedBy": "user-uuid",
-    "timestamp": "2025-10-12T23:59:59.000Z"
-  }
-  ```
-
-- **Consumo automático:** Para escuchar un tópico basta anotar el método con
-  `@KafkaConsumer('mesa-ya.reviews.created')`; el `KafkaConsumerExplorer`
-  descubre la metadata en el arranque y registra el handler.
-
-### Interface
-
-- Controladores REST, resolvers GraphQL, handlers de eventos.
-- Validan y transforman entrada usando DTOs y `class-validator`.
-- Delegan toda la lógica al caso de uso correspondiente.
-- No realizan llamadas directas a infraestructura.
-
-> **Implementado:** controladores emplean `ApiPaginationQuery` para documentar
-> parámetros comunes y exponen rutas versionadas (`/api/v1/...`).
-
-### Shared
-
-- Código transversal reutilizable.
-- `core/`: abstracciones base (UseCase, BaseEntity, ValueObject, Result, Guard,
-  DomainEvent, etc.).
-- `utils/`: helpers puros (formateo de fechas, generadores de UUID, hashing).
-- `config/`: adaptadores de configuración, carga de `.env`.
-- `providers/`: módulos globales (Logger, Event Bus).
-- `testing/`: utilidades para tests unitarios/integración.
-
-## Módulos NestJS por feature
-
-Cada _feature_ expone un módulo Nest principal (`users.module.ts`) dentro de su
-raíz. Este módulo vincula la capa `interface` con los `use-cases` y registra las
-implementaciones de infraestructura.
-
+```text
+src/features/<feature-name>/
+├── <feature-name>.module.ts         # Módulo NestJS
+├── <feature-name>.tokens.ts         # Tokens de inyección (Symbols)
+├── index.ts                         # Barrel exports
+│
+├── domain/                          # Capa de Dominio
+│   ├── entities/                    # Entidades con identidad
+│   ├── value-objects/               # Valores inmutables
+│   ├── services/                    # Servicios de dominio
+│   └── events/                      # Eventos de dominio
+│
+├── application/                     # Capa de Aplicación
+│   ├── use-cases/                   # Casos de uso
+│   ├── dto/
+│   │   ├── input/                   # DTOs de entrada
+│   │   └── output/                  # DTOs de salida
+│   ├── ports/                       # Interfaces (contratos)
+│   └── mappers/                     # Transformadores
+│
+├── infrastructure/                  # Capa de Infraestructura
+│   ├── repositories/                # Implementaciones de repositorios
+│   ├── orm/                         # Schemas de TypeORM
+│   ├── mappers/                     # Mappers ORM ↔ Domain
+│   └── providers/                   # Servicios externos
+│
+└── interface/                       # Capa de Interfaz
+    ├── controllers/                 # Controladores REST
+    ├── graphql/                     # Resolvers GraphQL
+    └── validators/                  # Validaciones específicas
 ```
-// src/users/users.module.ts
+
+## Responsabilidades por Capa
+
+### 1. Domain (Dominio)
+
+**Responsabilidad:** Modelar el negocio puro, sin dependencias externas.
+
+- **Entities:** Objetos con identidad única (Restaurant, User, Reservation)
+- **Value Objects:** Valores inmutables con validaciones (Email, SectionWidth, Price)
+- **Domain Services:** Lógica compleja que involucra múltiples entidades
+- **Domain Events:** Hechos significativos del negocio (RestaurantCreated)
+
+**Reglas:**
+
+- Solo TypeScript puro, sin NestJS ni TypeORM
+- Sin imports de otras capas
+- Validaciones en constructores o métodos estáticos
+- Inmutabilidad en Value Objects
+
+### 2. Application (Aplicación)
+
+**Responsabilidad:** Orquestar casos de uso del negocio.
+
+- **Use Cases:** Acciones específicas (CreateRestaurant, UpdateReservation)
+- **DTOs:** Objetos de transferencia de datos (input/output)
+- **Ports:** Interfaces que definen contratos (RepositoryPort, GatewayPort)
+- **Mappers:** Transformadores entre Domain ↔ DTO
+
+**Reglas:**
+
+- Define INTERFACES, no implementaciones
+- No conoce tecnologías concretas (TypeORM, Kafka, etc.)
+- Usa inyección de dependencias mediante Ports
+- No maneja HTTP requests/responses directamente
+
+### 3. Infrastructure (Infraestructura)
+
+**Responsabilidad:** Implementar adaptadores a tecnologías externas.
+
+- **Repositories:** Implementaciones concretas de repositorios (TypeORM)
+- **ORM Schemas:** Definiciones de esquemas de base de datos
+- **External Services:** Integraciones (Kafka, Supabase, APIs externas)
+- **Mappers:** Transformaciones ORM ↔ Domain
+
+**Reglas:**
+
+- IMPLEMENTA las interfaces definidas en Application (Ports)
+- Única capa que conoce TypeORM, Kafka, HTTP clients, etc.
+- Maneja detalles de persistencia y comunicación externa
+
+### 4. Interface (Interfaz / Presentación)
+
+**Responsabilidad:** Exponer la aplicación al mundo exterior.
+
+- **Controllers:** Endpoints REST
+- **GraphQL Resolvers:** Queries y mutations
+- **Validators:** Validaciones de entrada con `class-validator`
+- **Response Mappers:** Serialización de respuestas
+
+**Reglas:**
+
+- Delega TODA la lógica a Use Cases
+- Maneja validaciones de entrada (DTOs con decoradores)
+- No contiene lógica de negocio
+- Transforma requests → Use Case Input
+- Transforma Use Case Output → Response
+
+## Inyección de Dependencias (NestJS)
+
+### Sistema de Tokens
+
+Cada feature define sus tokens de inyección usando **Symbols** en archivos
+`*.tokens.ts`:
+
+```typescript
+// src/features/restaurants/restaurants.tokens.ts
+
+// Repositories
+export const RESTAURANT_REPOSITORY = Symbol('RESTAURANT_REPOSITORY');
+export const RESTAURANT_ANALYTICS_REPOSITORY = Symbol('RESTAURANT_ANALYTICS_REPOSITORY');
+
+// Services
+export const RESTAURANT_EVENT_PUBLISHER = Symbol('RESTAURANT_EVENT_PUBLISHER');
+
+// Readers (para comunicación cross-feature)
+export const USER_RESTAURANT_READER = Symbol('USER_RESTAURANT_READER');
+```
+
+**Ventajas:**
+
+- Evita colisiones de nombres entre módulos
+- Type-safe (TypeScript infiere tipos)
+- Facilita refactoring
+
+### Estructura de Módulos NestJS
+
+Cada feature tiene un módulo que registra providers e implementaciones:
+
+```typescript
+// src/features/restaurants/restaurants.module.ts
+import { Module } from '@nestjs/common';
+import { RestaurantsController } from './interface/controllers/restaurants.controller';
+import { RESTAURANT_REPOSITORY } from './restaurants.tokens';
+import { RestaurantTypeOrmRepository } from './infrastructure/repositories/restaurant-typeorm.repository';
+import { CreateRestaurantUseCase } from './application/use-cases/create-restaurant.use-case';
+
 @Module({
-  controllers: [UsersController],
+  controllers: [RestaurantsController],
   providers: [
+    // Implementación de Port
     {
-      provide: UserRepositoryPort,
-      useClass: TypeOrmUserRepository,
+      provide: RESTAURANT_REPOSITORY,
+      useClass: RestaurantTypeOrmRepository,
     },
-    CreateUserUseCase,
-    UpdateUserUseCase,
+    // Use Cases
+    CreateRestaurantUseCase,
+    ListRestaurantsUseCase,
   ],
   exports: [
-    CreateUserUseCase,
-    UpdateUserUseCase,
+    RESTAURANT_REPOSITORY,    // Otras features pueden usarlo
+    CreateRestaurantUseCase,
   ],
 })
-export class UsersModule {}
+export class RestaurantsModule {}
 ```
 
-Reglas para módulos:
+### Módulo Agregador (FeaturesModule)
 
-- Las dependencias entre módulos deben seguir el dominio (por ejemplo,
-  `orders` puede importar `users` para validar propietarios, pero no al revés).
-- Las exportaciones son casos de uso o _ports_ que otras features necesitan.
+Todas las features se agrupan en un módulo central:
 
-## Estrategia de migración desde la estructura actual
+```typescript
+// src/features/features.module.ts
+import { Module } from '@nestjs/common';
 
-1. **Inventario:** Lista las entidades y servicios existentes (`auth`,
-   `restaurant`, `review`, `section`, `payment`).
-2. **Define features:** Agrupa elementos por contexto de negocio.
-   - `users`: modelos y lógica de autenticación/autorización.
-   - `restaurants`: restaurantes y secciones.
-   - `orders`: pagos y órdenes (actualmente `payment`).
-   - `reviews`: calificaciones.
-3. **Mover dominio:** Extrae las clases `*.entity.ts` y reglas de negocio a
-   `domain/entities` y `domain/value-objects`.
-4. **Crear ports:** En `application/ports` define interfaces de repositorio usando
-   métodos que el caso de uso requiere (ej.: `findByEmail`, `save`).
-5. **Reescribir casos de uso:** Al migrar los servicios (`*.service.ts`),
-   conviértelos en `use-cases` con dependencias solo hacia los `ports`.
-6. **Adaptadores:** Mueve repositories concretos (TypeORM) a
-   `infrastructure/repositories`. Implementan los `ports`.
-7. **Módulo Nest:** Actualiza el módulo de la feature para wirear los providers y
-   exponer controladores.
-8. **Actualizar imports:** Usa `@` o rutas relativas en `tsconfig` para evitar
-   recorridos largos (`"paths": { "@users/*": ["src/users/*"] }`).
-9. **Testing:** Asegúrate de que los tests unitarios trabajen contra _ports_ y
-   usen _mocks_ (test doubles) de infraestructura.
+@Module({
+  imports: [
+    AuthModule,
+    RestaurantsModule,
+    SectionsModule,
+    TablesModule,
+    ReviewsModule,
+    ReservationModule,
+    // ... otras features
+  ],
+  exports: [
+    AuthModule,
+    RestaurantsModule,
+    // ... todas las features
+  ],
+})
+export class FeaturesModule {}
+```
 
-> **Checklist aplicada:** Se agregaron módulos `SectionsModule` y `RestaurantsModule`
-> al `AppModule` para que sus controladores se expongan en Swagger y la versión
-> `dist` cargue sin `MODULE_NOT_FOUND`.
+## Comunicación entre Features
 
-## DTOs y validaciones
+### Reglas de dependencias entre módulos
 
-- Input DTOs viven en `application/dto/input`. Se anotan con `class-validator`.
-- Output DTOs en `application/dto/output`. Pueden mapear desde `domain`.
-- Validaciones complejas deben moverse a _value objects_ para reutilizarse.
+- **Evitar dependencias circulares:** Feature A no debe depender de Feature B si
+  B ya depende de A
+- **Usar Ports/Interfaces:** Para comunicación entre features, exporta interfaces
+  (Ports) no implementaciones concretas
+- **Readers para consultas:** Usa interfaces `Reader` para consultas
+  cross-feature sin exponer repositorios completos
 
-> **Ejemplo:** `CreateSectionDto` valida `width` y `height` como enteros positivos,
-> mientras que el `SectionWidth`/`SectionHeight` refuerzan la misma regla en el
-> dominio.
+### Comunicación asíncrona (eventos)
 
-## Pruebas recomendadas
+Para desacoplar completamente, usa **Domain Events** o **Integration Events**:
 
-| Capa           | Tipo de prueba      | Objetivo                                      |
-| -------------- | ------------------- | --------------------------------------------- |
-| Domain         | Unitarias puras     | Validar reglas con value objects y entidades. |
-| Application    | Unitarias con mocks | Asegurar orquestación de casos de uso.        |
-| Infrastructure | Integración         | Verificar conexión con DB, HTTP, colas.       |
-| Interface      | E2E / Pact          | Validar contratos REST/GraphQL con la API.    |
+- **Domain Events:** Dentro del mismo bounded context
+- **Integration Events:** Entre bounded contexts (vía Kafka, RabbitMQ)
 
-Considera una carpeta paralela `__tests__` para cada capa o agrupa tests por
-feature (`src/users/tests/...`). Usa `shared/testing` para builders y factories.
+```text
+┌─────────────┐          Event          ┌─────────────┐
+│  Payments   │ ──────────────────────> │ Reservation │
+│   Feature   │   PaymentConfirmed      │   Feature   │
+└─────────────┘                         └─────────────┘
+```
 
-## Gestión de dependencias y configuración
+## Módulo Shared (Código Compartido)
 
-- Centraliza tokens de inyección (`const USER_REPOSITORY = Symbol('UserRepository');`).
-- Evita literales mágicos en casos de uso; extrae a `shared/core/constants`.
-- Usa `ConfigService` solo en infraestructura o interface. La aplicación/le no
-  debe leer variables de entorno directamente.
+El módulo `shared/` contiene código transversal usado por múltiples features:
 
-## Comunicación entre features
+```text
+src/shared/
+├── core/                            # Abstracciones base
+│   ├── BaseEntity.ts                # Entidad base con ID
+│   ├── UseCase.ts                   # Interface de casos de uso
+│   ├── Result.ts / Either.ts        # Manejo de errores funcional
+│   ├── DomainEvent.ts               # Eventos de dominio
+│   └── config/                      # Configuraciones globales
+│
+├── domain/                          # Entidades compartidas
+│   ├── entities/                    # Entidades usadas por múltiples features
+│   └── value-objects/               # Value Objects compartidos
+│
+├── application/                     # Lógica compartida
+│   ├── interfaces/                  # Interfaces comunes
+│   └── services/                    # Servicios transversales
+│
+├── infrastructure/                  # Adaptadores compartidos
+│   ├── adapters/
+│   │   ├── app-config/              # ConfigModule (variables de entorno)
+│   │   ├── database/                # TypeORM DatabaseModule
+│   │   ├── logger/                  # LoggerModule (Winston)
+│   │   └── exceptions-filter/       # Filtros globales de excepciones
+│   ├── kafka/                       # Integración con Kafka
+│   ├── pagination/                  # Helpers de paginación
+│   ├── guards/                      # Guards globales (Auth, Throttler)
+│   ├── decorators/                  # Decoradores compartidos
+│   └── supabase/                    # Cliente Supabase
+│
+└── interface/                       # Interfaces compartidas
+    └── dto/                         # DTOs comunes
+```
 
-- Expón casos de uso o _ports_ específicos a través de `exports` del módulo.
-- Considera eventos de dominio (`UserRegisteredEvent`) para desacoplar flujos
-  cruzados (por ejemplo, crear una orden al recibir un pago confirmado).
-- Si necesitas compartir entidades, hazlo vía `shared/core` o interfaces de
-  dominio, no usando clases concretas de otra feature.
+### Principios para Shared
 
-> **Pendiente:** evaluar un mecanismo de eventos de dominio o integración (ej. a
-> través de `@nestjs/cqrs`) para sincronizar reservas y disponibilidad de
-> secciones en tiempo real.
+- **Solo código REALMENTE compartido:** No mover código aquí prematuramente
+- **Sin lógica de negocio específica:** Debe ser genérico
+- **Abstracciones estables:** Cambios en shared afectan a todas las features
 
-## Guía para nuevos features
+## Patrones de Diseño Aplicados
 
-1. Crea la carpeta `src/<feature>/` con la estructura base.
-2. Define entidades y value objects mínimos.
-3. Crea puertos en `application/ports` y casos de uso.
-4. Implementa adaptadores en `infrastructure` según la tecnología actual (por
-   ejemplo, TypeORM). Si más adelante cambias a Prisma o un microservicio, bastará
-   con reemplazar el adaptador.
-5. Exponer controladores/resolvers en `interface` que llamen a los casos de uso.
-6. Registra el módulo en `app.module.ts`.
+### 1. Dependency Inversion Principle (DIP)
 
-> **Sugerencia:** agrega pruebas mínimas (unitarias para value objects y E2E para
-> endpoints críticos) antes de exponer un nuevo módulo en producción.
+Application define interfaces (Ports), Infrastructure las implementa:
 
-## Configuración de rutas y permisos
+```typescript
+// Application Layer - Define el contrato
+export interface RestaurantRepositoryPort {
+  save(restaurant: Restaurant): Promise<void>;
+  findById(id: string): Promise<Restaurant | null>;
+}
 
-- Mantén guardias y decoradores (roles/permissions) en la capa `interface`.
-- Los casos de uso no deben conocer `Request`, `Response` ni guardias NestJS.
-- La autorización de alto nivel (¿puede el usuario ejecutar el caso de uso?) se
-  valida antes de invocar al caso de uso.
+// Infrastructure Layer - Implementa el contrato
+export class RestaurantTypeOrmRepository implements RestaurantRepositoryPort {
+  save(restaurant: Restaurant): Promise<void> {
+    // Implementación con TypeORM
+  }
+}
+```
 
-## Logging y monitoreo
+### 2. Ports & Adapters (Hexagonal Architecture)
 
-- Usa un `Logger` compartido en `shared/providers/logger.provider.ts`.
-- Casos de uso loguean eventos de alto nivel; adaptadores loguean detalles de
-  integración.
-- Considera un wrapper para métricas (`shared/providers/metrics`).
+- **Ports:** Interfaces en Application
+- **Adapters:** Implementaciones en Infrastructure
+- **Driving Adapters:** Controllers (entrada)
+- **Driven Adapters:** Repositories, External Services (salida)
 
-## Roadmap sugerido
+### 3. Repository Pattern
 
-1. Crear `shared/core` con abstracciones base (UseCase, BaseEntity, Result,
-   UniqueEntityID, DomainEvent, Guard).
-2. Migrar `auth` → `users feature` siguiendo la estructura propuesta.
-3. Migrar `restaurants`, `sections` y `reviews`.
-4. Unificar `payment` dentro de un nuevo dominio `orders` o `payments` según lo
-   que defina el negocio.
-5. Añadir pruebas unitarias al dominio antes de mover a producción.
-6. Documentar en README los comandos para ejecutar casos de uso y tests.
+Abstrae el acceso a datos:
 
-### Backlog de mejoras adicionales
+```typescript
+// Port (Application)
+interface UserRepositoryPort {
+  findByEmail(email: string): Promise<User | null>;
+  save(user: User): Promise<void>;
+}
 
-- Instrumentar migraciones automatizadas (TypeORM CLI o `@nestjs/typeorm`
-  factories) para nuevos campos (`width`, `height`, etc.).
-- Centralizar configuración de variables obligatorias con defaults y perfiles
-  (`.env.development`, `.env.test`) para evitar fallos en `ConfigModule`.
-- Añadir _health checks_ y métricas (p. ej. `@nestjs/terminus`) en `shared` para
-  monitoreo.
-- Incluir _fixtures_ de semillas por feature (extendiendo `seed` actual) y
-  automatizar su ejecución en pipelines.
-- Expandir la documentación de estándares de Swagger (naming de tags, ejemplos
-  por respuesta, políticas de error).
-- Implementar pruebas contractuales para módulos que consumen `paginateQueryBuilder`
-  asegurando alias válidos al ordenar.
-- Analizar la introducción de un _event bus_ o _outbox pattern_ para futuras
-  integraciones (pagos, notificaciones) sin acoplar casos de uso entre sí.
-- Incorporar un _linter_ para convenciones de importación (evitar `../..` largos)
-  y un _formatter_ consistente (`eslint + prettier`) ya configurado en scripts.
+// Adapter (Infrastructure)
+class UserTypeOrmRepository implements UserRepositoryPort {
+  // Implementación específica de TypeORM
+}
+```
 
-## Glosario rápido
+### 4. Use Case Pattern
 
-- **Entity:** Objeto con identidad en el negocio (User, Restaurant, Order).
-- **Value Object:** Define propiedades inmutables y reglas (Email, Price).
-- **Use Case:** Orquesta una acción concreta (CreateUser, UpdateOrderStatus).
-- **Port:** Contrato abstracto para infraestructura (UserRepositoryPort).
-- **Adapter:** Implementación concreta del port (TypeOrmUserRepository).
+Cada acción de negocio es un caso de uso independiente:
+
+```typescript
+export class CreateRestaurantUseCase {
+  constructor(
+    @Inject(RESTAURANT_REPOSITORY)
+    private readonly repository: RestaurantRepositoryPort,
+  ) {}
+
+  async execute(input: CreateRestaurantInput): Promise<CreateRestaurantOutput> {
+    const restaurant = Restaurant.create(input);
+    await this.repository.save(restaurant);
+    return { id: restaurant.id };
+  }
+}
+```
+
+### 5. Value Object Pattern
+
+Encapsula validaciones en objetos inmutables:
+
+```typescript
+export class Email {
+  private constructor(private readonly value: string) {}
+
+  static create(email: string): Email {
+    if (!this.isValid(email)) {
+      throw new Error('Invalid email format');
+    }
+    return new Email(email);
+  }
+
+  private static isValid(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  getValue(): string {
+    return this.value;
+  }
+}
+```
+
+## Glosario
+
+### Términos de arquitectura
+
+- **Entity:** Objeto con identidad única en el negocio (Restaurant, User, Table).
+  Contiene lógica de negocio y se persiste en la base de datos.
+- **Value Object:** Define propiedades inmutables con reglas de validación
+  (SectionWidth, Email, Price). No tiene identidad propia.
+- **Use Case:** Orquesta una acción específica del negocio (CreateRestaurant,
+  UpdateReservationStatus). Coordina entidades, value objects y repositorios.
+- **Port:** Contrato abstracto (interface) para infraestructura
+  (RestaurantRepositoryPort, PaymentGatewayPort). Define qué operaciones necesita
+  la aplicación sin especificar cómo se implementan.
+- **Adapter:** Implementación concreta de un port (RestaurantTypeOrmRepository,
+  StripePaymentGateway). Traduce entre el dominio y tecnologías externas.
+- **Aggregate:** Grupo de entidades y value objects que se tratan como una unidad
+  para cambios de datos (Restaurant + Sections + Tables).
+- **Domain Event:** Hecho significativo que ocurrió en el dominio
+  (RestaurantCreated, ReservationConfirmed). Usado para comunicación asíncrona.
+- **Bounded Context:** Límite explícito dentro del cual un modelo de dominio es
+  válido y consistente.
+- **Feature:** Módulo que encapsula un contexto de negocio completo con sus 4 capas.
+
+### Términos de NestJS
+
+- **Module:** Unidad de organización que agrupa providers, controllers y exports.
+- **Provider:** Clase inyectable (services, repositories, factories).
+- **Controller:** Maneja requests HTTP y delega a casos de uso.
+- **Guard:** Determina si un request puede proceder (autenticación, autorización).
+- **Interceptor:** Transforma o procesa requests/responses.
+- **Pipe:** Transforma o valida datos de entrada.
 
 ## Recursos adicionales
 
-- [Clean Architecture (Robert C. Martin)](https://www.oreilly.com/library/view/clean-architecture/9780134494272/)
-- [Implementing DDD with NestJS](https://docs.nestjs.com/recipes/prisma#domain-driven-design-passion-project)
-- [Hexagonal Architecture in TypeScript](https://blog.arkency.com/hexagonal-architecture/)
+### Documentación interna
 
-> Mantén este documento vivo: actualízalo cuando cambie la estrategia
-> arquitectónica, se incorporen nuevas reglas o se agreguen herramientas.
+- **[NAMING_CONVENTIONS.md](./NAMING_CONVENTIONS.md):** Convenciones de nombrado del proyecto
+- **[TOKENS_ORGANIZATION.md](./TOKENS_ORGANIZATION.md):** Organización de tokens de inyección
+
+### Referencias externas
+
+- [Clean Architecture (Robert C. Martin)](https://www.oreilly.com/library/view/clean-architecture/9780134494272/)
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [Domain-Driven Design (Eric Evans)](https://www.domainlanguage.com/ddd/)
+
+---
+
+**Última actualización:** Octubre 2025
+**Mantenedores:** Equipo MesaYa
