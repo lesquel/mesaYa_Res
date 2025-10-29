@@ -16,6 +16,7 @@ import type {
   GetMenuByIdDto,
   UpdateMenuDto,
   DeleteMenuDto,
+  ListMenusQuery,
 } from '../dtos/input';
 import type {
   MenuResponseDto,
@@ -92,8 +93,15 @@ export class MenuService {
     return this.getMenuByIdUseCase.execute(dto);
   }
 
-  async findAll(): Promise<MenuListResponseDto> {
-    return this.listMenusUseCase.execute();
+  async findAll(query: ListMenusQuery): Promise<MenuListResponseDto> {
+    return this.listMenusUseCase.execute(query);
+  }
+
+  async findByRestaurant(
+    restaurantId: string,
+    query: ListMenusQuery,
+  ): Promise<MenuListResponseDto> {
+    return this.listMenusUseCase.execute({ ...query, restaurantId });
   }
 
   @KafkaEmit({

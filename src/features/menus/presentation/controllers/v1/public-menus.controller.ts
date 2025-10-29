@@ -1,5 +1,10 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   ThrottleRead,
   ThrottleSearch,
@@ -17,6 +22,10 @@ import {
   MenuAnalyticsResponseDto,
   MenuResponseSwaggerDto,
 } from '@features/menus/presentation/dto';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 
 @ApiTags('Menus - Public')
 @Controller({ path: 'public/menus', version: '1' })
@@ -28,17 +37,44 @@ export class PublicMenusController {
 
   @Get()
   @ThrottleRead()
-  @ApiOkResponse({
-    description: 'Public menus list',
-    type: MenuResponseSwaggerDto,
-    isArray: true,
+  @ApiOperation({ summary: 'Listar menús públicos (paginado)' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: MenuResponseSwaggerDto,
+    description: 'Listado paginado de menús públicos',
   })
-  findAll(): Promise<MenuListResponseDto> {
-    return this.menuService.findAll();
+  findAll(
+    @PaginationParams({ defaultRoute: '/public/menus' })
+    query: PaginatedQueryParams,
+  ): Promise<MenuListResponseDto> {
+    return this.menuService.findAll(query);
+  }
+
+  @Get('restaurant/:restaurantId')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Listar menús públicos por restaurante (paginado)',
+  })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: MenuResponseSwaggerDto,
+    description: 'Listado paginado de menús de un restaurante',
+  })
+  findByRestaurant(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @PaginationParams({ defaultRoute: '/public/menus/restaurant' })
+    query: PaginatedQueryParams,
+  ): Promise<MenuListResponseDto> {
+    return this.menuService.findByRestaurant(restaurantId, {
+      ...query,
+      route: `/public/menus/restaurant/${restaurantId}`,
+    });
   }
 
   @Get('analytics')
   @ThrottleSearch()
+  @ApiOperation({ summary: 'Analytics públicas de menús' })
   @ApiOkResponse({
     description: 'Public menu analytics',
     type: MenuAnalyticsResponseDto,
@@ -52,11 +88,15 @@ export class PublicMenusController {
 
   @Get(':menuId')
   @ThrottleRead()
+  @ApiOperation({ summary: 'Obtener detalles públicos de un menú' })
+  @ApiParam({ name: 'menuId', description: 'UUID del menú' })
   @ApiOkResponse({
     description: 'Public menu details',
     type: MenuResponseSwaggerDto,
   })
-  findById(@Param('menuId') menuId: string): Promise<MenuResponseDto> {
+  findById(
+    @Param('menuId', ParseUUIDPipe) menuId: string,
+  ): Promise<MenuResponseDto> {
     return this.menuService.findById({ menuId });
   }
 }
