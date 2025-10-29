@@ -110,7 +110,7 @@ export class MenuTypeOrmRepository extends IMenuRepositoryPort {
     const qb = this.menus.createQueryBuilder(alias);
 
     if (query.restaurantId) {
-      qb.andWhere(`${alias}.restaurant_id = :restaurantId`, {
+      qb.andWhere(`${alias}.restaurantId = :restaurantId`, {
         restaurantId: query.restaurantId,
       });
     }
@@ -118,8 +118,8 @@ export class MenuTypeOrmRepository extends IMenuRepositoryPort {
     const sortMap: Record<string, string> = {
       name: `${alias}.name`,
       price: `${alias}.price`,
-      createdAt: `${alias}.created_at`,
-      updatedAt: `${alias}.updated_at`,
+      createdAt: `${alias}.createdAt`,
+      updatedAt: `${alias}.updatedAt`,
     };
 
     const sortByColumn =
