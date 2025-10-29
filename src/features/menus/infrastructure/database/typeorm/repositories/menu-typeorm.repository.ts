@@ -123,9 +123,7 @@ export class MenuTypeOrmRepository extends IMenuRepositoryPort {
     };
 
     const sortByColumn =
-      query.sortBy && sortMap[query.sortBy]
-        ? sortMap[query.sortBy]
-        : undefined;
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
 
     const paginationResult = await paginateQueryBuilder(qb, {
       ...query.pagination,

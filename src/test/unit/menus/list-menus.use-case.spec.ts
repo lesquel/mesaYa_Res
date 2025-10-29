@@ -1,7 +1,12 @@
+import { describe, it, expect, jest } from '@jest/globals';
 import { MoneyVO } from '@shared/domain/entities/values';
 import { MenuEntity } from '@features/menus/domain/entities/menu.entity';
 import { IMenuRepositoryPort } from '@features/menus/domain/repositories/menu-repository.port';
-import type { MenuCreate, MenuUpdate, MenuPaginatedQuery } from '@features/menus/domain/types';
+import type {
+  MenuCreate,
+  MenuUpdate,
+  MenuPaginatedQuery,
+} from '@features/menus/domain/types';
 import type { PaginatedResult } from '@shared/application/types/pagination';
 import { MenuDomainService } from '@features/menus/domain/services/menu-domain.service';
 import { DishMapper, MenuMapper } from '@features/menus/application/mappers';
