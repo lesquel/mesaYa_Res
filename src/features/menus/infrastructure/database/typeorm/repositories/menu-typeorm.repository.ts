@@ -6,9 +6,12 @@ import {
   MenuEntity,
   MenuCreate,
   MenuUpdate,
+  MenuPaginatedQuery,
 } from '@features/menus/domain';
 import { MenuOrmEntity, DishOrmEntity } from '../orm';
 import { MenuOrmMapper, DishOrmMapper } from '../mappers';
+import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 
 @Injectable()
 export class MenuTypeOrmRepository extends IMenuRepositoryPort {
@@ -93,21 +96,54 @@ export class MenuTypeOrmRepository extends IMenuRepositoryPort {
     }
 
     const menuIds = menus.map((menu) => menu.id);
-    const dishes = await this.dishes.find({ where: { menuId: In(menuIds) } });
-    const groupedDishes = dishes.reduce((acc, dish) => {
-      if (!dish.menuId) {
-        return acc;
-      }
-
-      const collection = acc.get(dish.menuId) ?? [];
-      collection.push(dish);
-      acc.set(dish.menuId, collection);
-      return acc;
-    }, new Map<string, DishOrmEntity[]>());
+    const groupedDishes = await this.loadDishesGroupedByMenu(menuIds);
 
     return menus.map((menu) =>
       MenuOrmMapper.toDomain(menu, groupedDishes.get(menu.id) ?? []),
     );
+  }
+
+  async paginate(
+    query: MenuPaginatedQuery,
+  ): Promise<PaginatedResult<MenuEntity>> {
+    const alias = 'menu';
+    const qb = this.menus.createQueryBuilder(alias);
+
+    if (query.restaurantId) {
+      qb.andWhere(`${alias}.restaurantId = :restaurantId`, {
+        restaurantId: query.restaurantId,
+      });
+    }
+
+    const sortMap: Record<string, string> = {
+      name: `${alias}.name`,
+      price: `${alias}.price`,
+      createdAt: `${alias}.createdAt`,
+      updatedAt: `${alias}.updatedAt`,
+    };
+
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [`${alias}.name`, `${alias}.description`],
+    });
+
+    const menuIds = paginationResult.results.map((menu) => menu.id);
+    const groupedDishes = await this.loadDishesGroupedByMenu(menuIds);
+
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((menu) =>
+        MenuOrmMapper.toDomain(menu, groupedDishes.get(menu.id) ?? []),
+      ),
+    };
   }
 
   async delete(id: string): Promise<boolean> {
@@ -125,5 +161,25 @@ export class MenuTypeOrmRepository extends IMenuRepositoryPort {
 
     const dishes = await this.dishes.find({ where: { menuId: id } });
     return MenuOrmMapper.toDomain(menu, dishes);
+  }
+
+  private async loadDishesGroupedByMenu(
+    menuIds: string[],
+  ): Promise<Map<string, DishOrmEntity[]>> {
+    if (menuIds.length === 0) {
+      return new Map<string, DishOrmEntity[]>();
+    }
+
+    const dishes = await this.dishes.find({ where: { menuId: In(menuIds) } });
+    return dishes.reduce((acc, dish) => {
+      if (!dish.menuId) {
+        return acc;
+      }
+
+      const collection = acc.get(dish.menuId) ?? [];
+      collection.push(dish);
+      acc.set(dish.menuId, collection);
+      return acc;
+    }, new Map<string, DishOrmEntity[]>());
   }
 }

@@ -1,3 +1,4 @@
+import { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { MoneyVO } from '@shared/domain/entities/values';
 import { DishCreate, DishUpdate } from './dish.types';
 
@@ -17,4 +18,8 @@ export interface MenuUpdate {
   price?: MoneyVO;
   imageUrl?: string;
   dishes?: DishUpdate[];
+}
+
+export interface MenuPaginatedQuery extends PaginatedQueryParams {
+  restaurantId?: string;
 }

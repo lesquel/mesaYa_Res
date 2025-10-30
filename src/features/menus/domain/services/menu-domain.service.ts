@@ -1,6 +1,7 @@
+import { PaginatedResult } from '@shared/application/types/pagination';
 import { IMenuRepositoryPort } from '../repositories/menu-repository.port';
 import { MenuEntity } from '../entities/menu.entity';
-import { MenuCreate, MenuUpdate } from '../types';
+import { MenuCreate, MenuUpdate, MenuPaginatedQuery } from '../types';
 import {
   MenuNotFoundError,
   MenuCreationFailedError,
@@ -45,6 +46,12 @@ export class MenuDomainService {
 
   async findAllMenus(): Promise<MenuEntity[]> {
     return this.menuRepository.findAll();
+  }
+
+  async paginateMenus(
+    query: MenuPaginatedQuery,
+  ): Promise<PaginatedResult<MenuEntity>> {
+    return this.menuRepository.paginate(query);
   }
 
   async deleteMenu(menuId: string): Promise<void> {
