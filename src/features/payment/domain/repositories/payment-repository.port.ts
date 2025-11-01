@@ -17,6 +17,9 @@ export abstract class IPaymentRepositoryPort extends IBaseRepositoryPort<
   abstract findBySubscriptionId(
     subscriptionId: string,
   ): Promise<PaymentEntity[]>;
+  abstract findByRestaurantId(
+    restaurantId: string,
+  ): Promise<PaymentEntity[]>;
   abstract paginate(
     query: ListPaymentsQuery,
   ): Promise<PaginatedResult<PaymentEntity>>;

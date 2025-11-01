@@ -3,6 +3,8 @@ import {
   KafkaService,
   KAFKA_TOPICS,
 } from '@shared/infrastructure/kafka';
+import type { SectionAnalyticsQuery } from '../dto/analytics/section-analytics.query';
+import type { SectionAnalyticsResponse } from '../dto/analytics/section-analytics.response';
 import type {
   CreateSectionCommand,
   DeleteSectionCommand,
@@ -20,8 +22,11 @@ import {
   FindSectionUseCase,
   ListRestaurantSectionsUseCase,
   ListSectionsUseCase,
+  GetSectionAnalyticsUseCase,
   UpdateSectionUseCase,
 } from '../use-cases';
+import { SectionsAccessService } from './sections-access.service';
+import { SectionForbiddenError } from '../../domain/errors';
 
 export class SectionsService {
   constructor(
@@ -31,6 +36,8 @@ export class SectionsService {
     private readonly findSectionUseCase: FindSectionUseCase,
     private readonly updateSectionUseCase: UpdateSectionUseCase,
     private readonly deleteSectionUseCase: DeleteSectionUseCase,
+    private readonly getSectionAnalyticsUseCase: GetSectionAnalyticsUseCase,
+    private readonly accessControl: SectionsAccessService,
     private readonly kafkaService: KafkaService,
   ) {}
 
@@ -48,6 +55,17 @@ export class SectionsService {
     return this.createSectionUseCase.execute(command);
   }
 
+  async createForOwner(
+    command: CreateSectionCommand,
+    ownerId: string,
+  ): Promise<SectionResponseDto> {
+    await this.accessControl.assertRestaurantOwnership(
+      command.restaurantId,
+      ownerId,
+    );
+    return this.create(command);
+  }
+
   async list(query: ListSectionsQuery): Promise<PaginatedSectionResponse> {
     return this.listSectionsUseCase.execute(query);
   }
@@ -58,8 +76,31 @@ export class SectionsService {
     return this.listRestaurantSectionsUseCase.execute(query);
   }
 
+  async listByRestaurantForOwner(
+    query: ListRestaurantSectionsQuery,
+    ownerId: string,
+  ): Promise<PaginatedSectionResponse> {
+    await this.accessControl.assertRestaurantOwnership(
+      query.restaurantId,
+      ownerId,
+    );
+    return this.listByRestaurant(query);
+  }
+
   async findOne(query: FindSectionQuery): Promise<SectionResponseDto> {
     return this.findSectionUseCase.execute(query);
+  }
+
+  async findOneForOwner(
+    query: FindSectionQuery,
+    ownerId: string,
+  ): Promise<SectionResponseDto> {
+    const section = await this.findOne(query);
+    await this.accessControl.assertRestaurantOwnership(
+      section.restaurantId,
+      ownerId,
+    );
+    return section;
   }
 
   /**
@@ -74,6 +115,28 @@ export class SectionsService {
   })
   async update(command: UpdateSectionCommand): Promise<SectionResponseDto> {
     return this.updateSectionUseCase.execute(command);
+  }
+
+  async updateForOwner(
+    command: UpdateSectionCommand,
+    ownerId: string,
+  ): Promise<SectionResponseDto> {
+    const ownership = await this.accessControl.assertSectionOwnership(
+      command.sectionId,
+      ownerId,
+    );
+
+    if (
+      command.restaurantId &&
+      command.restaurantId !== ownership.restaurantId
+    ) {
+      await this.accessControl.assertRestaurantOwnership(
+        command.restaurantId,
+        ownerId,
+      );
+    }
+
+    return this.update(command);
   }
 
   /**
@@ -94,5 +157,40 @@ export class SectionsService {
     command: DeleteSectionCommand,
   ): Promise<DeleteSectionResponseDto> {
     return this.deleteSectionUseCase.execute(command);
+  }
+
+  async deleteForOwner(
+    command: DeleteSectionCommand,
+    ownerId: string,
+  ): Promise<DeleteSectionResponseDto> {
+    await this.accessControl.assertSectionOwnership(
+      command.sectionId,
+      ownerId,
+    );
+    return this.delete(command);
+  }
+
+  async getAnalytics(
+    query: SectionAnalyticsQuery,
+  ): Promise<SectionAnalyticsResponse> {
+    return this.getSectionAnalyticsUseCase.execute(query);
+  }
+
+  async getAnalyticsForOwner(
+    query: SectionAnalyticsQuery,
+    ownerId: string,
+  ): Promise<SectionAnalyticsResponse> {
+    if (!query.restaurantId) {
+      throw new SectionForbiddenError(
+        'Restaurant identifier is required for owner analytics access',
+      );
+    }
+
+    await this.accessControl.assertRestaurantOwnership(
+      query.restaurantId,
+      ownerId,
+    );
+
+    return this.getAnalytics(query);
   }
 }

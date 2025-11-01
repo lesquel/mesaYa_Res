@@ -90,6 +90,22 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     return this.mapper.toDomainList(entities);
   }
 
+  async findByRestaurantId(restaurantId: string): Promise<PaymentEntity[]> {
+    const entities = await this.payments
+      .createQueryBuilder('payment')
+      .leftJoinAndSelect('payment.reservation', 'reservation')
+      .leftJoinAndSelect('payment.subscription', 'subscription')
+      .leftJoin('reservation.restaurant', 'reservationRestaurant')
+      .leftJoin('subscription.restaurant', 'subscriptionRestaurant')
+      .where(
+        'reservationRestaurant.id = :restaurantId OR subscriptionRestaurant.id = :restaurantId',
+        { restaurantId },
+      )
+      .getMany();
+
+    return this.mapper.toDomainList(entities);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<PaymentOrmEntity> {
     const alias = 'payment';
     return this.payments.createQueryBuilder(alias);

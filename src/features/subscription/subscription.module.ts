@@ -12,6 +12,7 @@ import {
   GetSubscriptionPlanAnalyticsUseCase,
   SUBSCRIPTION_ANALYTICS_REPOSITORY,
   SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
+  SubscriptionAccessService,
 } from './application';
 import {
   SubscriptionPlanOrmMapper,
@@ -79,6 +80,7 @@ import { KafkaService } from '@shared/infrastructure/kafka';
       provide: SUBSCRIPTION_PLAN_ANALYTICS_REPOSITORY,
       useClass: SubscriptionPlanAnalyticsTypeOrmRepository,
     },
+    SubscriptionAccessService,
     {
       provide: SubscriptionMapper,
       useFactory: () => new SubscriptionMapper(),
@@ -94,18 +96,21 @@ import { KafkaService } from '@shared/infrastructure/kafka';
         subscriptionRepository: ISubscriptionRepositoryPort,
         subscriptionMapper: SubscriptionMapper,
         kafkaService: KafkaService,
+        accessService: SubscriptionAccessService,
       ) =>
         new SubscriptionService(
           logger,
           subscriptionRepository,
           subscriptionMapper,
           kafkaService,
+          accessService,
         ),
       inject: [
         LOGGER,
         ISubscriptionRepositoryPort,
         SubscriptionMapper,
         KafkaService,
+        SubscriptionAccessService,
       ],
     },
     {

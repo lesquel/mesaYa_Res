@@ -6,3 +6,5 @@ export * from './payment-already-settled.error';
 export * from './payment-exceeds-outstanding.error';
 export * from './payment-target-ambiguity.error';
 export * from './partial-payments-not-allowed.error';
+export * from './payment-forbidden.error';
+export * from './payment-target-not-found.error';

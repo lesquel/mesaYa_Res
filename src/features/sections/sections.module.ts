@@ -21,6 +21,7 @@ import {
   RESTAURANT_SECTION_READER,
   SECTION_ANALYTICS_REPOSITORY,
   GetSectionAnalyticsUseCase,
+  SectionsAccessService,
 } from './application';
 import type {
   SectionRepositoryPort,
@@ -107,6 +108,7 @@ import {
         new DeleteSectionUseCase(sectionDomainService),
       inject: [SectionDomainService],
     },
+    SectionsAccessService,
     {
       provide: SectionsService,
       useFactory: (
@@ -116,6 +118,8 @@ import {
         findSectionUseCase: FindSectionUseCase,
         updateSectionUseCase: UpdateSectionUseCase,
         deleteSectionUseCase: DeleteSectionUseCase,
+        getSectionAnalyticsUseCase: GetSectionAnalyticsUseCase,
+        sectionsAccessService: SectionsAccessService,
         kafkaService: KafkaService,
       ) =>
         new SectionsService(
@@ -125,6 +129,8 @@ import {
           findSectionUseCase,
           updateSectionUseCase,
           deleteSectionUseCase,
+          getSectionAnalyticsUseCase,
+          sectionsAccessService,
           kafkaService,
         ),
       inject: [
@@ -134,6 +140,8 @@ import {
         FindSectionUseCase,
         UpdateSectionUseCase,
         DeleteSectionUseCase,
+        GetSectionAnalyticsUseCase,
+        SectionsAccessService,
         KafkaService,
       ],
     },
@@ -154,6 +162,7 @@ import {
     SectionsService,
     GetSectionAnalyticsUseCase,
     SECTION_REPOSITORY,
+    SectionsAccessService,
   ],
 })
 export class SectionsModule {}

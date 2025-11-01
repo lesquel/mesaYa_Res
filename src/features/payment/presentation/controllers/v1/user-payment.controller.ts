@@ -48,8 +48,7 @@ export class UserPaymentController {
     @Body() dto: CreatePaymentRequestDto,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto> {
-    // El servicio debe validar que la reserva pertenece al usuario
-    return this.paymentService.createPayment(dto);
+    return this.paymentService.createReservationPaymentForUser(dto, user.userId);
   }
 
   @Get(':paymentId')
@@ -64,7 +63,6 @@ export class UserPaymentController {
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto> {
-    // El servicio debe validar que el pago pertenece al usuario
-    return this.paymentService.getPaymentById({ paymentId });
+    return this.paymentService.getUserPaymentById(paymentId, user.userId);
   }
 }

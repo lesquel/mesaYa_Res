@@ -13,4 +13,7 @@ export abstract class ISubscriptionRepositoryPort extends IBaseRepositoryPort<
   abstract paginate(
     query: ListSubscriptionsQuery,
   ): Promise<PaginatedResult<SubscriptionEntity>>;
+  abstract findByRestaurantId(
+    restaurantId: string,
+  ): Promise<SubscriptionEntity | null>;
 }

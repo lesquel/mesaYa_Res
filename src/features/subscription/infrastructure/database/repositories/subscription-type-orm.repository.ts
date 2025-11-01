@@ -111,6 +111,20 @@ export class SubscriptionTypeOrmRepository extends ISubscriptionRepositoryPort {
     return this.mapper.toDomainList(entities);
   }
 
+  async findByRestaurantId(
+    restaurantId: string,
+  ): Promise<SubscriptionEntity | null> {
+    const entity = await this.subscriptions
+      .createQueryBuilder('subscription')
+      .leftJoinAndSelect('subscription.subscriptionPlan', 'subscriptionPlan')
+      .leftJoinAndSelect('subscription.restaurant', 'restaurant')
+      .where('subscription.restaurantId = :restaurantId', { restaurantId })
+      .orderBy('subscription.subscriptionStartDate', 'DESC')
+      .getOne();
+
+    return entity ? this.mapper.toDomain(entity) : null;
+  }
+
   async paginate(
     query: ListSubscriptionsQuery,
   ): Promise<PaginatedResult<SubscriptionEntity>> {

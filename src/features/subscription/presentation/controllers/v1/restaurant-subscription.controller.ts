@@ -53,9 +53,7 @@ export class RestaurantSubscriptionController {
     @Body() dto: CreateSubscriptionRequestDto,
     @CurrentUser() user: { userId: string },
   ): Promise<SubscriptionResponseDto> {
-    // El servicio debe validar que el restaurante pertenece al usuario actual
-    // y que el usuario tiene permisos de propietario sobre ese restaurante
-    return this.subscriptionService.create(dto);
+    return this.subscriptionService.createForOwner(dto, user.userId);
   }
 
   @Get('restaurant/:restaurantId')
@@ -73,8 +71,9 @@ export class RestaurantSubscriptionController {
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @CurrentUser() user: { userId: string },
   ): Promise<SubscriptionResponseDto> {
-    // El servicio debe validar que el restaurante pertenece al usuario actual
-    // Por ahora retornamos usando findById - debería implementarse getByRestaurantId
-    return this.subscriptionService.findById({ subscriptionId: restaurantId }); // TODO: Implementar getByRestaurantId
+    return this.subscriptionService.findByRestaurantForOwner(
+      { restaurantId },
+      user.userId,
+    );
   }
 }

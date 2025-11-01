@@ -24,6 +24,7 @@ import type {
   DeletePaymentResponseDto,
 } from '../dtos/output';
 import { PaymentEntityDTOMapper } from '../mappers';
+import { PaymentAccessService } from './payment-access.service';
 import {
   IPaymentRepositoryPort,
   PaymentDomainService,
@@ -35,13 +36,18 @@ export class PaymentService {
   private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
   private deletePaymentUseCase: DeletePaymentUseCase;
   private readonly paymentDomainService: PaymentDomainService;
+  private readonly paymentRepository: IPaymentRepositoryPort;
+  private readonly paymentMapper: PaymentEntityDTOMapper;
 
   constructor(
     private readonly logger: ILoggerPort,
     paymentRepository: IPaymentRepositoryPort,
     paymentEntityToMapper: PaymentEntityDTOMapper,
     private readonly kafkaService: KafkaService,
+    private readonly accessControl: PaymentAccessService,
   ) {
+    this.paymentRepository = paymentRepository;
+    this.paymentMapper = paymentEntityToMapper;
     this.paymentDomainService = new PaymentDomainService(paymentRepository);
     this.createPaymentUseCase = new CreatePaymentUseCase(
       this.logger,
@@ -69,6 +75,22 @@ export class PaymentService {
     );
   }
 
+  async createReservationPaymentForUser(
+    dto: CreatePaymentDto,
+    userId: string,
+  ): Promise<PaymentResponseDto> {
+    await this.accessControl.assertUserReservationPayment(dto, userId);
+    return await this.createPayment(dto);
+  }
+
+  async createSubscriptionPaymentForOwner(
+    dto: CreatePaymentDto,
+    ownerId: string,
+  ): Promise<PaymentResponseDto> {
+    await this.accessControl.assertOwnerSubscriptionPayment(dto, ownerId);
+    return await this.createPayment(dto);
+  }
+
   /**
    * Emits `mesa-ya.payments.created` with `{ action, entityId, entity }` and returns the created payment DTO.
    */
@@ -92,10 +114,43 @@ export class PaymentService {
     return await this.getPaymentByIdUseCase.execute(dto);
   }
 
+  async getUserPaymentById(
+    paymentId: string,
+    userId: string,
+  ): Promise<PaymentResponseDto> {
+    const payment = await this.getPaymentById({ paymentId });
+    await this.accessControl.assertUserPaymentAccess(payment, userId);
+    return payment;
+  }
+
+  async getOwnerPaymentById(
+    paymentId: string,
+    ownerId: string,
+  ): Promise<PaymentResponseDto> {
+    const payment = await this.getPaymentById({ paymentId });
+    await this.accessControl.assertOwnerPaymentAccess(payment, ownerId);
+    return payment;
+  }
+
   async getAllPayments(
     params: PaginatedQueryParams,
   ): Promise<PaymentListResponseDto> {
     return await this.getAllPaymentsUseCase.execute(params);
+  }
+
+  async getPaymentsByRestaurantForOwner(
+    restaurantId: string,
+    ownerId: string,
+  ): Promise<PaymentResponseDto[]> {
+    await this.accessControl.assertRestaurantOwnership(restaurantId, ownerId);
+
+    const payments = await this.paymentRepository.findByRestaurantId(
+      restaurantId,
+    );
+
+    return payments.map((payment) =>
+      this.paymentMapper.fromEntitytoDTO(payment),
+    );
   }
 
   /**

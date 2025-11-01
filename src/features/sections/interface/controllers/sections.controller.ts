@@ -21,6 +21,11 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
+import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
@@ -45,6 +50,14 @@ import {
   SectionResponseSwaggerDto,
 } from '@features/sections/interface/dto';
 
+const hasRole = (
+  user: CurrentUserPayload | undefined,
+  role: AuthRoleName,
+): boolean => user?.roles?.some((item) => item.name === role) ?? false;
+
+const isAdmin = (user: CurrentUserPayload | undefined): boolean =>
+  hasRole(user, AuthRoleName.ADMIN);
+
 @ApiTags('Sections')
 @Controller({ path: 'sections', version: '1' })
 export class SectionsController {
@@ -60,9 +73,16 @@ export class SectionsController {
     description: 'Sección creada correctamente',
     type: SectionResponseSwaggerDto,
   })
-  async create(@Body() dto: CreateSectionDto): Promise<SectionResponseDto> {
+  async create(
+    @Body() dto: CreateSectionDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<SectionResponseDto> {
     const command: CreateSectionCommand = { ...dto };
-    return this.sectionsService.create(command);
+    if (isAdmin(user)) {
+      return this.sectionsService.create(command);
+    }
+
+    return this.sectionsService.createForOwner(command, user.userId);
   }
 
   @Get('restaurant/:restaurantId')
@@ -127,12 +147,17 @@ export class SectionsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateSectionDto,
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
     const command: UpdateSectionCommand = {
       sectionId: id,
       ...dto,
     };
-    return this.sectionsService.update(command);
+    if (isAdmin(user)) {
+      return this.sectionsService.update(command);
+    }
+
+    return this.sectionsService.updateForOwner(command, user.userId);
   }
 
   @Delete(':id')
@@ -147,8 +172,13 @@ export class SectionsController {
   })
   async remove(
     @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<DeleteSectionResponseDto> {
     const command: DeleteSectionCommand = { sectionId: id };
-    return this.sectionsService.delete(command);
+    if (isAdmin(user)) {
+      return this.sectionsService.delete(command);
+    }
+
+    return this.sectionsService.deleteForOwner(command, user.userId);
   }
 }

@@ -9,6 +9,7 @@ import {
   CreateSubscriptionUseCase,
   DeleteSubscriptionUseCase,
   GetSubscriptionByIdUseCase,
+  GetSubscriptionByRestaurantUseCase,
   ListSubscriptionsUseCase,
   UpdateSubscriptionStateUseCase,
   UpdateSubscriptionUseCase,
@@ -17,6 +18,7 @@ import type {
   CreateSubscriptionDto,
   DeleteSubscriptionDto,
   GetSubscriptionByIdDto,
+  GetSubscriptionByRestaurantDto,
   UpdateSubscriptionDto,
   UpdateSubscriptionStateDto,
 } from '../dtos/input';
@@ -30,11 +32,13 @@ import {
   SubscriptionDomainService,
 } from '@features/subscription/domain';
 import { SubscriptionMapper } from '../mappers';
+import { SubscriptionAccessService } from './subscription-access.service';
 export class SubscriptionService {
   private readonly subscriptionDomainService: SubscriptionDomainService;
 
   private readonly createSubscriptionUseCase: CreateSubscriptionUseCase;
   private readonly getSubscriptionByIdUseCase: GetSubscriptionByIdUseCase;
+  private readonly getSubscriptionByRestaurantUseCase: GetSubscriptionByRestaurantUseCase;
   private readonly listSubscriptionsUseCase: ListSubscriptionsUseCase;
   private readonly updateSubscriptionUseCase: UpdateSubscriptionUseCase;
   private readonly updateSubscriptionStateUseCase: UpdateSubscriptionStateUseCase;
@@ -45,6 +49,7 @@ export class SubscriptionService {
     subscriptionRepository: ISubscriptionRepositoryPort,
     subscriptionMapper: SubscriptionMapper,
     private readonly kafkaService: KafkaService,
+    private readonly accessControl: SubscriptionAccessService,
   ) {
     this.subscriptionDomainService = new SubscriptionDomainService(
       subscriptionRepository,
@@ -61,6 +66,13 @@ export class SubscriptionService {
       this.subscriptionDomainService,
       subscriptionMapper,
     );
+
+    this.getSubscriptionByRestaurantUseCase =
+      new GetSubscriptionByRestaurantUseCase(
+        this.logger,
+        this.subscriptionDomainService,
+        subscriptionMapper,
+      );
 
     this.listSubscriptionsUseCase = new ListSubscriptionsUseCase(
       this.logger,
@@ -106,10 +118,54 @@ export class SubscriptionService {
     return this.createSubscriptionUseCase.execute(dto);
   }
 
+  async createForOwner(
+    dto: CreateSubscriptionDto,
+    ownerId: string,
+  ): Promise<SubscriptionResponseDto> {
+    await this.accessControl.assertRestaurantOwnership(
+      dto.restaurantId,
+      ownerId,
+    );
+
+    return this.create(dto);
+  }
+
   async findById(
     dto: GetSubscriptionByIdDto,
   ): Promise<SubscriptionResponseDto> {
     return this.getSubscriptionByIdUseCase.execute(dto);
+  }
+
+  async findByIdForOwner(
+    dto: GetSubscriptionByIdDto,
+    ownerId: string,
+  ): Promise<SubscriptionResponseDto> {
+    const subscription = await this.findById(dto);
+    await this.accessControl.assertSubscriptionOwnership(
+      subscription.subscriptionId,
+      ownerId,
+    );
+    return subscription;
+  }
+
+  async findByRestaurantForOwner(
+    dto: GetSubscriptionByRestaurantDto,
+    ownerId: string,
+  ): Promise<SubscriptionResponseDto> {
+    await this.accessControl.assertRestaurantOwnership(
+      dto.restaurantId,
+      ownerId,
+    );
+
+    const subscription =
+      await this.getSubscriptionByRestaurantUseCase.execute(dto);
+
+    await this.accessControl.assertSubscriptionOwnership(
+      subscription.subscriptionId,
+      ownerId,
+    );
+
+    return subscription;
   }
 
   async findAll(

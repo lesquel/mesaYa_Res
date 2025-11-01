@@ -3,3 +3,4 @@ export * from './subscription-not-found.error';
 export * from './subscription-plan-inactive.error';
 export * from './subscription-plan-not-found.error';
 export * from './subscription-restaurant-not-found.error';
+export * from './subscription-forbidden.error';

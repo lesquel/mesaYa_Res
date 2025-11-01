@@ -53,9 +53,10 @@ export class RestaurantPaymentController {
     @Body() dto: CreatePaymentRequestDto,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto> {
-    // El servicio debe validar que el restaurante pertenece al usuario
-    // y que el pago es para una suscripción válida
-    return this.paymentService.createPayment(dto);
+    return this.paymentService.createSubscriptionPaymentForOwner(
+      dto,
+      user.userId,
+    );
   }
 
   @Get('restaurant/:restaurantId')
@@ -74,10 +75,10 @@ export class RestaurantPaymentController {
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto[]> {
-    // El servicio debe validar que el restaurante pertenece al usuario
-    // y filtrar solo los pagos de suscripciones de ese restaurante
-    // TODO: Implementar getPaymentsByRestaurant en el servicio
-    return [] as PaymentResponseDto[];
+    return this.paymentService.getPaymentsByRestaurantForOwner(
+      restaurantId,
+      user.userId,
+    );
   }
 
   @Get(':paymentId')
@@ -95,7 +96,6 @@ export class RestaurantPaymentController {
     @Param('paymentId', ParseUUIDPipe) paymentId: string,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto> {
-    // El servicio debe validar que el pago pertenece a un restaurante del usuario
-    return this.paymentService.getPaymentById({ paymentId });
+    return this.paymentService.getOwnerPaymentById(paymentId, user.userId);
   }
 }

@@ -52,6 +52,19 @@ export class SubscriptionDomainService {
     return subscription;
   }
 
+  async findSubscriptionByRestaurant(
+    restaurantId: string,
+  ): Promise<SubscriptionEntity> {
+    const subscription =
+      await this.subscriptionRepository.findByRestaurantId(restaurantId);
+
+    if (!subscription) {
+      throw new SubscriptionNotFoundError(restaurantId);
+    }
+
+    return subscription;
+  }
+
   async findAllSubscriptions(): Promise<SubscriptionEntity[]> {
     return this.subscriptionRepository.findAll();
   }

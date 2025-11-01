@@ -3,6 +3,7 @@ export * from './create-subscription.use-case';
 export * from './delete-subscription-plan.use-case';
 export * from './delete-subscription.use-case';
 export * from './get-subscription-by-id.use-case';
+export * from './get-subscription-by-restaurant.use-case';
 export * from './get-subscription-plan-by-id.use-case';
 export * from './get-subscription-analytics.use-case';
 export * from './get-subscription-plan-analytics.use-case';
