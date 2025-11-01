@@ -124,10 +124,7 @@ export class TablesService {
       ownerId,
     );
 
-    if (
-      command.sectionId &&
-      command.sectionId !== ownership.sectionId
-    ) {
+    if (command.sectionId && command.sectionId !== ownership.sectionId) {
       await this.accessControl.assertSectionOwnership(
         command.sectionId,
         ownerId,

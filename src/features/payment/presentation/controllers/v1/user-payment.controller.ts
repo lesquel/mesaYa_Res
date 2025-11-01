@@ -48,7 +48,10 @@ export class UserPaymentController {
     @Body() dto: CreatePaymentRequestDto,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto> {
-    return this.paymentService.createReservationPaymentForUser(dto, user.userId);
+    return this.paymentService.createReservationPaymentForUser(
+      dto,
+      user.userId,
+    );
   }
 
   @Get(':paymentId')

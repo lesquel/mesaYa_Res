@@ -163,10 +163,7 @@ export class SectionsService {
     command: DeleteSectionCommand,
     ownerId: string,
   ): Promise<DeleteSectionResponseDto> {
-    await this.accessControl.assertSectionOwnership(
-      command.sectionId,
-      ownerId,
-    );
+    await this.accessControl.assertSectionOwnership(command.sectionId, ownerId);
     return this.delete(command);
   }
 

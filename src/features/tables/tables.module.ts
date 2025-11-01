@@ -41,7 +41,11 @@ import {
 
 @Module({
   imports: [
-  TypeOrmModule.forFeature([TableOrmEntity, SectionOrmEntity, RestaurantOrmEntity]),
+    TypeOrmModule.forFeature([
+      TableOrmEntity,
+      SectionOrmEntity,
+      RestaurantOrmEntity,
+    ]),
     AuthModule,
   ],
   controllers: [AdminTablesController, PublicTablesController],

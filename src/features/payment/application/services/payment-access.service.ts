@@ -8,10 +8,7 @@ import {
   PaymentForbiddenError,
   PaymentTargetNotFoundError,
 } from '@features/payment/domain';
-import type {
-  CreatePaymentDto,
-  PaymentResponseDto,
-} from '../dtos';
+import type { CreatePaymentDto, PaymentResponseDto } from '../dtos';
 
 interface ReservationOwnershipSnapshot {
   reservationId: string;
@@ -87,10 +84,7 @@ export class PaymentAccessService {
     );
 
     if (!subscription) {
-      throw new PaymentTargetNotFoundError(
-        'subscription',
-        dto.subscriptionId,
-      );
+      throw new PaymentTargetNotFoundError('subscription', dto.subscriptionId);
     }
 
     if (subscription.restaurantOwnerId !== ownerId) {

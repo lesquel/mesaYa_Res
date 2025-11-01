@@ -7,10 +7,7 @@ import { GetSubscriptionByRestaurantDto } from '../dtos/input/get-subscription-b
 import { SubscriptionResponseDto } from '../dtos/output/subscription-response.dto';
 
 export class GetSubscriptionByRestaurantUseCase
-  implements UseCase<
-    GetSubscriptionByRestaurantDto,
-    SubscriptionResponseDto
-  >
+  implements UseCase<GetSubscriptionByRestaurantDto, SubscriptionResponseDto>
 {
   constructor(
     private readonly logger: ILoggerPort,

@@ -144,9 +144,8 @@ export class PaymentService {
   ): Promise<PaymentResponseDto[]> {
     await this.accessControl.assertRestaurantOwnership(restaurantId, ownerId);
 
-    const payments = await this.paymentRepository.findByRestaurantId(
-      restaurantId,
-    );
+    const payments =
+      await this.paymentRepository.findByRestaurantId(restaurantId);
 
     return payments.map((payment) =>
       this.paymentMapper.fromEntitytoDTO(payment),
