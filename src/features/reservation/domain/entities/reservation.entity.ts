@@ -25,6 +25,10 @@ export interface ReservationSnapshot extends ReservartionProps {
   id: string;
 }
 
+interface ReservationValidationOptions {
+  allowPastReservation?: boolean;
+}
+
 export class ReservationEntity {
   constructor(
     private readonly _id: string,
@@ -51,7 +55,7 @@ export class ReservationEntity {
   }
 
   static rehydrate(snapshot: ReservationSnapshot): ReservationEntity {
-    this.validate(snapshot);
+    this.validate(snapshot, { allowPastReservation: true });
     return new ReservationEntity(snapshot.id, { ...snapshot });
   }
 
@@ -92,7 +96,21 @@ export class ReservationEntity {
       ...props,
       updatedAt: new Date(),
     };
-    ReservationEntity.validate(updatedProps);
+    const now = new Date();
+    const overridesReservationDate =
+      'reservationDate' in props && props.reservationDate !== undefined;
+    const overridesReservationTime =
+      'reservationTime' in props && props.reservationTime !== undefined;
+
+    const existingReservationIsInPast =
+      this.props.reservationDate < now || this.props.reservationTime < now;
+
+    ReservationEntity.validate(updatedProps, {
+      allowPastReservation:
+        existingReservationIsInPast &&
+        !overridesReservationDate &&
+        !overridesReservationTime,
+    });
     this.props = updatedProps;
   }
 
@@ -105,18 +123,21 @@ export class ReservationEntity {
 
   private static validate(
     props: ReservartionProps | ReservationSnapshot,
+    options: ReservationValidationOptions = {},
   ): void {
+    const now = new Date();
+
     if (props.numberOfGuests <= 0) {
       throw new InvalidReservationDataError(
         'Number of guests must be greater than zero.',
       );
     }
-    if (props.reservationDate < new Date()) {
+    if (!options.allowPastReservation && props.reservationDate < now) {
       throw new InvalidReservationDataError(
         'Reservation date must be in the future.',
       );
     }
-    if (props.reservationTime < new Date()) {
+    if (!options.allowPastReservation && props.reservationTime < now) {
       throw new InvalidReservationDataError(
         'Reservation time must be in the future.',
       );

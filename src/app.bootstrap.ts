@@ -27,7 +27,9 @@ export function configureApp(app: INestApplication) {
   configureCors(app, configService);
   configureGlobalPipes(app);
   configureLogger(app);
-  configureFilters(app);
+  if (configService.get<string>('NODE_ENV') !== 'production') {
+    configureFilters(app);
+  }
 
   return app;
 }
