@@ -21,7 +21,7 @@ interface TotalsRaw {
 }
 
 interface ImageDistributionRaw {
-  imageId: number;
+  imageId: string;
   count: string | number | null;
 }
 
@@ -220,7 +220,7 @@ export class GraphicObjectAnalyticsTypeOrmRepository
       });
     }
 
-    if (typeof filters.imageId === 'number') {
+    if (typeof filters.imageId === 'string') {
       qb.andWhere('object.imageId = :imageId', { imageId: filters.imageId });
     }
 
