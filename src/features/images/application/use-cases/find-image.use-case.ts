@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { ImageNotFoundError } from '../../domain';
-import { ImageMapper } from '../mappers';
-import { FindImageQuery, ImageResponseDto } from '../dto';
-import { IMAGE_REPOSITORY, type ImageRepositoryPort } from '../ports';
+import { ImageNotFoundError } from '../../domain/index.js';
+import { ImageMapper } from '../mappers/index.js';
+import { FindImageQuery, ImageResponseDto } from '../dto/index.js';
+import { IMAGE_REPOSITORY, type ImageRepositoryPort } from '../ports/index.js';
 
 @Injectable()
 export class FindImageUseCase
