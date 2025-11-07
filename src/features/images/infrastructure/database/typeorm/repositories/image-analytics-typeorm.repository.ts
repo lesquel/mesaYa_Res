@@ -16,7 +16,7 @@ type TotalsRaw = {
 };
 
 type EntityDistributionRaw = {
-  entityId: number;
+  entityId: string;
   count: string | number | null;
 };
 
@@ -136,7 +136,7 @@ export class ImageAnalyticsTypeOrmRepository
       });
     }
 
-    if (typeof filters.entityId === 'number') {
+    if (typeof filters.entityId === 'string' && filters.entityId.length > 0) {
       qb.andWhere('image.entityId = :entityId', {
         entityId: filters.entityId,
       });
