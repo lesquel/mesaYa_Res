@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { ImageAnalyticsQuery } from '../dto/analytics/image-analytics.query';
+import type { ImageAnalyticsQuery } from '../dto/analytics/image-analytics.query.js';
 import type {
   ImageAnalyticsRepositoryResult,
   ImageAnalyticsResponse,
-} from '../dto/analytics/image-analytics.response';
+} from '../dto/analytics/image-analytics.response.js';
 import {
   IMAGE_ANALYTICS_REPOSITORY,
   type ImageAnalyticsRepositoryPort,
-} from '../ports/image-analytics.repository.port';
+} from '../ports/image-analytics.repository.port.js';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const DAYS_WINDOW = 30;
@@ -51,7 +51,7 @@ export class GetImageAnalyticsUseCase {
     analytics: ImageAnalyticsRepositoryResult,
   ): number {
     if (analytics.totals.uniqueEntities === 0) {
-      return Number(analytics.totals.totalImages.toFixed(2));
+      return 0;
     }
 
     return Number(

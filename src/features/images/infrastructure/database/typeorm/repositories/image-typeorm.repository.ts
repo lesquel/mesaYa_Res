@@ -4,7 +4,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Image } from '../../../../domain/index.js';
 import { ImageOrmEntity } from '../orm/index.js';
 import { ImageOrmMapper } from '../mappers/index.js';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate.js';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { ListImagesQuery } from '../../../../application/dto/index.js';
 import { type ImageRepositoryPort } from '../../../../application/ports/index.js';
