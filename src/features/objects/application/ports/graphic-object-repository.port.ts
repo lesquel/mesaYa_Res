@@ -1,6 +1,6 @@
-import { GraphicObject } from '../../domain';
+import { GraphicObject } from '../../domain/index.js';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { ListGraphicObjectsQuery } from '../dto';
+import { ListGraphicObjectsQuery } from '../dto/index.js';
 
 export const GRAPHIC_OBJECT_REPOSITORY = Symbol('GRAPHIC_OBJECT_REPOSITORY');
 
