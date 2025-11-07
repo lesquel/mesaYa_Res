@@ -1,1 +1,1 @@
-export * from './restaurant.mapper';
+export * from './restaurant.mapper.js';

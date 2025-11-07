@@ -1,3 +1,3 @@
-export * from './delete-restaurant.response.dto';
-export * from './delete-restaurant.response';
-export * from './restaurant.response.dto';
+export * from './delete-restaurant.response.dto.js';
+export * from './delete-restaurant.response.js';
+export * from './restaurant.response.dto.js';
