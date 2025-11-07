@@ -1,13 +1,13 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { ThrottleRead } from '@shared/infrastructure/decorators';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator.js';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
+import { ThrottleRead } from '@shared/infrastructure/decorators/index.js';
 import {
   ObjectsService,
   type FindGraphicObjectQuery,
   type ListGraphicObjectsQuery,
-} from '../../../application';
+} from '../../../application/index.js';
 
 @ApiTags('Objects - Public')
 @Controller({ path: 'public/objects', version: '1' })
