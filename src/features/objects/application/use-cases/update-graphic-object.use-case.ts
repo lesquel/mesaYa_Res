@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port';
-import { GraphicObjectMapper } from '../mappers';
-import { UpdateGraphicObjectCommand, GraphicObjectResponseDto } from '../dto';
+import { UseCase } from '@shared/application/ports/use-case.port.js';
+import { GraphicObjectMapper } from '../mappers/index.js';
+import {
+  UpdateGraphicObjectCommand,
+  GraphicObjectResponseDto,
+} from '../dto/index.js';
 import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   type GraphicObjectEventPublisherPort,
-} from '../ports';
-import { GraphicObjectDomainService } from '../../domain';
+} from '../ports/index.js';
+import { GraphicObjectDomainService } from '../../domain/index.js';
 
 @Injectable()
 export class UpdateGraphicObjectUseCase
