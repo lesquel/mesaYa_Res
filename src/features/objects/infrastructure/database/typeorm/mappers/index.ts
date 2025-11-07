@@ -1,1 +1,1 @@
-export * from './graphic-object.orm-mapper';
+export * from './graphic-object.orm-mapper.js';
