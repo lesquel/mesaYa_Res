@@ -1,4 +1,4 @@
-import type { RestaurantDay } from '../entities/values/restaurant-day';
+import type { RestaurantDay } from '../entities/values/restaurant-day.js';
 
 export interface RestaurantCreate {
   name: string;
