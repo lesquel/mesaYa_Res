@@ -1,10 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsInt,
   IsNotEmpty,
   IsOptional,
-  IsPositive,
   IsString,
+  IsUUID,
   MaxLength,
 } from 'class-validator';
 import type { ImageFilePayload } from './create-image.dto.js';
@@ -24,10 +23,10 @@ export class UpdateImageDto {
   @MaxLength(100)
   description?: string;
 
-  @ApiPropertyOptional({ example: 1 })
+  @ApiPropertyOptional({ example: '550e8400-e29b-41d4-a716-446655440000' })
   @IsOptional()
-  @IsInt()
-  @IsPositive()
+  @IsString()
+  @IsUUID()
   entityId?: string;
 }
 

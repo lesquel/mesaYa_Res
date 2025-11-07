@@ -1,12 +1,6 @@
 import type { Buffer } from 'node:buffer';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsInt,
-  IsNotEmpty,
-  IsPositive,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, IsUUID } from 'class-validator';
 
 export class CreateImageDto {
   @ApiProperty({ example: 'Banner' })
@@ -21,9 +15,10 @@ export class CreateImageDto {
   @MaxLength(100)
   description: string;
 
-  @ApiProperty({ example: 1 })
-  @IsInt()
-  @IsPositive()
+  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
   entityId: string;
 }
 
