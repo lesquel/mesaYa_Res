@@ -1,7 +1,7 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
-import { RestaurantMapper } from '../mappers';
-import { RestaurantResponseDto, CreateRestaurantCommand } from '../dto';
+import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service.js';
+import { RestaurantMapper } from '../mappers/index.js';
+import { RestaurantResponseDto, CreateRestaurantCommand } from '../dto/index.js';
 
 export class CreateRestaurantUseCase
   implements UseCase<CreateRestaurantCommand, RestaurantResponseDto>
