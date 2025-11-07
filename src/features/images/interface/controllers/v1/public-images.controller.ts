@@ -2,7 +2,7 @@ import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator.js';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
-import { ThrottleRead } from '@shared/infrastructure/decorators';
+import { ThrottleRead } from '@shared/infrastructure/decorators/index.js';
 import {
   ImagesService,
   type FindImageQuery,

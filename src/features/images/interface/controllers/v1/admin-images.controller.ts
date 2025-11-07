@@ -35,7 +35,7 @@ import {
   ThrottleCreate,
   ThrottleModify,
   ThrottleSearch,
-} from '@shared/infrastructure/decorators';
+} from '@shared/infrastructure/decorators/index.js';
 import {
   ImagesService,
   CreateImageDto,
