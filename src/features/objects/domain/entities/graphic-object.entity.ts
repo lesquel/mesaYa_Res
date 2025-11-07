@@ -29,8 +29,8 @@ export class GraphicObject {
   ) {}
 
   static create(id: string, props: GraphicObjectProps): GraphicObject {
-    GraphicObject.validate(props);
-    return new GraphicObject(id, { ...props });
+    const normalized = GraphicObject.normalize(props);
+    return new GraphicObject(id, normalized);
   }
 
   static validate(props: GraphicObjectProps) {
@@ -44,6 +44,16 @@ export class GraphicObject {
       throw new InvalidGraphicObjectDataError(
         'height must be positive integer',
       );
+    if (typeof imageId !== 'string' || imageId.trim().length === 0)
+      throw new InvalidGraphicObjectDataError('imageId must be a non-empty string');
+  }
+
+  private static normalize(props: GraphicObjectProps): GraphicObjectProps {
+    GraphicObject.validate(props);
+    return {
+      ...props,
+      imageId: props.imageId.trim(),
+    };
   }
 
   get id() {
@@ -75,8 +85,7 @@ export class GraphicObject {
   }
 
   update(patch: Partial<GraphicObjectProps>) {
-    const next = { ...this.props, ...patch } as GraphicObjectProps;
-    GraphicObject.validate(next);
+    const next = GraphicObject.normalize({ ...this.props, ...patch } as GraphicObjectProps);
     this.props = next;
   }
 

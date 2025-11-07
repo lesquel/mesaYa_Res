@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsPositive } from 'class-validator';
+import { IsInt, IsPositive, IsUUID } from 'class-validator';
 
 export class CreateGraphicObjectDto {
   @ApiProperty({ example: 10 })
@@ -20,9 +20,8 @@ export class CreateGraphicObjectDto {
   @IsPositive()
   height: number;
 
-  @ApiProperty({ example: 1 })
-  @IsInt()
-  @IsPositive()
+  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000', format: 'uuid' })
+  @IsUUID()
   imageId: string;
 }
 
