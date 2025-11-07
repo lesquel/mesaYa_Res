@@ -1,1 +1,1 @@
-export * from './graphic-object-domain-repository.port';
+export * from './graphic-object-domain-repository.port.js';
