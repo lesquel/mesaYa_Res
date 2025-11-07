@@ -1,11 +1,11 @@
 import { Inject } from '@nestjs/common';
-import type { RestaurantAnalyticsQuery } from '../dto/analytics/restaurant-analytics.query';
+import type { RestaurantAnalyticsQuery } from '../dto/analytics/restaurant-analytics.query.js';
 import {
   type RestaurantAnalyticsResponse,
   type RestaurantAnalyticsRepositoryResult,
   RESTAURANT_ANALYTICS_REPOSITORY,
   type RestaurantAnalyticsRepositoryPort,
-} from '..';
+} from '../index.js';
 
 export class GetRestaurantAnalyticsUseCase {
   constructor(
