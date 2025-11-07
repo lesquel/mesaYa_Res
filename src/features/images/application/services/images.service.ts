@@ -4,7 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '@shared/infrastructure/kafka';
+} from '@shared/infrastructure/kafka/index.js';
 import type {
   CreateImageCommand,
   DeleteImageCommand,
@@ -13,7 +13,7 @@ import type {
   ListImagesQuery,
   UpdateImageCommand,
   DeleteImageResponseDto,
-} from '../dto';
+} from '../dto/index.js';
 import {
   CreateImageUseCase,
   DeleteImageUseCase,
@@ -21,7 +21,7 @@ import {
   ListImagesUseCase,
   UpdateImageUseCase,
   type PaginatedImageResponse,
-} from '../use-cases';
+} from '../use-cases/index.js';
 
 @Injectable()
 export class ImagesService {
