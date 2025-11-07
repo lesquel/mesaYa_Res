@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { GraphicObjectAnalyticsResponse } from '../../application/dto/analytics/graphic-object-analytics.response';
+import type { GraphicObjectAnalyticsResponse } from '../../application/dto/analytics/graphic-object-analytics.response.js';
 
 class GraphicObjectAnalyticsSummaryDto {
   @ApiProperty({ description: 'Total de objetos registrados' })
@@ -44,8 +44,8 @@ class GraphicObjectAnalyticsObjectsDto {
 }
 
 class GraphicObjectAnalyticsImageItemDto {
-  @ApiProperty({ description: 'Identificador de la imagen' })
-  imageId!: number;
+  @ApiProperty({ description: 'Identificador de la imagen', format: 'uuid' })
+  imageId!: string;
 
   @ApiProperty({ description: 'Objetos asociados a la imagen' })
   count!: number;
