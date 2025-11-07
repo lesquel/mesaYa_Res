@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsInt, IsOptional, Min } from 'class-validator';
+import { IsDateString, IsOptional, IsUUID } from 'class-validator';
 import type { ImageAnalyticsQuery } from '../../application/dto/analytics/image-analytics.query';
 
 export class ImageAnalyticsRequestDto {
@@ -16,12 +16,12 @@ export class ImageAnalyticsRequestDto {
 
   @ApiPropertyOptional({
     description: 'Identificador de la entidad asociada a las imágenes',
-    example: 42,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
   })
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  entityId?: number;
+  @IsUUID()
+  entityId?: string;
 
   toQuery(): ImageAnalyticsQuery {
     const startDate = this.startDate
@@ -40,7 +40,7 @@ export class ImageAnalyticsRequestDto {
     return {
       startDate,
       endDate,
-      entityId: this.entityId,
+  entityId: this.entityId,
     };
   }
 

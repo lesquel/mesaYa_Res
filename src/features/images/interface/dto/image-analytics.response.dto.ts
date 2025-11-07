@@ -32,8 +32,8 @@ class ImageAnalyticsUploadsDto {
 }
 
 class ImageAnalyticsEntityDistributionItemDto {
-  @ApiProperty({ description: 'Identificador de la entidad' })
-  entityId: number;
+  @ApiProperty({ description: 'Identificador de la entidad', format: 'uuid' })
+  entityId: string;
 
   @ApiProperty({ description: 'Cantidad de imágenes asociadas a la entidad' })
   count: number;
