@@ -17,14 +17,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
 import {
   ThrottleCreate,
   ThrottleModify,
   ThrottleSearch,
-} from '@shared/infrastructure/decorators';
+} from '@shared/infrastructure/decorators/index.js';
 import {
   ObjectsService,
   type CreateGraphicObjectCommand,
@@ -33,11 +33,11 @@ import {
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
   GetGraphicObjectAnalyticsUseCase,
-} from '../../../application';
+} from '../../../application/index.js';
 import {
   GraphicObjectAnalyticsRequestDto,
   GraphicObjectAnalyticsResponseDto,
-} from '../../dto';
+} from '../../dto/index.js';
 
 @ApiTags('Objects - Admin')
 @Controller({ path: 'admin/objects', version: '1' })
