@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { ImageAnalyticsResponse } from '../../application/dto/analytics/image-analytics.response';
+import type { ImageAnalyticsResponse } from '../../application/dto/analytics/image-analytics.response.js';
 
 class ImageAnalyticsSummaryDto {
   @ApiProperty({ description: 'Total de imágenes registradas' })
