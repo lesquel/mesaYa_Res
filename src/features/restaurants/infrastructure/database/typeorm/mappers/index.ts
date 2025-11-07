@@ -1,1 +1,1 @@
-export * from './restaurant.orm-mapper';
+export * from './restaurant.orm-mapper.js';
