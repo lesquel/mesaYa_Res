@@ -2,13 +2,13 @@ import {
   GraphicObject,
   GraphicObjectNotFoundError,
   type GraphicObjectProps,
-} from '../entities';
-import { IGraphicObjectDomainRepositoryPort } from '../repositories';
+} from '../entities/index.js';
+import { IGraphicObjectDomainRepositoryPort } from '../repositories/index.js';
 import {
   type GraphicObjectCreateRequest,
   type GraphicObjectDeleteRequest,
   type GraphicObjectUpdateRequest,
-} from '../types';
+} from '../types/index.js';
 
 export class GraphicObjectDomainService {
   constructor(
