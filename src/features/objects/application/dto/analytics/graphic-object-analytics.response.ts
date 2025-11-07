@@ -21,7 +21,7 @@ export interface GraphicObjectAnalyticsResponse {
     readonly byDate: GraphicObjectAnalyticsTrendPoint[];
   };
   readonly images: Array<{
-    readonly imageId: number;
+    readonly imageId: string;
     readonly count: number;
   }>;
   readonly sizeBuckets: Array<{
@@ -47,7 +47,7 @@ export interface GraphicObjectAnalyticsRepositoryTotals {
 export interface GraphicObjectAnalyticsRepositoryResult {
   readonly totals: GraphicObjectAnalyticsRepositoryTotals;
   readonly objectsByDate: GraphicObjectAnalyticsTrendPoint[];
-  readonly objectsByImage: Array<{ imageId: number; count: number }>;
+  readonly objectsByImage: Array<{ imageId: string; count: number }>;
   readonly sizeDistribution: Array<{ bucket: string; count: number }>;
   readonly orientationDistribution: Array<{
     orientation: string;
