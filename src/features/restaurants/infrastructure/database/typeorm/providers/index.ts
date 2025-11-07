@@ -1,1 +1,1 @@
-export * from './owner-typeorm.provider';
+export * from './owner-typeorm.provider.js';
