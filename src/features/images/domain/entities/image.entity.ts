@@ -71,7 +71,7 @@ export class Image {
       storagePath: props.storagePath.trim(),
       title: props.title.trim(),
       description: props.description.trim(),
-      entityId: props.entityId,
+      entityId: props.entityId.trim(),
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
     };
@@ -92,6 +92,8 @@ export class Image {
       throw new InvalidImageDataError(
         'description must be at most 100 characters',
       );
+    if (typeof props.entityId !== 'string' || props.entityId.trim().length === 0)
+      throw new InvalidImageDataError('entityId must be a non-empty string');
     if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
       throw new InvalidImageDataError('createdAt must be a valid Date');
     if (!(props.updatedAt instanceof Date) || Number.isNaN(props.updatedAt))
