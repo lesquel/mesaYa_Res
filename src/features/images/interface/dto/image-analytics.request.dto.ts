@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsOptional, IsUUID } from 'class-validator';
-import type { ImageAnalyticsQuery } from '../../application/dto/analytics/image-analytics.query';
+import type { ImageAnalyticsQuery } from '../../application/dto/analytics/image-analytics.query.js';
 
 export class ImageAnalyticsRequestDto {
   @ApiPropertyOptional({ description: 'Fecha inicial en formato ISO 8601' })
