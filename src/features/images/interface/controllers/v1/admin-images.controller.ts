@@ -78,7 +78,11 @@ export class AdminImagesController {
           type: 'string',
           example: 'Main banner for the landing section',
         },
-        entityId: { type: 'integer', example: 1 },
+        entityId: {
+          type: 'string',
+          format: 'uuid',
+          example: '550e8400-e29b-41d4-a716-446655440000',
+        },
         file: { type: 'string', format: 'binary' },
       },
       required: ['title', 'description', 'entityId', 'file'],
@@ -134,6 +138,7 @@ export class AdminImagesController {
     required: false,
     type: String,
     description: 'Filtra por entidad asociada',
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   async analytics(
     @Query(new ValidationPipe({ transform: true, whitelist: true }))
@@ -158,7 +163,11 @@ export class AdminImagesController {
           type: 'string',
           example: 'Main banner for the landing section',
         },
-        entityId: { type: 'integer', example: 1 },
+        entityId: {
+          type: 'string',
+          format: 'uuid',
+          example: '550e8400-e29b-41d4-a716-446655440000',
+        },
         file: { type: 'string', format: 'binary' },
       },
     },
