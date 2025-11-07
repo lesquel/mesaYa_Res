@@ -4,10 +4,10 @@ import {
   IsDateString,
   IsNumber,
   IsOptional,
-  IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
-import type { GraphicObjectAnalyticsQuery } from '../../application/dto/analytics/graphic-object-analytics.query';
+import type { GraphicObjectAnalyticsQuery } from '../../application/dto/analytics/graphic-object-analytics.query.js';
 
 export class GraphicObjectAnalyticsRequestDto {
   @ApiPropertyOptional({ description: 'Fecha inicial (ISO 8601)' })
@@ -20,9 +20,12 @@ export class GraphicObjectAnalyticsRequestDto {
   @IsDateString()
   endDate?: string;
 
-  @ApiPropertyOptional({ description: 'Identificador de la imagen asociada' })
+  @ApiPropertyOptional({
+    description: 'Identificador de la imagen asociada',
+    format: 'uuid',
+  })
   @IsOptional()
-  @IsString()
+  @IsUUID()
   imageId?: string;
 
   @ApiPropertyOptional({ description: 'Ancho mínimo (px)' })
