@@ -5,6 +5,7 @@ import {
   RestaurantResponseDto,
 } from '../dto/index.js';
 import { RestaurantMapper } from '../mappers/index.js';
+} from '../dto/index';
 
 export class UpdateRestaurantUseCase
   implements UseCase<UpdateRestaurantCommand, RestaurantResponseDto>
