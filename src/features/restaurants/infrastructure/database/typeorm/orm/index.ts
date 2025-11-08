@@ -1,1 +1,1 @@
-export * from './restaurant.orm-entity.js';
+export * from './restaurant.orm-entity';
