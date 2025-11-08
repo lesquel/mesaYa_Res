@@ -1,2 +1,2 @@
-export * from './image-analytics.query.js';
-export * from './image-analytics.response.js';
+export * from './image-analytics.query';
+export * from './image-analytics.response';
