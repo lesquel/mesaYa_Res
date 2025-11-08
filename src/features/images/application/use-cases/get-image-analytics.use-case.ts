@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { ImageAnalyticsQuery } from '../dto/analytics/image-analytics.query.js';
+import type { ImageAnalyticsQuery } from '../dto/analytics/image-analytics.query';
 import type {
   ImageAnalyticsRepositoryResult,
   ImageAnalyticsResponse,
-} from '../dto/analytics/image-analytics.response.js';
+} from '../dto/analytics/image-analytics.response';
 import {
   IMAGE_ANALYTICS_REPOSITORY,
   type ImageAnalyticsRepositoryPort,
-} from '../ports/image-analytics.repository.port.js';
+} from '../ports/image-analytics.repository.port';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const DAYS_WINDOW = 30;
