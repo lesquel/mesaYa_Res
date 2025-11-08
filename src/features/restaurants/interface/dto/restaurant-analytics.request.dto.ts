@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
-import type { RestaurantAnalyticsQuery } from '../../application/dto/analytics/restaurant-analytics.query';
+import type { RestaurantAnalyticsQuery } from '../../application/dto/analytics/restaurant-analytics.query.js';
 
 export class RestaurantAnalyticsRequestDto {
   @ApiPropertyOptional({ description: 'Fecha inicial (ISO 8601)' })

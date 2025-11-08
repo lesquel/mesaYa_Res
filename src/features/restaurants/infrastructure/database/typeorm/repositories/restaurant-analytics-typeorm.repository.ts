@@ -58,7 +58,7 @@ export class RestaurantAnalyticsTypeOrmRepository
       >();
     const subscriptionPromise =
       this.buildSubscriptionDistributionQuery(query).getRawMany<
-        DistributionRaw<number>
+        DistributionRaw<string>
       >();
     const trendPromise = this.buildTrendQuery(query).getRawMany<TrendRaw>();
 
@@ -256,7 +256,7 @@ export class RestaurantAnalyticsTypeOrmRepository
       });
     }
 
-    if (typeof filters.subscriptionId === 'number') {
+    if (typeof filters.subscriptionId === 'string') {
       qb.andWhere('restaurant.subscriptionId = :subscriptionId', {
         subscriptionId: filters.subscriptionId,
       });
