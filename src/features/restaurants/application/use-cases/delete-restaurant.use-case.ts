@@ -1,10 +1,10 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
 import {
-  DeleteRestaurantCommand, 
-  DeleteRestaurantResponseDto, 
-} from '../dto/index.js';
-import { RestaurantMapper } from '../mappers/index.js';
+  DeleteRestaurantCommand,
+  DeleteRestaurantResponseDto,
+} from '../dto/index';
+import { RestaurantMapper } from '../mappers/index';
 
 export class DeleteRestaurantUseCase
   implements UseCase<DeleteRestaurantCommand, DeleteRestaurantResponseDto>
@@ -27,8 +27,3 @@ export class DeleteRestaurantUseCase
     };
   }
 }
-
-import { UseCase } from '@shared/application/ports/use-case.port';
-import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
-} from '../dto/index';
-import { RestaurantMapper } from '../mappers/index';
