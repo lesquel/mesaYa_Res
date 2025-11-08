@@ -4,7 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
-} from '@shared/infrastructure/kafka';
+} from '@shared/infrastructure/kafka/index.js';
 import type {
   CreateRestaurantCommand,
   DeleteRestaurantCommand,
@@ -15,7 +15,7 @@ import type {
   PaginatedRestaurantResponse,
   RestaurantResponseDto,
   DeleteRestaurantResponseDto,
-} from '../dto';
+} from '../dto/index.js';
 import {
   CreateRestaurantUseCase,
   DeleteRestaurantUseCase,
@@ -23,7 +23,7 @@ import {
   ListOwnerRestaurantsUseCase,
   ListRestaurantsUseCase,
   UpdateRestaurantUseCase,
-} from '../use-cases';
+} from '../use-cases/index.js';
 
 @Injectable()
 export class RestaurantsService {
