@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { InvalidRestaurantDataError } from '../errors/invalid-restaurant-data.error.js';
 
 export type RestaurantDay =
