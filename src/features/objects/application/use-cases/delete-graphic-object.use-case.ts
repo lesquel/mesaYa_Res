@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
 import {
   DeleteGraphicObjectCommand,
-  DeleteGraphicObjectResponseDto,
-} from '../dto/index.js';
+  GraphicObjectResponseDto,
+} from '../dto/index';
 import { GraphicObjectMapper } from '../mappers/index.js';
 import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   type GraphicObjectEventPublisherPort,
-} from '../ports/index.js';
+} from '../ports/index';
 import { GraphicObjectDomainService } from '../../domain/index.js';
+import { GraphicObjectDomainService } from '../../domain/index';
 
 @Injectable()
 export class DeleteGraphicObjectUseCase
