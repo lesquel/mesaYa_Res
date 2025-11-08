@@ -134,3 +134,7 @@ export class LoginUseCase {
 - [ ] Actualizar repositorios de infraestructura
 - [ ] Actualizar controladores que inyecten servicios directamente
 - [ ] Documentar convención en guía de desarrollo del proyecto
+
+## Recomendación
+
+Antes de mover tokens entre archivos, añade pruebas unitarias que validen que los símbolos exportados siguen siendo accesibles desde los use-cases; un test simple con `require`/`import` ayuda a detectar rupturas en refactors.
