@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '@features/auth/auth.module.js';
-import { ObjectsService } from './application/services/objects.service.js';
+import { AuthModule } from '@features/auth/auth.module';
+import { ObjectsService } from './application/services/objects.service';
 import {
   CreateGraphicObjectUseCase,
   DeleteGraphicObjectUseCase,
@@ -12,21 +12,21 @@ import {
   GRAPHIC_OBJECT_EVENT_PUBLISHER,
   GetGraphicObjectAnalyticsUseCase,
   GRAPHIC_OBJECT_ANALYTICS_REPOSITORY,
-} from './application/index.js';
-import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index.js';
+} from './application/index';
+import { GraphicObjectOrmEntity } from './infrastructure/database/typeorm/orm/index';
 import {
   GraphicObjectTypeOrmRepository,
   GraphicObjectAnalyticsTypeOrmRepository,
-} from './infrastructure/database/typeorm/repositories/index.js';
-import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider.js';
+} from './infrastructure/database/typeorm/repositories/index';
+import { GraphicObjectEventNoopProvider } from './infrastructure/providers/graphic-object-event-noop.provider';
 import {
   GraphicObjectDomainService,
   IGraphicObjectDomainRepositoryPort,
-} from './domain/index.js';
+} from './domain/index';
 import {
   AdminObjectsController,
   PublicObjectsController,
-} from './interface/controllers/v1/index.js';
+} from './interface/controllers/v1/index';
 
 @Module({
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
