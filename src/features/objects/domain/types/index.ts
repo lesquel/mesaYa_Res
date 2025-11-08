@@ -1,1 +1,1 @@
-export * from './graphic-object-request.types.js';
+export * from './graphic-object-request.types';
