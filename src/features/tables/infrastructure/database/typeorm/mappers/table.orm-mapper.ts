@@ -3,6 +3,8 @@ import { TableOrmEntity } from '../orm';
 import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 
 export class TableOrmMapper {
+  // Mapper responsable de convertir entre Table <-> TableOrmEntity.
+  // Mantén lógica de mapeo aquí; evitar mezclar reglas de negocio.
   static toOrmEntity(
     table: Table,
     ctx: { existing?: TableOrmEntity; section?: SectionOrmEntity },
