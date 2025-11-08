@@ -4,8 +4,8 @@ import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
 import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query.js';
 import type {
-  AuthAnalyticsRepositoryResult,
-  AuthAnalyticsTrendPoint,
+      AuthAnalyticsRepositoryResult,
+      AuthAnalyticsTrendPoint,
 } from '../../../../application/dto/responses/auth-analytics.response.js';
 import type { AuthAnalyticsRepositoryPort } from '../../../../application/ports/auth-analytics.repository.port';
 import { UserOrmEntity } from '../entities/user.orm-entity';
