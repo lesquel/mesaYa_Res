@@ -28,14 +28,14 @@ import {
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard.js';
-import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard.js';
-import { Permissions } from '@features/auth/interface/decorators/permissions.decorator.js';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
   ThrottleCreate,
   ThrottleModify,
   ThrottleSearch,
-} from '@shared/infrastructure/decorators/index.js';
+} from '@shared/infrastructure/decorators/index';
 import {
   ImagesService,
   CreateImageDto,
@@ -44,13 +44,13 @@ import {
   type DeleteImageCommand,
   type UpdateImageCommand,
   GetImageAnalyticsUseCase,
-} from '../../../application/index.js';
-import type { ImageFilePayload } from '../../../application/dto/input/create-image.dto.js';
+} from '../../../application/index';
+import type { ImageFilePayload } from '../../../application/dto/input/create-image.dto';
 import type { Multer } from 'multer';
 import {
   ImageAnalyticsRequestDto,
   ImageAnalyticsResponseDto,
-} from '../../dto/index.js';
+} from '../../dto/index';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
