@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { AuthAnalyticsResponse } from '../../application/dto/responses/auth-analytics.response.js';
+import type { AuthAnalyticsResponse } from '../../application/dto/responses/auth-analytics.response';
 
 class AuthAnalyticsSummaryDto {
   @ApiProperty()

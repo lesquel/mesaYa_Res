@@ -8,7 +8,7 @@ import {
   MaxLength,
   IsUUID,
 } from 'class-validator';
-import type { AuthAnalyticsQuery } from '../../application/dto/queries/auth-analytics.query.js';
+import type { AuthAnalyticsQuery } from '../../application/dto/queries/auth-analytics.query';
 
 export class AuthAnalyticsRequestDto {
   @ApiPropertyOptional({
