@@ -8,7 +8,7 @@ import type {
   GraphicObjectAnalyticsTrendPoint,
 } from '../../../../application/dto/analytics/graphic-object-analytics.response';
 import type { GraphicObjectAnalyticsRepositoryPort } from '../../../../application/ports/graphic-object-analytics.repository.port';
-import { GraphicObjectOrmEntity } from '../orm/index.js';
+import { GraphicObjectOrmEntity } from '../orm/index';
 
 interface TotalsRaw {
   totalObjects: string | number | null;
