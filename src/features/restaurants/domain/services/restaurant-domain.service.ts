@@ -1,17 +1,17 @@
-import { RestaurantEntity } from '../entities/restaurant.entity.js';
+import { RestaurantEntity } from '../entities/restaurant.entity';
 import {
   RestaurantNotFoundError,
   RestaurantOwnerNotFoundError,
   RestaurantOwnershipError,
-} from '../errors/index.js';
-import { IRestaurantDomainRepositoryPort } from '../repositories/restaurant-domain-repository.port.js';
-import { IRestaurantOwnerPort } from '../ports/restaurant-owner.port.js';
+} from '../errors/index';
+import { IRestaurantDomainRepositoryPort } from '../repositories/restaurant-domain-repository.port';
+import { IRestaurantOwnerPort } from '../ports/restaurant-owner.port';
 import {
   type RestaurantCreateRequest,
   type RestaurantDeleteRequest,
   type RestaurantUpdateRequest,
-} from '../types/restaurant-domain.types.js';
-import type { RestaurantUpdate } from '../types/restaurant-update.type.js';
+} from '../types/restaurant-domain.types';
+import type { RestaurantUpdate } from '../types/restaurant-update.type';
 
 export class RestaurantDomainService {
   constructor(
