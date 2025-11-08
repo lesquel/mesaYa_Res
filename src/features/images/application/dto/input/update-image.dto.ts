@@ -6,7 +6,7 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator';
-import type { ImageFilePayload } from './create-image.dto.js';
+import type { ImageFilePayload } from './create-image.dto';
 
 export class UpdateImageDto {
   @ApiPropertyOptional({ example: 'Banner' })
