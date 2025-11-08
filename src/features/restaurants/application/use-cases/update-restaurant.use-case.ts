@@ -1,4 +1,4 @@
-import { UseCase } from '@shared/application/ports/use-case.port';
+import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service.js';
 import {
   UpdateRestaurantCommand,
