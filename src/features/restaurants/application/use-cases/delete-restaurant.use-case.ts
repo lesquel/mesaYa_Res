@@ -1,8 +1,8 @@
 import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service.js';
 import {
-  DeleteRestaurantCommand,
-  DeleteRestaurantResponseDto,
+  DeleteRestaurantCommand, 
+  DeleteRestaurantResponseDto, 
 } from '../dto/index.js';
 import { RestaurantMapper } from '../mappers/index.js';
 
@@ -27,3 +27,8 @@ export class DeleteRestaurantUseCase
     };
   }
 }
+
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
+} from '../dto/index';
+import { RestaurantMapper } from '../mappers/index';
