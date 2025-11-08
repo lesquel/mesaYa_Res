@@ -10,8 +10,9 @@ import {
   IsString,
   MaxLength,
   Min,
+  IsUUID,
 } from 'class-validator';
-import { RestaurantDay } from '../../../domain';
+import { RestaurantDay } from '../../../domain/index.js';
 
 const trim = () =>
   Transform(({ value }) => (typeof value === 'string' ? value.trim() : value));
@@ -78,13 +79,16 @@ export class CreateRestaurantDto {
   @Min(1)
   totalCapacity: number;
 
-  @ApiProperty({ example: 'abc123-uuid-subscription' })
+  @ApiProperty({ example: '9a4d5c78-3d9f-427c-9f5c-a4c9b6f0c2d1' })
   @IsString()
+  @IsNotEmpty()
+  @IsUUID()
   subscriptionId: string;
 
-  @ApiPropertyOptional({ example: 'abc123-uuid-image' })
+  @ApiPropertyOptional({ example: '5e2f7c1a-0d83-4fe1-bbe6-01baf2ea9871' })
   @IsOptional()
   @IsString()
+  @IsUUID()
   imageId?: string;
 }
 
