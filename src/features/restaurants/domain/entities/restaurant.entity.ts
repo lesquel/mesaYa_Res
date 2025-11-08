@@ -10,12 +10,12 @@ import {
   RestaurantSchedule,
   RestaurantSubscriptionId,
   type RestaurantDay,
-} from './values/index.js';
+} from './values/index';
 import {
   type RestaurantCreate,
   type RestaurantSnapshot,
   type RestaurantUpdate,
-} from '../types/index.js';
+} from '../types/index';
 
 interface RestaurantProps {
   name: RestaurantName;
