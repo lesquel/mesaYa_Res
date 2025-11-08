@@ -23,7 +23,7 @@ Nota: `restaurantId` en los query params también puede usarse en el endpoint p�
 
 # Guía completa de Kafka en MesaYa
 
-Esta guía documenta al detalle cómo está integrada la mensajería con Apache Kafka en MesaYa. Aquí encontrarás los componentes disponibles, los pasos de configuración, ejemplos de uso de productores y consumidores, y buenas prácticas para mantener la integración al 10000000%.
+Esta guía documenta al detalle cómo está integrada la mensajería con Apache Kafka en MesaYa. Aquí encontrarás los componentes disponibles, los pasos de configuración, ejemplos de uso de productores y consumidores, y buenas prácticas para mantener la integración estable y confiable.
 
 ## Visión general
 

@@ -10,7 +10,7 @@ Cada módulo sigue esta estructura:
 
 ```plaintext
 src/features/<nombre-modulo>/
-├── <nombre-modulo>.tokens.ts    ← NUEVO: Todos los símbolos aquí
+├── <nombre-modulo>.tokens.ts    ← NUEVO: Todos los símbolos aquí (por módulo)
 ├── <nombre-modulo>.module.ts
 ├── application/
 │   └── ports/

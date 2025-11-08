@@ -29,7 +29,7 @@ src/
 // Define los throttlers globales que se aplican a TODAS las peticiones
 export const THROTTLER_CONFIG: ThrottlerModuleOptions = {
   throttlers: [
-    { name: 'short', ttl: 1000, limit: 3 },   // Anti-burst
+  { name: 'short', ttl: 1000, limit: 3 },   // Anti-burst (ráfaga)
     { name: 'medium', ttl: 10000, limit: 20 }, // Control medio plazo
     { name: 'long', ttl: 60000, limit: 100 },  // Control largo plazo
   ],

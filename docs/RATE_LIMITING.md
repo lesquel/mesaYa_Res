@@ -131,8 +131,7 @@ async getPublicInfo() {
 **Uso:** Límites personalizados
 **Parámetros:**
 
-- `ttl`: Tiempo en milisegundos
-- `limit`: Número de peticiones
+ `ttl`: Tiempo en milisegundos (ms)
 
 ```typescript
 @Get('custom')

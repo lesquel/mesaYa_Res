@@ -44,7 +44,7 @@ users.module.ts
 ```
 
 > 📘 **Motivo:**
-> `kebab-case` es el formato estándar en proyectos NestJS.
+> `kebab-case` es el formato habitual en proyectos NestJS.
 > Mejora la legibilidad en terminales, importaciones y sistemas Unix.
 
 ---

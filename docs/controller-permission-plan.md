@@ -2,7 +2,7 @@
 
 ## Objective
 
-Define the controller architecture and RBAC/resource-scoping strategy for the Mesa Ya API, ensuring security, scalability, and maintainability while preserving a clear separation of concerns.
+Define the controller architecture and RBAC/resource-scoping strategy for the MesaYa API, ensuring security, scalability, and maintainability while preserving a clear separation of concerns.
 
 ## Key Concepts
 
