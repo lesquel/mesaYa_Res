@@ -1,1 +1,1 @@
-export * from './graphic-object-domain.service.js';
+export * from './graphic-object-domain.service';
