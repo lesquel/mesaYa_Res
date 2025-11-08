@@ -1,13 +1,13 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator.js';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator.js';
-import { ThrottleRead } from '@shared/infrastructure/decorators/index.js';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { ThrottleRead } from '@shared/infrastructure/decorators/index';
 import {
   ImagesService,
   type FindImageQuery,
   type ListImagesQuery,
-} from '../../../application/index.js';
+} from '../../../application/index';
 
 @ApiTags('Images - Public')
 @Controller({ path: 'public/images', version: '1' })
