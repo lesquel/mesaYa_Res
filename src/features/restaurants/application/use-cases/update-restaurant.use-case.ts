@@ -1,11 +1,10 @@
-import { UseCase } from '@shared/application/ports/use-case.port.js';
-import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service.js';
+import { UseCase } from '@shared/application/ports/use-case.port';
+import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
 import {
   UpdateRestaurantCommand,
   RestaurantResponseDto,
-} from '../dto/index.js';
-import { RestaurantMapper } from '../mappers/index.js';
 } from '../dto/index';
+import { RestaurantMapper } from '../mappers/index';
 
 export class UpdateRestaurantUseCase
   implements UseCase<UpdateRestaurantCommand, RestaurantResponseDto>
