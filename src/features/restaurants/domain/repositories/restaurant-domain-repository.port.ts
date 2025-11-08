@@ -1,4 +1,4 @@
-import { RestaurantEntity } from '../entities/restaurant.entity';
+import { RestaurantEntity } from '../entities/restaurant.entity.js';
 
 export abstract class IRestaurantDomainRepositoryPort {
   abstract save(restaurant: RestaurantEntity): Promise<RestaurantEntity>;
