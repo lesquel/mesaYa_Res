@@ -1,2 +1,2 @@
-export * from './restaurant-analytics.query.js';
-export * from './restaurant-analytics.response.js';
+export * from './restaurant-analytics.query';
+export * from './restaurant-analytics.response';
