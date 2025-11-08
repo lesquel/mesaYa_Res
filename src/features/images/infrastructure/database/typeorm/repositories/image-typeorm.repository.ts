@@ -1,13 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Image } from '../../../../domain/index.js';
-import { ImageOrmEntity } from '../orm/index.js';
-import { ImageOrmMapper } from '../mappers/index.js';
+import { Image } from '../../../../domain/index';
+import { ImageOrmEntity } from '../orm/index';
+import { ImageOrmMapper } from '../mappers/index';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
-import { ListImagesQuery } from '../../../../application/dto/index.js';
-import { type ImageRepositoryPort } from '../../../../application/ports/index.js';
+import { ListImagesQuery } from '../../../../application/dto/index';
+import { type ImageRepositoryPort } from '../../../../application/ports/index';
 
 @Injectable()
 export class ImageTypeOrmRepository implements ImageRepositoryPort {

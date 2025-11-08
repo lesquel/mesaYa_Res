@@ -8,7 +8,7 @@ import type {
   ImageAnalyticsTrendPoint,
 } from '../../../../application/dto/analytics/image-analytics.response';
 import type { ImageAnalyticsRepositoryPort } from '../../../../application/ports/image-analytics.repository.port';
-import { ImageOrmEntity } from '../orm/index.js';
+import { ImageOrmEntity } from '../orm/index';
 
 type TotalsRaw = {
   totalImages: string | number | null;
