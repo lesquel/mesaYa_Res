@@ -1,5 +1,5 @@
-import { RestaurantEntity } from '../../domain';
-import { RestaurantResponseDto } from '../dto';
+import { RestaurantEntity } from '../../domain/index.js';
+import { RestaurantResponseDto } from '../dto/index.js';
 
 export class RestaurantMapper {
   static toResponse(restaurant: RestaurantEntity): RestaurantResponseDto {
