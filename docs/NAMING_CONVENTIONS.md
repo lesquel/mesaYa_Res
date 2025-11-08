@@ -47,6 +47,10 @@ users.module.ts
 > `kebab-case` es el formato habitual en proyectos NestJS.
 > Mejora la legibilidad en terminales, importaciones y sistemas Unix.
 
+## Recomendación
+
+Evita abreviaciones en nombres de archivos y clases; usa nombres descriptivos (p. ej. `restaurant-section.mapper.ts` en lugar de `rest-sec.map.ts`). Esto facilita búsquedas y reduce ambigüedades en equipos grandes.
+
 ---
 
 ## 2. Clases, Interfaces y Tipos → `PascalCase`
