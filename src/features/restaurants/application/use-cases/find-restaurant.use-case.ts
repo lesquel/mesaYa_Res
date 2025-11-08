@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UseCase } from '@shared/application/ports/use-case.port';
+import { UseCase } from '@shared/application/ports/use-case.port.js';
 import { RestaurantNotFoundError } from '../../domain/index.js';
 import { FindRestaurantQuery, RestaurantResponseDto } from '../dto/index.js';
 import { RestaurantMapper } from '../mappers/index.js';
