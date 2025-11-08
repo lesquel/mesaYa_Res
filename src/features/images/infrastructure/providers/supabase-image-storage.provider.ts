@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { SupabaseStorageService } from '@shared/infrastructure/supabase/index.js';
+import { SupabaseStorageService } from '@shared/infrastructure/supabase/index';
 import {
   type ImageStoragePort,
   type ImageStorageUploadParams,
   type ImageStorageUploadResult,
-} from '../../application/ports/index.js';
+} from '../../application/ports/index';
 
 @Injectable()
 export class SupabaseImageStorageProvider implements ImageStoragePort {
