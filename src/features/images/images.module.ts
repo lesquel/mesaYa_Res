@@ -15,13 +15,13 @@ import {
   IMAGE_REPOSITORY,
   IMAGE_STORAGE,
   IMAGE_ANALYTICS_REPOSITORY,
-} from './application/index.js';
-import { ImageOrmEntity } from './infrastructure/database/typeorm/orm/index.js';
-import { ImageTypeOrmRepository } from './infrastructure/database/typeorm/repositories/image-typeorm.repository.js';
-import { ImageAnalyticsTypeOrmRepository } from './infrastructure/database/typeorm/repositories/image-analytics-typeorm.repository.js';
-import { ImageEventNoopProvider } from './infrastructure/providers/image-event-noop.provider.js';
-import { SupabaseModule } from '@shared/infrastructure/supabase/index.js';
-import { SupabaseImageStorageProvider } from './infrastructure/providers/supabase-image-storage.provider.js';
+} from './application/index';
+import { ImageOrmEntity } from './infrastructure/database/typeorm/orm/index';
+import { ImageTypeOrmRepository } from './infrastructure/database/typeorm/repositories/image-typeorm.repository';
+import { ImageAnalyticsTypeOrmRepository } from './infrastructure/database/typeorm/repositories/image-analytics-typeorm.repository';
+import { ImageEventNoopProvider } from './infrastructure/providers/image-event-noop.provider';
+import { SupabaseModule } from '@shared/infrastructure/supabase/index';
+import { SupabaseImageStorageProvider } from './infrastructure/providers/supabase-image-storage.provider';
 
 @Module({
   imports: [
