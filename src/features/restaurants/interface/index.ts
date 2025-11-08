@@ -1,2 +1,2 @@
-export * from './controllers/index.js';
-export * from './dto/index.js';
+export * from './controllers/index';
+export * from './dto/index';

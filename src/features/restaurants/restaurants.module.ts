@@ -5,13 +5,13 @@ import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/en
 import {
   AdminRestaurantsController,
   PublicRestaurantsController,
-} from './interface/index.js';
+  } from './interface/index';
 import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
   OwnerTypeOrmProvider,
   RestaurantAnalyticsTypeOrmRepository,
-} from './infrastructure/index.js';
+  } from './infrastructure/index';
 import {
   CreateRestaurantUseCase,
   ListRestaurantsUseCase,
@@ -24,15 +24,15 @@ import {
   RESTAURANT_REPOSITORY,
   RESTAURANT_ANALYTICS_REPOSITORY,
   GetRestaurantAnalyticsUseCase,
-} from './application/index.js';
-import { RestaurantDomainService } from './domain/services/restaurant-domain.service.js';
-import { IRestaurantDomainRepositoryPort } from './domain/repositories/restaurant-domain-repository.port.js';
-import { IRestaurantOwnerPort } from './domain/ports/restaurant-owner.port.js';
+  } from './application/index';
+import { RestaurantDomainService } from './domain/services/restaurant-domain.service';
+import { IRestaurantDomainRepositoryPort } from './domain/repositories/restaurant-domain-repository.port';
+import { IRestaurantOwnerPort } from './domain/ports/restaurant-owner.port';
 import { KafkaService } from '@shared/infrastructure/kafka';
 import type {
   RestaurantRepositoryPort,
   RestaurantAnalyticsRepositoryPort,
-} from './application/index.js';
+} from './application/index';
 
 @Module({
   imports: [
