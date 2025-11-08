@@ -1,5 +1,5 @@
-import { GraphicObject } from '../../../../domain/index.js';
-import { GraphicObjectOrmEntity } from '../orm/index.js';
+import { GraphicObject } from '../../../../domain/index';
+import { GraphicObjectOrmEntity } from '../orm/index';
 
 export class GraphicObjectOrmMapper {
   static toDomain(entity: GraphicObjectOrmEntity): GraphicObject {
