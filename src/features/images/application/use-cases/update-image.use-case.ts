@@ -6,11 +6,10 @@ import {
   type ImageEventPublisherPort,
   type ImageRepositoryPort,
   type ImageStoragePort,
-} from '../ports/index.js';
+} from '../ports/index';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { ImageNotFoundError } from '../../domain/index';
 import { ImageMapper } from '../mappers/index';
-import { IMAGE_REPOSITORY, type ImageRepositoryPort } from '../ports/index';
 import { ImageResponseDto, UpdateImageCommand } from '../dto/index';
 
 @Injectable()
