@@ -1,1 +1,1 @@
-export * from './image.mapper.js';
+export * from './image.mapper';
