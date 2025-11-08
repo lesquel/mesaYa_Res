@@ -18,6 +18,9 @@ import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { type SectionRepositoryPort } from '../../../../application/ports';
 
+// Repositorio TypeORM que implementa los puertos del dominio para Sections.
+// Mantiene la responsabilidad de traducir entre `SectionOrmEntity` y `Section`.
+
 @Injectable()
 export class SectionTypeOrmRepository
   implements SectionRepositoryPort, ISectionDomainRepositoryPort

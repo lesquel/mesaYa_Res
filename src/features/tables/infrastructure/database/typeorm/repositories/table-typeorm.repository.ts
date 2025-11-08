@@ -17,6 +17,10 @@ import {
 import { type TableRepositoryPort } from '../../../../application/ports';
 import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
 
+// Nota: Este repositorio mapea entre la entidad ORM (`TableOrmEntity`) y el
+// agregado de dominio `Table`. Las transformaciones se realizan mediante
+// `TableOrmMapper` para mantener la capa de infraestructura separada del dominio.
+
 @Injectable()
 export class TableTypeOrmRepository
   implements TableRepositoryPort, ITableDomainRepositoryPort
