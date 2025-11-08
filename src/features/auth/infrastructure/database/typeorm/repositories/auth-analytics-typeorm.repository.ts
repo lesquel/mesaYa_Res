@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
-import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query.js';
+import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query';
 import type {
-      AuthAnalyticsRepositoryResult,
-      AuthAnalyticsTrendPoint,
-} from '../../../../application/dto/responses/auth-analytics.response.js';
+  AuthAnalyticsRepositoryResult,
+  AuthAnalyticsTrendPoint,
+} from '../../../../application/dto/responses/auth-analytics.response';
 import type { AuthAnalyticsRepositoryPort } from '../../../../application/ports/auth-analytics.repository.port';
 import { UserOrmEntity } from '../entities/user.orm-entity';
 import { ReservationOrmEntity } from '@features/reservation/infrastructure/orm/reservation.orm-entity';
