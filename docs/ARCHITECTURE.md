@@ -475,3 +475,7 @@ export class Email {
 
 **Última actualización:** Noviembre 2025
 **Mantenedores:** Equipo MesaYa
+
+## Recomendación
+
+Cuando realices refactors masivos (p. ej. renombrado de tokens o movimiento de carpetas), crea un pequeño script de validación que haga `tsc --noEmit` y verifique aliases/resolves para evitar roturas en CI. Esto ayuda a mantener la integridad del grafo de imports.

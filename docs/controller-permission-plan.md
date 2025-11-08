@@ -115,3 +115,7 @@ Define the controller architecture and RBAC/resource-scoping strategy for the Me
 - Audit service/use-case layers for any remaining TODOs related to ownership validation and implement necessary checks.
 - Expand test coverage for RBAC and resource scoping, especially around shared admin endpoints used by multiple roles.
 - Optionally regenerate Swagger docs once ownership validations and tag descriptions are finalized.
+
+## Recomendación
+
+Añade pruebas de integración que simulen solicitudes desde distintos roles (USER, OWNER, ADMIN) y asegúrate de que los endpoints multirol devuelven 403 cuando corresponde. Esto detecta regresiones en nivel de permisos al refactorizar servicios o controllers.
