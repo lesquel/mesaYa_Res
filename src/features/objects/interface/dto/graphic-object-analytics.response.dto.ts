@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { GraphicObjectAnalyticsResponse } from '../../application/dto/analytics/graphic-object-analytics.response.js';
+import type { GraphicObjectAnalyticsResponse } from '../../application/dto/analytics/graphic-object-analytics.response';
 
 class GraphicObjectAnalyticsSummaryDto {
   @ApiProperty({ description: 'Total de objetos registrados' })

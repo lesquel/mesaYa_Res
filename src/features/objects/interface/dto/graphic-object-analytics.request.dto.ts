@@ -7,7 +7,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import type { GraphicObjectAnalyticsQuery } from '../../application/dto/analytics/graphic-object-analytics.query.js';
+import type { GraphicObjectAnalyticsQuery } from '../../application/dto/analytics/graphic-object-analytics.query';
 
 export class GraphicObjectAnalyticsRequestDto {
   @ApiPropertyOptional({ description: 'Fecha inicial (ISO 8601)' })
