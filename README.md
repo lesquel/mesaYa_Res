@@ -38,9 +38,9 @@ $ npm install
 $ npm run start
 el dueño del restaurante va a poder crear platillos, mapear el restaurante
 
-y el usuario administrador donde se va a encargar 
+y el usuario administrador que se va a encargar de la administración
 
-y el usuario cliente donde se va a encargarse va a encargar de pedir platillos, reseervar mesas
+y el usuario cliente que se va a encargar de pedir platillos y reservar mesas
 
 # watch mode
 $ npm run start:dev

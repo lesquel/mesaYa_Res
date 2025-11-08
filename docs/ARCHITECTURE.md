@@ -473,5 +473,5 @@ export class Email {
 
 ---
 
-**Última actualización:** Octubre 2025
+**Última actualización:** Noviembre 2025
 **Mantenedores:** Equipo MesaYa
