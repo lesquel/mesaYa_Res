@@ -1,4 +1,4 @@
-import { GraphicObject } from '../../domain/index.js';
+import { GraphicObject } from '../../domain/index';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { ListGraphicObjectsQuery } from '../dto/index.js';
 
