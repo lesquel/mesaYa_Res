@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { RestaurantAnalyticsResponse } from '../../application/dto/analytics/restaurant-analytics.response.js';
+import type { RestaurantAnalyticsResponse } from '../../application/dto/analytics/restaurant-analytics.response';
 
 class RestaurantAnalyticsSummaryDto {
   @ApiProperty()

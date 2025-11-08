@@ -8,7 +8,7 @@ import type {
   MenuAnalyticsTrendPoint,
 } from '../../../../application/dtos/analytics/menu-analytics.response';
 import type { MenuAnalyticsRepositoryPort } from '../../../../application/ports/menu-analytics.repository.port';
-import { MenuOrmEntity } from '../orm/index.js';
+import { MenuOrmEntity } from '../orm/index';
 
 type TotalsRaw = {
   totalMenus: string | number | null;

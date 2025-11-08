@@ -7,7 +7,7 @@ import type {
   DishAnalyticsRepositoryTotals,
 } from '../../../../application/dtos/analytics/dish-analytics.response';
 import type { DishAnalyticsRepositoryPort } from '../../../../application/ports/dish-analytics.repository.port';
-import { DishOrmEntity } from '../orm/index.js';
+import { DishOrmEntity } from '../orm/index';
 
 interface DishTotalsRaw {
   totalDishes: string | number | null;
