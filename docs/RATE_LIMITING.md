@@ -356,3 +356,7 @@ El sistema registra automáticamente cuando se alcanza un límite:
 - [NestJS Throttler Documentation](https://docs.nestjs.com/security/rate-limiting)
 - [HTTP 429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429)
 - [Rate Limiting Best Practices](https://cloud.google.com/architecture/rate-limiting-strategies-techniques)
+
+## Recomendación
+
+Para pruebas automáticas de integración en CI, usa un entorno controlado (por ejemplo `docker-compose` con un servicio de testing proxy) y haz tests de rendimiento por separado para evitar falsos positivos debidos a limitaciones del runner.

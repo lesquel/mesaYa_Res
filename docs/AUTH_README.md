@@ -265,3 +265,7 @@ Invoke-RestMethod -Method Patch -Uri http://localhost:3000/auth/admin/roles/OWNE
 - Módulo principal: `src/features/auth/auth.module.ts`.
 
 Si reorganizas carpetas, recuerda actualizar imports relativos con `.js` debido al modo NodeNext/ESM.
+
+## Recomendación
+
+Si trabajas en local con TypeScript, evita añadir `.js` en los archivos fuente; en su lugar, asegúrate de que el pipeline de compilación mantiene las rutas correctas y usa `npm run build` antes de ejecutar entornos Node en modo ESM.
