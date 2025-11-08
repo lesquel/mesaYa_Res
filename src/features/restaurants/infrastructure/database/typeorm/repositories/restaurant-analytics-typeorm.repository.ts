@@ -1,14 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
-import type { RestaurantAnalyticsQuery } from '../../../../application/dto/analytics/restaurant-analytics.query';
+import type { RestaurantAnalyticsQuery } from '../../../../application/dto/analytics/restaurant-analytics.query.js';
 import type {
   RestaurantAnalyticsRepositoryResult,
   RestaurantAnalyticsRepositoryTotals,
   RestaurantAnalyticsTrendPoint,
-} from '../../../../application/dto/analytics/restaurant-analytics.response';
-import type { RestaurantAnalyticsRepositoryPort } from '../../../../application/ports/restaurant-analytics.repository.port';
-import { RestaurantOrmEntity } from '../../typeorm/orm/restaurant.orm-entity';
+} from '../../../../application/dto/analytics/restaurant-analytics.response.js';
+import type { RestaurantAnalyticsRepositoryPort } from '../../../../application/ports/restaurant-analytics.repository.port.js';
+import { RestaurantOrmEntity } from '../../typeorm/orm/restaurant.orm-entity.js';
 
 interface RestaurantTotalsRaw {
   totalRestaurants: string | number | null;
