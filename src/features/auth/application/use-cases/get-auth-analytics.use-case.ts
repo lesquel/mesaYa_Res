@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AuthAnalyticsQuery } from '../dto/queries/auth-analytics.query.js';
+import type { AuthAnalyticsQuery } from '../dto/queries/auth-analytics.query';
 import type {
   AuthAnalyticsRepositoryResult,
   AuthAnalyticsResponse,
   AuthAnalyticsTrendPoint,
-} from '../dto/responses/auth-analytics.response.js';
+} from '../dto/responses/auth-analytics.response';
 import { type AuthAnalyticsRepositoryPort } from '../ports/auth-analytics.repository.port';
-import { AUTH_ANALYTICS_REPOSITORY } from '@features/auth/auth.tokens.js';
+import { AUTH_ANALYTICS_REPOSITORY } from '@features/auth/auth.tokens';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
