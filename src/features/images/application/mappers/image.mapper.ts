@@ -1,5 +1,5 @@
-import { Image } from '../../domain/index.js';
-import { ImageResponseDto } from '../dto/index.js';
+import { Image } from '../../domain/index';
+import { ImageResponseDto } from '../dto/index';
 
 export class ImageMapper {
   static toResponse(image: Image): ImageResponseDto {
