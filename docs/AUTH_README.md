@@ -2,7 +2,7 @@
 
 Este documento describe la implementación de autenticación (JWT) y autorización (RBAC: Roles + Permisos) siguiendo la arquitectura limpia aplicada al feature de auth.
 
-Nota ESM/NodeNext: los imports relativos entre archivos del proyecto deben incluir la extensión `.js`.
+Nota ESM/NodeNext: en tiempo de ejecución Node (cuando se usan outputs ESM) exige que los imports relativos apunten a archivos con extensión `.js` (p. ej. `./file.js`). En el código TypeScript fuente suele omitirse la extensión; al compilar a JS verifica las rutas resultantes.
 
 ## Tabla de contenidos
 

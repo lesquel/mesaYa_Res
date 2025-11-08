@@ -62,6 +62,8 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+Nota: en Windows PowerShell usa `npm run test` desde el folder raíz del proyecto. Si tienes problemas con rutas de alias, ejecuta `npm run build` antes de testear.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.

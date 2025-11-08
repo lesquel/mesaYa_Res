@@ -16,8 +16,7 @@ async function bootstrap() {
   const PORT = configService.get<number>('APP_PORT', 3000);
 
   await app.listen(PORT);
-  console.log(`Application running on: http://${HOST}:${PORT}`);
-  console.log(`Application running on: http://${HOST}:${PORT}/docs/api`);
+  console.log(`Application running on: http://${HOST}:${PORT} — docs: http://${HOST}:${PORT}/docs/api`);
 }
 
 bootstrap().catch((err) => {
