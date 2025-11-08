@@ -17,12 +17,20 @@ export class BcryptPasswordHasherAdapter implements AuthPasswordHasherPort {
     // Try to load native bcrypt at runtime. If not available (e.g., not installed
     // or fails to build on Windows), fall back to a pure-Node implementation using scrypt.
     try {
+      // Try native bcrypt first
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       this.bcryptImpl = require('bcrypt');
       this.useBcrypt = true;
     } catch (err) {
-      this.useBcrypt = false;
-      this.bcryptImpl = null;
+      try {
+        // Fallback to bcryptjs if available (pure JS)
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        this.bcryptImpl = require('bcryptjs');
+        this.useBcrypt = true;
+      } catch (err2) {
+        this.useBcrypt = false;
+        this.bcryptImpl = null;
+      }
     }
   }
 
