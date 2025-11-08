@@ -13,6 +13,9 @@ import { MenuOrmMapper, DishOrmMapper } from '../mappers';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 
+// Nota: Este repositorio coordina la persistencia de Menus y Dishes.
+// Usa mappers (MenuOrmMapper, DishOrmMapper) para convertir entre capas.
+
 @Injectable()
 export class MenuTypeOrmRepository extends IMenuRepositoryPort {
   constructor(
