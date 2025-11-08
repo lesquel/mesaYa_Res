@@ -29,7 +29,7 @@ export interface RestaurantAnalyticsResponse {
   readonly ownerDistribution: RestaurantAnalyticsDistributionItem<
     string | null
   >[];
-  readonly subscriptionDistribution: RestaurantAnalyticsDistributionItem<number>[];
+  readonly subscriptionDistribution: RestaurantAnalyticsDistributionItem<string>[];
   readonly creationTrend: RestaurantAnalyticsTrendPoint[];
 }
 
@@ -59,6 +59,6 @@ export interface RestaurantAnalyticsRepositoryResult {
   readonly ownerDistribution: RestaurantAnalyticsRepositoryDistribution<
     string | null
   >[];
-  readonly subscriptionDistribution: RestaurantAnalyticsRepositoryDistribution<number>[];
+  readonly subscriptionDistribution: RestaurantAnalyticsRepositoryDistribution<string>[];
   readonly creationTrend: RestaurantAnalyticsTrendPoint[];
 }
