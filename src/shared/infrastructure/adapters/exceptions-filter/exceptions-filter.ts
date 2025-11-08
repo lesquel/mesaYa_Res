@@ -13,7 +13,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     @Inject(LOGGER) private readonly logger: ILoggerPort,
     private readonly configService: ConfigService,
   ) {
-    this.isProd = this.configService.get<string>('NODE_ENV') === 'development';
+    // isProd should be true when NODE_ENV is 'production'
+    this.isProd = this.configService.get<string>('NODE_ENV') === 'production';
   }
 
   catch(exception: unknown, host: ArgumentsHost) {
