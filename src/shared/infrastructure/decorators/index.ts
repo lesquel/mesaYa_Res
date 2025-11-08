@@ -1,1 +1,1 @@
-export * from './throttle';
+export * from './throttle/index.js';
