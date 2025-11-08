@@ -3,5 +3,5 @@ export interface RestaurantAnalyticsQuery {
   readonly endDate?: Date;
   readonly active?: boolean;
   readonly ownerId?: string;
-  readonly subscriptionId?: string;
+  readonly subscriptionId?: number;
 }
