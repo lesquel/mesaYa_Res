@@ -10,6 +10,9 @@ import {
 import { DishOrmEntity } from '../orm';
 import { DishOrmMapper } from '../mappers';
 
+// Repositorio de platos (Dish). Las transformaciones de entidad/ORM
+// se hacen mediante `DishOrmMapper`.
+
 @Injectable()
 export class DishTypeOrmRepository extends IDishRepositoryPort {
   constructor(
