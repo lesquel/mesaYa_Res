@@ -19,7 +19,10 @@ export class RestaurantAnalyticsRequestDto {
   @IsDateString()
   endDate?: string;
 
-  @ApiPropertyOptional({ description: 'Granularity for trend: day|week|month', enum: ['day', 'week', 'month'] })
+  @ApiPropertyOptional({
+    description: 'Granularity for trend: day|week|month',
+    enum: ['day', 'week', 'month'],
+  })
   @IsOptional()
   granularity?: 'day' | 'week' | 'month';
 
@@ -57,7 +60,9 @@ export class RestaurantAnalyticsRequestDto {
 
     // enforce max range (365 days)
     if (startDate && endDate) {
-      const diff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+      const diff = Math.ceil(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24),
+      );
       const MAX_RANGE_DAYS = 365;
       if (diff > MAX_RANGE_DAYS) {
         throw new BadRequestException(

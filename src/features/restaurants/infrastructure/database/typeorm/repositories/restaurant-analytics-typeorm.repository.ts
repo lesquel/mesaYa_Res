@@ -219,13 +219,17 @@ export class RestaurantAnalyticsTypeOrmRepository
 
     let dateExpression: string;
     if (dialect === 'postgres') {
-      if (granularity === 'day') dateExpression = "TO_CHAR(restaurant.createdAt, 'YYYY-MM-DD')";
-      else if (granularity === 'week') dateExpression = "TO_CHAR(restaurant.createdAt, 'IYYY-IW')"; // ISO week
+      if (granularity === 'day')
+        dateExpression = "TO_CHAR(restaurant.createdAt, 'YYYY-MM-DD')";
+      else if (granularity === 'week')
+        dateExpression = "TO_CHAR(restaurant.createdAt, 'IYYY-IW')"; // ISO week
       else dateExpression = "TO_CHAR(restaurant.createdAt, 'YYYY-MM')";
     } else {
       // sqlite or others using strftime
-      if (granularity === 'day') dateExpression = "strftime('%Y-%m-%d', restaurant.createdAt)";
-      else if (granularity === 'week') dateExpression = "strftime('%Y-%W', restaurant.createdAt)";
+      if (granularity === 'day')
+        dateExpression = "strftime('%Y-%m-%d', restaurant.createdAt)";
+      else if (granularity === 'week')
+        dateExpression = "strftime('%Y-%W', restaurant.createdAt)";
       else dateExpression = "strftime('%Y-%m', restaurant.createdAt)";
     }
 
