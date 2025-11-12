@@ -13,10 +13,16 @@ export class ReservationResponseSwaggerDto {
   @ApiProperty({ format: 'uuid' })
   tableId!: string;
 
-  @ApiProperty({ type: String, description: 'Fecha de la reserva (ISO 8601 date)' })
+  @ApiProperty({
+    type: String,
+    description: 'Fecha de la reserva (ISO 8601 date)',
+  })
   reservationDate!: string;
 
-  @ApiProperty({ type: String, description: 'Hora de la reserva (ISO 8601 time)' })
+  @ApiProperty({
+    type: String,
+    description: 'Hora de la reserva (ISO 8601 time)',
+  })
   reservationTime!: string;
 
   @ApiProperty()

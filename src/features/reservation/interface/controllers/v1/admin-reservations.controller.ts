@@ -65,7 +65,9 @@ export class AdminReservationsController {
   @Get()
   @ThrottleSearch()
   @Permissions('reservation:read')
-  @ApiOperation({ summary: 'Listar reservas (permiso reservation:read) (Admin)' })
+  @ApiOperation({
+    summary: 'Listar reservas (permiso reservation:read) (Admin)',
+  })
   @PaginatedEndpoint()
   @ApiPaginatedResponse({
     model: ReservationResponseSwaggerDto,
@@ -73,9 +75,17 @@ export class AdminReservationsController {
   })
   @ApiQuery({ name: 'status', required: false, type: String })
   @ApiQuery({ name: 'restaurantId', required: false, type: String })
-  @ApiQuery({ name: 'date', required: false, type: String, description: 'Filter by date YYYY-MM-DD' })
+  @ApiQuery({
+    name: 'date',
+    required: false,
+    type: String,
+    description: 'Filter by date YYYY-MM-DD',
+  })
   async findAll(
-    @PaginationParams({ defaultRoute: '/admin/reservations', allowExtraParams: true })
+    @PaginationParams({
+      defaultRoute: '/admin/reservations',
+      allowExtraParams: true,
+    })
     pagination: PaginatedQueryParams,
   ): Promise<PaginatedReservationResponse> {
     const query: ListReservationsQuery = { ...pagination } as any;

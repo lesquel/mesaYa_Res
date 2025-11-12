@@ -78,7 +78,10 @@ export class PaginationDto {
   q?: string;
 
   // Alias accepted by some clients: pageSize as alternative to limit
-  @ApiPropertyOptional({ example: 10, description: 'Alias for limit (pageSize)' })
+  @ApiPropertyOptional({
+    example: 10,
+    description: 'Alias for limit (pageSize)',
+  })
   @IsOptional()
   @IsInt()
   @IsPositive()

@@ -183,7 +183,9 @@ export class AuthController {
     const paginated = await this.listUsersUseCase.execute(query);
     return {
       ...paginated,
-      results: paginated.results.map((u) => AdminAuthUserResponseDto.fromDomain(u)),
+      results: paginated.results.map((u) =>
+        AdminAuthUserResponseDto.fromDomain(u),
+      ),
     };
   }
 
