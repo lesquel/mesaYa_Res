@@ -11,6 +11,7 @@ import {
   type ReviewCreateRequest,
   type ReviewDeleteRequest,
   type ReviewUpdateRequest,
+  type ReviewModerationRequest,
 } from '../types';
 
 export class ReviewDomainService {
@@ -71,6 +72,20 @@ export class ReviewDomainService {
     await this.reviewRepository.delete(review.id);
 
     return review;
+  }
+
+  async moderateReview(request: ReviewModerationRequest): Promise<Review> {
+    const review = await this.ensureReview(request.reviewId);
+
+    const nextComment =
+      request.hideComment === true ? null : (request.comment ?? undefined);
+
+    review.update({
+      rating: request.rating,
+      comment: nextComment,
+    });
+
+    return this.reviewRepository.save(review);
   }
 
   private async ensureReview(reviewId: string): Promise<Review> {

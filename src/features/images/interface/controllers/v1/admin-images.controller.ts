@@ -33,9 +33,14 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
   ThrottleCreate,
+  ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators/index';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   ImagesService,
   CreateImageDto,
@@ -44,12 +49,15 @@ import {
   type DeleteImageCommand,
   type UpdateImageCommand,
   GetImageAnalyticsUseCase,
+  type PaginatedImageResponse,
+  type ListImagesQuery,
 } from '../../../application/index';
 import type { ImageFilePayload } from '../../../application/dto/input/create-image.dto';
 import type { Multer } from 'multer';
 import {
   ImageAnalyticsRequestDto,
   ImageAnalyticsResponseDto,
+  ImageResponseSwaggerDto,
 } from '../../dto/index';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -63,6 +71,23 @@ export class AdminImagesController {
     private readonly images: ImagesService,
     private readonly getImageAnalytics: GetImageAnalyticsUseCase,
   ) {}
+
+  @Get()
+  @ThrottleRead()
+  @Permissions('image:read')
+  @ApiOperation({ summary: 'Listar imágenes (Admin)' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: ImageResponseSwaggerDto,
+    description: 'Listado paginado de imágenes',
+  })
+  async findAll(
+    @PaginationParams({ defaultRoute: '/admin/images' })
+    pagination: PaginatedQueryParams,
+  ): Promise<PaginatedImageResponse> {
+    const query: ListImagesQuery = { ...pagination };
+    return this.images.list(query);
+  }
 
   @Post()
   @ThrottleCreate()

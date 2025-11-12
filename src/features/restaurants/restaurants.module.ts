@@ -5,17 +5,18 @@ import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/en
 import {
   AdminRestaurantsController,
   PublicRestaurantsController,
-  } from './interface/index';
+} from './interface/index';
 import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
   OwnerTypeOrmProvider,
   RestaurantAnalyticsTypeOrmRepository,
-  } from './infrastructure/index';
+} from './infrastructure/index';
 import {
   CreateRestaurantUseCase,
   ListRestaurantsUseCase,
   ListOwnerRestaurantsUseCase,
+  ListRestaurantOwnersUseCase,
   FindRestaurantUseCase,
   UpdateRestaurantUseCase,
   DeleteRestaurantUseCase,
@@ -24,7 +25,7 @@ import {
   RESTAURANT_REPOSITORY,
   RESTAURANT_ANALYTICS_REPOSITORY,
   GetRestaurantAnalyticsUseCase,
-  } from './application/index';
+} from './application/index';
 import { RestaurantDomainService } from './domain/services/restaurant-domain.service';
 import { IRestaurantDomainRepositoryPort } from './domain/repositories/restaurant-domain-repository.port';
 import { IRestaurantOwnerPort } from './domain/ports/restaurant-owner.port';
@@ -91,6 +92,12 @@ import type {
       inject: [RESTAURANT_REPOSITORY],
     },
     {
+      provide: ListRestaurantOwnersUseCase,
+      useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
+        new ListRestaurantOwnersUseCase(restaurantRepository),
+      inject: [RESTAURANT_REPOSITORY],
+    },
+    {
       provide: FindRestaurantUseCase,
       useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
         new FindRestaurantUseCase(restaurantRepository),
@@ -117,6 +124,7 @@ import type {
         findRestaurantUseCase: FindRestaurantUseCase,
         updateRestaurantUseCase: UpdateRestaurantUseCase,
         deleteRestaurantUseCase: DeleteRestaurantUseCase,
+        listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
         kafkaService: KafkaService,
       ) =>
         new RestaurantsService(
@@ -126,6 +134,7 @@ import type {
           findRestaurantUseCase,
           updateRestaurantUseCase,
           deleteRestaurantUseCase,
+          listRestaurantOwnersUseCase,
           kafkaService,
         ),
       inject: [
@@ -135,6 +144,7 @@ import type {
         FindRestaurantUseCase,
         UpdateRestaurantUseCase,
         DeleteRestaurantUseCase,
+        ListRestaurantOwnersUseCase,
         KafkaService,
       ],
     },
@@ -149,6 +159,7 @@ import type {
     CreateRestaurantUseCase,
     ListRestaurantsUseCase,
     ListOwnerRestaurantsUseCase,
+    ListRestaurantOwnersUseCase,
     FindRestaurantUseCase,
     UpdateRestaurantUseCase,
     DeleteRestaurantUseCase,

@@ -15,6 +15,7 @@ import type {
   PaginatedRestaurantResponse,
   RestaurantResponseDto,
   DeleteRestaurantResponseDto,
+  RestaurantOwnerOptionDto,
 } from '../dto/index';
 import {
   CreateRestaurantUseCase,
@@ -23,6 +24,7 @@ import {
   ListOwnerRestaurantsUseCase,
   ListRestaurantsUseCase,
   UpdateRestaurantUseCase,
+  ListRestaurantOwnersUseCase,
 } from '../use-cases/index';
 
 @Injectable()
@@ -34,6 +36,7 @@ export class RestaurantsService {
     private readonly findRestaurantUseCase: FindRestaurantUseCase,
     private readonly updateRestaurantUseCase: UpdateRestaurantUseCase,
     private readonly deleteRestaurantUseCase: DeleteRestaurantUseCase,
+    private readonly listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
@@ -67,6 +70,10 @@ export class RestaurantsService {
     query: ListOwnerRestaurantsQuery,
   ): Promise<PaginatedRestaurantResponse> {
     return this.listOwnerRestaurantsUseCase.execute(query);
+  }
+
+  async listOwners(): Promise<RestaurantOwnerOptionDto[]> {
+    return this.listRestaurantOwnersUseCase.execute();
   }
 
   async findOne(query: FindRestaurantQuery): Promise<RestaurantResponseDto> {

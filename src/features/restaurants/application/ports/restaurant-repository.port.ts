@@ -3,6 +3,7 @@ import { RestaurantEntity } from '../../domain';
 import { ListRestaurantsQuery } from '../dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import type { RestaurantCreate, RestaurantUpdate } from '../../domain/types';
+import type { RestaurantOwnerOptionDto } from '../dto';
 
 export const RESTAURANT_REPOSITORY = Symbol('RESTAURANT_REPOSITORY');
 
@@ -19,4 +20,5 @@ export abstract class RestaurantRepositoryPort extends IBaseRepositoryPort<
     ownerId: string,
     query: ListRestaurantsQuery,
   ): Promise<PaginatedResult<RestaurantEntity>>;
+  abstract listOwners(): Promise<RestaurantOwnerOptionDto[]>;
 }

@@ -17,6 +17,7 @@ import {
   FindReviewUseCase,
   DeleteReviewUseCase,
   UpdateReviewUseCase,
+  ModerateReviewUseCase,
   ReviewsService,
   REVIEW_REPOSITORY,
   RESTAURANT_REVIEW_READER,
@@ -130,6 +131,12 @@ import { RestaurantOrmEntity } from '../restaurants';
       inject: [ReviewDomainService],
     },
     {
+      provide: ModerateReviewUseCase,
+      useFactory: (reviewDomainService: ReviewDomainService) =>
+        new ModerateReviewUseCase(reviewDomainService),
+      inject: [ReviewDomainService],
+    },
+    {
       provide: GetReviewAnalyticsUseCase,
       useFactory: (analyticsRepository: ReviewAnalyticsRepositoryPort) =>
         new GetReviewAnalyticsUseCase(analyticsRepository),
@@ -144,6 +151,7 @@ import { RestaurantOrmEntity } from '../restaurants';
         findReviewUseCase: FindReviewUseCase,
         updateReviewUseCase: UpdateReviewUseCase,
         deleteReviewUseCase: DeleteReviewUseCase,
+        moderateReviewUseCase: ModerateReviewUseCase,
         kafkaService: KafkaService,
       ) =>
         new ReviewsService(
@@ -153,6 +161,7 @@ import { RestaurantOrmEntity } from '../restaurants';
           findReviewUseCase,
           updateReviewUseCase,
           deleteReviewUseCase,
+          moderateReviewUseCase,
           kafkaService,
         ),
       inject: [
@@ -162,6 +171,7 @@ import { RestaurantOrmEntity } from '../restaurants';
         FindReviewUseCase,
         UpdateReviewUseCase,
         DeleteReviewUseCase,
+        ModerateReviewUseCase,
         KafkaService,
       ],
     },
@@ -173,6 +183,7 @@ import { RestaurantOrmEntity } from '../restaurants';
     FindReviewUseCase,
     UpdateReviewUseCase,
     DeleteReviewUseCase,
+    ModerateReviewUseCase,
     ReviewsService,
     GetReviewAnalyticsUseCase,
     REVIEW_REPOSITORY,

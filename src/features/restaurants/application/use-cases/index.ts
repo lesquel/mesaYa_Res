@@ -5,3 +5,4 @@ export * from './list-owner-restaurants.use-case';
 export * from './list-restaurants.use-case';
 export * from './update-restaurant.use-case';
 export * from './get-restaurant-analytics.use-case';
+export * from './list-restaurant-owners.use-case';

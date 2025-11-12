@@ -18,6 +18,7 @@ import type {
   RestaurantCreate,
   RestaurantUpdate,
 } from '../../../../domain/types';
+import { RestaurantOwnerOptionDto } from '../../../../application/dto';
 
 @Injectable()
 export class RestaurantTypeOrmRepository
@@ -117,6 +118,23 @@ export class RestaurantTypeOrmRepository
   ): Promise<PaginatedResult<RestaurantEntity>> {
     const qb = this.buildBaseQuery().where('owner.id = :ownerId', { ownerId });
     return this.execPagination(qb, query);
+  }
+
+  async listOwners(): Promise<RestaurantOwnerOptionDto[]> {
+    const alias = 'restaurant';
+    const rows = await this.restaurantRepository
+      .createQueryBuilder(alias)
+      .innerJoin(`${alias}.owner`, 'owner')
+      .select('owner.id', 'ownerId')
+      .addSelect('owner.name', 'name')
+      .addSelect('owner.email', 'email')
+      .groupBy('owner.id')
+      .addGroupBy('owner.name')
+      .addGroupBy('owner.email')
+      .orderBy('owner.name', 'ASC')
+      .getRawMany<{ ownerId: string; name: string; email: string }>();
+
+    return RestaurantOwnerOptionDto.fromArray(rows);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<RestaurantOrmEntity> {

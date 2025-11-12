@@ -16,3 +16,10 @@ export interface ReviewDeleteRequest {
   reviewId: string;
   userId: string;
 }
+
+export interface ReviewModerationRequest {
+  reviewId: string;
+  rating?: number;
+  comment?: string | null;
+  hideComment?: boolean;
+}

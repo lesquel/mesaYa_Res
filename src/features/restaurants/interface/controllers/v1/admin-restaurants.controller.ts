@@ -13,6 +13,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -23,6 +24,9 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   ThrottleCreate,
   ThrottleRead,
@@ -37,6 +41,7 @@ import {
   UpdateRestaurantDto,
   RestaurantsService,
   GetRestaurantAnalyticsUseCase,
+  RestaurantOwnerOptionDto,
 } from '@features/restaurants/application';
 import type {
   ListOwnerRestaurantsQuery,
@@ -47,6 +52,7 @@ import type {
 } from '@features/restaurants/application';
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
+import { RestaurantResponseSwaggerDto } from '@features/restaurants/interface/dto';
 
 @ApiTags('Restaurants - Admin')
 @Controller({ path: 'admin/restaurants', version: '1' })
@@ -57,6 +63,36 @@ export class AdminRestaurantsController {
     private readonly restaurantsService: RestaurantsService,
     private readonly getRestaurantAnalytics: GetRestaurantAnalyticsUseCase,
   ) {}
+
+  @Get()
+  @ThrottleRead()
+  @Permissions('restaurant:read')
+  @ApiOperation({ summary: 'Listar restaurantes (permiso restaurant:read)' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: RestaurantResponseSwaggerDto,
+    description: 'Listado paginado de restaurantes',
+  })
+  async findAll(
+    @PaginationParams({ defaultRoute: '/admin/restaurants' })
+    pagination: PaginatedQueryParams,
+  ): Promise<PaginatedRestaurantResponse> {
+    const query: ListRestaurantsQuery = { ...pagination };
+    return this.restaurantsService.list(query);
+  }
+
+  @Get('owners')
+  @ThrottleRead()
+  @Permissions('restaurant:read')
+  @ApiOperation({ summary: 'Listar propietarios de restaurantes' })
+  @ApiOkResponse({
+    description: 'Opciones de propietarios disponibles',
+    type: RestaurantOwnerOptionDto,
+    isArray: true,
+  })
+  async listOwners(): Promise<RestaurantOwnerOptionDto[]> {
+    return this.restaurantsService.listOwners();
+  }
 
   @Post()
   @ThrottleCreate()

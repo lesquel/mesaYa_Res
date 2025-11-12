@@ -5,3 +5,4 @@ export * from './list-restaurant-reviews.use-case';
 export * from './list-reviews.use-case';
 export * from './update-review.use-case';
 export * from './get-review-analytics.use-case';
+export * from './moderate-review.use-case';

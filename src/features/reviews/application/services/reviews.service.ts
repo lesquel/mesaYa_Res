@@ -15,6 +15,7 @@ import type {
   PaginatedReviewResponse,
   ReviewResponseDto,
   UpdateReviewCommand,
+  ModerateReviewCommand,
 } from '../dto';
 import {
   CreateReviewUseCase,
@@ -22,6 +23,7 @@ import {
   FindReviewUseCase,
   ListRestaurantReviewsUseCase,
   ListReviewsUseCase,
+  ModerateReviewUseCase,
   UpdateReviewUseCase,
 } from '../use-cases';
 
@@ -34,6 +36,7 @@ export class ReviewsService {
     private readonly findReviewUseCase: FindReviewUseCase,
     private readonly updateReviewUseCase: UpdateReviewUseCase,
     private readonly deleteReviewUseCase: DeleteReviewUseCase,
+    private readonly moderateReviewUseCase: ModerateReviewUseCase,
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
@@ -85,6 +88,25 @@ export class ReviewsService {
   })
   async update(command: UpdateReviewCommand): Promise<ReviewResponseDto> {
     return this.updateReviewUseCase.execute(command);
+  }
+
+  /**
+   * Emits `mesa-ya.reviews.updated` with `{ action, entityId, entity, moderated: true }` and returns the moderated review DTO.
+   */
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.REVIEW_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [ModerateReviewCommand];
+      return {
+        action: 'review.moderated',
+        entityId: command.reviewId,
+        moderated: true,
+        entity: toPlain(result),
+      };
+    },
+  })
+  async moderate(command: ModerateReviewCommand): Promise<ReviewResponseDto> {
+    return this.moderateReviewUseCase.execute(command);
   }
 
   /**
