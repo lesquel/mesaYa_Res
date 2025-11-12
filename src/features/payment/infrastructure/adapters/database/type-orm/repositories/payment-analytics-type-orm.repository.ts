@@ -183,14 +183,14 @@ export class PaymentAnalyticsTypeOrmRepository
     filters: PaymentAnalyticsQuery,
   ): SelectQueryBuilder<PaymentOrmEntity> {
     const qb = this.createBaseQuery()
-      .select('reservation.restaurantId', 'restaurantId')
+      .select('reservation.restaurant_id', 'restaurantId')
       .addSelect('COUNT(payment.id)', 'count')
       .addSelect('COALESCE(SUM(payment.amount), 0)', 'amount')
-      .where('reservation.restaurantId IS NOT NULL');
+      .where('reservation.restaurant_id IS NOT NULL');
 
     this.applyFilters(qb, filters);
 
-    qb.groupBy('reservation.restaurantId').orderBy('amount', 'DESC');
+    qb.groupBy('reservation.restaurant_id').orderBy('amount', 'DESC');
 
     return qb;
   }
@@ -254,7 +254,7 @@ export class PaymentAnalyticsTypeOrmRepository
     }
 
     if (filters.restaurantId) {
-      qb.andWhere('reservation.restaurantId = :restaurantId', {
+      qb.andWhere('reservation.restaurant_id = :restaurantId', {
         restaurantId: filters.restaurantId,
       });
     }
