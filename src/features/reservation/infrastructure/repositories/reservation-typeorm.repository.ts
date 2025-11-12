@@ -151,6 +151,35 @@ export class ReservationTypeOrmRepository
     query: ListReservationsQuery,
   ): Promise<PaginatedResult<ReservationEntity>> {
     const alias = qb.alias;
+    // Apply optional filters (status, restaurantId, date)
+    if ((query as any).status) {
+      qb.andWhere(`${alias}.status = :status`, { status: (query as any).status });
+    }
+
+    if ((query as any).restaurantId) {
+      qb.andWhere('restaurant.id = :restaurantId', {
+        restaurantId: (query as any).restaurantId,
+      });
+    }
+
+    if ((query as any).date) {
+      // filter reservations whose reservationDate falls within the given date
+      try {
+        const date = new Date((query as any).date);
+        if (!isNaN(date.getTime())) {
+          const start = new Date(date);
+          start.setHours(0, 0, 0, 0);
+          const end = new Date(start);
+          end.setDate(start.getDate() + 1);
+          qb.andWhere(`${alias}.reservationDate BETWEEN :startDate AND :endDate`, {
+            startDate: start.toISOString(),
+            endDate: end.toISOString(),
+          });
+        }
+      } catch (e) {
+        // ignore invalid dates and let query return unfiltered results
+      }
+    }
 
     const sortMap: Record<string, string> = {
       createdAt: `${alias}.createdAt`,

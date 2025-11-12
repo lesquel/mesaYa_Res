@@ -76,4 +76,17 @@ export class PaginationDto {
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   q?: string;
+
+  // Alias accepted by some clients: pageSize as alternative to limit
+  @ApiPropertyOptional({ example: 10, description: 'Alias for limit (pageSize)' })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Min(1)
+  @Max(100)
+  @Type(() => Number)
+  @Transform(({ value }) =>
+    value === undefined || value === null || value === '' ? undefined : value,
+  )
+  pageSize?: number;
 }

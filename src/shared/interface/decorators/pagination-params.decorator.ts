@@ -12,6 +12,11 @@ import type { PaginatedQueryParams } from '@shared/application/types/pagination'
 export interface PaginationParamsOptions {
   defaultRoute?: string;
   allowSearch?: boolean;
+  /**
+   * If true, do not forbid non-whitelisted query params. Useful when callers
+   * want to include extra filter params (status, restaurantId, date, etc.)
+   */
+  allowExtraParams?: boolean;
 }
 
 /**
@@ -32,7 +37,8 @@ export const PaginationParams = createParamDecorator(
     const validationErrors = validateSync(dto, {
       skipMissingProperties: true,
       whitelist: true,
-      forbidNonWhitelisted: true,
+      // allowExtraParams toggles whether unknown query params cause validation failure
+      forbidNonWhitelisted: !options.allowExtraParams,
     });
 
     if (validationErrors.length > 0) {
@@ -48,10 +54,12 @@ export const PaginationParams = createParamDecorator(
 
     const allowSearch = options.allowSearch ?? true;
 
+    const effectiveLimit = dto.limit ?? (dto as any).pageSize ?? undefined;
+
     return {
       pagination: {
         page: dto.page,
-        limit: dto.limit,
+        limit: effectiveLimit,
         offset: dto.offset,
       },
       sortBy: dto.sortBy,

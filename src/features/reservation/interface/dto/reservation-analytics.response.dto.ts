@@ -71,6 +71,9 @@ class ReservationAnalyticsHourItemDto {
   @ApiProperty({ description: 'Hora del día (0-23)' })
   hour!: number;
 
+  @ApiProperty({ description: 'Hora como texto HH:MM' })
+  time!: string;
+
   @ApiProperty()
   count!: number;
 }
@@ -129,6 +132,7 @@ export class ReservationAnalyticsResponseDto {
     }));
     dto.peakHours = response.peakHours.map((item) => ({
       hour: item.hour,
+      time: `${String(item.hour).padStart(2, '0')}:00`,
       count: item.count,
     }));
     return dto;

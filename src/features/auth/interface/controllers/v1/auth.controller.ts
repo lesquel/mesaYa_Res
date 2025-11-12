@@ -43,11 +43,20 @@ import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
 import { ThrottleAuth, ThrottleRead } from '@shared/infrastructure/decorators';
+import { ListUsersUseCase } from '@features/auth/application/use-cases/list-users.use-case';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { AdminAuthUserResponseDto } from '../../dto/admin-auth-user.response.dto';
 
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly listUsersUseCase: ListUsersUseCase,
+  ) {}
 
   @Post('signup')
   @ThrottleAuth()
@@ -154,6 +163,28 @@ export class AuthController {
   ): Promise<AuthAnalyticsResponseDto> {
     const analytics = await this.authService.getAnalytics(query.toQuery());
     return AuthAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get('admin/users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(AuthRoleName.ADMIN)
+  @ApiOperation({ summary: 'Listar usuarios (ADMIN) — incluye roles y estado' })
+  @ApiBearerAuth()
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: AdminAuthUserResponseDto,
+    description: 'Listado paginado de usuarios (admin view)',
+  })
+  async listUsersAdmin(
+    @PaginationParams({ defaultRoute: '/auth/admin/users' })
+    params: PaginatedQueryParams,
+  ) {
+    const query = { ...params } as any;
+    const paginated = await this.listUsersUseCase.execute(query);
+    return {
+      ...paginated,
+      results: paginated.results.map((u) => AdminAuthUserResponseDto.fromDomain(u)),
+    };
   }
 
   @Patch('admin/users/:id/roles')
