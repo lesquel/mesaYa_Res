@@ -87,7 +87,16 @@ export class AdminSubscriptionController {
   async getSubscriptions(
     @PaginationParams() params: PaginatedQueryParams,
   ): Promise<SubscriptionListResponseDto> {
-    return this.subscriptionService.findAll(params);
+    const paginated = await this.subscriptionService.findAll(params);
+    return {
+      data: paginated.results,
+      pagination: {
+        page: paginated.page,
+        pageSize: paginated.limit,
+        totalItems: paginated.total,
+        totalPages: paginated.pages,
+      },
+    } as unknown as SubscriptionListResponseDto;
   }
 
   @Get(':subscriptionId')

@@ -32,18 +32,45 @@ export class SubscriptionPlanAnalyticsRequestDto {
   startDate?: string;
 
   @ApiPropertyOptional({
+    description:
+      'Alias para startDate (acepta rangeStart en clientes legacy)',
+  })
+  @IsOptional()
+  @IsDateString()
+  rangeStart?: string;
+
+  @ApiPropertyOptional({
     description: 'Fecha final de creación del plan (ISO 8601)',
   })
   @IsOptional()
   @IsDateString()
   endDate?: string;
 
+  @ApiPropertyOptional({
+    description: 'Alias para endDate (acepta rangeEnd en clientes legacy)',
+  })
+  @IsOptional()
+  @IsDateString()
+  rangeEnd?: string;
+
+  @ApiPropertyOptional({
+    description: "Granularity for trend: day|week|month",
+    enum: ['day', 'week', 'month'],
+  })
+  @IsOptional()
+  @IsEnum(['day', 'week', 'month'] as any)
+  granularity?: 'day' | 'week' | 'month';
+
   toQuery(): SubscriptionPlanAnalyticsQuery {
-    const startDate = this.startDate
-      ? this.parseDate(this.startDate, false, 'startDate')
+    // Accept both startDate/endDate and legacy rangeStart/rangeEnd
+    const rawStart = this.startDate ?? this.rangeStart;
+    const rawEnd = this.endDate ?? this.rangeEnd;
+
+    const startDate = rawStart
+      ? this.parseDate(rawStart, false, 'startDate')
       : undefined;
-    const endDate = this.endDate
-      ? this.parseDate(this.endDate, true, 'endDate')
+    const endDate = rawEnd
+      ? this.parseDate(rawEnd, true, 'endDate')
       : undefined;
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
@@ -52,12 +79,22 @@ export class SubscriptionPlanAnalyticsRequestDto {
       );
     }
 
+    // enforce reasonable max range (365 days)
+    if (startDate && endDate) {
+      const diff = endDate.getTime() - startDate.getTime();
+      const maxRange = 365 * 24 * 60 * 60 * 1000;
+      if (diff > maxRange) {
+        throw new BadRequestException('El rango máximo permitido es 365 días');
+      }
+    }
+
     return {
       state: this.state,
       period: this.period,
       startDate,
       endDate,
-    };
+      granularity: this.granularity ?? 'month',
+    } as SubscriptionPlanAnalyticsQuery;
   }
 
   private parseDate(

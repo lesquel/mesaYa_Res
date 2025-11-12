@@ -45,6 +45,10 @@ import {
   SubscriptionPlanResponseSwaggerDto,
   UpdateSubscriptionPlanRequestDto,
 } from '@features/subscription/presentation/dto';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 
 @ApiTags('Subscription Plans - Admin')
 @Controller({ path: 'admin/subscription-plans', version: '1' })
@@ -70,6 +74,40 @@ export class AdminSubscriptionPlanController {
       query.toQuery(),
     );
     return SubscriptionPlanAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get()
+  @PaginatedEndpoint()
+  @Permissions('subscription-plan:read')
+  @ApiPaginatedResponse({
+    model: SubscriptionPlanResponseSwaggerDto,
+    description: 'Listado paginado de planes de suscripción (admin)',
+  })
+  async listSubscriptionPlans(
+    @PaginationParams({ defaultRoute: '/admin/subscription-plans', allowExtraParams: true })
+    params: PaginatedQueryParams,
+  ) {
+    const paginated = await this.subscriptionPlanService.findAll(params);
+    return {
+      data: paginated.results,
+      pagination: {
+        page: paginated.page,
+        pageSize: paginated.limit,
+        totalItems: paginated.total,
+        totalPages: paginated.pages,
+      },
+    };
+  }
+
+  @Get(':subscriptionPlanId')
+  @Permissions('subscription-plan:read')
+  @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
+  @ApiOkResponse({ description: 'Subscription plan details', type: SubscriptionPlanResponseSwaggerDto })
+  async getSubscriptionPlanById(
+    @Param('subscriptionPlanId', ParseUUIDPipe) subscriptionPlanId: string,
+  ): Promise<{ data: SubscriptionPlanResponseDto }> {
+    const plan = await this.subscriptionPlanService.findById({ subscriptionPlanId });
+    return { data: plan };
   }
 
   @Post()

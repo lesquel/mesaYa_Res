@@ -45,23 +45,56 @@ export class SubscriptionAnalyticsRequestDto {
   @IsDateString()
   startDate?: string;
 
+  @ApiPropertyOptional({
+    description: 'Alias para startDate (acepta rangeStart en clientes legacy)',
+  })
+  @IsOptional()
+  @IsDateString()
+  rangeStart?: string;
+
   @ApiPropertyOptional({ description: 'Fecha final (ISO 8601)' })
   @IsOptional()
   @IsDateString()
   endDate?: string;
 
+  @ApiPropertyOptional({
+    description: 'Alias para endDate (acepta rangeEnd en clientes legacy)',
+  })
+  @IsOptional()
+  @IsDateString()
+  rangeEnd?: string;
+
+  @ApiPropertyOptional({
+    description: "Granularity for trend: day|week|month",
+    enum: ['day', 'week', 'month'],
+  })
+  @IsOptional()
+  @IsEnum(['day', 'week', 'month'] as any)
+  granularity?: 'day' | 'week' | 'month';
+
   toQuery(): SubscriptionAnalyticsQuery {
-    const startDate = this.startDate
-      ? this.parseDate(this.startDate, false, 'startDate')
+    // Accept both startDate/endDate and legacy rangeStart/rangeEnd
+    const rawStart = this.startDate ?? this.rangeStart;
+    const rawEnd = this.endDate ?? this.rangeEnd;
+
+    const startDate = rawStart
+      ? this.parseDate(rawStart, false, 'startDate')
       : undefined;
-    const endDate = this.endDate
-      ? this.parseDate(this.endDate, true, 'endDate')
-      : undefined;
+    const endDate = rawEnd ? this.parseDate(rawEnd, true, 'endDate') : undefined;
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
       throw new BadRequestException(
         'startDate debe ser menor o igual que endDate.',
       );
+    }
+
+    // enforce reasonable max range (365 days)
+    if (startDate && endDate) {
+      const diff = endDate.getTime() - startDate.getTime();
+      const maxRange = 365 * 24 * 60 * 60 * 1000;
+      if (diff > maxRange) {
+        throw new BadRequestException('El rango máximo permitido es 365 días');
+      }
     }
 
     return {
@@ -71,7 +104,8 @@ export class SubscriptionAnalyticsRequestDto {
       subscriptionPeriod: this.subscriptionPeriod,
       startDate,
       endDate,
-    };
+      granularity: this.granularity ?? 'month',
+    } as SubscriptionAnalyticsQuery;
   }
 
   private parseDate(
