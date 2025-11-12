@@ -1,5 +1,6 @@
 import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Catch, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { QueryFailedError } from 'typeorm';
 import type { Request, Response } from 'express';
 import { BaseDomainError } from '@shared/domain/errors/base-domain-error';
 
@@ -20,6 +21,35 @@ export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     if (exception instanceof HttpException) {
       this.respondFromHttpException(exception, host);
+      return;
+    }
+
+    // Special-case TypeORM DB errors for friendlier client responses
+    if (exception instanceof QueryFailedError) {
+      const err: any = exception as any;
+      const message = err?.message ?? 'Query failed';
+      const sqlCode = err?.driverError?.code ?? err?.code ?? null;
+
+      // Postgres foreign key violation => 409 Conflict
+      if (sqlCode === '23503' || /foreign key/i.test(message)) {
+        this.respondFromDomainError(
+          new Error(
+            'Conflict due to related resource (foreign key constraint)',
+          ),
+          host,
+          HttpStatus.CONFLICT,
+          { originalMessage: message },
+        );
+        return;
+      }
+
+      // Other SQL errors: expose as 400 with original message details
+      this.respondFromDomainError(
+        new Error('Database query failed'),
+        host,
+        HttpStatus.BAD_REQUEST,
+        { originalMessage: message },
+      );
       return;
     }
 

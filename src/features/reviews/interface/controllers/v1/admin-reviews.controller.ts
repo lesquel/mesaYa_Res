@@ -167,7 +167,28 @@ export class AdminReviewsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: ModerateReviewDto,
   ): Promise<ReviewResponseDto> {
-    const command: ModerateReviewCommand = { ...dto, reviewId: id };
+    // Support both field-based moderation (rating/comment/hideComment)
+    // and action-based moderation ({ action: 'approve'|'reject'|'hide', moderationNotes })
+    const command: ModerateReviewCommand = { ...dto, reviewId: id } as any;
+
+    if (dto.action) {
+      const action = dto.action;
+      if (action === 'hide') {
+        command.hideComment = true;
+      } else if (action === 'reject') {
+        // reject -> hide and remove comment
+        command.hideComment = true;
+        command.comment = null as any;
+      } else if (action === 'approve') {
+        command.hideComment = false;
+      }
+      // If moderationNotes provided, store them in comment if comment is null
+      if (dto.moderationNotes) {
+        // append or replace comment with moderation note depending on existing comment
+        command.comment = dto.moderationNotes;
+      }
+    }
+
     return this.reviewsService.moderate(command);
   }
 }

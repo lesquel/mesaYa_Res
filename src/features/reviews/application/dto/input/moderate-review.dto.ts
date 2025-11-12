@@ -28,6 +28,20 @@ export class ModerateReviewDto {
   @IsOptional()
   @IsBoolean()
   hideComment?: boolean;
+
+  @ApiPropertyOptional({
+    description:
+      "Acción de moderación por parte del admin: 'approve'|'reject'|'hide'",
+    enum: ['approve', 'reject', 'hide'],
+  })
+  @IsOptional()
+  @IsString()
+  action?: 'approve' | 'reject' | 'hide';
+
+  @ApiPropertyOptional({ description: 'Notas del moderador', nullable: true })
+  @IsOptional()
+  @IsString()
+  moderationNotes?: string | null;
 }
 
 export type ModerateReviewCommand = ModerateReviewDto & {

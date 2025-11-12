@@ -239,4 +239,26 @@ export class AdminImagesController {
     const command: DeleteImageCommand = { imageId: id };
     return this.images.delete(command);
   }
+
+  @Patch(':id/metadata')
+  @ThrottleModify()
+  @Permissions('image:update')
+  @ApiOperation({
+    summary:
+      'Actualizar metadata de imagen (solo campos alt/title/description/entityId)',
+  })
+  @ApiParam({ name: 'id', description: 'UUID de la imagen' })
+  @ApiBody({ type: UpdateImageDto })
+  async updateMetadata(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateImageDto,
+  ) {
+    const command: UpdateImageCommand = {
+      imageId: id,
+      ...dto,
+      file: undefined,
+    };
+
+    return this.images.update(command);
+  }
 }

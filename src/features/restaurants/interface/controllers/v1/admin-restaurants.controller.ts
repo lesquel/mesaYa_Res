@@ -53,6 +53,7 @@ import type {
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
 import { RestaurantResponseSwaggerDto } from '@features/restaurants/interface/dto';
+import { UpdateRestaurantStatusRequestDto } from '@features/restaurants/interface/dto';
 
 @ApiTags('Restaurants - Admin')
 @Controller({ path: 'admin/restaurants', version: '1' })
@@ -138,6 +139,30 @@ export class AdminRestaurantsController {
       query.toQuery(),
     );
     return RestaurantAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Patch(':id/status')
+  @ThrottleModify()
+  @Permissions('restaurant:update')
+  @ApiOperation({
+    summary: 'Actualizar estado del restaurante (permiso restaurant:update)',
+  })
+  @ApiParam({ name: 'id', description: 'UUID del restaurante' })
+  @ApiBody({ type: UpdateRestaurantStatusRequestDto })
+  async updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateRestaurantStatusRequestDto,
+    @CurrentUser() user: { userId: string },
+  ) {
+    // Map to existing update command - only change allowed fields
+    const command = {
+      restaurantId: id,
+      ownerId: user.userId,
+      status: dto.status,
+      adminNote: dto.note,
+    } as any;
+
+    return this.restaurantsService.update(command);
   }
 
   @Patch(':id')
