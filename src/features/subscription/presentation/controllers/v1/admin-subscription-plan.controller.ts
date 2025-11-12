@@ -84,7 +84,10 @@ export class AdminSubscriptionPlanController {
     description: 'Listado paginado de planes de suscripción (admin)',
   })
   async listSubscriptionPlans(
-    @PaginationParams({ defaultRoute: '/admin/subscription-plans', allowExtraParams: true })
+    @PaginationParams({
+      defaultRoute: '/admin/subscription-plans',
+      allowExtraParams: true,
+    })
     params: PaginatedQueryParams,
   ) {
     const paginated = await this.subscriptionPlanService.findAll(params);
@@ -102,11 +105,16 @@ export class AdminSubscriptionPlanController {
   @Get(':subscriptionPlanId')
   @Permissions('subscription-plan:read')
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
-  @ApiOkResponse({ description: 'Subscription plan details', type: SubscriptionPlanResponseSwaggerDto })
+  @ApiOkResponse({
+    description: 'Subscription plan details',
+    type: SubscriptionPlanResponseSwaggerDto,
+  })
   async getSubscriptionPlanById(
     @Param('subscriptionPlanId', ParseUUIDPipe) subscriptionPlanId: string,
   ): Promise<{ data: SubscriptionPlanResponseDto }> {
-    const plan = await this.subscriptionPlanService.findById({ subscriptionPlanId });
+    const plan = await this.subscriptionPlanService.findById({
+      subscriptionPlanId,
+    });
     return { data: plan };
   }
 

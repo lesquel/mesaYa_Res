@@ -32,8 +32,7 @@ export class SubscriptionPlanAnalyticsRequestDto {
   startDate?: string;
 
   @ApiPropertyOptional({
-    description:
-      'Alias para startDate (acepta rangeStart en clientes legacy)',
+    description: 'Alias para startDate (acepta rangeStart en clientes legacy)',
   })
   @IsOptional()
   @IsDateString()
@@ -54,7 +53,7 @@ export class SubscriptionPlanAnalyticsRequestDto {
   rangeEnd?: string;
 
   @ApiPropertyOptional({
-    description: "Granularity for trend: day|week|month",
+    description: 'Granularity for trend: day|week|month',
     enum: ['day', 'week', 'month'],
   })
   @IsOptional()

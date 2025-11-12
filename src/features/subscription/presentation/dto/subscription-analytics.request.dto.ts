@@ -65,7 +65,7 @@ export class SubscriptionAnalyticsRequestDto {
   rangeEnd?: string;
 
   @ApiPropertyOptional({
-    description: "Granularity for trend: day|week|month",
+    description: 'Granularity for trend: day|week|month',
     enum: ['day', 'week', 'month'],
   })
   @IsOptional()
@@ -80,7 +80,9 @@ export class SubscriptionAnalyticsRequestDto {
     const startDate = rawStart
       ? this.parseDate(rawStart, false, 'startDate')
       : undefined;
-    const endDate = rawEnd ? this.parseDate(rawEnd, true, 'endDate') : undefined;
+    const endDate = rawEnd
+      ? this.parseDate(rawEnd, true, 'endDate')
+      : undefined;
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
       throw new BadRequestException(
