@@ -175,11 +175,43 @@ export class AuthController {
     model: AdminAuthUserResponseDto,
     description: 'Listado paginado de usuarios (admin view)',
   })
+  @ApiQuery({ name: 'role', required: false, type: String })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: String,
+    description:
+      'active|invited|suspended (mapped to active boolean where possible)',
+  })
+  @ApiQuery({ name: 'restaurantId', required: false, type: String })
   async listUsersAdmin(
-    @PaginationParams({ defaultRoute: '/auth/admin/users' })
+    @PaginationParams({
+      defaultRoute: '/auth/admin/users',
+      allowExtraParams: true,
+    })
     params: PaginatedQueryParams,
+    @Query() raw: Record<string, any>,
   ) {
-    const query = { ...params } as any;
+    // Map incoming query params to ListUsersQuery. The repository accepts `role`, `active` (boolean) and `restaurantId`.
+    const query: any = { ...params };
+    if (raw.role) query.role = raw.role;
+    if (raw.restaurantId) query.restaurantId = raw.restaurantId;
+    // Accept status synonyms and map to `active` where possible. If status is not mappable, omit and let repo return all.
+    const status = raw.status ?? raw.state ?? undefined;
+    if (typeof status === 'string') {
+      const s = status.toLowerCase();
+      if (s === 'active' || s === 'enabled') query.active = true;
+      else if (['invited', 'pending', 'suspended', 'disabled'].includes(s))
+        query.active = false;
+    }
+
+    // Also accept explicit active=true/false in query
+    if (raw.active !== undefined) {
+      if (raw.active === 'true' || raw.active === true) query.active = true;
+      else if (raw.active === 'false' || raw.active === false)
+        query.active = false;
+    }
+
     const paginated = await this.listUsersUseCase.execute(query);
     return {
       ...paginated,

@@ -4,4 +4,5 @@ export interface RestaurantAnalyticsQuery {
   readonly active?: boolean;
   readonly ownerId?: string;
   readonly subscriptionId?: string;
+  readonly granularity?: 'day' | 'week' | 'month';
 }

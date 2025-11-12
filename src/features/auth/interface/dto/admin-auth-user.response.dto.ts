@@ -17,8 +17,8 @@ export class AdminAuthUserResponseDto {
   @ApiProperty({ description: 'Active status' })
   active!: boolean;
 
-  @ApiProperty({ type: [String] })
-  roles!: string[];
+  @ApiProperty({ type: [Object], description: 'Roles with permissions' })
+  roles!: { name: string; permissions: string[] }[];
 
   static fromDomain(user: AuthUser): AdminAuthUserResponseDto {
     const dto = new AdminAuthUserResponseDto();
@@ -27,7 +27,10 @@ export class AdminAuthUserResponseDto {
     dto.name = user.name;
     dto.phone = user.phone;
     dto.active = user.active;
-    dto.roles = user.roles.map((r) => r.name);
+    dto.roles = user.roles.map((r) => ({
+      name: r.name,
+      permissions: r.permissions.map((p) => p.name),
+    }));
     return dto;
   }
 }

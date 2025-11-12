@@ -19,6 +19,10 @@ export class RestaurantAnalyticsRequestDto {
   @IsDateString()
   endDate?: string;
 
+  @ApiPropertyOptional({ description: 'Granularity for trend: day|week|month', enum: ['day', 'week', 'month'] })
+  @IsOptional()
+  granularity?: 'day' | 'week' | 'month';
+
   @ApiPropertyOptional({ description: 'Filtrar por estado activo' })
   @IsOptional()
   @IsBooleanString()
@@ -51,6 +55,17 @@ export class RestaurantAnalyticsRequestDto {
       );
     }
 
+    // enforce max range (365 days)
+    if (startDate && endDate) {
+      const diff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+      const MAX_RANGE_DAYS = 365;
+      if (diff > MAX_RANGE_DAYS) {
+        throw new BadRequestException(
+          `Rango máximo permitido es ${MAX_RANGE_DAYS} días.`,
+        );
+      }
+    }
+
     return {
       startDate,
       endDate,
@@ -60,6 +75,7 @@ export class RestaurantAnalyticsRequestDto {
           : undefined,
       ownerId: this.ownerId,
       subscriptionId: this.subscriptionId,
+      granularity: this.granularity ?? 'month',
     };
   }
 

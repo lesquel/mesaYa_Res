@@ -55,6 +55,18 @@ export class AuthAnalyticsResponseDto {
   @ApiProperty({ type: [AuthAnalyticsDistributionItemDto] })
   permissions: AuthAnalyticsDistributionItemDto[];
 
+  @ApiProperty({
+    type: [AuthAnalyticsDistributionItemDto],
+    description: 'Status breakdown (active/inactive)',
+  })
+  statuses?: AuthAnalyticsDistributionItemDto[];
+
+  @ApiProperty({
+    type: [AuthAnalyticsTrendPointDto],
+    description: 'Activity trend by date',
+  })
+  activity?: AuthAnalyticsTrendPointDto[];
+
   static fromApplication(
     response: AuthAnalyticsResponse,
   ): AuthAnalyticsResponseDto {
@@ -80,6 +92,15 @@ export class AuthAnalyticsResponseDto {
     dto.permissions = response.permissions.map((item) => ({
       label: item.label,
       count: item.count,
+    }));
+    // provide aliases for frontend: statuses and activity
+    dto.statuses = [
+      { label: 'active', count: response.summary.activeUsers },
+      { label: 'inactive', count: response.summary.inactiveUsers },
+    ];
+    dto.activity = response.registrations.byDate.map((point) => ({
+      date: point.date,
+      count: point.count,
     }));
     return dto;
   }

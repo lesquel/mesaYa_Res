@@ -38,7 +38,7 @@ import {
   type PaginatedReservationResponse,
 } from '@features/reservation/application/dto';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
-import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
+import { ApiListResponse } from '@shared/interface/swagger/decorators/api-list-response.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { ReservationResponseSwaggerDto } from '../../dto';
@@ -69,10 +69,7 @@ export class AdminReservationsController {
     summary: 'Listar reservas (permiso reservation:read) (Admin)',
   })
   @PaginatedEndpoint()
-  @ApiPaginatedResponse({
-    model: ReservationResponseSwaggerDto,
-    description: 'Listado paginado de reservas',
-  })
+  @ApiListResponse({ model: ReservationResponseSwaggerDto, description: 'Listado paginado de reservas' })
   @ApiQuery({ name: 'status', required: false, type: String })
   @ApiQuery({ name: 'restaurantId', required: false, type: String })
   @ApiQuery({
@@ -82,16 +79,26 @@ export class AdminReservationsController {
     description: 'Filter by date YYYY-MM-DD',
   })
   async findAll(
-    @PaginationParams({
-      defaultRoute: '/admin/reservations',
-      allowExtraParams: true,
-    })
+    @PaginationParams({ defaultRoute: '/admin/reservations', allowExtraParams: true })
     pagination: PaginatedQueryParams,
-  ): Promise<PaginatedReservationResponse> {
-    const query: ListReservationsQuery = { ...pagination } as any;
-    // pick possible filters from pagination.route payload - pagination decorator allowed extra params
-    // note: PaginationParams returns search and route; extra query params are handled in repository
-    return this.reservationsService.list(query);
+    @Query() raw: Record<string, any>,
+  ) {
+    const query: any = { ...pagination };
+    if (raw.status) query.status = raw.status;
+    if (raw.restaurantId) query.restaurantId = raw.restaurantId;
+    if (raw.date) query.date = raw.date;
+
+    const paginated = await this.reservationsService.list(query);
+
+    return {
+      data: paginated.results,
+      pagination: {
+        page: paginated.page,
+        pageSize: paginated.limit,
+        totalPages: paginated.pages,
+        totalItems: paginated.total,
+      },
+    };
   }
 
   @Post()
