@@ -42,11 +42,25 @@ services:
       timeout: 10s
       retries: 10
 
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./scripts/kafka:/opt/kafka-init:ro
+    entrypoint: ['/bin/bash', '/opt/kafka-init/create-topics.sh']
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    restart: 'no'
+
   app:
     build: .
     depends_on:
       kafka:
         condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:

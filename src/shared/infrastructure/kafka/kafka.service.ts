@@ -8,9 +8,11 @@ import {
   ServerKafka,
   Transport,
 } from '@nestjs/microservices';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { Kafka, Partitioners, logLevel } from 'kafkajs';
+import { firstValueFrom } from 'rxjs';
 import type { Observable } from 'rxjs';
 import type { KafkaConsumerMetadata } from './kafka.constants';
+import { KAFKA_TOPICS } from './kafka.topics';
 
 interface KafkaConsumerDefinition extends KafkaConsumerMetadata {
   handler: KafkaConsumerHandler;
@@ -36,6 +38,7 @@ export class KafkaService implements OnModuleDestroy {
   private readonly consumerDefinitions: KafkaConsumerDefinition[] = [];
   private readonly consumerServers = new Map<string, KafkaServerRef>();
   private consumersInitialized = false;
+  private brokerReadyPromise: Promise<void> | null = null;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -101,6 +104,8 @@ export class KafkaService implements OnModuleDestroy {
       return;
     }
 
+    await this.ensureBrokerReady();
+
     const grouped = this.groupConsumersByGroupId();
     const initializationTasks = Array.from(grouped.entries()).map(
       ([groupId, definitions]) =>
@@ -116,6 +121,8 @@ export class KafkaService implements OnModuleDestroy {
       return this.client;
     }
 
+    await this.ensureBrokerReady();
+
     const brokers = this.readBrokers();
     const clientId = this.configService.get<string>(
       'KAFKA_CLIENT_ID',
@@ -128,6 +135,7 @@ export class KafkaService implements OnModuleDestroy {
         client: { clientId, brokers },
         producer: {
           allowAutoTopicCreation: true,
+          createPartitioner: Partitioners.LegacyPartitioner,
         },
       },
     };
@@ -271,5 +279,77 @@ export class KafkaService implements OnModuleDestroy {
     );
     this.consumerServers.clear();
     this.logger.log('Kafka consumers stopped');
+  }
+
+  private async ensureBrokerReady(): Promise<void> {
+    if (this.brokerReadyPromise) {
+      return this.brokerReadyPromise;
+    }
+
+    this.brokerReadyPromise = this.waitForBrokerAndTopics();
+    return this.brokerReadyPromise;
+  }
+
+  private async waitForBrokerAndTopics(): Promise<void> {
+    const brokers = this.readBrokers();
+    const clientId = this.configService.get<string>('KAFKA_CLIENT_ID', 'mesa-ya');
+    const kafka = new Kafka({
+      clientId: `${clientId}-admin`,
+      brokers,
+      logLevel: logLevel.ERROR,
+    });
+    const admin = kafka.admin();
+    const maxAttempts = 5;
+    const backoffMs = 2000;
+    const requiredTopics = Object.values(KAFKA_TOPICS);
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        await admin.connect();
+
+        const metadata = await admin.fetchTopicMetadata();
+        const existingTopics = new Set(metadata.topics.map((topic) => topic.name));
+        const topicsToCreate = requiredTopics.filter(
+          (topic) => !existingTopics.has(topic),
+        );
+
+        if (topicsToCreate.length > 0) {
+          await admin.createTopics({
+            topics: topicsToCreate.map((topic) => ({
+              topic,
+              numPartitions: 1,
+              replicationFactor: 1,
+            })),
+            waitForLeaders: true,
+          });
+          this.logger.log(
+            `Kafka topics ensured: ${topicsToCreate.join(', ')}`,
+          );
+        }
+
+        await admin.disconnect();
+        return;
+      } catch (error) {
+        this.logger.warn(
+          `Kafka readiness check attempt ${attempt} failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        try {
+          await admin.disconnect();
+        } catch {
+          // ignore disconnect errors while retrying
+        }
+
+        if (attempt === maxAttempts) {
+          this.logger.error('Kafka broker not ready after retries');
+          throw error instanceof Error ? error : new Error(String(error));
+        }
+
+        await new Promise((resolve) =>
+          setTimeout(resolve, backoffMs * attempt),
+        );
+      }
+    }
   }
 }
