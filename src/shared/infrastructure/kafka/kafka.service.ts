@@ -292,7 +292,10 @@ export class KafkaService implements OnModuleDestroy {
 
   private async waitForBrokerAndTopics(): Promise<void> {
     const brokers = this.readBrokers();
-    const clientId = this.configService.get<string>('KAFKA_CLIENT_ID', 'mesa-ya');
+    const clientId = this.configService.get<string>(
+      'KAFKA_CLIENT_ID',
+      'mesa-ya',
+    );
     const kafka = new Kafka({
       clientId: `${clientId}-admin`,
       brokers,
@@ -308,7 +311,9 @@ export class KafkaService implements OnModuleDestroy {
         await admin.connect();
 
         const metadata = await admin.fetchTopicMetadata();
-        const existingTopics = new Set(metadata.topics.map((topic) => topic.name));
+        const existingTopics = new Set(
+          metadata.topics.map((topic) => topic.name),
+        );
         const topicsToCreate = requiredTopics.filter(
           (topic) => !existingTopics.has(topic),
         );
@@ -322,9 +327,7 @@ export class KafkaService implements OnModuleDestroy {
             })),
             waitForLeaders: true,
           });
-          this.logger.log(
-            `Kafka topics ensured: ${topicsToCreate.join(', ')}`,
-          );
+          this.logger.log(`Kafka topics ensured: ${topicsToCreate.join(', ')}`);
         }
 
         await admin.disconnect();
