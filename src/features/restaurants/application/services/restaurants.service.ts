@@ -12,6 +12,7 @@ import type {
   ListOwnerRestaurantsQuery,
   ListRestaurantsQuery,
   UpdateRestaurantCommand,
+  UpdateRestaurantStatusCommand,
   PaginatedRestaurantResponse,
   RestaurantResponseDto,
   DeleteRestaurantResponseDto,
@@ -24,6 +25,7 @@ import {
   ListOwnerRestaurantsUseCase,
   ListRestaurantsUseCase,
   UpdateRestaurantUseCase,
+  UpdateRestaurantStatusUseCase,
   ListRestaurantOwnersUseCase,
 } from '../use-cases/index';
 
@@ -35,6 +37,7 @@ export class RestaurantsService {
     private readonly listOwnerRestaurantsUseCase: ListOwnerRestaurantsUseCase,
     private readonly findRestaurantUseCase: FindRestaurantUseCase,
     private readonly updateRestaurantUseCase: UpdateRestaurantUseCase,
+    private readonly updateRestaurantStatusUseCase: UpdateRestaurantStatusUseCase,
     private readonly deleteRestaurantUseCase: DeleteRestaurantUseCase,
     private readonly listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
     @KafkaProducer() private readonly kafkaService: KafkaService,
@@ -98,6 +101,23 @@ export class RestaurantsService {
     command: UpdateRestaurantCommand,
   ): Promise<RestaurantResponseDto> {
     return this.updateRestaurantUseCase.execute(command);
+  }
+
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [UpdateRestaurantStatusCommand];
+      return {
+        action: 'restaurant.status.updated',
+        entity: toPlain(result),
+        performedBy: command.ownerId,
+      };
+    },
+  })
+  async updateStatus(
+    command: UpdateRestaurantStatusCommand,
+  ): Promise<RestaurantResponseDto> {
+    return this.updateRestaurantStatusUseCase.execute(command);
   }
 
   /**

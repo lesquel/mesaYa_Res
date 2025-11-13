@@ -9,39 +9,36 @@ export interface ApiPaginatedResponseOptions {
 const buildPaginationSchema = (model: Type<unknown>) => ({
   type: 'object',
   properties: {
-    results: {
+    data: {
       type: 'array',
       items: { $ref: getSchemaPath(model) },
     },
-    total: { type: 'number', example: 20 },
-    page: { type: 'number', example: 1 },
-    limit: { type: 'number', example: 10 },
-    offset: { type: 'number', example: 0 },
-    pages: { type: 'number', example: 2 },
-    hasNext: { type: 'boolean', example: false },
-    hasPrev: { type: 'boolean', example: false },
-    links: {
+    pagination: {
       type: 'object',
-      nullable: true,
       properties: {
-        self: { type: 'string', example: '/api/v1/resource?page=1' },
-        next: { type: 'string', nullable: true, example: null },
-        prev: { type: 'string', nullable: true, example: null },
-        first: { type: 'string', example: '/api/v1/resource?page=1' },
-        last: { type: 'string', example: '/api/v1/resource?page=2' },
+        page: { type: 'number', example: 1 },
+        pageSize: { type: 'number', example: 10 },
+        totalPages: { type: 'number', example: 2 },
+        totalItems: { type: 'number', example: 20 },
+        hasNext: { type: 'boolean', example: false },
+        hasPrev: { type: 'boolean', example: false },
+        offset: { type: 'number', example: 0 },
+        links: {
+          type: 'object',
+          nullable: true,
+          properties: {
+            self: { type: 'string', example: '/api/v1/resource?page=1' },
+            next: { type: 'string', nullable: true, example: null },
+            prev: { type: 'string', nullable: true, example: null },
+            first: { type: 'string', example: '/api/v1/resource?page=1' },
+            last: { type: 'string', example: '/api/v1/resource?page=2' },
+          },
+        },
       },
+      required: ['page', 'pageSize', 'totalPages', 'totalItems'],
     },
   },
-  required: [
-    'results',
-    'total',
-    'page',
-    'limit',
-    'offset',
-    'pages',
-    'hasNext',
-    'hasPrev',
-  ],
+  required: ['data', 'pagination'],
 });
 
 export const ApiPaginatedResponse = (

@@ -7,6 +7,8 @@ export interface RestaurantCreateRequest {
   location: string;
   openTime: string;
   closeTime: string;
+  status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote?: string | null;
   daysOpen: RestaurantDay[];
   totalCapacity: number;
   subscriptionId: string;
@@ -21,11 +23,20 @@ export interface RestaurantUpdateRequest {
   description?: string | null;
   location?: string;
   openTime?: string;
+  status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote?: string | null;
   closeTime?: string;
   daysOpen?: RestaurantDay[];
   totalCapacity?: number;
   subscriptionId?: string;
   imageId?: string | null;
+}
+
+export interface RestaurantStatusUpdateRequest {
+  restaurantId: string;
+  ownerId: string;
+  status: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote?: string | null;
 }
 
 export interface RestaurantDeleteRequest {

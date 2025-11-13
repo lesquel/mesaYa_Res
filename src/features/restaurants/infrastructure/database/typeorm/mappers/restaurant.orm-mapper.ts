@@ -32,6 +32,8 @@ export class RestaurantOrmMapper {
       subscriptionId: entity.subscriptionId,
       imageId: entity.imageId ?? null,
       active: entity.active,
+      status: (entity.status ?? (entity.active ? 'ACTIVE' : 'SUSPENDED')) as 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED',
+      adminNote: entity.adminNote ?? null,
       ownerId: entity.ownerId ?? entity.owner?.id ?? null,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
@@ -56,6 +58,8 @@ export class RestaurantOrmMapper {
     entity.subscriptionId = snapshot.subscriptionId;
     entity.imageId = snapshot.imageId ?? null;
     entity.active = snapshot.active;
+    entity.status = snapshot.status;
+    entity.adminNote = snapshot.adminNote ?? null;
     entity.ownerId = snapshot.ownerId ?? null;
     entity.owner = owner ?? null;
     entity.createdAt = snapshot.createdAt;

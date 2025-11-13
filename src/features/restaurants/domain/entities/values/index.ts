@@ -8,3 +8,5 @@ export * from './restaurant-name';
 export * from './restaurant-owner-id';
 export * from './restaurant-schedule';
 export * from './restaurant-subscription-id';
+export * from './restaurant-status';
+export * from './restaurant-admin-note';

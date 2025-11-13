@@ -31,6 +31,12 @@ export class RestaurantResponseSwaggerDto {
   @ApiProperty({ required: false, nullable: true, format: 'uuid' })
   imageId!: string | null;
 
+  @ApiProperty({ enum: ['ACTIVE', 'SUSPENDED', 'ARCHIVED'] })
+  status!: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+
+  @ApiProperty({ required: false, nullable: true, maxLength: 500 })
+  adminNote!: string | null;
+
   @ApiProperty()
   active!: boolean;
 

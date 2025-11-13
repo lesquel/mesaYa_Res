@@ -10,6 +10,7 @@ import {
   type RestaurantCreateRequest,
   type RestaurantDeleteRequest,
   type RestaurantUpdateRequest,
+  type RestaurantStatusUpdateRequest,
 } from '../types/restaurant-domain.types';
 import type { RestaurantUpdate } from '../types/restaurant-update.type';
 
@@ -37,6 +38,8 @@ export class RestaurantDomainService {
       subscriptionId: request.subscriptionId,
       imageId: request.imageId ?? null,
       active: request.active ?? true,
+      status: request.status,
+      adminNote: request.adminNote,
     });
 
     return this.restaurantRepository.save(restaurant);
@@ -60,9 +63,23 @@ export class RestaurantDomainService {
       totalCapacity: request.totalCapacity,
       subscriptionId: request.subscriptionId,
       imageId: request.imageId,
+      status: request.status,
+      adminNote: request.adminNote,
     };
 
     restaurant.update(updatePayload);
+
+    return this.restaurantRepository.save(restaurant);
+  }
+
+  async changeStatus(
+    request: RestaurantStatusUpdateRequest,
+  ): Promise<RestaurantEntity> {
+    const restaurant = await this.ensureRestaurant(request.restaurantId);
+    const ownerId = this.normalizeId(request.ownerId);
+    this.ensureOwnership(restaurant, ownerId);
+
+    restaurant.setStatus(request.status, request.adminNote);
 
     return this.restaurantRepository.save(restaurant);
   }

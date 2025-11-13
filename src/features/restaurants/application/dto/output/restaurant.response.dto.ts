@@ -11,6 +11,8 @@ export interface RestaurantResponseDto {
   totalCapacity: number;
   subscriptionId: string;
   imageId?: string | null;
+  status: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote?: string | null;
   active: boolean;
   ownerId: string | null;
   createdAt: Date;

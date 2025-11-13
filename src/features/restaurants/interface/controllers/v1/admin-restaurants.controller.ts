@@ -38,6 +38,7 @@ import {
   CreateRestaurantDto,
   DeleteRestaurantCommand,
   UpdateRestaurantCommand,
+  UpdateRestaurantStatusCommand,
   UpdateRestaurantDto,
   RestaurantsService,
   GetRestaurantAnalyticsUseCase,
@@ -153,16 +154,15 @@ export class AdminRestaurantsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateRestaurantStatusRequestDto,
     @CurrentUser() user: { userId: string },
-  ) {
-    // Map to existing update command - only change allowed fields
-    const command = {
+  ): Promise<RestaurantResponseDto> {
+    const command: UpdateRestaurantStatusCommand = {
       restaurantId: id,
       ownerId: user.userId,
-      status: dto.status,
-      adminNote: dto.note,
-    } as any;
+      status: dto.status as UpdateRestaurantStatusCommand['status'],
+      adminNote: dto.adminNote,
+    };
 
-    return this.restaurantsService.update(command);
+    return this.restaurantsService.updateStatus(command);
   }
 
   @Patch(':id')

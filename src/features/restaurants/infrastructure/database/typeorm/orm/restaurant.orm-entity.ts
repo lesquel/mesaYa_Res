@@ -46,6 +46,12 @@ export class RestaurantOrmEntity {
   @Column({ type: 'boolean', name: 'active', nullable: false })
   active: boolean;
 
+  @Column({ type: 'varchar', length: 20, name: 'status', nullable: false, default: 'ACTIVE' })
+  status: string;
+
+  @Column({ type: 'varchar', length: 500, name: 'admin_note', nullable: true })
+  adminNote?: string | null;
+
   @Column({ type: 'uuid', name: 'owner_id', nullable: true })
   ownerId: string | null;
 

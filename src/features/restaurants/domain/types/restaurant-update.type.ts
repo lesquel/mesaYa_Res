@@ -11,4 +11,6 @@ export interface RestaurantUpdate {
   totalCapacity?: number;
   subscriptionId?: string;
   imageId?: string | null;
+  status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote?: string | null;
 }

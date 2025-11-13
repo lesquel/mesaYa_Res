@@ -11,6 +11,8 @@ export interface RestaurantCreate {
   subscriptionId: string;
   imageId?: string | null;
   active?: boolean;
+  status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote?: string | null;
   ownerId: string;
   createdAt?: Date;
   updatedAt?: Date;

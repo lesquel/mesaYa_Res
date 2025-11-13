@@ -15,6 +15,8 @@ export class RestaurantMapper {
       totalCapacity: snapshot.totalCapacity,
       subscriptionId: snapshot.subscriptionId,
       imageId: snapshot.imageId,
+      status: snapshot.status,
+      adminNote: snapshot.adminNote,
       active: snapshot.active,
       ownerId: snapshot.ownerId,
       createdAt: snapshot.createdAt,

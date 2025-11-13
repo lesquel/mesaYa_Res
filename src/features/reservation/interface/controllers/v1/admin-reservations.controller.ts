@@ -87,24 +87,23 @@ export class AdminReservationsController {
       allowExtraParams: true,
     })
     pagination: PaginatedQueryParams,
-    @Query() raw: Record<string, any>,
-  ) {
-    const query: any = { ...pagination };
-    if (raw.status) query.status = raw.status;
-    if (raw.restaurantId) query.restaurantId = raw.restaurantId;
-    if (raw.date) query.date = raw.date;
+    @Query() raw: Record<string, unknown>,
+  ): Promise<PaginatedReservationResponse> {
+    const query: ListReservationsQuery = { ...pagination };
 
-    const paginated = await this.reservationsService.list(query);
+    if (typeof raw.status === 'string') {
+      query.status = raw.status as ListReservationsQuery['status'];
+    }
 
-    return {
-      data: paginated.results,
-      pagination: {
-        page: paginated.page,
-        pageSize: paginated.limit,
-        totalPages: paginated.pages,
-        totalItems: paginated.total,
-      },
-    };
+    if (typeof raw.restaurantId === 'string') {
+      query.restaurantId = raw.restaurantId;
+    }
+
+    if (typeof raw.date === 'string') {
+      query.date = raw.date;
+    }
+
+    return this.reservationsService.list(query);
   }
 
   @Post()

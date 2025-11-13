@@ -12,6 +12,8 @@ export interface RestaurantSnapshot {
   subscriptionId: string;
   imageId: string | null;
   active: boolean;
+  status: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
+  adminNote: string | null;
   ownerId: string | null;
   createdAt: Date;
   updatedAt: Date;

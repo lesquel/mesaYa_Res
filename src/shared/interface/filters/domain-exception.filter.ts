@@ -84,10 +84,19 @@ export class DomainExceptionFilter implements ExceptionFilter {
   ): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
     const body = exception.getResponse();
+    const normalized = this.normalizeHttpExceptionPayload(body, exception);
 
-    response.status(status).json(body);
+    response.status(status).json({
+      statusCode: status,
+      message: normalized.message,
+      error: normalized.error,
+      details: normalized.details,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+    });
   }
 
   private respondFromDomainError(
@@ -150,5 +159,47 @@ export class DomainExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: request.url,
     });
+  }
+
+  private normalizeHttpExceptionPayload(
+    body: unknown,
+    exception: HttpException,
+  ): { message: string; error: string; details?: unknown } {
+    let message = exception.message ?? 'Unexpected error';
+    let error = exception.name ?? 'HttpException';
+    let details: unknown;
+
+    if (typeof body === 'string') {
+      message = body;
+    } else if (body && typeof body === 'object') {
+      const payload = body as Record<string, unknown>;
+
+      if (typeof payload.message === 'string') {
+        message = payload.message;
+      } else if (Array.isArray(payload.message)) {
+        message = 'Validation failed';
+        details = { issues: payload.message };
+      } else if (payload.message && typeof payload.message === 'object') {
+        message = 'Validation failed';
+        details = payload.message;
+      }
+
+      if (typeof payload.error === 'string') {
+        error = payload.error;
+      }
+
+      if (payload.details !== undefined && details === undefined) {
+        details = payload.details;
+      }
+
+      if (details === undefined) {
+        const { statusCode, message: _, error: __, ...rest } = payload;
+        if (Object.keys(rest).length > 0) {
+          details = rest;
+        }
+      }
+    }
+
+    return { message, error, details };
   }
 }

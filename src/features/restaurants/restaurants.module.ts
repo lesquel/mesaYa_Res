@@ -19,6 +19,7 @@ import {
   ListRestaurantOwnersUseCase,
   FindRestaurantUseCase,
   UpdateRestaurantUseCase,
+  UpdateRestaurantStatusUseCase,
   DeleteRestaurantUseCase,
   RestaurantsService,
   OWNER_READER,
@@ -110,6 +111,12 @@ import type {
       inject: [RestaurantDomainService],
     },
     {
+      provide: UpdateRestaurantStatusUseCase,
+      useFactory: (restaurantDomainService: RestaurantDomainService) =>
+        new UpdateRestaurantStatusUseCase(restaurantDomainService),
+      inject: [RestaurantDomainService],
+    },
+    {
       provide: DeleteRestaurantUseCase,
       useFactory: (restaurantDomainService: RestaurantDomainService) =>
         new DeleteRestaurantUseCase(restaurantDomainService),
@@ -123,6 +130,7 @@ import type {
         listOwnerRestaurantsUseCase: ListOwnerRestaurantsUseCase,
         findRestaurantUseCase: FindRestaurantUseCase,
         updateRestaurantUseCase: UpdateRestaurantUseCase,
+        updateRestaurantStatusUseCase: UpdateRestaurantStatusUseCase,
         deleteRestaurantUseCase: DeleteRestaurantUseCase,
         listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
         kafkaService: KafkaService,
@@ -133,6 +141,7 @@ import type {
           listOwnerRestaurantsUseCase,
           findRestaurantUseCase,
           updateRestaurantUseCase,
+          updateRestaurantStatusUseCase,
           deleteRestaurantUseCase,
           listRestaurantOwnersUseCase,
           kafkaService,
@@ -143,6 +152,7 @@ import type {
         ListOwnerRestaurantsUseCase,
         FindRestaurantUseCase,
         UpdateRestaurantUseCase,
+        UpdateRestaurantStatusUseCase,
         DeleteRestaurantUseCase,
         ListRestaurantOwnersUseCase,
         KafkaService,
@@ -162,6 +172,7 @@ import type {
     ListRestaurantOwnersUseCase,
     FindRestaurantUseCase,
     UpdateRestaurantUseCase,
+    UpdateRestaurantStatusUseCase,
     DeleteRestaurantUseCase,
     RestaurantsService,
     GetRestaurantAnalyticsUseCase,

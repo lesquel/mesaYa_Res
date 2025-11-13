@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export enum RestaurantStatusEnum {
-  DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
   SUSPENDED = 'SUSPENDED',
   ARCHIVED = 'ARCHIVED',
@@ -19,6 +18,6 @@ export class UpdateRestaurantStatusRequestDto {
   })
   @IsOptional()
   @IsString()
-  @MaxLength(250)
-  note?: string;
+  @MaxLength(500)
+  adminNote?: string;
 }

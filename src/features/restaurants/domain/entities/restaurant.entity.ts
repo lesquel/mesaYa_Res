@@ -9,6 +9,9 @@ import {
   RestaurantOwnerId,
   RestaurantSchedule,
   RestaurantSubscriptionId,
+  RestaurantStatus,
+  type RestaurantStatusValue,
+  RestaurantAdminNote,
   type RestaurantDay,
 } from './values/index';
 import {
@@ -26,6 +29,8 @@ interface RestaurantProps {
   totalCapacity: RestaurantCapacity;
   subscriptionId: RestaurantSubscriptionId;
   imageId: RestaurantImageId;
+  status: RestaurantStatus;
+  adminNote: RestaurantAdminNote;
   active: boolean;
   ownerId: RestaurantOwnerId | null;
   createdAt: Date;
@@ -43,6 +48,9 @@ export class RestaurantEntity {
     id: string = randomUUID(),
   ): RestaurantEntity {
     const now = new Date();
+    const status = RestaurantStatus.create(
+      props.status ?? (props.active === false ? 'SUSPENDED' : 'ACTIVE'),
+    );
 
     const aggregated: RestaurantProps = {
       name: new RestaurantName(props.name),
@@ -53,7 +61,9 @@ export class RestaurantEntity {
       totalCapacity: new RestaurantCapacity(props.totalCapacity),
       subscriptionId: new RestaurantSubscriptionId(props.subscriptionId),
       imageId: RestaurantImageId.create(props.imageId ?? null),
-      active: props.active ?? true,
+      status,
+      adminNote: RestaurantAdminNote.create(props.adminNote ?? null),
+      active: status.isActive(),
       ownerId: RestaurantOwnerId.create(props.ownerId),
       createdAt: props.createdAt ?? now,
       updatedAt: props.updatedAt ?? now,
@@ -72,6 +82,10 @@ export class RestaurantEntity {
       totalCapacity: new RestaurantCapacity(snapshot.totalCapacity),
       subscriptionId: new RestaurantSubscriptionId(snapshot.subscriptionId),
       imageId: RestaurantImageId.create(snapshot.imageId),
+      status: RestaurantStatus.create(
+        snapshot.status ?? (snapshot.active ? 'ACTIVE' : 'SUSPENDED'),
+      ),
+      adminNote: RestaurantAdminNote.create(snapshot.adminNote ?? null),
       active: snapshot.active,
       ownerId: RestaurantOwnerId.fromNullable(snapshot.ownerId),
       createdAt: snapshot.createdAt,
@@ -119,6 +133,14 @@ export class RestaurantEntity {
 
   get imageId(): string | null {
     return this.props.imageId.value;
+  }
+
+  get status(): RestaurantStatusValue {
+    return this.props.status.value;
+  }
+
+  get adminNote(): string | null {
+    return this.props.adminNote.value;
   }
 
   get active(): boolean {
@@ -175,10 +197,21 @@ export class RestaurantEntity {
         data.imageId !== undefined
           ? RestaurantImageId.create(data.imageId)
           : this.props.imageId,
+      status:
+        data.status !== undefined
+          ? RestaurantStatus.create(data.status)
+          : this.props.status,
+      adminNote:
+        data.adminNote !== undefined
+          ? RestaurantAdminNote.create(data.adminNote)
+          : this.props.adminNote,
       updatedAt: new Date(),
     };
 
-    this.props = nextProps;
+    this.props = {
+      ...nextProps,
+      active: nextProps.status.isActive(),
+    };
   }
 
   deactivate(): void {
@@ -189,6 +222,7 @@ export class RestaurantEntity {
     this.props = {
       ...this.props,
       active: false,
+      status: this.props.status.suspend(),
       updatedAt: new Date(),
     };
   }
@@ -201,6 +235,29 @@ export class RestaurantEntity {
     this.props = {
       ...this.props,
       active: true,
+      status: this.props.status.activate(),
+      updatedAt: new Date(),
+    };
+  }
+
+  setStatus(status: RestaurantStatusValue, adminNote?: string | null): void {
+    const nextStatus = RestaurantStatus.create(status);
+
+    this.props = {
+      ...this.props,
+      status: nextStatus,
+      adminNote: RestaurantAdminNote.create(adminNote ?? null),
+      active: nextStatus.isActive(),
+      updatedAt: new Date(),
+    };
+  }
+
+  archive(): void {
+    this.props = {
+      ...this.props,
+      status: this.props.status.archive(),
+      adminNote: this.props.adminNote,
+      active: false,
       updatedAt: new Date(),
     };
   }
@@ -228,6 +285,8 @@ export class RestaurantEntity {
       subscriptionId: this.props.subscriptionId.value,
       imageId: this.props.imageId.value,
       active: this.props.active,
+      status: this.props.status.value,
+      adminNote: this.props.adminNote.value,
       ownerId: this.props.ownerId?.value ?? null,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,

@@ -10,6 +10,7 @@ import {
   configureGlobalPipes,
   configureLogger,
   configureFilters,
+  configureInterceptors,
 } from '@shared/core/config';
 
 export function configureApp(app: INestApplication) {
@@ -27,6 +28,7 @@ export function configureApp(app: INestApplication) {
   configureCors(app, configService);
   configureGlobalPipes(app);
   configureLogger(app);
+  configureInterceptors(app);
   if (configService.get<string>('NODE_ENV') !== 'production') {
     configureFilters(app);
   }
