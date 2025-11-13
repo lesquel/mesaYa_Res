@@ -32,7 +32,10 @@ export class RestaurantOrmMapper {
       subscriptionId: entity.subscriptionId,
       imageId: entity.imageId ?? null,
       active: entity.active,
-      status: (entity.status ?? (entity.active ? 'ACTIVE' : 'SUSPENDED')) as 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED',
+      status: (entity.status ?? (entity.active ? 'ACTIVE' : 'SUSPENDED')) as
+        | 'ACTIVE'
+        | 'SUSPENDED'
+        | 'ARCHIVED',
       adminNote: entity.adminNote ?? null,
       ownerId: entity.ownerId ?? entity.owner?.id ?? null,
       createdAt: entity.createdAt,

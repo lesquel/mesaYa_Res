@@ -168,4 +168,8 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
     return (
       value !== null &&
       typeof value === 'object' &&
-      typeof (value as any).
+      typeof (value as any).pipe === 'function' &&
+      typeof (value as any).on === 'function'
+    );
+  }
+}
