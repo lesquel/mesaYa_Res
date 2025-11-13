@@ -39,6 +39,7 @@ export class KafkaService implements OnModuleDestroy {
   private readonly consumerServers = new Map<string, KafkaServerRef>();
   private consumersInitialized = false;
   private brokerReadyPromise: Promise<void> | null = null;
+  private effectiveBrokers: string[] | null = null;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -123,7 +124,7 @@ export class KafkaService implements OnModuleDestroy {
 
     await this.ensureBrokerReady();
 
-    const brokers = this.readBrokers();
+    const brokers = this.effectiveBrokers ?? this.readBrokers();
     const clientId = this.configService.get<string>(
       'KAFKA_CLIENT_ID',
       'mesa-ya',
@@ -172,7 +173,9 @@ export class KafkaService implements OnModuleDestroy {
   }
 
   private readBrokers(): string[] {
-    const brokers = this.configService.get<string>('KAFKA_BROKER');
+    const brokers =
+      this.configService.get<string>('KAFKA_BROKERS') ||
+      this.configService.get<string>('KAFKA_BROKER');
     if (!brokers) {
       throw new Error('KAFKA_BROKER is not defined');
     }
@@ -291,68 +294,99 @@ export class KafkaService implements OnModuleDestroy {
   }
 
   private async waitForBrokerAndTopics(): Promise<void> {
-    const brokers = this.readBrokers();
+    const configured = this.readBrokers();
     const clientId = this.configService.get<string>(
       'KAFKA_CLIENT_ID',
       'mesa-ya',
     );
-    const kafka = new Kafka({
-      clientId: `${clientId}-admin`,
-      brokers,
-      logLevel: logLevel.ERROR,
-    });
-    const admin = kafka.admin();
-    const maxAttempts = 5;
+
+    // Candidate broker lists: try configured brokers first, then common
+    // fallbacks that are reachable from inside Docker containers.
+    const candidates: string[][] = [configured];
+
+    const internalKafka = 'kafka:9092';
+    const localhost9092 = 'localhost:9092';
+
+    if (!configured.includes(internalKafka)) {
+      candidates.push([internalKafka]);
+    }
+    if (!configured.includes(localhost9092)) {
+      candidates.push([localhost9092]);
+    }
+
+    const maxAttemptsPerCandidate = 3;
     const backoffMs = 2000;
     const requiredTopics = Object.values(KAFKA_TOPICS);
 
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        await admin.connect();
-
-        const metadata = await admin.fetchTopicMetadata();
-        const existingTopics = new Set(
-          metadata.topics.map((topic) => topic.name),
-        );
-        const topicsToCreate = requiredTopics.filter(
-          (topic) => !existingTopics.has(topic),
-        );
-
-        if (topicsToCreate.length > 0) {
-          await admin.createTopics({
-            topics: topicsToCreate.map((topic) => ({
-              topic,
-              numPartitions: 1,
-              replicationFactor: 1,
-            })),
-            waitForLeaders: true,
-          });
-          this.logger.log(`Kafka topics ensured: ${topicsToCreate.join(', ')}`);
-        }
-
-        await admin.disconnect();
-        return;
-      } catch (error) {
-        this.logger.warn(
-          `Kafka readiness check attempt ${attempt} failed: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
+    for (const brokers of candidates) {
+      for (let attempt = 1; attempt <= maxAttemptsPerCandidate; attempt++) {
+        const kafka = new Kafka({
+          clientId: `${clientId}-admin`,
+          brokers,
+          logLevel: logLevel.ERROR,
+        });
+        const admin = kafka.admin();
         try {
+          this.logger.log(
+            `Attempting Kafka admin connect (brokers=${brokers.join(',')}) attempt=${attempt}`,
+          );
+          await admin.connect();
+
+          const metadata = await admin.fetchTopicMetadata();
+          const existingTopics = new Set(
+            metadata.topics.map((topic) => topic.name),
+          );
+          const topicsToCreate = requiredTopics.filter(
+            (topic) => !existingTopics.has(topic),
+          );
+
+          if (topicsToCreate.length > 0) {
+            await admin.createTopics({
+              topics: topicsToCreate.map((topic) => ({
+                topic,
+                numPartitions: 1,
+                replicationFactor: 1,
+              })),
+              waitForLeaders: true,
+            });
+            this.logger.log(
+              `Kafka topics ensured: ${topicsToCreate.join(', ')}`,
+            );
+          }
+
           await admin.disconnect();
-        } catch {
-          // ignore disconnect errors while retrying
-        }
 
-        if (attempt === maxAttempts) {
-          this.logger.error('Kafka broker not ready after retries');
-          throw error instanceof Error ? error : new Error(String(error));
-        }
+          // Persist the successful brokers so producer/consumer use same list.
+          this.effectiveBrokers = brokers;
+          this.logger.log(`Kafka broker ready (brokers=${brokers.join(',')})`);
+          return;
+        } catch (error) {
+          this.logger.warn(
+            `Kafka readiness check failed for brokers=${brokers.join(',')} attempt=${attempt}: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+          try {
+            await admin.disconnect();
+          } catch {
+            // ignore
+          }
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, backoffMs * attempt),
-        );
+          if (attempt === maxAttemptsPerCandidate) {
+            this.logger.warn(
+              `Exhausted attempts for brokers=${brokers.join(',')}, trying next candidate if any...`,
+            );
+            break; // move to next candidate brokers set
+          }
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, backoffMs * attempt),
+          );
+        }
       }
     }
+
+    this.logger.error('Kafka broker not ready after all fallback attempts');
+    throw new Error('Kafka broker not ready after retries');
   }
 }
