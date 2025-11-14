@@ -31,7 +31,14 @@ export class RestaurantScheduleExceptionRepository {
     return saved as unknown as ScheduleExceptionRecord;
   }
 
-  async update(id: string, data: Partial<{ startDate: string; endDate: string; reason?: string | null }>): Promise<ScheduleExceptionRecord | null> {
+  async update(
+    id: string,
+    data: Partial<{
+      startDate: string;
+      endDate: string;
+      reason?: string | null;
+    }>,
+  ): Promise<ScheduleExceptionRecord | null> {
     await this.repo.update({ id }, data as any);
     return this.findById(id);
   }
@@ -45,15 +52,29 @@ export class RestaurantScheduleExceptionRepository {
     return r ? (r as unknown as ScheduleExceptionRecord) : null;
   }
 
-  async listByRestaurant(restaurantId: string): Promise<ScheduleExceptionRecord[]> {
-    const rows = await this.repo.find({ where: { restaurantId }, order: { startDate: 'ASC' } });
+  async listByRestaurant(
+    restaurantId: string,
+  ): Promise<ScheduleExceptionRecord[]> {
+    const rows = await this.repo.find({
+      where: { restaurantId },
+      order: { startDate: 'ASC' },
+    });
     return rows as unknown as ScheduleExceptionRecord[];
   }
 
-  async findOverlapping(restaurantId: string, startDate: string, endDate: string, excludeId?: string): Promise<ScheduleExceptionRecord[]> {
-    const qb = this.repo.createQueryBuilder('e')
+  async findOverlapping(
+    restaurantId: string,
+    startDate: string,
+    endDate: string,
+    excludeId?: string,
+  ): Promise<ScheduleExceptionRecord[]> {
+    const qb = this.repo
+      .createQueryBuilder('e')
       .where('e.restaurant_id = :restaurantId', { restaurantId })
-      .andWhere('NOT (e.end_date < :startDate OR e.start_date > :endDate)', { startDate, endDate });
+      .andWhere('NOT (e.end_date < :startDate OR e.start_date > :endDate)', {
+        startDate,
+        endDate,
+      });
 
     if (excludeId) {
       qb.andWhere('e.id != :excludeId', { excludeId });

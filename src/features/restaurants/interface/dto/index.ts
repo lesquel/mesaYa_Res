@@ -2,3 +2,6 @@ export * from './restaurant-analytics.request.dto';
 export * from './restaurant-analytics.response.dto';
 export * from './restaurant-response.swagger-dto';
 export * from './update-restaurant-status.request.dto';
+export * from './create-schedule-exception.dto';
+export * from './update-schedule-exception.dto';
+export * from './schedule-exception.response.dto';

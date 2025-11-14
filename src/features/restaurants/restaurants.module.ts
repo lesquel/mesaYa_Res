@@ -46,6 +46,8 @@ import type {
     AdminRestaurantsController,
     PublicRestaurantsController,
     RestaurantRestaurantsController,
+    // restaurant schedule exceptions controller (owner)
+    // will be imported from interface barrel via next line
   ],
   providers: [
     RestaurantTypeOrmRepository,
@@ -163,6 +165,7 @@ import type {
         KafkaService,
       ],
     },
+    RestaurantScheduleService,
     {
       provide: GetRestaurantAnalyticsUseCase,
       useFactory: (analyticsRepository: RestaurantAnalyticsRepositoryPort) =>
