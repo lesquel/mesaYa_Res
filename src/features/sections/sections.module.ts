@@ -43,7 +43,11 @@ import {
     TypeOrmModule.forFeature([SectionOrmEntity, RestaurantOrmEntity]),
     AuthModule,
   ],
-  controllers: [AdminSectionsController, PublicSectionsController, RestaurantSectionsController],
+  controllers: [
+    AdminSectionsController,
+    PublicSectionsController,
+    RestaurantSectionsController,
+  ],
   providers: [
     SectionTypeOrmRepository,
     RestaurantTypeOrmSectionProvider,

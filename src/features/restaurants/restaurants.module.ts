@@ -42,7 +42,11 @@ import type {
     TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity]),
     AuthModule,
   ],
-  controllers: [AdminRestaurantsController, PublicRestaurantsController, RestaurantRestaurantsController],
+  controllers: [
+    AdminRestaurantsController,
+    PublicRestaurantsController,
+    RestaurantRestaurantsController,
+  ],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,

@@ -23,7 +23,10 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
-import { CurrentUser, type CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
 import {
   CreateSectionDto,
   SectionsService,
@@ -64,7 +67,9 @@ export class RestaurantSectionsController {
 
   @Get('analytics')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Indicadores analíticos de secciones (propietario)' })
+  @ApiOperation({
+    summary: 'Indicadores analíticos de secciones (propietario)',
+  })
   async analytics(
     @Query() query: SectionAnalyticsRequestDto,
     @CurrentUser() user: CurrentUserPayload,
@@ -86,7 +91,10 @@ export class RestaurantSectionsController {
     @CurrentUser() user: CurrentUserPayload,
   ) {
     const pagination = { ...query, restaurantId };
-    return this.sectionsService.listByRestaurantForOwner(pagination, user.userId);
+    return this.sectionsService.listByRestaurantForOwner(
+      pagination,
+      user.userId,
+    );
   }
 
   @Get(':id')

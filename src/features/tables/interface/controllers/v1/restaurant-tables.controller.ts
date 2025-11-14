@@ -23,9 +23,15 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
-import { CurrentUser, type CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
 import { TablesService } from '@features/tables/application/services';
-import { CreateTableDto, UpdateTableDto } from '@features/tables/application/dto';
+import {
+  CreateTableDto,
+  UpdateTableDto,
+} from '@features/tables/application/dto';
 import type {
   CreateTableCommand,
   DeleteTableCommand,
@@ -33,7 +39,10 @@ import type {
   TableResponseDto,
   DeleteTableResponseDto,
 } from '@features/tables/application/dto';
-import { TableAnalyticsRequestDto, TableAnalyticsResponseDto } from '@features/tables/interface/dto';
+import {
+  TableAnalyticsRequestDto,
+  TableAnalyticsResponseDto,
+} from '@features/tables/interface/dto';
 
 @ApiTags('Tables - Restaurant')
 @Controller({ path: 'restaurant/tables', version: '1' })
@@ -73,7 +82,11 @@ export class RestaurantTablesController {
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({ summary: 'Listar mesas por sección (propietario)' })
   @ApiParam({ name: 'sectionId', description: 'UUID de la sección' })
-  async listBySection(@Param('sectionId', ParseUUIDPipe) sectionId: string, @Query() query: any, @CurrentUser() user: CurrentUserPayload) {
+  async listBySection(
+    @Param('sectionId', ParseUUIDPipe) sectionId: string,
+    @Query() query: any,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     const pagination = { ...query, sectionId };
     return this.tablesService.listSectionForOwner(pagination, user.userId);
   }
@@ -83,7 +96,10 @@ export class RestaurantTablesController {
   @ApiOperation({ summary: 'Obtener mesa por ID (propietario)' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   @ApiOkResponse({ description: 'Mesa encontrada' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: CurrentUserPayload): Promise<TableResponseDto> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<TableResponseDto> {
     return this.tablesService.findOneForOwner({ tableId: id }, user.userId);
   }
 
@@ -92,7 +108,11 @@ export class RestaurantTablesController {
   @ApiOperation({ summary: 'Actualizar mesa (propietario)' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   @ApiBody({ type: UpdateTableDto })
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateTableDto, @CurrentUser() user: CurrentUserPayload): Promise<TableResponseDto> {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateTableDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<TableResponseDto> {
     const command: UpdateTableCommand = { ...dto, tableId: id };
     return this.tablesService.updateForOwner(command, user.userId);
   }
@@ -101,7 +121,10 @@ export class RestaurantTablesController {
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({ summary: 'Eliminar mesa (propietario)' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
-  async remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: CurrentUserPayload): Promise<DeleteTableResponseDto> {
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<DeleteTableResponseDto> {
     const command: DeleteTableCommand = { tableId: id };
     return this.tablesService.deleteForOwner(command, user.userId);
   }

@@ -52,7 +52,11 @@ import {
     ]),
     AuthModule,
   ],
-  controllers: [AdminTablesController, PublicTablesController, RestaurantTablesController],
+  controllers: [
+    AdminTablesController,
+    PublicTablesController,
+    RestaurantTablesController,
+  ],
   providers: [
     TableTypeOrmRepository,
     SectionTypeOrmTableProvider,
