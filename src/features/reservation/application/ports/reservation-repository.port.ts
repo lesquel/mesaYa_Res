@@ -1,5 +1,9 @@
 import { ReservationEntity } from '../../domain/entities/reservation.entity';
-import { ListReservationsQuery, ListRestaurantReservationsQuery } from '../dto';
+import {
+  ListReservationsQuery,
+  ListRestaurantReservationsQuery,
+  ListOwnerReservationsQuery,
+} from '../dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 
 export const RESERVATION_REPOSITORY = Symbol('RESERVATION_REPOSITORY');
@@ -13,5 +17,8 @@ export interface ReservationRepositoryPort {
   ): Promise<PaginatedResult<ReservationEntity>>;
   paginateByRestaurant(
     query: ListRestaurantReservationsQuery,
+  ): Promise<PaginatedResult<ReservationEntity>>;
+  paginateByOwner(
+    query: ListOwnerReservationsQuery,
   ): Promise<PaginatedResult<ReservationEntity>>;
 }

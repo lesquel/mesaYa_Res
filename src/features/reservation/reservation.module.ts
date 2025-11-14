@@ -5,6 +5,7 @@ import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/en
 import {
   AdminReservationsController,
   PublicReservationsController,
+  RestaurantReservationsController,
 } from './interface';
 import {
   ReservationOrmEntity,
@@ -18,6 +19,7 @@ import {
   CreateReservationUseCase,
   ListReservationsUseCase,
   ListRestaurantReservationsUseCase,
+  ListOwnerReservationsUseCase,
   FindReservationUseCase,
   UpdateReservationUseCase,
   DeleteReservatioUseCase,
@@ -27,6 +29,7 @@ import {
   RESERVATION_EVENT_PUBLISHER,
   RESERVATION_ANALYTICS_REPOSITORY,
   GetReservationAnalyticsUseCase,
+  ReservationOwnerAccessService,
 } from './application';
 import { RestaurantOrmEntity } from '../restaurants';
 import { ReservationService } from './application';
@@ -52,7 +55,11 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     ]),
     AuthModule,
   ],
-  controllers: [AdminReservationsController, PublicReservationsController],
+  controllers: [
+    AdminReservationsController,
+    PublicReservationsController,
+    RestaurantReservationsController,
+  ],
   providers: [
     ReservationTypeOrmRepository,
     ReservationAnalyticsTypeOrmRepository,
@@ -60,6 +67,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     UserTypeOrmReservationProvider,
     TableTypeOrmReservationProvider,
     ReservationEventNoopProvider,
+    ReservationOwnerAccessService,
     {
       provide: RESERVATION_REPOSITORY,
       useExisting: ReservationTypeOrmRepository,
@@ -121,6 +129,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     CreateReservationUseCase,
     ListReservationsUseCase,
     ListRestaurantReservationsUseCase,
+    ListOwnerReservationsUseCase,
     FindReservationUseCase,
     UpdateReservationUseCase,
     DeleteReservatioUseCase,
@@ -130,6 +139,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     CreateReservationUseCase,
     ListReservationsUseCase,
     ListRestaurantReservationsUseCase,
+    ListOwnerReservationsUseCase,
     FindReservationUseCase,
     UpdateReservationUseCase,
     DeleteReservatioUseCase,

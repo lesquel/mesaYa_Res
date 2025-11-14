@@ -11,6 +11,7 @@ import {
 import {
   ListReservationsQuery,
   ListRestaurantReservationsQuery,
+  ListOwnerReservationsQuery,
 } from '../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
@@ -135,6 +136,22 @@ export class ReservationTypeOrmRepository
     const qb = this.buildBaseQuery().where('restaurant.id = :restaurantId', {
       restaurantId: query.restaurantId,
     });
+    return this.executePagination(qb, query);
+  }
+
+  async paginateByOwner(
+    query: ListOwnerReservationsQuery,
+  ): Promise<PaginatedResult<ReservationEntity>> {
+    const qb = this.buildBaseQuery().where('restaurant.ownerId = :ownerId', {
+      ownerId: query.ownerId,
+    });
+
+    if (query.restaurantId) {
+      qb.andWhere('restaurant.id = :restaurantId', {
+        restaurantId: query.restaurantId,
+      });
+    }
+
     return this.executePagination(qb, query);
   }
 
