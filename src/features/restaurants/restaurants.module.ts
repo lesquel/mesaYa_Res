@@ -43,7 +43,11 @@ import type {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity, RestaurantScheduleExceptionOrmEntity]),
+    TypeOrmModule.forFeature([
+      RestaurantOrmEntity,
+      UserOrmEntity,
+      RestaurantScheduleExceptionOrmEntity,
+    ]),
     AuthModule,
   ],
   controllers: [
