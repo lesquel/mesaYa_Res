@@ -6,7 +6,11 @@ import {
   AdminRestaurantsController,
   PublicRestaurantsController,
   RestaurantRestaurantsController,
+  RestaurantSchedulesController,
 } from './interface/index';
+import { RestaurantScheduleExceptionOrmEntity } from './infrastructure/database/typeorm/orm/restaurant-schedule-exception.orm-entity';
+import { RestaurantScheduleExceptionRepository } from './infrastructure/database/typeorm/repositories/restaurant-schedule-exception.repository';
+import { RestaurantScheduleService } from './application/services/restaurant-schedule.service';
 import {
   RestaurantOrmEntity,
   RestaurantTypeOrmRepository,
@@ -39,20 +43,20 @@ import type {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity]),
+    TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity, RestaurantScheduleExceptionOrmEntity]),
     AuthModule,
   ],
   controllers: [
     AdminRestaurantsController,
     PublicRestaurantsController,
     RestaurantRestaurantsController,
-    // restaurant schedule exceptions controller (owner)
-    // will be imported from interface barrel via next line
+    RestaurantSchedulesController,
   ],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,
     RestaurantAnalyticsTypeOrmRepository,
+    RestaurantScheduleExceptionRepository,
     {
       provide: RESTAURANT_REPOSITORY,
       useExisting: RestaurantTypeOrmRepository,
