@@ -22,9 +22,16 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
-import { CurrentUser, type CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
 import { RestaurantScheduleService } from '@features/restaurants/application/services/restaurant-schedule.service';
-import { CreateScheduleExceptionDto, UpdateScheduleExceptionDto, ScheduleExceptionResponseDto } from '@features/restaurants/interface/dto';
+import {
+  CreateScheduleExceptionDto,
+  UpdateScheduleExceptionDto,
+  ScheduleExceptionResponseDto,
+} from '@features/restaurants/interface/dto';
 
 @ApiTags('Schedules - Restaurant')
 @Controller({ path: 'restaurant/schedules', version: '1' })
@@ -35,16 +42,25 @@ export class RestaurantSchedulesController {
 
   @Post('restaurant/:restaurantId')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Crear excepción de horario para restaurante (propietario)' })
+  @ApiOperation({
+    summary: 'Crear excepción de horario para restaurante (propietario)',
+  })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiBody({ type: CreateScheduleExceptionDto })
-  @ApiCreatedResponse({ description: 'Excepción creada', type: ScheduleExceptionResponseDto })
+  @ApiCreatedResponse({
+    description: 'Excepción creada',
+    type: ScheduleExceptionResponseDto,
+  })
   async create(
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @Body() dto: CreateScheduleExceptionDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<ScheduleExceptionResponseDto> {
-    const rec = await this.scheduleService.createException(restaurantId, user.userId, dto as any);
+    const rec = await this.scheduleService.createException(
+      restaurantId,
+      user.userId,
+      dto as any,
+    );
     return ScheduleExceptionResponseDto.fromRecord(rec);
   }
 
@@ -52,9 +68,19 @@ export class RestaurantSchedulesController {
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({ summary: 'Listar excepciones de horario (propietario)' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiOkResponse({ description: 'Lista de excepciones', type: ScheduleExceptionResponseDto, isArray: true })
-  async list(@Param('restaurantId', ParseUUIDPipe) restaurantId: string, @CurrentUser() user: CurrentUserPayload) {
-    const rows = await this.scheduleService.listExceptions(restaurantId, user.userId);
+  @ApiOkResponse({
+    description: 'Lista de excepciones',
+    type: ScheduleExceptionResponseDto,
+    isArray: true,
+  })
+  async list(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    const rows = await this.scheduleService.listExceptions(
+      restaurantId,
+      user.userId,
+    );
     return rows.map(ScheduleExceptionResponseDto.fromRecord);
   }
 
@@ -70,7 +96,12 @@ export class RestaurantSchedulesController {
     @Body() dto: UpdateScheduleExceptionDto,
     @CurrentUser() user: CurrentUserPayload,
   ) {
-    const rec = await this.scheduleService.updateException(restaurantId, user.userId, id, dto as any);
+    const rec = await this.scheduleService.updateException(
+      restaurantId,
+      user.userId,
+      id,
+      dto as any,
+    );
     return ScheduleExceptionResponseDto.fromRecord(rec);
   }
 
@@ -80,7 +111,11 @@ export class RestaurantSchedulesController {
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiParam({ name: 'id', description: 'UUID de la excepción' })
   @ApiOkResponse({ description: 'Eliminada' })
-  async remove(@Param('restaurantId', ParseUUIDPipe) restaurantId: string, @Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: CurrentUserPayload) {
+  async remove(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
     await this.scheduleService.deleteException(restaurantId, user.userId, id);
     return { ok: true };
   }

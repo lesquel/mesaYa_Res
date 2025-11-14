@@ -9,14 +9,22 @@ export class RestaurantScheduleService {
     private readonly restaurantsService: RestaurantsService,
   ) {}
 
-  async createException(restaurantId: string, ownerId: string, payload: { startDate: string; endDate: string; reason?: string }) {
+  async createException(
+    restaurantId: string,
+    ownerId: string,
+    payload: { startDate: string; endDate: string; reason?: string },
+  ) {
     const restaurant = await this.restaurantsService.findOne({ restaurantId });
     if (restaurant.ownerId !== ownerId) {
       throw new Error('Restaurant does not belong to authenticated owner');
     }
 
     // check overlaps
-    const overlapping = await this.repo.findOverlapping(restaurantId, payload.startDate, payload.endDate);
+    const overlapping = await this.repo.findOverlapping(
+      restaurantId,
+      payload.startDate,
+      payload.endDate,
+    );
     if (overlapping.length > 0) {
       throw new Error('Schedule exception overlaps with existing exception');
     }
@@ -24,7 +32,12 @@ export class RestaurantScheduleService {
     return this.repo.create({ restaurantId, ...payload });
   }
 
-  async updateException(restaurantId: string, ownerId: string, id: string, payload: { startDate?: string; endDate?: string; reason?: string | null }) {
+  async updateException(
+    restaurantId: string,
+    ownerId: string,
+    id: string,
+    payload: { startDate?: string; endDate?: string; reason?: string | null },
+  ) {
     const restaurant = await this.restaurantsService.findOne({ restaurantId });
     if (restaurant.ownerId !== ownerId) {
       throw new Error('Restaurant does not belong to authenticated owner');
@@ -36,7 +49,12 @@ export class RestaurantScheduleService {
     const startDate = payload.startDate ?? existing.startDate;
     const endDate = payload.endDate ?? existing.endDate;
 
-    const overlapping = await this.repo.findOverlapping(restaurantId, startDate, endDate, id);
+    const overlapping = await this.repo.findOverlapping(
+      restaurantId,
+      startDate,
+      endDate,
+      id,
+    );
     if (overlapping.length > 0) {
       throw new Error('Schedule exception overlaps with existing exception');
     }
