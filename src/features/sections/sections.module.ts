@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { RestaurantOrmEntity } from '../restaurants';
-import { AdminSectionsController, PublicSectionsController } from './interface';
+import {
+  AdminSectionsController,
+  PublicSectionsController,
+  RestaurantSectionsController,
+} from './interface';
 import {
   SectionOrmEntity,
   SectionTypeOrmRepository,
@@ -39,7 +43,7 @@ import {
     TypeOrmModule.forFeature([SectionOrmEntity, RestaurantOrmEntity]),
     AuthModule,
   ],
-  controllers: [AdminSectionsController, PublicSectionsController],
+  controllers: [AdminSectionsController, PublicSectionsController, RestaurantSectionsController],
   providers: [
     SectionTypeOrmRepository,
     RestaurantTypeOrmSectionProvider,

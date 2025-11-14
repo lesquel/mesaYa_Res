@@ -5,6 +5,7 @@ import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/en
 import {
   AdminRestaurantsController,
   PublicRestaurantsController,
+  RestaurantRestaurantsController,
 } from './interface/index';
 import {
   RestaurantOrmEntity,
@@ -41,7 +42,7 @@ import type {
     TypeOrmModule.forFeature([RestaurantOrmEntity, UserOrmEntity]),
     AuthModule,
   ],
-  controllers: [AdminRestaurantsController, PublicRestaurantsController],
+  controllers: [AdminRestaurantsController, PublicRestaurantsController, RestaurantRestaurantsController],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,

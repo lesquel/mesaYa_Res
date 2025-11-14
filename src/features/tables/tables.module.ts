@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { AdminTablesController, PublicTablesController } from './interface';
+import {
+  AdminTablesController,
+  PublicTablesController,
+  RestaurantTablesController,
+} from './interface';
 import {
   TableOrmEntity,
   SectionTypeOrmTableProvider,
@@ -48,7 +52,7 @@ import {
     ]),
     AuthModule,
   ],
-  controllers: [AdminTablesController, PublicTablesController],
+  controllers: [AdminTablesController, PublicTablesController, RestaurantTablesController],
   providers: [
     TableTypeOrmRepository,
     SectionTypeOrmTableProvider,
