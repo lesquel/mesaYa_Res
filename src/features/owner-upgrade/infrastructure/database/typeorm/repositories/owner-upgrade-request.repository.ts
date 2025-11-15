@@ -59,7 +59,7 @@ export class OwnerUpgradeRequestRepository
     orm.restaurantDescription = snapshot.restaurantDescription ?? null;
     orm.preferredSubscriptionPlanId =
       snapshot.preferredSubscriptionPlanId ?? null;
-    orm.status = snapshot.status;
+    orm.status = snapshot.status ?? null;
     orm.userNote = snapshot.userNote ?? null;
     orm.adminNote = snapshot.adminNote ?? null;
     orm.assignedRestaurantId = snapshot.assignedRestaurantId ?? null;
