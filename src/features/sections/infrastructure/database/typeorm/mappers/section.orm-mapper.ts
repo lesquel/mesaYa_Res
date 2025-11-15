@@ -16,6 +16,15 @@ export class SectionOrmMapper {
       description: entity.description ?? null,
       width: entity.width,
       height: entity.height,
+      posX: 0,
+      posY: 0,
+      status: 'ACTIVE',
+      layoutMetadata: {
+        layoutId: null,
+        orientation: 'LANDSCAPE',
+        zIndex: 0,
+        notes: null,
+      },
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     });

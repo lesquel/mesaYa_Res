@@ -17,7 +17,7 @@ import type {
   PaginatedTableResponse,
 } from '@features/tables/application/dto';
 import { TablesService } from '@features/tables/application/services';
-import { TableResponseSwaggerDto } from '../dto';
+import { TableResponseSwaggerDto } from '../../dto';
 
 @ApiTags('Tables - Public')
 @Controller({ path: 'public/tables', version: '1' })
