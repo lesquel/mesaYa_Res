@@ -11,15 +11,15 @@ export interface SubscriptionSeedData {
 
 const subscriptionStates = [
   SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.INACTIVE,
   SubscriptionStatesEnum.ACTIVE,
-  SubscriptionStatesEnum.EXPIRED,
-  SubscriptionStatesEnum.PENDING,
+  SubscriptionStatesEnum.INACTIVE,
   SubscriptionStatesEnum.ACTIVE,
-  SubscriptionStatesEnum.PENDING,
+  SubscriptionStatesEnum.INACTIVE,
   SubscriptionStatesEnum.ACTIVE,
-  SubscriptionStatesEnum.EXPIRED,
+  SubscriptionStatesEnum.INACTIVE,
   SubscriptionStatesEnum.ACTIVE,
-  SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.INACTIVE,
 ];
 
 export const subscriptionsSeed: SubscriptionSeedData[] =
