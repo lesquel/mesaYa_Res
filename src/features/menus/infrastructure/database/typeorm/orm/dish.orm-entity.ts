@@ -38,7 +38,12 @@ export class DishOrmEntity {
   @Column({ type: 'uuid', name: 'category_id', nullable: true })
   categoryId?: string | null;
 
-  @Column({ type: 'varchar', length: 100, name: 'category_name', nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    name: 'category_name',
+    nullable: true,
+  })
   categoryName?: string | null;
 
   @Column({ type: 'text', name: 'category_description', nullable: true })

@@ -72,7 +72,8 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
     if (dto.categoryName !== undefined) update.categoryName = dto.categoryName;
     if (dto.categoryDescription !== undefined)
       update.categoryDescription = dto.categoryDescription;
-    if (dto.categoryOrder !== undefined) update.categoryOrder = dto.categoryOrder;
+    if (dto.categoryOrder !== undefined)
+      update.categoryOrder = dto.categoryOrder;
 
     return update;
   }
