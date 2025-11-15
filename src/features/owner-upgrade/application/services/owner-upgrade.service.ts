@@ -21,6 +21,7 @@ import type { AuthUser } from '@features/auth/domain/entities/auth-user.entity';
 import { RESTAURANT_REPOSITORY } from '@features/restaurants/application/ports/restaurant-repository.port';
 import type { RestaurantRepositoryPort } from '@features/restaurants/application/ports/restaurant-repository.port';
 import { UserNotFoundError } from '@features/auth/domain/errors/user-not-found.error';
+import { OWNER_UPGRADE_REQUEST_REPOSITORY } from '../../owner-upgrade.tokens';
 
 @Injectable()
 export class OwnerUpgradeService {
