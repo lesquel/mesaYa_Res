@@ -71,16 +71,19 @@ export class DishTypeOrmRepository extends IDishRepositoryPort {
     restaurantId: string,
     params: PaginatedQueryParams,
   ): Promise<PaginatedResult<DishEntity>> {
-    const qb = this.buildBaseQuery().where('dish.restaurantId = :restaurantId', {
-      restaurantId,
-    });
+    const qb = this.buildBaseQuery().where(
+      'dish.restaurantId = :restaurantId',
+      {
+        restaurantId,
+      },
+    );
     return this.execPagination(qb, params);
   }
-  
+
   private buildBaseQuery(): SelectQueryBuilder<DishOrmEntity> {
     return this.dishes.createQueryBuilder('dish');
   }
-  
+
   private async execPagination(
     qb: SelectQueryBuilder<DishOrmEntity>,
     params: PaginatedQueryParams,
@@ -91,7 +94,7 @@ export class DishTypeOrmRepository extends IDishRepositoryPort {
       allowedSorts: ['dish.name', 'dish.price', 'dish.createdAt'],
       searchable: ['dish.name', 'dish.description'],
     });
-  
+
     return {
       ...paginationResult,
       results: paginationResult.results.map((dish) =>
@@ -100,25 +103,3 @@ export class DishTypeOrmRepository extends IDishRepositoryPort {
     };
   }
 }
-  private buildBaseQuery(): SelectQueryBuilder<DishOrmEntity> {
-    return this.dishes.createQueryBuilder('dish');
-  }
-
-  private async execPagination(
-    qb: SelectQueryBuilder<DishOrmEntity>,
-    params: PaginatedQueryParams,
-  ): Promise<PaginatedResult<DishEntity>> {
-    const paginationResult = await paginateQueryBuilder(qb, {
-      ...params,
-      route: params.route,
-      allowedSorts: ['dish.name', 'dish.price', 'dish.createdAt'],
-      searchable: ['dish.name', 'dish.description'],
-    });
-
-    return {
-      ...paginationResult,
-      results: paginationResult.results.map((dish) =>
-        DishOrmMapper.toDomain(dish),
-      ),
-    };
-  }
