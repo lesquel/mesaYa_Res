@@ -1,5 +1,6 @@
 import { SubscriptionStatesEnum } from '@features/subscription/domain/enums';
 import { SubscriptionStateVO } from '@features/subscription/domain/entities/values/subscription-state.vo';
+import { subscriptionPlanNames } from './subscription-plans.seed';
 
 export interface SubscriptionSeedData {
   subscriptionPlanName: string;
@@ -8,21 +9,25 @@ export interface SubscriptionSeedData {
   stateSubscription: SubscriptionStateVO;
 }
 
-export const subscriptionsSeed: SubscriptionSeedData[] = [
-  {
-    subscriptionPlanName: 'Plan Premium',
-    restaurantIndex: 0,
-    subscriptionStartDate: new Date('2024-01-01'),
-    stateSubscription: SubscriptionStateVO.create(
-      SubscriptionStatesEnum.ACTIVE,
-    ),
-  },
-  {
-    subscriptionPlanName: 'Plan Estándar',
-    restaurantIndex: 1,
-    subscriptionStartDate: new Date('2024-02-01'),
-    stateSubscription: SubscriptionStateVO.create(
-      SubscriptionStatesEnum.ACTIVE,
-    ),
-  },
+const subscriptionStates = [
+  SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.EXPIRED,
+  SubscriptionStatesEnum.PENDING,
+  SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.PENDING,
+  SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.EXPIRED,
+  SubscriptionStatesEnum.ACTIVE,
+  SubscriptionStatesEnum.ACTIVE,
 ];
+
+export const subscriptionsSeed: SubscriptionSeedData[] =
+  subscriptionPlanNames.map((planName, index) => ({
+    subscriptionPlanName: planName,
+    restaurantIndex: index,
+    subscriptionStartDate: new Date(2024, index % 12, 1),
+    stateSubscription: SubscriptionStateVO.create(
+      subscriptionStates[index % subscriptionStates.length],
+    ),
+  }));

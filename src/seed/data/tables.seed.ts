@@ -1,3 +1,6 @@
+import { sectionsSeed } from './sections.seed';
+import { graphicObjectsSeed } from './graphic-objects.seed';
+
 export interface TableSeedData {
   sectionIndex: number;
   number: number;
@@ -5,113 +8,23 @@ export interface TableSeedData {
   posX: number;
   posY: number;
   width: number;
-  tableImageIndex: number; // Index to reference table graphic object
-  chairImageIndex: number; // Index to reference chair graphic object
+  tableImageIndex: number;
+  chairImageIndex: number;
 }
 
-export const tablesSeed: TableSeedData[] = [
-  // Tables for Section 0 (Salón Principal)
-  {
-    sectionIndex: 0,
-    number: 1,
-    capacity: 4,
-    posX: 50,
-    posY: 50,
-    width: 100,
-    tableImageIndex: 0, // Reference to first graphic object
-    chairImageIndex: 1, // Reference to second graphic object
-  },
-  {
-    sectionIndex: 0,
-    number: 2,
-    capacity: 4,
-    posX: 200,
-    posY: 50,
-    width: 100,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  {
-    sectionIndex: 0,
-    number: 3,
-    capacity: 6,
-    posX: 350,
-    posY: 50,
-    width: 120,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  {
-    sectionIndex: 0,
-    number: 4,
-    capacity: 2,
-    posX: 50,
-    posY: 200,
-    width: 80,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  // Tables for Section 1 (Terraza)
-  {
-    sectionIndex: 1,
-    number: 5,
-    capacity: 4,
-    posX: 50,
-    posY: 50,
-    width: 100,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  {
-    sectionIndex: 1,
-    number: 6,
-    capacity: 2,
-    posX: 200,
-    posY: 50,
-    width: 80,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  // Tables for Section 2 (Salón VIP)
-  {
-    sectionIndex: 2,
-    number: 7,
-    capacity: 8,
-    posX: 100,
-    posY: 100,
-    width: 150,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  {
-    sectionIndex: 2,
-    number: 8,
-    capacity: 6,
-    posX: 300,
-    posY: 100,
-    width: 120,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  // Tables for Section 3 (Jardín)
-  {
-    sectionIndex: 3,
-    number: 9,
-    capacity: 4,
-    posX: 50,
-    posY: 50,
-    width: 100,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-  {
-    sectionIndex: 3,
-    number: 10,
-    capacity: 4,
-    posX: 200,
-    posY: 50,
-    width: 100,
-    tableImageIndex: 0,
-    chairImageIndex: 1,
-  },
-];
+const TABLES_PER_SECTION = 2;
+
+export const tablesSeed: TableSeedData[] = sectionsSeed.flatMap(
+  (_, sectionIndex) =>
+    Array.from({ length: TABLES_PER_SECTION }, (_, tableOffset) => ({
+      sectionIndex,
+      number: sectionIndex * TABLES_PER_SECTION + tableOffset + 1,
+      capacity: 2 + ((tableOffset + 1) % 3) * 2,
+      posX: 40 + tableOffset * 120,
+      posY: 40 + sectionIndex * 12,
+      width: 90 + tableOffset * 15,
+      tableImageIndex: (sectionIndex + tableOffset) % graphicObjectsSeed.length,
+      chairImageIndex:
+        (sectionIndex + tableOffset + 2) % graphicObjectsSeed.length,
+    })),
+);

@@ -1,3 +1,5 @@
+import { restaurantsSeed } from './restaurants.seed';
+
 export interface SectionSeedData {
   restaurantIndex: number;
   name: string;
@@ -6,33 +8,34 @@ export interface SectionSeedData {
   height: number;
 }
 
-export const sectionsSeed: SectionSeedData[] = [
+const sectionTemplates = [
   {
-    restaurantIndex: 0,
     name: 'Salón Principal',
     description: 'Área principal del restaurante',
     width: 800,
     height: 600,
   },
   {
-    restaurantIndex: 0,
     name: 'Terraza',
     description: 'Área exterior con vista panorámica',
-    width: 600,
-    height: 400,
+    width: 620,
+    height: 420,
   },
   {
-    restaurantIndex: 1,
-    name: 'Salón VIP',
-    description: 'Área exclusiva para eventos especiales',
+    name: 'Lounge',
+    description: 'Espacio íntimo para grupos pequeños',
     width: 500,
-    height: 500,
-  },
-  {
-    restaurantIndex: 1,
-    name: 'Jardín',
-    description: 'Área verde al aire libre',
-    width: 700,
-    height: 600,
+    height: 360,
   },
 ];
+
+export const sectionsSeed: SectionSeedData[] = restaurantsSeed.flatMap(
+  (restaurant, restaurantIndex) =>
+    sectionTemplates.map((template) => ({
+      restaurantIndex,
+      name: `${restaurant.name} ${template.name}`,
+      description: template.description,
+      width: template.width + restaurantIndex * 6,
+      height: template.height + restaurantIndex * 4,
+    })),
+);
