@@ -1,4 +1,11 @@
 import { PaginatedResult } from '@shared/application/types/pagination';
+import type { SectionResponseDto } from '@features/sections/application/dto/output';
+import type { TableResponseDto } from '@features/tables/application/dto/output';
+
+export interface RestaurantSectionWithTablesDto
+  extends SectionResponseDto {
+  tables: TableResponseDto[];
+}
 
 export interface RestaurantResponseDto {
   id: string;
@@ -17,6 +24,7 @@ export interface RestaurantResponseDto {
   ownerId: string | null;
   createdAt: Date;
   updatedAt: Date;
+  sections: RestaurantSectionWithTablesDto[];
 }
 
 export type PaginatedRestaurantResponse =

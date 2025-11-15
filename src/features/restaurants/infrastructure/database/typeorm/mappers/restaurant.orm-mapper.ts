@@ -1,4 +1,7 @@
-import { RestaurantEntity, type RestaurantDay } from '../../../../domain';
+import {
+  RestaurantEntity,
+  type RestaurantDay,
+} from '../../../../domain';
 import { RestaurantOrmEntity } from '../orm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
@@ -40,6 +43,29 @@ export class RestaurantOrmMapper {
       ownerId: entity.ownerId ?? entity.owner?.id ?? null,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+      sections: (entity.sections ?? []).map((section) => ({
+        id: section.id,
+        restaurantId: section.restaurantId ?? entity.id,
+        name: section.name,
+        description: section.description ?? null,
+        width: section.width,
+        height: section.height,
+        createdAt: section.createdAt,
+        updatedAt: section.updatedAt,
+        tables: (section.tables ?? []).map((table) => ({
+          id: table.id,
+          sectionId: table.sectionId,
+          number: table.number,
+          capacity: table.capacity,
+          posX: table.posX,
+          posY: table.posY,
+          width: table.width,
+          tableImageId: table.tableImageId,
+          chairImageId: table.chairImageId,
+          createdAt: table.createdAt,
+          updatedAt: table.updatedAt,
+        })),
+      })),
     });
   }
 

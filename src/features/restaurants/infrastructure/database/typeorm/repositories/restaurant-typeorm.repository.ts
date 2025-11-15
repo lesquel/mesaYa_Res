@@ -79,7 +79,7 @@ export class RestaurantTypeOrmRepository
   async findById(id: string): Promise<RestaurantEntity | null> {
     const entity = await this.restaurantRepository.findOne({
       where: { id },
-      relations: ['owner'],
+      relations: ['owner', 'sections', 'sections.tables'],
     });
 
     if (!entity) {
@@ -91,7 +91,7 @@ export class RestaurantTypeOrmRepository
 
   async findAll(): Promise<RestaurantEntity[]> {
     const entities = await this.restaurantRepository.find({
-      relations: ['owner'],
+      relations: ['owner', 'sections', 'sections.tables'],
     });
 
     return entities.map((entity) => RestaurantOrmMapper.toDomain(entity));
@@ -168,7 +168,9 @@ export class RestaurantTypeOrmRepository
     const alias = 'restaurant';
     return this.restaurantRepository
       .createQueryBuilder(alias)
-      .leftJoinAndSelect(`${alias}.owner`, 'owner');
+      .leftJoinAndSelect(`${alias}.owner`, 'owner')
+      .leftJoinAndSelect(`${alias}.sections`, 'section')
+      .leftJoinAndSelect('section.tables', 'table');
   }
 
   private async execPagination(

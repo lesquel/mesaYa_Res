@@ -21,6 +21,10 @@ export class RestaurantMapper {
       ownerId: snapshot.ownerId,
       createdAt: snapshot.createdAt,
       updatedAt: snapshot.updatedAt,
+      sections: snapshot.sections?.map((section) => ({
+        ...section,
+        tables: section.tables ?? [],
+      })) ?? [],
     };
   }
 }

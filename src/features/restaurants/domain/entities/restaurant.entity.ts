@@ -14,6 +14,7 @@ import {
   RestaurantAdminNote,
   type RestaurantDay,
 } from './values/index';
+import type { SectionWithTablesSnapshot } from '@features/sections/domain/types';
 import {
   type RestaurantCreate,
   type RestaurantSnapshot,
@@ -29,6 +30,7 @@ interface RestaurantProps {
   totalCapacity: RestaurantCapacity;
   subscriptionId: RestaurantSubscriptionId;
   imageId: RestaurantImageId;
+  sections: SectionWithTablesSnapshot[];
   status: RestaurantStatus;
   adminNote: RestaurantAdminNote;
   active: boolean;
@@ -67,6 +69,7 @@ export class RestaurantEntity {
       ownerId: RestaurantOwnerId.create(props.ownerId),
       createdAt: props.createdAt ?? now,
       updatedAt: props.updatedAt ?? now,
+      sections: props.sections ?? [],
     };
 
     return new RestaurantEntity(aggregated, id);
@@ -90,6 +93,7 @@ export class RestaurantEntity {
       ownerId: RestaurantOwnerId.fromNullable(snapshot.ownerId),
       createdAt: snapshot.createdAt,
       updatedAt: snapshot.updatedAt,
+      sections: snapshot.sections ?? [],
     };
 
     return new RestaurantEntity(aggregated, snapshot.id);
@@ -206,6 +210,7 @@ export class RestaurantEntity {
           ? RestaurantAdminNote.create(data.adminNote)
           : this.props.adminNote,
       updatedAt: new Date(),
+      sections: this.props.sections,
     };
 
     this.props = {
@@ -290,6 +295,7 @@ export class RestaurantEntity {
       ownerId: this.props.ownerId?.value ?? null,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
+      sections: this.props.sections,
     };
   }
 }

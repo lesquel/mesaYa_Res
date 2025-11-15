@@ -1,4 +1,5 @@
 import type { RestaurantDay } from '../entities/values/restaurant-day';
+import type { SectionWithTablesSnapshot } from '@features/sections/domain/types';
 
 export interface RestaurantCreate {
   name: string;
@@ -16,4 +17,5 @@ export interface RestaurantCreate {
   ownerId: string;
   createdAt?: Date;
   updatedAt?: Date;
+  sections?: SectionWithTablesSnapshot[];
 }

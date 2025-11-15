@@ -5,9 +5,11 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
 @Entity({ name: 'restaurant' })
@@ -64,6 +66,9 @@ export class RestaurantOrmEntity {
   @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'owner_id', referencedColumnName: 'id' })
   owner: UserOrmEntity | null;
+
+  @OneToMany(() => SectionOrmEntity, (section) => section.restaurant)
+  sections: SectionOrmEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

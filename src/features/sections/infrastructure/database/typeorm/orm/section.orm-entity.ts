@@ -5,11 +5,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
+import { TableOrmEntity } from '../../../../../tables/infrastructure/database/typeorm/orm';
 
 @Entity({ name: 'section' })
 export class SectionOrmEntity {
@@ -38,6 +40,9 @@ export class SectionOrmEntity {
 
   @Column({ type: 'int', name: 'height', nullable: false })
   height: number;
+
+  @OneToMany(() => TableOrmEntity, (table) => table.section)
+  tables: TableOrmEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
