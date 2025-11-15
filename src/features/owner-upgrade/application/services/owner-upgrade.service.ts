@@ -31,6 +31,7 @@ export class OwnerUpgradeService {
     private readonly users: AuthUserRepositoryPort,
     @Inject(RESTAURANT_REPOSITORY)
     private readonly restaurantRepository: RestaurantRepositoryPort,
+    @Inject(OWNER_UPGRADE_REQUEST_REPOSITORY)
     private readonly upgradeRepository: OwnerUpgradeRequestRepositoryPort,
   ) {}
 
