@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OwnerUpgradeRequestStatus } from '../../../domain/owner-upgrade-request-status.enum';
+import { OwnerUpgradeRequestStatus } from '../../../../domain/owner-upgrade-request-status.enum';
 
 @Entity({ name: 'owner_upgrade_request' })
 export class OwnerUpgradeRequestOrmEntity {

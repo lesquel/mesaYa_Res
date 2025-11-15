@@ -15,10 +15,8 @@ import {
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
-import {
-  CurrentUser,
-  CurrentUserPayload,
-} from '@features/auth/interface/decorators/current-user.decorator';
+import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
 import { OwnerUpgradeDecisionDto } from '../../dto/owner-upgrade-decision.dto';
 import { OwnerUpgradeResponseDto } from '../../dto/owner-upgrade-response.dto';
 import { OwnerUpgradeService } from '@features/owner-upgrade/application/services/owner-upgrade.service';

@@ -6,10 +6,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
-import {
-  CurrentUser,
-  CurrentUserPayload,
-} from '@features/auth/interface/decorators/current-user.decorator';
+import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
 import { OwnerUpgradeService } from '@features/owner-upgrade/application/services/owner-upgrade.service';
 import { OwnerUpgradeRequestDto } from '../../dto/owner-upgrade-request.dto';
 import { OwnerUpgradeResponseDto } from '../../dto/owner-upgrade-response.dto';
