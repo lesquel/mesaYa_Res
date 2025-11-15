@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type {
-  SectionLayoutMetadata,
-} from '@features/sections/domain/types';
+import type { SectionLayoutMetadata } from '@features/sections/domain/types';
 
-export class SectionLayoutMetadataSwaggerDto
-  implements SectionLayoutMetadata
-{
+export class SectionLayoutMetadataSwaggerDto implements SectionLayoutMetadata {
   @ApiProperty({
     description: 'Identificador del layout asociado',
     format: 'uuid',

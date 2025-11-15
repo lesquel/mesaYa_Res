@@ -38,7 +38,9 @@ export interface CreateTableProps {
   chairImageId: string;
 }
 
-export type UpdateTableProps = Partial<Omit<TableProps, 'createdAt' | 'updatedAt'>>;
+export type UpdateTableProps = Partial<
+  Omit<TableProps, 'createdAt' | 'updatedAt'>
+>;
 
 export class Table {
   private constructor(

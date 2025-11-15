@@ -120,15 +120,15 @@ export class Section {
         data.height !== undefined
           ? new SectionHeight(data.height)
           : this.props.height,
-      posX:
-        data.posX !== undefined ? data.posX : this.props.posX,
-      posY:
-        data.posY !== undefined ? data.posY : this.props.posY,
-      status:
-        data.status !== undefined ? data.status : this.props.status,
+      posX: data.posX !== undefined ? data.posX : this.props.posX,
+      posY: data.posY !== undefined ? data.posY : this.props.posY,
+      status: data.status !== undefined ? data.status : this.props.status,
       layoutMetadata:
         data.layoutMetadata !== undefined
-          ? Section.mergeLayoutMetadata(this.props.layoutMetadata, data.layoutMetadata)
+          ? Section.mergeLayoutMetadata(
+              this.props.layoutMetadata,
+              data.layoutMetadata,
+            )
           : this.props.layoutMetadata,
     };
 
