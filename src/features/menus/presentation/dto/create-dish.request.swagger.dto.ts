@@ -40,4 +40,49 @@ export class CreateDishRequestDto implements CreateDishDto {
   @IsOptional()
   @IsString()
   imageId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Identificador del menú al que pertenece el plato',
+    nullable: true,
+    format: 'uuid',
+  })
+  @IsOptional()
+  @IsString()
+  menuId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Identificador de la categoría del plato',
+    nullable: true,
+    format: 'uuid',
+    example: 'a1b2c3d4-e5f6-7890-ab12-34567890cdef',
+  })
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Nombre de la categoría del plato',
+    maxLength: 100,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  categoryName?: string;
+
+  @ApiPropertyOptional({
+    description: 'Descripción de la categoría',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  categoryDescription?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Orden de visualización de la categoría',
+    minimum: 0,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  categoryOrder?: number;
 }

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import type { DishDto } from '../../application/dtos/output/dish.dto';
 
 export class DishResponseSwaggerDto implements DishDto {
@@ -42,6 +42,31 @@ export class DishResponseSwaggerDto implements DishDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   menuId?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Identificador de la categoría',
+    nullable: true,
+    format: 'uuid',
+  })
+  categoryId?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Nombre de la categoría del plato',
+    maxLength: 100,
+  })
+  categoryName?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Descripción de la categoría',
+    nullable: true,
+  })
+  categoryDescription?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Orden de visualización de la categoría',
+    minimum: 0,
+  })
+  categoryOrder?: number | null;
 
   @ApiProperty({
     description: 'Fecha de creación del plato',

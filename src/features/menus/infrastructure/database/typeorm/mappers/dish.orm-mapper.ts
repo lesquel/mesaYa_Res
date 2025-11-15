@@ -12,6 +12,10 @@ export class DishOrmMapper {
       price: new MoneyVO(Number(entity.price)),
       imageId: entity.imageId ?? undefined,
       menuId: entity.menuId ?? undefined,
+      categoryId: entity.categoryId ?? undefined,
+      categoryName: entity.categoryName ?? undefined,
+      categoryDescription: entity.categoryDescription ?? undefined,
+      categoryOrder: entity.categoryOrder ?? undefined,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     });
@@ -25,6 +29,10 @@ export class DishOrmMapper {
     entity.price = data.price.amount;
     entity.imageId = data.imageId ?? null;
     entity.menuId = data.menuId ?? menuId ?? null;
+    entity.categoryId = data.categoryId ?? null;
+    entity.categoryName = data.categoryName ?? null;
+    entity.categoryDescription = data.categoryDescription ?? null;
+    entity.categoryOrder = data.categoryOrder ?? null;
     return entity;
   }
 
@@ -47,6 +55,22 @@ export class DishOrmMapper {
 
     if (data.menuId !== undefined) {
       entity.menuId = data.menuId ?? null;
+    }
+
+    if (data.categoryId !== undefined) {
+      entity.categoryId = data.categoryId ?? null;
+    }
+
+    if (data.categoryName !== undefined) {
+      entity.categoryName = data.categoryName ?? null;
+    }
+
+    if (data.categoryDescription !== undefined) {
+      entity.categoryDescription = data.categoryDescription ?? null;
+    }
+
+    if (data.categoryOrder !== undefined) {
+      entity.categoryOrder = data.categoryOrder ?? null;
     }
 
     return entity;

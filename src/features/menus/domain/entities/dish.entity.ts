@@ -7,6 +7,10 @@ export interface DishProps {
   price: MoneyVO;
   imageId?: string;
   menuId?: string;
+  categoryId?: string;
+  categoryName?: string;
+  categoryDescription?: string | null;
+  categoryOrder?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -78,6 +82,22 @@ export class DishEntity {
 
   get menuId(): string | undefined {
     return this.props.menuId;
+  }
+
+  get categoryId(): string | undefined {
+    return this.props.categoryId;
+  }
+
+  get categoryName(): string | undefined {
+    return this.props.categoryName;
+  }
+
+  get categoryDescription(): string | null | undefined {
+    return this.props.categoryDescription;
+  }
+
+  get categoryOrder(): number | undefined {
+    return this.props.categoryOrder;
   }
 
   get createdAt(): Date {

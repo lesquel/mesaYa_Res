@@ -13,6 +13,10 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       price: entity.price.amount,
       imageId: entity.imageId ?? undefined,
       menuId: entity.menuId ?? undefined,
+      categoryId: entity.categoryId ?? null,
+      categoryName: entity.categoryName ?? null,
+      categoryDescription: entity.categoryDescription ?? null,
+      categoryOrder: entity.categoryOrder ?? null,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     };
@@ -28,6 +32,10 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       price,
       imageId: dto.imageId ?? undefined,
       menuId: dto.menuId ?? undefined,
+      categoryId: dto.categoryId ?? undefined,
+      categoryName: dto.categoryName ?? undefined,
+      categoryDescription: dto.categoryDescription ?? undefined,
+      categoryOrder: dto.categoryOrder ?? undefined,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
     });
@@ -43,6 +51,10 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
       price,
       imageId: dto.imageId,
       menuId: dto.menuId,
+      categoryId: dto.categoryId,
+      categoryName: dto.categoryName,
+      categoryDescription: dto.categoryDescription,
+      categoryOrder: dto.categoryOrder,
     };
   }
 
@@ -56,6 +68,11 @@ export class DishMapper extends EntityDTOMapper<DishEntity, DishDto> {
     if (dto.price !== undefined) update.price = new MoneyVO(dto.price);
     if (dto.imageId !== undefined) update.imageId = dto.imageId;
     if (dto.menuId !== undefined) update.menuId = dto.menuId;
+    if (dto.categoryId !== undefined) update.categoryId = dto.categoryId;
+    if (dto.categoryName !== undefined) update.categoryName = dto.categoryName;
+    if (dto.categoryDescription !== undefined)
+      update.categoryDescription = dto.categoryDescription;
+    if (dto.categoryOrder !== undefined) update.categoryOrder = dto.categoryOrder;
 
     return update;
   }
