@@ -11,6 +11,7 @@ import { MenusModule } from './menus/menus.module';
 import { PaymentModule } from './payment/payment.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ImagesModule } from './images/images.module';
+import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ImagesModule } from './images/images.module';
     MenusModule,
     PaymentModule,
     SubscriptionModule,
+    OwnerUpgradeModule,
   ],
   exports: [
     RestaurantsModule,
@@ -40,6 +42,7 @@ import { ImagesModule } from './images/images.module';
     MenusModule,
     PaymentModule,
     SubscriptionModule,
+    OwnerUpgradeModule,
   ],
 })
 export class FeaturesModule {}
