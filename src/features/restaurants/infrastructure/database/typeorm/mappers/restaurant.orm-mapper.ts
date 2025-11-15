@@ -1,7 +1,4 @@
-import {
-  RestaurantEntity,
-  type RestaurantDay,
-} from '../../../../domain';
+import { RestaurantEntity, type RestaurantDay } from '../../../../domain';
 import { RestaurantOrmEntity } from '../orm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
