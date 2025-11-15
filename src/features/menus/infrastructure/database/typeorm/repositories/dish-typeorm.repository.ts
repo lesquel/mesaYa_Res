@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import type {
+  PaginatedQueryParams,
+  PaginatedResult,
+} from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import {
   IDishRepositoryPort,
   DishEntity,
@@ -54,4 +59,66 @@ export class DishTypeOrmRepository extends IDishRepositoryPort {
     const result = await this.dishes.delete({ id });
     return (result.affected ?? 0) > 0;
   }
+
+  async paginate(
+    params: PaginatedQueryParams,
+  ): Promise<PaginatedResult<DishEntity>> {
+    const qb = this.buildBaseQuery();
+    return this.execPagination(qb, params);
+  }
+
+  async paginateByRestaurant(
+    restaurantId: string,
+    params: PaginatedQueryParams,
+  ): Promise<PaginatedResult<DishEntity>> {
+    const qb = this.buildBaseQuery().where('dish.restaurantId = :restaurantId', {
+      restaurantId,
+    });
+    return this.execPagination(qb, params);
+  }
+  
+  private buildBaseQuery(): SelectQueryBuilder<DishOrmEntity> {
+    return this.dishes.createQueryBuilder('dish');
+  }
+  
+  private async execPagination(
+    qb: SelectQueryBuilder<DishOrmEntity>,
+    params: PaginatedQueryParams,
+  ): Promise<PaginatedResult<DishEntity>> {
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...params,
+      route: params.route,
+      allowedSorts: ['dish.name', 'dish.price', 'dish.createdAt'],
+      searchable: ['dish.name', 'dish.description'],
+    });
+  
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((dish) =>
+        DishOrmMapper.toDomain(dish),
+      ),
+    };
+  }
 }
+  private buildBaseQuery(): SelectQueryBuilder<DishOrmEntity> {
+    return this.dishes.createQueryBuilder('dish');
+  }
+
+  private async execPagination(
+    qb: SelectQueryBuilder<DishOrmEntity>,
+    params: PaginatedQueryParams,
+  ): Promise<PaginatedResult<DishEntity>> {
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...params,
+      route: params.route,
+      allowedSorts: ['dish.name', 'dish.price', 'dish.createdAt'],
+      searchable: ['dish.name', 'dish.description'],
+    });
+
+    return {
+      ...paginationResult,
+      results: paginationResult.results.map((dish) =>
+        DishOrmMapper.toDomain(dish),
+      ),
+    };
+  }

@@ -7,3 +7,4 @@ export * from './update-menu.dto';
 export * from './get-menu-by-id.dto';
 export * from './delete-menu.dto';
 export * from './list-menus.query';
+export * from './list-dishes.query';

@@ -7,6 +7,8 @@ import {
   DishUpdateFailedError,
   DishDeletionFailedError,
 } from '../errors';
+import type { DishListQuery } from '../types';
+import { PaginatedResult } from '@shared/application/types/pagination';
 
 export class DishDomainService {
   constructor(private readonly dishRepository: IDishRepositoryPort) {}
@@ -45,6 +47,16 @@ export class DishDomainService {
 
   async findAllDishes(): Promise<DishEntity[]> {
     return this.dishRepository.findAll();
+  }
+
+  async listDishes(query: DishListQuery): Promise<PaginatedResult<DishEntity>> {
+    const { restaurantId, ...pagination } = query;
+
+    if (restaurantId) {
+      return this.dishRepository.paginateByRestaurant(restaurantId, pagination);
+    }
+
+    return this.dishRepository.paginate(pagination);
   }
 
   async deleteDish(dishId: string): Promise<void> {

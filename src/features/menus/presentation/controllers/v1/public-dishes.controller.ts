@@ -1,17 +1,26 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   ThrottleRead,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import type {
   DishResponseDto,
   DishListResponseDto,
-} from '@features/menus/application';
+} from '@features/menus/application/dtos/output';
 import {
   DishService,
   GetDishAnalyticsUseCase,
 } from '@features/menus/application';
+import type { ListDishesQuery } from '@features/menus/application/dtos/input';
 import {
   DishAnalyticsRequestDto,
   DishAnalyticsResponseDto,
@@ -28,13 +37,39 @@ export class PublicDishesController {
 
   @Get()
   @ThrottleRead()
-  @ApiOkResponse({
-    description: 'Public dishes list',
-    type: DishResponseSwaggerDto,
-    isArray: true,
+  @ApiOperation({ summary: 'Listar platos públicos (paginado)' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: DishResponseSwaggerDto,
+    description: 'Listado paginado de platos públicos',
   })
-  findAll(): Promise<DishListResponseDto> {
-    return this.dishService.findAll();
+  findAll(
+    @PaginationParams({ defaultRoute: '/public/dishes' })
+    query: ListDishesQuery,
+  ): Promise<DishListResponseDto> {
+    return this.dishService.findAll(query);
+  }
+
+  @Get('restaurant/:restaurantId')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Listar platos públicos de un restaurante (paginado)',
+  })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: DishResponseSwaggerDto,
+    description: 'Listado paginado de platos para un restaurante',
+  })
+  findByRestaurant(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @PaginationParams({ defaultRoute: '/public/dishes/restaurant' })
+    query: ListDishesQuery,
+  ): Promise<DishListResponseDto> {
+    return this.dishService.findByRestaurant(restaurantId, {
+      ...query,
+      route: `/public/dishes/restaurant/${restaurantId}`,
+    });
   }
 
   @Get('analytics')
