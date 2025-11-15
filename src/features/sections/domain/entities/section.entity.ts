@@ -11,6 +11,10 @@ import {
   type SectionSnapshot,
   type SectionUpdate,
 } from '../types';
+import type {
+  SectionLayoutMetadata,
+  SectionStatus,
+} from '../types/section-layout-metadata.type';
 
 interface SectionProps {
   restaurantId: SectionRestaurantId;
@@ -18,6 +22,10 @@ interface SectionProps {
   description: SectionDescription;
   width: SectionWidth;
   height: SectionHeight;
+  posX: number;
+  posY: number;
+  status: SectionStatus;
+  layoutMetadata: SectionLayoutMetadata;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -35,6 +43,10 @@ export class Section {
       description: SectionDescription.create(props.description ?? null),
       width: new SectionWidth(props.width),
       height: new SectionHeight(props.height),
+      posX: props.posX ?? 0,
+      posY: props.posY ?? 0,
+      status: props.status ?? 'ACTIVE',
+      layoutMetadata: Section.defaultLayoutMetadata(props.layoutMetadata),
     };
 
     return new Section(aggregated, id);
@@ -47,6 +59,10 @@ export class Section {
       description: SectionDescription.create(snapshot.description),
       width: new SectionWidth(snapshot.width),
       height: new SectionHeight(snapshot.height),
+      posX: snapshot.posX,
+      posY: snapshot.posY,
+      status: snapshot.status,
+      layoutMetadata: snapshot.layoutMetadata,
     };
 
     return new Section(aggregated, snapshot.id);
@@ -104,6 +120,16 @@ export class Section {
         data.height !== undefined
           ? new SectionHeight(data.height)
           : this.props.height,
+      posX:
+        data.posX !== undefined ? data.posX : this.props.posX,
+      posY:
+        data.posY !== undefined ? data.posY : this.props.posY,
+      status:
+        data.status !== undefined ? data.status : this.props.status,
+      layoutMetadata:
+        data.layoutMetadata !== undefined
+          ? Section.mergeLayoutMetadata(this.props.layoutMetadata, data.layoutMetadata)
+          : this.props.layoutMetadata,
     };
 
     this.props = next;
@@ -117,8 +143,51 @@ export class Section {
       description: this.props.description.value,
       width: this.props.width.value,
       height: this.props.height.value,
+      posX: this.props.posX,
+      posY: this.props.posY,
+      status: this.props.status,
+      layoutMetadata: this.props.layoutMetadata,
       createdAt: this.props.createdAt ?? new Date(),
       updatedAt: this.props.updatedAt ?? new Date(),
+    };
+  }
+
+  get posX(): number {
+    return this.props.posX;
+  }
+
+  get posY(): number {
+    return this.props.posY;
+  }
+
+  get status(): SectionStatus {
+    return this.props.status;
+  }
+
+  get layoutMetadata(): SectionLayoutMetadata {
+    return this.props.layoutMetadata;
+  }
+
+  private static defaultLayoutMetadata(
+    metadata?: SectionLayoutMetadata,
+  ): SectionLayoutMetadata {
+    return {
+      layoutId: metadata?.layoutId ?? null,
+      orientation: metadata?.orientation ?? 'LANDSCAPE',
+      zIndex: metadata?.zIndex ?? 0,
+      notes: metadata?.notes ?? null,
+    };
+  }
+
+  private static mergeLayoutMetadata(
+    current: SectionLayoutMetadata,
+    next: SectionLayoutMetadata,
+  ): SectionLayoutMetadata {
+    return {
+      layoutId: next.layoutId ?? current.layoutId,
+      orientation: next.orientation ?? current.orientation,
+      zIndex: next.zIndex ?? current.zIndex,
+      notes: next.notes ?? current.notes,
     };
   }
 }

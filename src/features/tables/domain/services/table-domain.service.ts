@@ -20,6 +20,7 @@ interface TableLayoutCandidate {
   posX: number;
   posY: number;
   width: number;
+  height: number;
 }
 
 export class TableDomainService {
@@ -70,8 +71,11 @@ export class TableDomainService {
       posX: request.posX ?? currentSnapshot.posX,
       posY: request.posY ?? currentSnapshot.posY,
       width: request.width ?? currentSnapshot.width,
+      height: request.height ?? currentSnapshot.height,
       tableImageId: request.tableImageId ?? currentSnapshot.tableImageId,
       chairImageId: request.chairImageId ?? currentSnapshot.chairImageId,
+      status: request.status ?? currentSnapshot.status,
+      isAvailable: request.isAvailable ?? currentSnapshot.isAvailable,
     };
 
     const candidate = Table.rehydrate(nextSnapshot);
@@ -159,9 +163,9 @@ export class TableDomainService {
     section: TableSectionSnapshot,
     snapshot: TableSnapshot,
   ): void {
-    const { posX, posY, width } = snapshot;
+    const { posX, posY, width, height } = snapshot;
     const fitsHorizontally = posX >= 0 && posX + width <= section.width;
-    const fitsVertically = posY >= 0 && posY + width <= section.height;
+    const fitsVertically = posY >= 0 && posY + height <= section.height;
 
     if (!fitsHorizontally || !fitsVertically) {
       throw new TableLayoutOutOfBoundsError(section.sectionId);
@@ -175,6 +179,7 @@ export class TableDomainService {
       posX: snapshot.posX,
       posY: snapshot.posY,
       width: snapshot.width,
+      height: snapshot.height,
     };
   }
 
@@ -183,9 +188,9 @@ export class TableDomainService {
     b: TableLayoutCandidate,
   ): boolean {
     const aRight = a.posX + a.width;
-    const aBottom = a.posY + a.width;
+    const aBottom = a.posY + a.height;
     const bRight = b.posX + b.width;
-    const bBottom = b.posY + b.width;
+    const bBottom = b.posY + b.height;
 
     const horizontalOverlap = a.posX < bRight && aRight > b.posX;
     const verticalOverlap = a.posY < bBottom && aBottom > b.posY;

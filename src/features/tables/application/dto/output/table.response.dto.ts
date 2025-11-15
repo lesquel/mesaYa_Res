@@ -1,3 +1,4 @@
+import type { TableStatus } from '@features/tables/domain/entities/table.entity';
 import { PaginatedResult } from '@shared/application/types/pagination';
 
 export interface TableResponseDto {
@@ -8,8 +9,11 @@ export interface TableResponseDto {
   posX: number;
   posY: number;
   width: number;
+  height: number;
   tableImageId: string;
   chairImageId: string;
+  status: TableStatus;
+  isAvailable: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

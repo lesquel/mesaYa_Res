@@ -11,6 +11,10 @@ export class SectionMapper {
       description: snapshot.description,
       width: snapshot.width,
       height: snapshot.height,
+      posX: snapshot.posX,
+      posY: snapshot.posY,
+      status: snapshot.status,
+      layoutMetadata: snapshot.layoutMetadata,
       createdAt: snapshot.createdAt,
       updatedAt: snapshot.updatedAt,
     };

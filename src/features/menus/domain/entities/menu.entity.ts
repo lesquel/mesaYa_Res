@@ -1,5 +1,6 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 import { DishSnapshot } from './dish.entity';
+import type { MenuCategorySnapshot } from '../types';
 
 export interface MenuProps {
   restaurantId: string;
@@ -8,6 +9,7 @@ export interface MenuProps {
   price: MoneyVO;
   imageUrl: string;
   dishes?: DishSnapshot[];
+  categories?: MenuCategorySnapshot[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -88,12 +90,23 @@ export class MenuEntity {
     return this.props.dishes;
   }
 
+  get categories(): MenuCategorySnapshot[] | undefined {
+    return this.props.categories;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt ?? new Date();
   }
 
   get updatedAt(): Date {
     return this.props.updatedAt ?? new Date();
+  }
+
+  replaceCategories(categories: MenuCategorySnapshot[]): void {
+    this.props = {
+      ...this.props,
+      categories: [...categories],
+    };
   }
 
   private static validate(props: MenuProps): void {

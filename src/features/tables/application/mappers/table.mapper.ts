@@ -12,8 +12,11 @@ export class TableMapper {
       posX: s.posX,
       posY: s.posY,
       width: s.width,
+      height: s.height,
       tableImageId: s.tableImageId,
       chairImageId: s.chairImageId,
+      status: s.status,
+      isAvailable: s.isAvailable,
       createdAt: s.createdAt,
       updatedAt: s.updatedAt,
     };

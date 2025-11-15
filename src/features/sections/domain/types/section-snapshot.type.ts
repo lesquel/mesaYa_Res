@@ -1,3 +1,8 @@
+import type {
+  SectionLayoutMetadata,
+  SectionStatus,
+} from './section-layout-metadata.type';
+
 export interface SectionSnapshot {
   id: string;
   restaurantId: string;
@@ -5,6 +10,10 @@ export interface SectionSnapshot {
   description: string | null;
   width: number;
   height: number;
+  posX: number;
+  posY: number;
+  status: SectionStatus;
+  layoutMetadata: SectionLayoutMetadata;
   createdAt: Date;
   updatedAt: Date;
 }

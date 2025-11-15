@@ -1,26 +1,44 @@
 import { InvalidTableDataError } from '../errors/invalid-table-data.error';
 
+export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'BLOCKED';
+
 export interface TableProps {
-  sectionId: string; // FK a section
-  number: number; // numero_mesa
-  capacity: number; // capacidad
-  posX: number; // pos_x
-  posY: number; // pos_y
-  width: number; // ancho
-  tableImageId: string; // imagen_mesa_id
-  chairImageId: string; // imagen_silla_id
+  sectionId: string;
+  number: number;
+  capacity: number;
+  posX: number;
+  posY: number;
+  width: number;
+  height: number;
+  tableImageId: string;
+  chairImageId: string;
+  status: TableStatus;
+  isAvailable: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface TableSnapshot extends TableProps {
-  id: string; // mesa_id
+  id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type CreateTableProps = TableProps;
-export type UpdateTableProps = Partial<TableProps>;
+export interface CreateTableProps {
+  sectionId: string;
+  number: number;
+  capacity: number;
+  posX: number;
+  posY: number;
+  width: number;
+  height?: number;
+  status?: TableStatus;
+  isAvailable?: boolean;
+  tableImageId: string;
+  chairImageId: string;
+}
+
+export type UpdateTableProps = Partial<Omit<TableProps, 'createdAt' | 'updatedAt'>>;
 
 export class Table {
   private constructor(
@@ -36,8 +54,11 @@ export class Table {
       posX: this.nonNegativeInt(props.posX, 'posX'),
       posY: this.nonNegativeInt(props.posY, 'posY'),
       width: this.positiveInt(props.width, 'width'),
+      height: this.positiveInt(props.height ?? props.width, 'height'),
       tableImageId: this.normalizeId(props.tableImageId, 'tableImageId'),
       chairImageId: this.normalizeId(props.chairImageId, 'chairImageId'),
+      status: props.status ?? 'AVAILABLE',
+      isAvailable: props.isAvailable ?? true,
     };
 
     this.validate(normalized);
@@ -85,11 +106,20 @@ export class Table {
   get width(): number {
     return this.props.width;
   }
+  get height(): number {
+    return this.props.height;
+  }
   get tableImageId(): string {
     return this.props.tableImageId;
   }
   get chairImageId(): string {
     return this.props.chairImageId;
+  }
+  get status(): TableStatus {
+    return this.props.status;
+  }
+  get isAvailable(): boolean {
+    return this.props.isAvailable;
   }
 
   get createdAt(): Date {
@@ -106,8 +136,14 @@ export class Table {
     if (props.capacity <= 0)
       throw new InvalidTableDataError('capacity must be > 0');
     if (props.width <= 0) throw new InvalidTableDataError('width must be > 0');
+    if (props.height <= 0)
+      throw new InvalidTableDataError('height must be > 0');
     if (props.posX < 0 || props.posY < 0)
       throw new InvalidTableDataError('posX/posY must be >= 0');
+    if (!['AVAILABLE', 'OCCUPIED', 'BLOCKED'].includes(props.status))
+      throw new InvalidTableDataError('status must be a valid table state');
+    if (typeof props.isAvailable !== 'boolean')
+      throw new InvalidTableDataError('isAvailable must be boolean');
     if (
       !props.tableImageId ||
       !props.tableImageId.trim() ||

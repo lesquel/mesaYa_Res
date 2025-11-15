@@ -1,6 +1,12 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { ThrottleRead } from '@shared/infrastructure/decorators';
 import type {
@@ -11,6 +17,7 @@ import type {
   PaginatedTableResponse,
 } from '@features/tables/application/dto';
 import { TablesService } from '@features/tables/application/services';
+import { TableResponseSwaggerDto } from '../dto';
 
 @ApiTags('Tables - Public')
 @Controller({ path: 'public/tables', version: '1' })
@@ -20,6 +27,10 @@ export class PublicTablesController {
   @Get()
   @ThrottleRead()
   @ApiOperation({ summary: 'Listar mesas públicas (paginado)' })
+  @ApiPaginatedResponse({
+    model: TableResponseSwaggerDto,
+    description: 'Listado paginado de mesas públicas',
+  })
   @ApiPaginationQuery()
   async findAll(
     @PaginationParams({ defaultRoute: '/public/tables' })
@@ -32,6 +43,10 @@ export class PublicTablesController {
   @ThrottleRead()
   @ApiOperation({ summary: 'Listar mesas públicas por sección' })
   @ApiParam({ name: 'sectionId', description: 'UUID de la sección' })
+  @ApiPaginatedResponse({
+    model: TableResponseSwaggerDto,
+    description: 'Listado paginado de mesas de una sección',
+  })
   @ApiPaginationQuery()
   async findBySection(
     @Param('sectionId', ParseUUIDPipe) sectionId: string,
@@ -49,6 +64,10 @@ export class PublicTablesController {
   @ThrottleRead()
   @ApiOperation({ summary: 'Obtener mesa pública por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
+  @ApiOkResponse({
+    description: 'Mesa encontrada',
+    type: TableResponseSwaggerDto,
+  })
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TableResponseDto> {

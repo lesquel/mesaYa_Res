@@ -1,3 +1,5 @@
+import type { TableStatus } from '../entities/table.entity';
+
 export interface TableCreateRequest {
   tableId: string;
   sectionId: string;
@@ -6,6 +8,9 @@ export interface TableCreateRequest {
   posX: number;
   posY: number;
   width: number;
+  height?: number;
+  status?: TableStatus;
+  isAvailable?: boolean;
   tableImageId: string;
   chairImageId: string;
 }
@@ -18,6 +23,9 @@ export interface TableUpdateRequest {
   posX?: number;
   posY?: number;
   width?: number;
+  height?: number;
+  status?: TableStatus;
+  isAvailable?: boolean;
   tableImageId?: string;
   chairImageId?: string;
 }

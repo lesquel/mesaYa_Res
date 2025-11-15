@@ -1,4 +1,5 @@
 import { DishDto } from './dish.dto';
+import { MenuCategoryDto } from './menu-category.dto';
 
 export class MenuDto {
   menuId: string;
@@ -8,6 +9,7 @@ export class MenuDto {
   price: number;
   imageUrl: string;
   dishes?: DishDto[];
+  categories?: MenuCategoryDto[];
   createdAt: Date;
   updatedAt: Date;
 }
