@@ -21,4 +21,8 @@ export abstract class RestaurantRepositoryPort extends IBaseRepositoryPort<
     query: ListRestaurantsQuery,
   ): Promise<PaginatedResult<RestaurantEntity>>;
   abstract listOwners(): Promise<RestaurantOwnerOptionDto[]>;
+  abstract assignOwner(
+    restaurantId: string,
+    ownerId: string,
+  ): Promise<RestaurantEntity>;
 }

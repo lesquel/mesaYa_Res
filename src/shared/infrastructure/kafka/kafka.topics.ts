@@ -42,6 +42,7 @@ export const KAFKA_TOPICS = {
   AUTH_USER_LOGGED_IN: 'mesa-ya.auth.user-logged-in',
   AUTH_USER_ROLES_UPDATED: 'mesa-ya.auth.user-roles-updated',
   AUTH_ROLE_PERMISSIONS_UPDATED: 'mesa-ya.auth.role-permissions-updated',
+  OWNER_UPGRADE_STATUS_CHANGED: 'mesa-ya.owner-upgrade.status-changed',
 } as const;
 
 export type KafkaTopic = (typeof KAFKA_TOPICS)[keyof typeof KAFKA_TOPICS];

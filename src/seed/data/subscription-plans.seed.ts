@@ -6,45 +6,66 @@ import { MoneyVO } from '@shared/domain/entities/values/money.vo';
 import { SubscriptionPlanStateVO } from '@features/subscription/domain/entities/values/subscription-plan-state.vo';
 import { SubscriptionPlanPeriodVO } from '@features/subscription/domain/entities/values/subscription-plan-period.vo';
 
-export const subscriptionPlansSeed = [
+const planDefinitions = [
   {
     name: 'Plan Básico',
-    price: new MoneyVO(29.99),
-    subscriptionPeriod: SubscriptionPlanPeriodVO.create(
-      SubscriptionPlanPeriodsEnum.MONTHLY,
-    ),
-    stateSubscriptionPlan: SubscriptionPlanStateVO.create(
-      SubscriptionPlanStatesEnum.ACTIVE,
-    ),
+    price: 29.99,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
   },
   {
     name: 'Plan Estándar',
-    price: new MoneyVO(79.99),
-    subscriptionPeriod: SubscriptionPlanPeriodVO.create(
-      SubscriptionPlanPeriodsEnum.MONTHLY,
-    ),
-    stateSubscriptionPlan: SubscriptionPlanStateVO.create(
-      SubscriptionPlanStatesEnum.ACTIVE,
-    ),
+    price: 79.99,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
   },
   {
     name: 'Plan Premium',
-    price: new MoneyVO(249.99),
-    subscriptionPeriod: SubscriptionPlanPeriodVO.create(
-      SubscriptionPlanPeriodsEnum.YEARLY,
-    ),
-    stateSubscriptionPlan: SubscriptionPlanStateVO.create(
-      SubscriptionPlanStatesEnum.ACTIVE,
-    ),
+    price: 249.99,
+    period: SubscriptionPlanPeriodsEnum.YEARLY,
   },
   {
     name: 'Plan Empresarial',
-    price: new MoneyVO(149.99),
-    subscriptionPeriod: SubscriptionPlanPeriodVO.create(
-      SubscriptionPlanPeriodsEnum.MONTHLY,
-    ),
-    stateSubscriptionPlan: SubscriptionPlanStateVO.create(
-      SubscriptionPlanStatesEnum.ACTIVE,
-    ),
+    price: 149.99,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
+  },
+  {
+    name: 'Plan Platinum',
+    price: 199.99,
+    period: SubscriptionPlanPeriodsEnum.YEARLY,
+  },
+  {
+    name: 'Plan Emprende',
+    price: 59.99,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
+  },
+  {
+    name: 'Plan Corporativo',
+    price: 320.0,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
+  },
+  {
+    name: 'Plan Innovación',
+    price: 120.0,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
+  },
+  {
+    name: 'Plan Delivery',
+    price: 49.99,
+    period: SubscriptionPlanPeriodsEnum.MONTHLY,
+  },
+  {
+    name: 'Plan Chef',
+    price: 89.99,
+    period: SubscriptionPlanPeriodsEnum.YEARLY,
   },
 ];
+
+export const subscriptionPlanNames = planDefinitions.map((plan) => plan.name);
+
+export const subscriptionPlansSeed = planDefinitions.map((plan) => ({
+  name: plan.name,
+  price: new MoneyVO(plan.price),
+  subscriptionPeriod: SubscriptionPlanPeriodVO.create(plan.period),
+  stateSubscriptionPlan: SubscriptionPlanStateVO.create(
+    SubscriptionPlanStatesEnum.ACTIVE,
+  ),
+}));

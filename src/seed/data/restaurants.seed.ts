@@ -1,3 +1,5 @@
+import { subscriptionPlanNames } from './subscription-plans.seed';
+
 export interface RestaurantSeedData {
   name: string;
   description: string;
@@ -11,44 +13,80 @@ export interface RestaurantSeedData {
   active: boolean;
 }
 
-export const restaurantsSeed: RestaurantSeedData[] = [
+const restaurantTemplates = [
   {
     name: 'La Esquina del Sabor',
     description:
       'Restaurante tradicional con cocina ecuatoriana e internacional',
     location: 'Av. Principal 123, Quito',
-    openTime: '10:00',
-    closeTime: '22:00',
-    daysOpen: [
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY',
-    ],
-    totalCapacity: 80,
-    subscriptionPlanName: 'Plan Premium',
-    ownerEmail: 'owner1@mesaya.com',
-    active: true,
   },
   {
     name: 'El Jardín Gourmet',
     description: 'Restaurante especializado en comida mediterránea',
     location: 'Calle Flores 456, Guayaquil',
-    openTime: '11:00',
-    closeTime: '23:00',
-    daysOpen: [
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY',
-      'SUNDAY',
-    ],
-    totalCapacity: 60,
-    subscriptionPlanName: 'Plan Estándar',
-    ownerEmail: 'owner2@mesaya.com',
-    active: true,
+  },
+  {
+    name: 'Brasa Cocina Urbana',
+    description: 'Parrilla urbana con propuesta de autor',
+    location: 'Ruta Viva 85, Quito',
+  },
+  {
+    name: 'Nómada Casa de Mar',
+    description: 'Marisquería con sabor internacional',
+    location: 'Malecón 21, Salinas',
+  },
+  {
+    name: 'Fogón Andino',
+    description: 'Cocina andina contemporánea',
+    location: 'Av. Amazonas 200, Quito',
+  },
+  {
+    name: 'Cielo Sabor & Arte',
+    description: 'Experiencia gastronómica con arte local',
+    location: 'La Carolina 14, Quito',
+  },
+  {
+    name: 'Aura Kitchen Club',
+    description: 'Bar y cocina creativa nocturna',
+    location: 'Av. 9 de Octubre 1100, Guayaquil',
+  },
+  {
+    name: 'Origen Parrilla',
+    description: 'Asados premium y cocteles clásicos',
+    location: 'Av. América 700, Guayaquil',
+  },
+  {
+    name: 'Mirador Urbano',
+    description: 'Rooftop con vista a la ciudad',
+    location: 'Centro Histórico, Quito',
+  },
+  {
+    name: 'Ritmo Tropical',
+    description: 'Fusión caribeña con ritmos latinos',
+    location: 'Av. del Bombero 55, Guayaquil',
   },
 ];
+
+const weekSchedules = [
+  ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
+  ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+  ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SUNDAY'],
+  ['MONDAY', 'TUESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+  ['MONDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+];
+
+export const restaurantsSeed: RestaurantSeedData[] = restaurantTemplates.map(
+  (template, index) => ({
+    name: template.name,
+    description: template.description,
+    location: template.location,
+    openTime: index % 2 === 0 ? '10:00' : '11:30',
+    closeTime: index % 3 === 0 ? '23:30' : '22:30',
+    daysOpen: weekSchedules[index % weekSchedules.length],
+    totalCapacity: 60 + index * 4,
+    subscriptionPlanName:
+      subscriptionPlanNames[index] ?? subscriptionPlanNames[0],
+    ownerEmail: `owner${index + 1}@mesaya.com`,
+    active: true,
+  }),
+);

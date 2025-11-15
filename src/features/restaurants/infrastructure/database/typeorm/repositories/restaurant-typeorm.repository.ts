@@ -137,6 +137,33 @@ export class RestaurantTypeOrmRepository
     return RestaurantOwnerOptionDto.fromArray(rows);
   }
 
+  async assignOwner(
+    restaurantId: string,
+    ownerId: string,
+  ): Promise<RestaurantEntity> {
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+    });
+
+    if (!restaurant) {
+      throw new RestaurantNotFoundError(restaurantId);
+    }
+
+    const owner = await this.userRepository.findOne({
+      where: { id: ownerId },
+    });
+
+    if (!owner) {
+      throw new RestaurantOwnerNotFoundError(ownerId);
+    }
+
+    restaurant.owner = owner;
+    restaurant.ownerId = ownerId;
+
+    const saved = await this.restaurantRepository.save(restaurant);
+    return RestaurantOrmMapper.toDomain(saved);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<RestaurantOrmEntity> {
     const alias = 'restaurant';
     return this.restaurantRepository

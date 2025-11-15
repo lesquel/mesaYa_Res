@@ -16,42 +16,76 @@ const getRelativeDate = (daysFromNow: number): Date => {
 };
 
 export const paymentsSeed: PaymentSeedData[] = [
-  // Payments for reservations
   {
-    amount: 50.0,
-    date: getRelativeDate(-2),
+    amount: 55.0,
+    date: getRelativeDate(-5),
     paymentStatus: PaymentStatusEnum.COMPLETED,
     reservationIndex: 0,
   },
   {
-    amount: 75.0,
-    date: getRelativeDate(-1),
+    amount: 70.0,
+    date: getRelativeDate(-4),
     paymentStatus: PaymentStatusEnum.COMPLETED,
     reservationIndex: 1,
   },
   {
-    amount: 100.0,
-    date: getRelativeDate(0),
-    paymentStatus: PaymentStatusEnum.PENDING,
+    amount: 95.0,
+    date: getRelativeDate(-3),
+    paymentStatus: PaymentStatusEnum.COMPLETED,
     reservationIndex: 2,
   },
   {
-    amount: 60.0,
-    date: getRelativeDate(1),
+    amount: 65.0,
+    date: getRelativeDate(-2),
     paymentStatus: PaymentStatusEnum.PENDING,
     reservationIndex: 3,
   },
-  // Payments for subscriptions
   {
-    amount: 299.99,
-    date: new Date('2024-01-01'),
+    amount: 45.0,
+    date: getRelativeDate(-1),
+    paymentStatus: PaymentStatusEnum.PENDING,
+    reservationIndex: 4,
+  },
+  {
+    amount: 80.0,
+    date: getRelativeDate(0),
+    paymentStatus: PaymentStatusEnum.PENDING,
+    reservationIndex: 5,
+  },
+  {
+    amount: 249.99,
+    date: new Date('2024-03-05'),
     paymentStatus: PaymentStatusEnum.COMPLETED,
-    subscriptionIndex: 0,
+    subscriptionIndex: 2,
   },
   {
     amount: 149.99,
-    date: new Date('2024-02-01'),
+    date: new Date('2024-04-10'),
     paymentStatus: PaymentStatusEnum.COMPLETED,
-    subscriptionIndex: 1,
+    subscriptionIndex: 3,
+  },
+  {
+    amount: 199.0,
+    date: new Date('2024-05-15'),
+    paymentStatus: PaymentStatusEnum.COMPLETED,
+    subscriptionIndex: 4,
+  },
+  {
+    amount: 59.99,
+    date: new Date('2024-06-20'),
+    paymentStatus: PaymentStatusEnum.COMPLETED,
+    subscriptionIndex: 5,
+  },
+  {
+    amount: 320.0,
+    date: new Date('2024-07-25'),
+    paymentStatus: PaymentStatusEnum.COMPLETED,
+    subscriptionIndex: 6,
+  },
+  {
+    amount: 120.0,
+    date: new Date('2024-08-30'),
+    paymentStatus: PaymentStatusEnum.COMPLETED,
+    subscriptionIndex: 7,
   },
 ];
