@@ -5,4 +5,6 @@ export * from './list-owner-reservations.use-case';
 export * from './find-reservation.use-case';
 export * from './update-reservation.use-case';
 export * from './delete-reservation.use-case';
+export * from './update-owner-reservation.use-case';
+export * from './delete-owner-reservation.use-case';
 export * from './get-reservation-analytics.use-case';

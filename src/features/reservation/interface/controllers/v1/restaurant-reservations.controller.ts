@@ -1,13 +1,17 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -21,15 +25,21 @@ import {
   CurrentUser,
   type CurrentUserPayload,
 } from '@features/auth/interface/decorators/current-user.decorator';
-import { ThrottleRead } from '@shared/infrastructure/decorators';
+import { ThrottleModify, ThrottleRead } from '@shared/infrastructure/decorators';
 import {
   ListOwnerReservationsQuery,
   PaginatedReservationResponse,
   ReservationResponseDto,
+  DeleteReservationResponseDto,
+  UpdateOwnerReservationDto,
+  UpdateOwnerReservationCommand,
+  DeleteOwnerReservationCommand,
 } from '@features/reservation/application/dto';
 import {
   ListOwnerReservationsUseCase,
   ReservationService,
+  UpdateOwnerReservationUseCase,
+  DeleteOwnerReservationUseCase,
 } from '@features/reservation/application';
 import { ReservationOwnerAccessService } from '@features/reservation/application/services';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
@@ -47,6 +57,8 @@ export class RestaurantReservationsController {
   constructor(
     private readonly listOwnerReservations: ListOwnerReservationsUseCase,
     private readonly reservationService: ReservationService,
+    private readonly updateOwnerReservation: UpdateOwnerReservationUseCase,
+    private readonly deleteOwnerReservation: DeleteOwnerReservationUseCase,
     private readonly ownerAccess: ReservationOwnerAccessService,
   ) {}
 
@@ -105,5 +117,38 @@ export class RestaurantReservationsController {
   ): Promise<ReservationResponseDto> {
     await this.ownerAccess.assertReservationOwnership(id, user.userId);
     return this.reservationService.findOne({ reservationId: id });
+  }
+
+  @Patch(':id')
+  @ThrottleModify()
+  @ApiOperation({ summary: 'Actualizar una reserva propia por ID' })
+  @ApiParam({ name: 'id', description: 'UUID de la reserva' })
+  @ApiBody({ type: UpdateOwnerReservationDto })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateOwnerReservationDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<ReservationResponseDto> {
+    const command: UpdateOwnerReservationCommand = {
+      ...dto,
+      reservationId: id,
+      ownerId: user.userId,
+    };
+    return this.updateOwnerReservation.execute(command);
+  }
+
+  @Delete(':id')
+  @ThrottleModify()
+  @ApiOperation({ summary: 'Eliminar una reserva propia por ID' })
+  @ApiParam({ name: 'id', description: 'UUID de la reserva' })
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<DeleteReservationResponseDto> {
+    const command: DeleteOwnerReservationCommand = {
+      reservationId: id,
+      ownerId: user.userId,
+    };
+    return this.deleteOwnerReservation.execute(command);
   }
 }
