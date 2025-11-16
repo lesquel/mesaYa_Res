@@ -1,12 +1,20 @@
 import { MoneyVO } from '@shared/domain/entities/values/money.vo';
 import { restaurantsSeed } from './restaurants.seed';
 
+export interface DishSeedData {
+  name: string;
+  description: string;
+  price: MoneyVO;
+  imageUrl: string;
+}
+
 export interface MenuSeedData {
   restaurantIndex: number;
   name: string;
   description: string;
   price: MoneyVO;
   imageUrl: string;
+  dishes: DishSeedData[];
 }
 
 const menuNames = [
@@ -35,10 +43,59 @@ const imageUrls = [
   'https://images.unsplash.com/photo-1527515637464-3c74f6ba5b10',
 ];
 
-export const menusSeed: MenuSeedData[] = restaurantsSeed.map((_, index) => ({
-  restaurantIndex: index,
-  name: menuNames[index] ?? `Menú Especial ${index + 1}`,
-  description: `${menuNames[index] ?? 'Menú Especial'} con ingredientes frescos`,
-  price: new MoneyVO(12 + index * 1.8),
-  imageUrl: imageUrls[index % imageUrls.length],
-}));
+const dishTemplates = [
+  {
+    suffix: 'Entrada',
+    note: 'Perfecto para comenzar el banquete',
+    multiplier: 1,
+  },
+  {
+    suffix: 'Plato Principal',
+    note: 'Fuerza principal del menú',
+    multiplier: 1.35,
+  },
+  {
+    suffix: 'Postre',
+    note: 'Tentación dulce para finalizar',
+    multiplier: 0.85,
+  },
+];
+
+const dishImageUrls = [
+  'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
+  'https://images.unsplash.com/photo-1498654200792-0c92a2dd6b0b',
+  'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17',
+  'https://images.unsplash.com/photo-1543352634-2a9c2b1d0b4f',
+  'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0',
+  'https://images.unsplash.com/photo-1470337458703-46ad1756a187',
+  'https://images.unsplash.com/photo-1504674900247-2c1bfc1d836c',
+  'https://images.unsplash.com/photo-1495195134817-aeb325a55b65',
+  'https://images.unsplash.com/photo-1527515637464-3c74f6ba5b10',
+  'https://images.unsplash.com/photo-1532634896-26909d0d2f1c',
+];
+
+export const menusSeed: MenuSeedData[] = restaurantsSeed.map((_, index) => {
+  const menuName = menuNames[index] ?? `Menú Especial ${index + 1}`;
+  const menuDescription = `${menuName} con ingredientes frescos`;
+  const menuPrice = new MoneyVO(12 + index * 1.8);
+
+  const dishes: DishSeedData[] = dishTemplates.map(
+    (template, templateIndex) => ({
+      name: `${menuName} ${template.suffix}`,
+      description: `${template.note} inspirado en la propuesta ${menuName}`,
+      price: new MoneyVO(
+        Number.parseFloat((12 + index * 1.5 + templateIndex * 2).toFixed(2)),
+      ),
+      imageUrl: dishImageUrls[(index + templateIndex) % dishImageUrls.length],
+    }),
+  );
+
+  return {
+    restaurantIndex: index,
+    name: menuName,
+    description: menuDescription,
+    price: menuPrice,
+    imageUrl: imageUrls[index % imageUrls.length],
+    dishes,
+  };
+});
