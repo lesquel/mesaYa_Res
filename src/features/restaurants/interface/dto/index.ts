@@ -5,3 +5,5 @@ export * from './update-restaurant-status.request.dto';
 export * from './create-schedule-exception.dto';
 export * from './update-schedule-exception.dto';
 export * from './schedule-exception.response.dto';
+export * from './create-schedule-slot.dto';
+export * from './schedule-slot.response.dto';
