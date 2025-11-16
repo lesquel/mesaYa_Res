@@ -3,6 +3,16 @@ import { RestaurantScheduleExceptionRepository } from '@features/restaurants/inf
 import { RestaurantScheduleSlotRepository } from '@features/restaurants/infrastructure/database/typeorm/repositories/restaurant-schedule-slot.repository';
 import { RestaurantsService } from '@features/restaurants/application/services';
 
+const VALID_WEEKDAYS = new Set([
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+]);
+
 @Injectable()
 export class RestaurantScheduleService {
   constructor(
@@ -82,17 +92,19 @@ export class RestaurantScheduleService {
   ) {
     await this.ensureOwnership(restaurantId, ownerId);
 
+    const normalized = this.normalizeSlotPayload(payload);
+
     const overlaps = await this.slotsRepo.hasOverlap({
       restaurantId,
-      day: payload.day,
-      open: payload.open,
-      close: payload.close,
+      day: normalized.day,
+      open: normalized.open,
+      close: normalized.close,
     });
     if (overlaps) {
       throw new Error('Schedule slot overlaps with an existing slot');
     }
 
-    return this.slotsRepo.create({ restaurantId, ...payload });
+    return this.slotsRepo.create({ restaurantId, ...normalized });
   }
 
   async deleteSlot(restaurantId: string, ownerId: string, id: string) {
@@ -109,5 +121,29 @@ export class RestaurantScheduleService {
     if (restaurant.ownerId !== ownerId) {
       throw new Error('Restaurant does not belong to authenticated owner');
     }
+  }
+
+  private normalizeSlotPayload(payload: {
+    summary: string;
+    day: string;
+    open: string;
+    close: string;
+  }) {
+    const day = this.normalizeWeekday(payload.day);
+    const open = (payload.open ?? '').trim();
+    const close = (payload.close ?? '').trim();
+    if (!open || !close || open >= close) {
+      throw new Error('Schedule slot has invalid time range');
+    }
+    const summary = (payload.summary ?? '').trim() || 'Shift';
+    return { summary, day, open, close };
+  }
+
+  private normalizeWeekday(value: string): string {
+    const normalized = (value ?? '').toLowerCase();
+    if (!VALID_WEEKDAYS.has(normalized)) {
+      throw new Error('Invalid weekday value');
+    }
+    return normalized;
   }
 }

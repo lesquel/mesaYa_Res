@@ -121,7 +121,7 @@ export class RestaurantSchedulesController {
     return ScheduleSlotResponseDto.fromRecord(rec);
   }
 
-  @Delete('slots/:id/restaurant/:restaurantId')
+  @Delete('restaurant/:restaurantId/slots/:id')
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({ summary: 'Eliminar horario base (propietario)' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
