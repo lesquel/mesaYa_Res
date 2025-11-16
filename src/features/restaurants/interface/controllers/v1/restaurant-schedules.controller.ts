@@ -31,6 +31,8 @@ import {
   CreateScheduleExceptionDto,
   UpdateScheduleExceptionDto,
   ScheduleExceptionResponseDto,
+  CreateScheduleSlotDto,
+  ScheduleSlotResponseDto,
 } from '@features/restaurants/interface/dto';
 
 @ApiTags('Schedules - Restaurant')
@@ -82,6 +84,56 @@ export class RestaurantSchedulesController {
       user.userId,
     );
     return rows.map(ScheduleExceptionResponseDto.fromRecord);
+  }
+
+  @Get('restaurant/:restaurantId/slots')
+  @Roles(AuthRoleName.OWNER)
+  @ApiOperation({ summary: 'Listar horarios base (propietario)' })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiOkResponse({
+    description: 'Lista de horarios',
+    type: ScheduleSlotResponseDto,
+    isArray: true,
+  })
+  async listSlots(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    const rows = await this.scheduleService.listSlots(restaurantId, user.userId);
+    return rows.map(ScheduleSlotResponseDto.fromRecord);
+  }
+
+  @Post('restaurant/:restaurantId/slots')
+  @Roles(AuthRoleName.OWNER)
+  @ApiOperation({ summary: 'Crear horario base (propietario)' })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiBody({ type: CreateScheduleSlotDto })
+  @ApiCreatedResponse({
+    description: 'Horario creado',
+    type: ScheduleSlotResponseDto,
+  })
+  async createSlot(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Body() dto: CreateScheduleSlotDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<ScheduleSlotResponseDto> {
+    const rec = await this.scheduleService.createSlot(restaurantId, user.userId, dto as any);
+    return ScheduleSlotResponseDto.fromRecord(rec);
+  }
+
+  @Delete('slots/:id/restaurant/:restaurantId')
+  @Roles(AuthRoleName.OWNER)
+  @ApiOperation({ summary: 'Eliminar horario base (propietario)' })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiParam({ name: 'id', description: 'UUID del horario' })
+  @ApiOkResponse({ description: 'Horario eliminado' })
+  async deleteSlot(
+    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ) {
+    await this.scheduleService.deleteSlot(restaurantId, user.userId, id);
+    return { ok: true };
   }
 
   @Patch(':id/restaurant/:restaurantId')

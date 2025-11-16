@@ -9,7 +9,9 @@ import {
   RestaurantSchedulesController,
 } from './interface/index';
 import { RestaurantScheduleExceptionOrmEntity } from './infrastructure/database/typeorm/orm/restaurant-schedule-exception.orm-entity';
+import { RestaurantScheduleSlotOrmEntity } from './infrastructure/database/typeorm/orm/restaurant-schedule-slot.orm-entity';
 import { RestaurantScheduleExceptionRepository } from './infrastructure/database/typeorm/repositories/restaurant-schedule-exception.repository';
+import { RestaurantScheduleSlotRepository } from './infrastructure/database/typeorm/repositories/restaurant-schedule-slot.repository';
 import { RestaurantScheduleService } from './application/services/restaurant-schedule.service';
 import {
   RestaurantOrmEntity,
@@ -47,6 +49,7 @@ import type {
       RestaurantOrmEntity,
       UserOrmEntity,
       RestaurantScheduleExceptionOrmEntity,
+      RestaurantScheduleSlotOrmEntity,
     ]),
     AuthModule,
   ],
@@ -61,6 +64,7 @@ import type {
     OwnerTypeOrmProvider,
     RestaurantAnalyticsTypeOrmRepository,
     RestaurantScheduleExceptionRepository,
+    RestaurantScheduleSlotRepository,
     {
       provide: RESTAURANT_REPOSITORY,
       useExisting: RestaurantTypeOrmRepository,
