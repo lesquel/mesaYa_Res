@@ -20,6 +20,7 @@ import {
   type RestaurantSnapshot,
   type RestaurantUpdate,
 } from '../types/index';
+import type { RestaurantLocationSnapshot } from './values/restaurant-location';
 
 interface RestaurantProps {
   name: RestaurantName;
@@ -37,6 +38,7 @@ interface RestaurantProps {
   ownerId: RestaurantOwnerId | null;
   createdAt: Date;
   updatedAt: Date;
+  distanceKm?: number | null;
 }
 
 export class RestaurantEntity {
@@ -70,6 +72,7 @@ export class RestaurantEntity {
       createdAt: props.createdAt ?? now,
       updatedAt: props.updatedAt ?? now,
       sections: props.sections ?? [],
+      distanceKm: null,
     };
 
     return new RestaurantEntity(aggregated, id);
@@ -94,6 +97,7 @@ export class RestaurantEntity {
       createdAt: snapshot.createdAt,
       updatedAt: snapshot.updatedAt,
       sections: snapshot.sections ?? [],
+      distanceKm: snapshot.distanceKm ?? null,
     };
 
     return new RestaurantEntity(aggregated, snapshot.id);
@@ -111,8 +115,12 @@ export class RestaurantEntity {
     return this.props.description.value;
   }
 
-  get location(): string {
+  get location(): RestaurantLocationSnapshot {
     return this.props.location.value;
+  }
+
+  get locationLabel(): string {
+    return this.props.location.label;
   }
 
   get openTime(): string {
@@ -257,6 +265,13 @@ export class RestaurantEntity {
     };
   }
 
+  setComputedDistance(distanceKm: number | null | undefined): void {
+    this.props = {
+      ...this.props,
+      distanceKm: distanceKm ?? null,
+    };
+  }
+
   archive(): void {
     this.props = {
       ...this.props,
@@ -296,6 +311,7 @@ export class RestaurantEntity {
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
       sections: this.props.sections,
+      distanceKm: this.props.distanceKm ?? null,
     };
   }
 }

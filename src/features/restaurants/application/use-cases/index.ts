@@ -3,6 +3,7 @@ export * from './delete-restaurant.use-case';
 export * from './find-restaurant.use-case';
 export * from './list-owner-restaurants.use-case';
 export * from './list-restaurants.use-case';
+export * from './list-nearby-restaurants.use-case';
 export * from './update-restaurant.use-case';
 export * from './update-restaurant-status.use-case';
 export * from './get-restaurant-analytics.use-case';
