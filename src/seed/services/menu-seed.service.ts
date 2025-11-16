@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { IMenuRepositoryPort } from '@features/menus/domain/repositories/menu-repository.port';
 import { IDishRepositoryPort } from '@features/menus/domain/repositories/dish-repository.port';
-import { menusSeed, dishesSeed } from '../data';
+import { menusSeed } from '../data';
 import { RestaurantSeedService } from './restaurant-seed.service';
 
 @Injectable()
@@ -64,50 +64,44 @@ export class MenuSeedService {
       return;
     }
 
-    for (const dishSeed of dishesSeed) {
-      // Usar el índice del menú para obtener el restaurantId correspondiente
-      const menuData = menusSeed[dishSeed.menuIndex];
+    let createdDishes = 0;
 
-      if (!menuData) {
-        this.logger.warn(
-          `Skipping dish "${dishSeed.name}": menu not found at index ${dishSeed.menuIndex}`,
-        );
-        continue;
-      }
-
+    for (const [menuIndex, menuSeed] of menusSeed.entries()) {
       const restaurantId = this.restaurantSeedService.getRestaurantId(
-        menuData.restaurantIndex,
+        menuSeed.restaurantIndex,
       );
 
       if (!restaurantId) {
         this.logger.warn(
-          `Skipping dish "${dishSeed.name}": restaurant not found`,
+          `Skipping dishes for menu "${menuSeed.name}": restaurant not found`,
         );
         continue;
       }
 
-      // Obtener el menuId correspondiente del array de IDs capturados
-      const menuId = this.menuIds[dishSeed.menuIndex];
+      const menuId = this.menuIds[menuIndex];
 
       if (!menuId) {
         this.logger.warn(
-          `Skipping dish "${dishSeed.name}": menu ID not found at index ${dishSeed.menuIndex}`,
+          `Skipping dishes for menu "${menuSeed.name}": menu ID not found`,
         );
         continue;
       }
 
-      // Crear el dish con el menuId capturado
-      await this.dishRepository.create({
-        restaurantId: restaurantId,
-        name: dishSeed.name,
-        description: dishSeed.description,
-        price: dishSeed.price,
-        imageId: undefined,
-        menuId: menuId,
-      });
+      for (const dishSeed of menuSeed.dishes) {
+        await this.dishRepository.create({
+          restaurantId: restaurantId,
+          name: dishSeed.name,
+          description: dishSeed.description,
+          price: dishSeed.price,
+          imageId: undefined,
+          menuId: menuId,
+        });
+
+        createdDishes += 1;
+      }
     }
 
-    this.logger.log(`✅ Created ${dishesSeed.length} dishes`);
+    this.logger.log(`✅ Created ${createdDishes} dishes`);
   }
 
   /**
