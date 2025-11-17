@@ -4,14 +4,13 @@ export interface RestaurantLocationSnapshot {
   label: string;
   address: string;
   city: string;
-  province?: string | null;
+  province: string | null;
   country: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  placeId?: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  placeId: string | null;
 }
-
-type RestaurantLocationInput =
+export type RestaurantLocationInput =
   | string
   | (Partial<RestaurantLocationSnapshot> & {
       address?: string;
@@ -53,6 +52,10 @@ export class RestaurantLocation {
         address: label,
         city: label,
         country: label,
+        province: null,
+        latitude: null,
+        longitude: null,
+        placeId: null,
       };
     }
 

@@ -1,11 +1,11 @@
 import type { RestaurantDay } from '../entities/values/restaurant-day';
-import type { RestaurantLocationSnapshot } from '../entities/values/restaurant-location';
+import type { RestaurantLocationInput } from '../entities/values/restaurant-location';
 
 export interface RestaurantUpdate {
   id: string;
   name?: string;
   description?: string | null;
-  location?: RestaurantLocationSnapshot | string;
+  location?: RestaurantLocationInput;
   openTime?: string;
   closeTime?: string;
   daysOpen?: RestaurantDay[];

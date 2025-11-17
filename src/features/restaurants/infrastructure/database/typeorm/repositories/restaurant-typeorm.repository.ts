@@ -169,7 +169,7 @@ export class RestaurantTypeOrmRepository
 
   async findNearby(
     query: ListNearbyRestaurantsQuery,
-  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number }>> {
+  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>> {
     const alias = 'restaurant';
     const distanceExpression = this.buildDistanceExpression(alias);
 

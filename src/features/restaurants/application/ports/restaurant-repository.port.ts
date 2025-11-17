@@ -30,5 +30,5 @@ export abstract class RestaurantRepositoryPort extends IBaseRepositoryPort<
   ): Promise<RestaurantEntity>;
   abstract findNearby(
     query: ListNearbyRestaurantsQuery,
-  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number }>>;
+  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>>;
 }

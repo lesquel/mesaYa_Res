@@ -1,11 +1,11 @@
 import type { RestaurantDay } from '../entities/values/restaurant-day';
-import type { RestaurantLocationSnapshot } from '../entities/values/restaurant-location';
+import type { RestaurantLocationInput } from '../entities/values/restaurant-location';
 
 export interface RestaurantCreateRequest {
   ownerId: string;
   name: string;
   description?: string | null;
-  location: RestaurantLocationSnapshot | string;
+  location: RestaurantLocationInput;
   openTime: string;
   closeTime: string;
   status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
@@ -22,7 +22,7 @@ export interface RestaurantUpdateRequest {
   ownerId: string;
   name?: string;
   description?: string | null;
-  location?: RestaurantLocationSnapshot | string;
+  location?: RestaurantLocationInput;
   openTime?: string;
   status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
   adminNote?: string | null;
