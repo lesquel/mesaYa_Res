@@ -6,11 +6,22 @@ export interface RestaurantSectionWithTablesDto extends SectionResponseDto {
   tables: TableResponseDto[];
 }
 
+export interface RestaurantLocationResponseDto {
+  label: string;
+  address: string;
+  city: string;
+  province?: string | null;
+  country: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  placeId?: string | null;
+}
+
 export interface RestaurantResponseDto {
   id: string;
   name: string;
   description?: string | null;
-  location: string;
+  location: RestaurantLocationResponseDto;
   openTime: string;
   closeTime: string;
   daysOpen: string[];
@@ -21,6 +32,7 @@ export interface RestaurantResponseDto {
   adminNote?: string | null;
   active: boolean;
   ownerId: string | null;
+  distanceKm?: number;
   createdAt: Date;
   updatedAt: Date;
   sections: RestaurantSectionWithTablesDto[];

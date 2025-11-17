@@ -1,9 +1,18 @@
 import { subscriptionPlanNames } from './subscription-plans.seed';
 
+export interface RestaurantLocationSeed {
+  address: string;
+  city: string;
+  province?: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface RestaurantSeedData {
   name: string;
   description: string;
-  location: string;
+  location: RestaurantLocationSeed;
   openTime: string;
   closeTime: string;
   daysOpen: string[];
@@ -18,52 +27,122 @@ const restaurantTemplates = [
     name: 'La Esquina del Sabor',
     description:
       'Restaurante tradicional con cocina ecuatoriana e internacional',
-    location: 'Av. Principal 123, Quito',
+    location: {
+      address: 'Av. Principal 123',
+      city: 'Quito',
+      province: 'Pichincha',
+      country: 'Ecuador',
+      latitude: -0.180653,
+      longitude: -78.467834,
+    },
   },
   {
     name: 'El Jardín Gourmet',
     description: 'Restaurante especializado en comida mediterránea',
-    location: 'Calle Flores 456, Guayaquil',
+    location: {
+      address: 'Calle Flores 456',
+      city: 'Guayaquil',
+      province: 'Guayas',
+      country: 'Ecuador',
+      latitude: -2.170998,
+      longitude: -79.922359,
+    },
   },
   {
     name: 'Brasa Cocina Urbana',
     description: 'Parrilla urbana con propuesta de autor',
-    location: 'Ruta Viva 85, Quito',
+    location: {
+      address: 'Ruta Viva 85',
+      city: 'Quito',
+      province: 'Pichincha',
+      country: 'Ecuador',
+      latitude: -0.102629,
+      longitude: -78.438101,
+    },
   },
   {
     name: 'Nómada Casa de Mar',
     description: 'Marisquería con sabor internacional',
-    location: 'Malecón 21, Salinas',
+    location: {
+      address: 'Malecón 21',
+      city: 'Salinas',
+      province: 'Santa Elena',
+      country: 'Ecuador',
+      latitude: -2.214815,
+      longitude: -80.968147,
+    },
   },
   {
     name: 'Fogón Andino',
     description: 'Cocina andina contemporánea',
-    location: 'Av. Amazonas 200, Quito',
+    location: {
+      address: 'Av. Amazonas 200',
+      city: 'Quito',
+      province: 'Pichincha',
+      country: 'Ecuador',
+      latitude: -0.191226,
+      longitude: -78.490279,
+    },
   },
   {
     name: 'Cielo Sabor & Arte',
     description: 'Experiencia gastronómica con arte local',
-    location: 'La Carolina 14, Quito',
+    location: {
+      address: 'La Carolina 14',
+      city: 'Quito',
+      province: 'Pichincha',
+      country: 'Ecuador',
+      latitude: -0.180143,
+      longitude: -78.485382,
+    },
   },
   {
     name: 'Aura Kitchen Club',
     description: 'Bar y cocina creativa nocturna',
-    location: 'Av. 9 de Octubre 1100, Guayaquil',
+    location: {
+      address: 'Av. 9 de Octubre 1100',
+      city: 'Guayaquil',
+      province: 'Guayas',
+      country: 'Ecuador',
+      latitude: -2.190556,
+      longitude: -79.889085,
+    },
   },
   {
     name: 'Origen Parrilla',
     description: 'Asados premium y cocteles clásicos',
-    location: 'Av. América 700, Guayaquil',
+    location: {
+      address: 'Av. América 700',
+      city: 'Guayaquil',
+      province: 'Guayas',
+      country: 'Ecuador',
+      latitude: -2.163987,
+      longitude: -79.901389,
+    },
   },
   {
     name: 'Mirador Urbano',
     description: 'Rooftop con vista a la ciudad',
-    location: 'Centro Histórico, Quito',
+    location: {
+      address: 'Centro Histórico',
+      city: 'Quito',
+      province: 'Pichincha',
+      country: 'Ecuador',
+      latitude: -0.220164,
+      longitude: -78.512327,
+    },
   },
   {
     name: 'Ritmo Tropical',
     description: 'Fusión caribeña con ritmos latinos',
-    location: 'Av. del Bombero 55, Guayaquil',
+    location: {
+      address: 'Av. del Bombero 55',
+      city: 'Guayaquil',
+      province: 'Guayas',
+      country: 'Ecuador',
+      latitude: -2.152808,
+      longitude: -79.931017,
+    },
   },
 ];
 

@@ -1,11 +1,12 @@
 import type { RestaurantDay } from '../entities/values/restaurant-day';
+import type { RestaurantLocationSnapshot } from '../entities/values/restaurant-location';
 import type { SectionWithTablesSnapshot } from '@features/sections/domain/types';
 
 export interface RestaurantSnapshot {
   id: string;
   name: string;
   description: string | null;
-  location: string;
+  location: RestaurantLocationSnapshot;
   openTime: string;
   closeTime: string;
   daysOpen: RestaurantDay[];
@@ -19,4 +20,5 @@ export interface RestaurantSnapshot {
   createdAt: Date;
   updatedAt: Date;
   sections?: SectionWithTablesSnapshot[];
+  distanceKm?: number | null;
 }

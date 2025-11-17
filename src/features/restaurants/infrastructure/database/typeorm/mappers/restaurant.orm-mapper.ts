@@ -1,6 +1,7 @@
 import { RestaurantEntity, type RestaurantDay } from '../../../../domain';
 import { RestaurantOrmEntity } from '../orm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
+import type { RestaurantLocationSnapshot } from '../../../../domain/entities/values/restaurant-location';
 
 export class RestaurantOrmMapper {
   static toDomain(entity: RestaurantOrmEntity): RestaurantEntity {
@@ -20,11 +21,13 @@ export class RestaurantOrmMapper {
       return value;
     };
 
+    const locationSnapshot = RestaurantOrmMapper.buildLocationSnapshot(entity);
+
     return RestaurantEntity.rehydrate({
       id: entity.id,
       name: entity.name,
       description: entity.description ?? null,
-      location: entity.location,
+      location: locationSnapshot,
       openTime: normalizeTime(entity.openTime),
       closeTime: normalizeTime(entity.closeTime),
       daysOpen: (entity.daysOpen ?? []) as RestaurantDay[],
@@ -88,7 +91,19 @@ export class RestaurantOrmMapper {
     entity.id = snapshot.id;
     entity.name = snapshot.name;
     entity.description = snapshot.description ?? null;
-    entity.location = snapshot.location;
+    entity.location = snapshot.location.label || snapshot.location.address;
+    entity.locationPayload = {
+      label: snapshot.location.label,
+      address: snapshot.location.address,
+      city: snapshot.location.city,
+      province: snapshot.location.province ?? null,
+      country: snapshot.location.country,
+      latitude: snapshot.location.latitude ?? null,
+      longitude: snapshot.location.longitude ?? null,
+      placeId: snapshot.location.placeId ?? null,
+    } satisfies RestaurantLocationSnapshot;
+    entity.locationLatitude = snapshot.location.latitude ?? null;
+    entity.locationLongitude = snapshot.location.longitude ?? null;
     entity.openTime = snapshot.openTime;
     entity.closeTime = snapshot.closeTime;
     entity.daysOpen = snapshot.daysOpen;
@@ -104,5 +119,22 @@ export class RestaurantOrmMapper {
     entity.updatedAt = snapshot.updatedAt;
 
     return entity;
+  }
+
+  private static buildLocationSnapshot(
+    entity: RestaurantOrmEntity,
+  ): RestaurantLocationSnapshot {
+    const payload = entity.locationPayload ?? undefined;
+    const baseLabel = entity.location ?? payload?.label ?? '';
+    return {
+      label: payload?.label || baseLabel,
+      address: payload?.address || baseLabel,
+      city: payload?.city || baseLabel,
+      province: payload?.province ?? null,
+      country: payload?.country || payload?.province || baseLabel,
+      latitude: payload?.latitude ?? entity.locationLatitude ?? null,
+      longitude: payload?.longitude ?? entity.locationLongitude ?? null,
+      placeId: payload?.placeId ?? null,
+    };
   }
 }

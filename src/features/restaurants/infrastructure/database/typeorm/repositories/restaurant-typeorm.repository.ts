@@ -6,7 +6,10 @@ import {
   RestaurantOwnerNotFoundError,
   RestaurantNotFoundError,
 } from '../../../../domain';
-import { ListRestaurantsQuery } from '../../../../application/dto';
+import {
+  ListNearbyRestaurantsQuery,
+  ListRestaurantsQuery,
+} from '../../../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { RestaurantRepositoryPort } from '../../../../application/ports';
 import { RestaurantOrmEntity } from '../orm';
@@ -164,6 +167,44 @@ export class RestaurantTypeOrmRepository
     return RestaurantOrmMapper.toDomain(saved);
   }
 
+  async findNearby(
+    query: ListNearbyRestaurantsQuery,
+  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number }>> {
+    const alias = 'restaurant';
+    const distanceExpression = this.buildDistanceExpression(alias);
+
+    const qb = this.buildBaseQuery()
+      .andWhere(`${alias}.locationLatitude IS NOT NULL`)
+      .andWhere(`${alias}.locationLongitude IS NOT NULL`)
+      .addSelect(distanceExpression, 'distanceKm')
+      .setParameters({
+        centerLat: query.latitude,
+        centerLng: query.longitude,
+      })
+      .orderBy('distanceKm', 'ASC')
+      .take(query.limit ?? 10);
+
+    if (query.radiusKm) {
+      qb.andWhere(`${distanceExpression} <= :radiusKm`, {
+        centerLat: query.latitude,
+        centerLng: query.longitude,
+        radiusKm: query.radiusKm,
+      });
+    }
+
+    const { entities, raw } = await qb.getRawAndEntities();
+
+    return entities.map((entity, index) => {
+      const rawDistance = raw[index]?.distanceKm;
+      const distance = rawDistance === null || rawDistance === undefined
+        ? null
+        : Number(rawDistance);
+      const restaurant = RestaurantOrmMapper.toDomain(entity);
+      restaurant.setComputedDistance(distance);
+      return { restaurant, distanceKm: distance ?? null };
+    });
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<RestaurantOrmEntity> {
     const alias = 'restaurant';
     return this.restaurantRepository
@@ -171,6 +212,16 @@ export class RestaurantTypeOrmRepository
       .leftJoinAndSelect(`${alias}.owner`, 'owner')
       .leftJoinAndSelect(`${alias}.sections`, 'section')
       .leftJoinAndSelect('section.tables', 'table');
+  }
+
+  private buildDistanceExpression(alias: string): string {
+    return `(
+      6371 * acos(
+        cos(radians(:centerLat)) * cos(radians(${alias}.location_latitude)) *
+        cos(radians(${alias}.location_longitude) - radians(:centerLng)) +
+        sin(radians(:centerLat)) * sin(radians(${alias}.location_latitude))
+      )
+    )`;
   }
 
   private async execPagination(

@@ -13,6 +13,7 @@ import type {
   ListRestaurantsQuery,
   UpdateRestaurantCommand,
   UpdateRestaurantStatusCommand,
+    ListNearbyRestaurantsQuery,
   PaginatedRestaurantResponse,
   RestaurantResponseDto,
   DeleteRestaurantResponseDto,
@@ -23,6 +24,7 @@ import {
   DeleteRestaurantUseCase,
   FindRestaurantUseCase,
   ListOwnerRestaurantsUseCase,
+    ListNearbyRestaurantsUseCase,
   ListRestaurantsUseCase,
   UpdateRestaurantUseCase,
   UpdateRestaurantStatusUseCase,
@@ -36,12 +38,19 @@ export class RestaurantsService {
     private readonly listRestaurantsUseCase: ListRestaurantsUseCase,
     private readonly listOwnerRestaurantsUseCase: ListOwnerRestaurantsUseCase,
     private readonly findRestaurantUseCase: FindRestaurantUseCase,
+      private readonly listNearbyRestaurantsUseCase: ListNearbyRestaurantsUseCase,
     private readonly updateRestaurantUseCase: UpdateRestaurantUseCase,
     private readonly updateRestaurantStatusUseCase: UpdateRestaurantStatusUseCase,
     private readonly deleteRestaurantUseCase: DeleteRestaurantUseCase,
     private readonly listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
+
+    async listNearby(
+      query: ListNearbyRestaurantsQuery,
+    ): Promise<RestaurantResponseDto[]> {
+      return this.listNearbyRestaurantsUseCase.execute(query);
+    }
 
   /**
    * Emits `mesa-ya.restaurants.created` with `{ action, entity, performedBy }` and returns the created restaurant DTO.

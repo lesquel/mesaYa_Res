@@ -27,6 +27,32 @@ export class RestaurantOrmEntity {
   @Column({ type: 'varchar', length: 200, name: 'location', nullable: false })
   location: string;
 
+  @Column({ type: 'jsonb', name: 'location_payload', nullable: true })
+  locationPayload?: {
+    label: string;
+    address: string;
+    city: string;
+    province?: string | null;
+    country: string;
+    latitude?: number | null;
+    longitude?: number | null;
+    placeId?: string | null;
+  } | null;
+
+  @Column({
+    type: 'double precision',
+    name: 'location_latitude',
+    nullable: true,
+  })
+  locationLatitude?: number | null;
+
+  @Column({
+    type: 'double precision',
+    name: 'location_longitude',
+    nullable: true,
+  })
+  locationLongitude?: number | null;
+
   @Column({ type: 'time', name: 'open_time', nullable: true })
   openTime: string;
 
