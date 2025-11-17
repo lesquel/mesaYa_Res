@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { RestaurantScheduleExceptionRepository } from '@features/restaurants/infrastructure/database/typeorm/repositories/restaurant-schedule-exception.repository';
 import { RestaurantScheduleSlotRepository } from '@features/restaurants/infrastructure/database/typeorm/repositories/restaurant-schedule-slot.repository';
 import { RestaurantsService } from '@features/restaurants/application/services';
@@ -35,7 +41,9 @@ export class RestaurantScheduleService {
       payload.endDate,
     );
     if (overlapping.length > 0) {
-      throw new Error('Schedule exception overlaps with existing exception');
+      throw new ConflictException(
+        'Schedule exception overlaps with existing exception',
+      );
     }
 
     return this.exceptionsRepo.create({ restaurantId, ...payload });
@@ -51,7 +59,7 @@ export class RestaurantScheduleService {
 
     // compute new dates for overlap check
     const existing = await this.exceptionsRepo.findById(id);
-    if (!existing) throw new Error('Schedule exception not found');
+    if (!existing) throw new NotFoundException('Schedule exception not found');
     const startDate = payload.startDate ?? existing.startDate;
     const endDate = payload.endDate ?? existing.endDate;
 
@@ -62,7 +70,9 @@ export class RestaurantScheduleService {
       id,
     );
     if (overlapping.length > 0) {
-      throw new Error('Schedule exception overlaps with existing exception');
+      throw new ConflictException(
+        'Schedule exception overlaps with existing exception',
+      );
     }
 
     return this.exceptionsRepo.update(id, payload);
@@ -101,7 +111,7 @@ export class RestaurantScheduleService {
       close: normalized.close,
     });
     if (overlaps) {
-      throw new Error('Schedule slot overlaps with an existing slot');
+      throw new ConflictException('Schedule slot overlaps with an existing slot');
     }
 
     return this.slotsRepo.create({ restaurantId, ...normalized });
@@ -111,15 +121,20 @@ export class RestaurantScheduleService {
     await this.ensureOwnership(restaurantId, ownerId);
     const slot = await this.slotsRepo.findById(id);
     if (!slot || slot.restaurantId !== restaurantId) {
-      throw new Error('Schedule slot not found');
+      throw new NotFoundException('Schedule slot not found');
     }
     await this.slotsRepo.remove(id);
   }
 
   private async ensureOwnership(restaurantId: string, ownerId: string) {
     const restaurant = await this.restaurantsService.findOne({ restaurantId });
+    if (!restaurant) {
+      throw new NotFoundException('Restaurant not found');
+    }
     if (restaurant.ownerId !== ownerId) {
-      throw new Error('Restaurant does not belong to authenticated owner');
+      throw new ForbiddenException(
+        'Restaurant does not belong to authenticated owner',
+      );
     }
   }
 
@@ -133,7 +148,7 @@ export class RestaurantScheduleService {
     const open = (payload.open ?? '').trim();
     const close = (payload.close ?? '').trim();
     if (!open || !close || open >= close) {
-      throw new Error('Schedule slot has invalid time range');
+      throw new BadRequestException('Schedule slot has invalid time range');
     }
     const summary = (payload.summary ?? '').trim() || 'Shift';
     return { summary, day, open, close };
@@ -142,7 +157,7 @@ export class RestaurantScheduleService {
   private normalizeWeekday(value: string): string {
     const normalized = (value ?? '').toLowerCase();
     if (!VALID_WEEKDAYS.has(normalized)) {
-      throw new Error('Invalid weekday value');
+      throw new BadRequestException('Invalid weekday value');
     }
     return normalized;
   }
