@@ -136,7 +136,10 @@ export class GetAllPaymentsUseCase
       : undefined;
   }
 
-  private parseDate(value: string | undefined, endOfDay: boolean): Date | undefined {
+  private parseDate(
+    value: string | undefined,
+    endOfDay: boolean,
+  ): Date | undefined {
     if (!value) {
       return undefined;
     }

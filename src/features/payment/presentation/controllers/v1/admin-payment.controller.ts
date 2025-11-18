@@ -46,7 +46,10 @@ import {
   PaymentAnalyticsRequestDto,
   PaymentAnalyticsResponseDto,
 } from '@features/payment/presentation/dto';
-import { PaymentStatusEnum, PaymentTypeEnum } from '@features/payment/domain/enums';
+import {
+  PaymentStatusEnum,
+  PaymentTypeEnum,
+} from '@features/payment/domain/enums';
 
 @ApiTags('Payments - Admin')
 @Controller({ path: 'admin/payments', version: '1' })

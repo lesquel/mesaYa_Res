@@ -85,7 +85,9 @@ const RESERVED_QUERY_KEYS = new Set([
   'q',
 ]);
 
-function extractFilterParams(query: Request['query']): Record<string, string> | undefined {
+function extractFilterParams(
+  query: Request['query'],
+): Record<string, string> | undefined {
   if (!query || typeof query !== 'object') {
     return undefined;
   }

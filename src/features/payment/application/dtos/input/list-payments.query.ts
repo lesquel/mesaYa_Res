@@ -1,5 +1,8 @@
 import { PaginationQuery } from '@shared/application/types/pagination';
-import { PaymentStatusEnum, PaymentTypeEnum } from '@features/payment/domain/enums';
+import {
+  PaymentStatusEnum,
+  PaymentTypeEnum,
+} from '@features/payment/domain/enums';
 
 export interface ListPaymentsQuery {
   pagination: PaginationQuery;
