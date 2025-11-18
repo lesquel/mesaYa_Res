@@ -146,7 +146,8 @@ export class ReservationDomainService {
       throw new ReservationNotFoundError(request.reservationId);
     }
 
-    if (reservation.userId !== request.userId) {
+    const shouldEnforceOwnership = request.enforceOwnership !== false;
+    if (shouldEnforceOwnership && reservation.userId !== request.userId) {
       throw new ReservationOwnershipError();
     }
 
@@ -205,7 +206,8 @@ export class ReservationDomainService {
       throw new ReservationNotFoundError(request.reservationId);
     }
 
-    if (reservation.userId !== request.userId) {
+    const shouldEnforceOwnership = request.enforceOwnership !== false;
+    if (shouldEnforceOwnership && reservation.userId !== request.userId) {
       throw new ReservationOwnershipError();
     }
 

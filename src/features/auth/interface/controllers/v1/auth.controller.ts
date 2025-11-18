@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -219,6 +220,23 @@ export class AuthController {
         AdminAuthUserResponseDto.fromDomain(u),
       ),
     };
+  }
+
+  @Get('admin/users/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(AuthRoleName.ADMIN)
+  @ApiOperation({ summary: 'Detalle de usuario (ADMIN)' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', description: 'UUID del usuario' })
+  @ApiOkResponse({ type: AdminAuthUserResponseDto })
+  async getUserAdmin(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<AdminAuthUserResponseDto> {
+    const user = await this.authService.getCurrentUser(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return AdminAuthUserResponseDto.fromDomain(user);
   }
 
   @Patch('admin/users/:id/roles')

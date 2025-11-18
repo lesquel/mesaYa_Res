@@ -72,18 +72,15 @@ export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {
     const sortByColumn =
       query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
 
-    const paginationResult = await paginateQueryBuilder(
-      qb as SelectQueryBuilder<UserOrmEntity>,
-      {
-        ...query.pagination,
-        route: query.route,
-        sortBy: sortByColumn,
-        sortOrder: query.sortOrder,
-        q: query.search,
-        allowedSorts: Object.values(sortMap),
-        searchable: [`${alias}.email`, `${alias}.name`],
-      },
-    );
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [`${alias}.email`, `${alias}.name`],
+    });
 
     return {
       ...paginationResult,

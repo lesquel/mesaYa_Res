@@ -19,6 +19,7 @@ export class UpdateRestaurantStatusUseCase
     const restaurant = await this.restaurantDomainService.changeStatus({
       restaurantId: command.restaurantId,
       ownerId: command.ownerId,
+      enforceOwnership: command.enforceOwnership,
       status: command.status,
       adminNote: command.adminNote,
     });

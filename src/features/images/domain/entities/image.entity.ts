@@ -92,7 +92,10 @@ export class Image {
       throw new InvalidImageDataError(
         'description must be at most 100 characters',
       );
-    if (typeof props.entityId !== 'string' || props.entityId.trim().length === 0)
+    if (
+      typeof props.entityId !== 'string' ||
+      props.entityId.trim().length === 0
+    )
       throw new InvalidImageDataError('entityId must be a non-empty string');
     if (!(props.createdAt instanceof Date) || Number.isNaN(props.createdAt))
       throw new InvalidImageDataError('createdAt must be a valid Date');

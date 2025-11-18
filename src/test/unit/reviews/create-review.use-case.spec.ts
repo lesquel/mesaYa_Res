@@ -25,9 +25,16 @@ describe('CreateReviewUseCase', () => {
     const domainService = new InMemoryReviewDomainService(review);
     const useCase = new CreateReviewUseCase(domainService as any);
 
-    const command = { restaurantId: 'rest-1', userId: 'user-1', rating: 5, comment: 'Great' } as any;
+    const command = {
+      restaurantId: 'rest-1',
+      userId: 'user-1',
+      rating: 5,
+      comment: 'Great',
+    } as any;
     const dto = await useCase.execute(command);
 
-    expect(dto).toEqual(expect.objectContaining({ userId: 'user-1', rating: 5 }));
+    expect(dto).toEqual(
+      expect.objectContaining({ userId: 'user-1', rating: 5 }),
+    );
   });
 });

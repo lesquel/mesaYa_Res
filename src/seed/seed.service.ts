@@ -52,7 +52,7 @@ export class SeedService {
    */
   async execute(): Promise<{ message: string; success: boolean }> {
     try {
-  this.logger.log('🌱 Starting database seeding...');
+      this.logger.log('🌱 Starting database seeding...');
 
       // Fase 1: Autenticación y autorización
       await this.authSeedService.seedPermissions();

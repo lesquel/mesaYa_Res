@@ -6,6 +6,9 @@ export class OwnerUpgradeResponseDto {
   @ApiProperty({ example: 'c6f1d030-5d91-4135-a2bc-6518daf57843' })
   requestId: string;
 
+  @ApiProperty({ example: '9e7d1f5b-2c34-4f40-82d8-1b2c3d4e5f67' })
+  userId: string;
+
   @ApiProperty({ enum: OwnerUpgradeRequestStatus })
   status: OwnerUpgradeRequestStatus;
 
@@ -63,6 +66,7 @@ export class OwnerUpgradeResponseDto {
     const dto = new OwnerUpgradeResponseDto();
 
     dto.requestId = entity.requestId;
+    dto.userId = entity.userId;
     dto.status = entity.status;
     dto.statusKey = `owner.upgrade.status.${entity.status.toLowerCase()}`;
     dto.restaurantName = entity.restaurantName;

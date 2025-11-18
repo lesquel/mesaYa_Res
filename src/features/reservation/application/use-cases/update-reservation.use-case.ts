@@ -31,6 +31,7 @@ export class UpdateReservationUseCase
         ? new Date(command.reservationTime as unknown as string)
         : undefined,
       numberOfGuests: command.numberOfGuests,
+      enforceOwnership: command.enforceOwnership,
     });
 
     await this.eventPublisher.publish({

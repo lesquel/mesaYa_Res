@@ -20,6 +20,7 @@ export interface RestaurantCreateRequest {
 export interface RestaurantUpdateRequest {
   restaurantId: string;
   ownerId: string;
+  enforceOwnership?: boolean;
   name?: string;
   description?: string | null;
   location?: RestaurantLocationInput;
@@ -36,6 +37,7 @@ export interface RestaurantUpdateRequest {
 export interface RestaurantStatusUpdateRequest {
   restaurantId: string;
   ownerId: string;
+  enforceOwnership?: boolean;
   status: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
   adminNote?: string | null;
 }
@@ -43,4 +45,5 @@ export interface RestaurantStatusUpdateRequest {
 export interface RestaurantDeleteRequest {
   restaurantId: string;
   ownerId: string;
+  enforceOwnership?: boolean;
 }

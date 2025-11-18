@@ -2,7 +2,11 @@
 import { CreateReservationDto } from './create-reservation.dto';
 
 export class UpdateOwnerReservationDto extends PartialType(
-  PickType(CreateReservationDto, ['reservationDate', 'reservationTime', 'numberOfGuests'] as const),
+  PickType(CreateReservationDto, [
+    'reservationDate',
+    'reservationTime',
+    'numberOfGuests',
+  ] as const),
 ) {}
 
 export type UpdateOwnerReservationCommand = UpdateOwnerReservationDto & {

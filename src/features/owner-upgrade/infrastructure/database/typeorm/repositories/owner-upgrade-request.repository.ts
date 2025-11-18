@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { OwnerUpgradeRequestEntity } from '../../../../domain/owner-upgrade-request.entity';
 import { OwnerUpgradeRequestRepositoryPort } from '../../../../application/ports/owner-upgrade-request.repository.port';
 import { OwnerUpgradeRequestOrmEntity } from '../orm/owner-upgrade-request.orm-entity';
 import { OwnerUpgradeRequestStatus } from '../../../../domain/owner-upgrade-request-status.enum';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import type { PaginatedResult } from '@shared/application/types/pagination';
+import type { ListOwnerUpgradeRequestsQuery } from '../../../../application/dto';
 
 @Injectable()
 export class OwnerUpgradeRequestRepository
@@ -44,6 +47,59 @@ export class OwnerUpgradeRequestRepository
     }
 
     return this.toDomain(entity);
+  }
+
+  async findById(id: string): Promise<OwnerUpgradeRequestEntity | null> {
+    const entity = await this.repository.findOne({ where: { id } });
+    return entity ? this.toDomain(entity) : null;
+  }
+
+  async paginate(
+    query: ListOwnerUpgradeRequestsQuery,
+  ): Promise<PaginatedResult<OwnerUpgradeRequestEntity>> {
+    const qb = this.buildBaseQuery();
+
+    if (query.status) {
+      qb.andWhere('upgrade.status = :status', { status: query.status });
+    }
+
+    if (query.userId) {
+      qb.andWhere('upgrade.userId = :userId', { userId: query.userId });
+    }
+
+    const sortMap: Record<string, string> = {
+      createdAt: 'upgrade.createdAt',
+      updatedAt: 'upgrade.updatedAt',
+      status: 'upgrade.status',
+    };
+
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+
+    const pagination = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [
+        'upgrade.restaurantName',
+        'upgrade.restaurantLocation',
+        'upgrade.restaurantDescription',
+        'upgrade.userNote',
+        'upgrade.adminNote',
+      ],
+    });
+
+    return {
+      ...pagination,
+      results: pagination.results.map((entity) => this.toDomain(entity)),
+    };
+  }
+
+  private buildBaseQuery(): SelectQueryBuilder<OwnerUpgradeRequestOrmEntity> {
+    return this.repository.createQueryBuilder('upgrade');
   }
 
   private toOrmEntity(

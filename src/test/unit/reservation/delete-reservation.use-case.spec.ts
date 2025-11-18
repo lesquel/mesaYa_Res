@@ -29,7 +29,10 @@ describe('DeleteReservatioUseCase', () => {
     const domainService = new InMemoryReservationDomainService(snapshot);
     const publisher = { publish: jest.fn() } as any;
 
-    const useCase = new DeleteReservatioUseCase(domainService as any, publisher);
+    const useCase = new DeleteReservatioUseCase(
+      domainService as any,
+      publisher,
+    );
 
     const command: DeleteReservationCommand = {
       reservationId: 'res-1',
@@ -39,7 +42,9 @@ describe('DeleteReservatioUseCase', () => {
     const result = await useCase.execute(command);
 
     expect(result.ok).toBe(true);
-    expect(result.reservation).toEqual(expect.objectContaining({ id: 'res-1' }));
+    expect(result.reservation).toEqual(
+      expect.objectContaining({ id: 'res-1' }),
+    );
     expect(publisher.publish).toHaveBeenCalled();
   });
 });

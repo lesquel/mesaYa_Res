@@ -25,7 +25,10 @@ import {
   CurrentUser,
   type CurrentUserPayload,
 } from '@features/auth/interface/decorators/current-user.decorator';
-import { ThrottleModify, ThrottleRead } from '@shared/infrastructure/decorators';
+import {
+  ThrottleModify,
+  ThrottleRead,
+} from '@shared/infrastructure/decorators';
 import {
   ListOwnerReservationsQuery,
   PaginatedReservationResponse,

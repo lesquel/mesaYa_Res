@@ -34,17 +34,26 @@ describe('ListReviewsUseCase', () => {
       pages: 1,
       hasNext: false,
       hasPrev: false,
-      links: { self: '/public/reviews?page=1', first: '/public/reviews?page=1', last: '/public/reviews?page=1' },
+      links: {
+        self: '/public/reviews?page=1',
+        first: '/public/reviews?page=1',
+        last: '/public/reviews?page=1',
+      },
     };
 
     const repo = new InMemoryReviewRepository(paginated as any);
     const useCase = new ListReviewsUseCase(repo as any);
 
-    const query = { pagination: { page: 1, limit: 10, offset: 0 }, route: '/public/reviews' } as any;
+    const query = {
+      pagination: { page: 1, limit: 10, offset: 0 },
+      route: '/public/reviews',
+    } as any;
     const response = await useCase.execute(query);
 
     expect(repo.lastQuery).toEqual(query);
     expect(response.total).toBe(1);
-    expect(response.results[0]).toEqual(expect.objectContaining({ userId: 'user-1' }));
+    expect(response.results[0]).toEqual(
+      expect.objectContaining({ userId: 'user-1' }),
+    );
   });
 });

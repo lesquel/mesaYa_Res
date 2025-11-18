@@ -45,7 +45,9 @@ export class GraphicObject {
         'height must be positive integer',
       );
     if (typeof imageId !== 'string' || imageId.trim().length === 0)
-      throw new InvalidGraphicObjectDataError('imageId must be a non-empty string');
+      throw new InvalidGraphicObjectDataError(
+        'imageId must be a non-empty string',
+      );
   }
 
   private static normalize(props: GraphicObjectProps): GraphicObjectProps {
@@ -85,7 +87,10 @@ export class GraphicObject {
   }
 
   update(patch: Partial<GraphicObjectProps>) {
-    const next = GraphicObject.normalize({ ...this.props, ...patch } as GraphicObjectProps);
+    const next = GraphicObject.normalize({
+      ...this.props,
+      ...patch,
+    } as GraphicObjectProps);
     this.props = next;
   }
 

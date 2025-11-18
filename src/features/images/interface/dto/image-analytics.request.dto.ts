@@ -40,7 +40,7 @@ export class ImageAnalyticsRequestDto {
     return {
       startDate,
       endDate,
-  entityId: this.entityId,
+      entityId: this.entityId,
     };
   }
 

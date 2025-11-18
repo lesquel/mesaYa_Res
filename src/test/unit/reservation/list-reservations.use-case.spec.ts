@@ -37,17 +37,26 @@ describe('ListReservationsUseCase', () => {
       pages: 1,
       hasNext: false,
       hasPrev: false,
-      links: { self: '/public/reservations?page=1', first: '/public/reservations?page=1', last: '/public/reservations?page=1' },
+      links: {
+        self: '/public/reservations?page=1',
+        first: '/public/reservations?page=1',
+        last: '/public/reservations?page=1',
+      },
     };
 
     const repo = new InMemoryReservationRepository(paginated as any);
     const useCase = new ListReservationsUseCase(repo as any);
 
-    const query = { pagination: { page: 1, limit: 10, offset: 0 }, route: '/public/reservations' } as any;
+    const query = {
+      pagination: { page: 1, limit: 10, offset: 0 },
+      route: '/public/reservations',
+    } as any;
     const response = await useCase.execute(query);
 
     expect(repo.lastQuery).toEqual(query);
     expect(response.total).toBe(1);
-    expect(response.results[0]).toEqual(expect.objectContaining({ userId: 'user-1' }));
+    expect(response.results[0]).toEqual(
+      expect.objectContaining({ userId: 'user-1' }),
+    );
   });
 });

@@ -34,8 +34,10 @@ export class ScheduleSlotResponseDto {
     dto.day = record.day;
     dto.open = record.open;
     dto.close = record.close;
-    dto.createdAt = record.createdAt?.toISOString?.() ?? String(record.createdAt);
-    dto.updatedAt = record.updatedAt?.toISOString?.() ?? String(record.updatedAt);
+    dto.createdAt =
+      record.createdAt?.toISOString?.() ?? String(record.createdAt);
+    dto.updatedAt =
+      record.updatedAt?.toISOString?.() ?? String(record.updatedAt);
     return dto;
   }
 }

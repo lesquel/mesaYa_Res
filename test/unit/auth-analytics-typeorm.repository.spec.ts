@@ -44,7 +44,7 @@ describe('AuthAnalyticsTypeOrmRepository (unit)', () => {
       },
     };
 
-    const repo = new AuthAnalyticsTypeOrmRepository(fakeUsersRepo as any);
+    const repo = new AuthAnalyticsTypeOrmRepository(fakeUsersRepo);
 
     const result = await repo.compute({} as AuthAnalyticsQuery);
 
@@ -84,7 +84,7 @@ describe('AuthAnalyticsTypeOrmRepository (unit)', () => {
       },
     };
 
-    const repo = new AuthAnalyticsTypeOrmRepository(fakeUsersRepo as any);
+    const repo = new AuthAnalyticsTypeOrmRepository(fakeUsersRepo);
     const result = await repo.compute({
       restaurantId: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
     } as AuthAnalyticsQuery);

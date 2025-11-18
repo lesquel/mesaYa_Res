@@ -50,7 +50,7 @@ export class RestaurantDomainService {
   ): Promise<RestaurantEntity> {
     const restaurant = await this.ensureRestaurant(request.restaurantId);
     const ownerId = this.normalizeId(request.ownerId);
-    this.ensureOwnership(restaurant, ownerId);
+    this.ensureOwnership(restaurant, ownerId, request.enforceOwnership ?? true);
 
     const updatePayload: RestaurantUpdate = {
       id: request.restaurantId,
@@ -77,7 +77,7 @@ export class RestaurantDomainService {
   ): Promise<RestaurantEntity> {
     const restaurant = await this.ensureRestaurant(request.restaurantId);
     const ownerId = this.normalizeId(request.ownerId);
-    this.ensureOwnership(restaurant, ownerId);
+    this.ensureOwnership(restaurant, ownerId, request.enforceOwnership ?? true);
 
     restaurant.setStatus(request.status, request.adminNote);
 
@@ -89,7 +89,7 @@ export class RestaurantDomainService {
   ): Promise<RestaurantEntity> {
     const restaurant = await this.ensureRestaurant(request.restaurantId);
     const ownerId = this.normalizeId(request.ownerId);
-    this.ensureOwnership(restaurant, ownerId);
+    this.ensureOwnership(restaurant, ownerId, request.enforceOwnership ?? true);
 
     await this.restaurantRepository.delete(restaurant.id);
 
@@ -114,7 +114,14 @@ export class RestaurantDomainService {
     return restaurant;
   }
 
-  private ensureOwnership(restaurant: RestaurantEntity, ownerId: string): void {
+  private ensureOwnership(
+    restaurant: RestaurantEntity,
+    ownerId: string,
+    enforceOwnership: boolean,
+  ): void {
+    if (!enforceOwnership) {
+      return;
+    }
     if (restaurant.ownerId !== ownerId) {
       throw new RestaurantOwnershipError();
     }

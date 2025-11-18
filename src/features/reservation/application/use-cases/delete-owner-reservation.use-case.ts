@@ -18,10 +18,8 @@ import { ReservationNotFoundError } from '../../domain/errors';
 
 @Injectable()
 export class DeleteOwnerReservationUseCase
-  implements UseCase<
-    DeleteOwnerReservationCommand,
-    DeleteReservationResponseDto
-  >
+  implements
+    UseCase<DeleteOwnerReservationCommand, DeleteReservationResponseDto>
 {
   constructor(
     private readonly ownerAccess: ReservationOwnerAccessService,

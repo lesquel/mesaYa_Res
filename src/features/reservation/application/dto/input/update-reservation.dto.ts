@@ -6,4 +6,5 @@ export class UpdateReservationDto extends PartialType(CreateReservationDto) {}
 export type UpdateReservationCommand = UpdateReservationDto & {
   reservationId: string;
   userId: string;
+  enforceOwnership?: boolean;
 };

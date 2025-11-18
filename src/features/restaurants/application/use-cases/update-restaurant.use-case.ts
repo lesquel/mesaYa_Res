@@ -1,9 +1,6 @@
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { RestaurantDomainService } from '../../domain/services/restaurant-domain.service';
-import {
-  UpdateRestaurantCommand,
-  RestaurantResponseDto,
-} from '../dto/index';
+import { UpdateRestaurantCommand, RestaurantResponseDto } from '../dto/index';
 import { RestaurantMapper } from '../mappers/index';
 
 export class UpdateRestaurantUseCase
@@ -19,6 +16,7 @@ export class UpdateRestaurantUseCase
     const restaurant = await this.restaurantDomainService.updateRestaurant({
       restaurantId: command.restaurantId,
       ownerId: command.ownerId,
+      enforceOwnership: command.enforceOwnership,
       name: command.name,
       description: command.description,
       location: command.location,

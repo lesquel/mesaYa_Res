@@ -158,6 +158,7 @@ export class AdminRestaurantsController {
     const command: UpdateRestaurantStatusCommand = {
       restaurantId: id,
       ownerId: user.userId,
+      enforceOwnership: false,
       status: dto.status as UpdateRestaurantStatusCommand['status'],
       adminNote: dto.adminNote,
     };
@@ -181,6 +182,7 @@ export class AdminRestaurantsController {
     const command: UpdateRestaurantCommand = {
       restaurantId: id,
       ownerId: user.userId,
+      enforceOwnership: false,
       ...dto,
     };
     return this.restaurantsService.update(command);
@@ -198,6 +200,7 @@ export class AdminRestaurantsController {
     const command: DeleteRestaurantCommand = {
       restaurantId: id,
       ownerId: user.userId,
+      enforceOwnership: false,
     };
     return this.restaurantsService.delete(command);
   }

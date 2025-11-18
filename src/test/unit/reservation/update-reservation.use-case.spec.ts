@@ -29,7 +29,10 @@ describe('UpdateReservationUseCase', () => {
     const domainService = new InMemoryReservationDomainService(snapshot);
     const publisher = { publish: jest.fn() } as any;
 
-    const useCase = new UpdateReservationUseCase(domainService as any, publisher);
+    const useCase = new UpdateReservationUseCase(
+      domainService as any,
+      publisher,
+    );
 
     const command: UpdateReservationCommand = {
       reservationId: 'res-1',

@@ -1,9 +1,6 @@
 import { IBaseRepositoryPort } from '@shared/application/ports/base-repo-port';
 import { RestaurantEntity } from '../../domain';
-import {
-  ListNearbyRestaurantsQuery,
-  ListRestaurantsQuery,
-} from '../dto';
+import { ListNearbyRestaurantsQuery, ListRestaurantsQuery } from '../dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import type { RestaurantCreate, RestaurantUpdate } from '../../domain/types';
 import type { RestaurantOwnerOptionDto } from '../dto';
@@ -30,5 +27,7 @@ export abstract class RestaurantRepositoryPort extends IBaseRepositoryPort<
   ): Promise<RestaurantEntity>;
   abstract findNearby(
     query: ListNearbyRestaurantsQuery,
-  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>>;
+  ): Promise<
+    Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>
+  >;
 }

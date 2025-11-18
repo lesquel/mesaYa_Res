@@ -24,6 +24,7 @@ export class DeleteReservatioUseCase
     const reservation = await this.reservationDomainService.cancelReservation({
       reservationId: command.reservationId,
       userId: command.userId,
+      enforceOwnership: command.enforceOwnership,
     });
 
     const reservationResponse = ReservationMapper.toResponse(reservation);

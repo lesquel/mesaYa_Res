@@ -16,12 +16,17 @@ import {
   OwnerUpgradeForbiddenError,
   OwnerUpgradeMissingDataError,
   OwnerUpgradeNotFoundError,
+  OwnerUpgradeRequestNotFoundError,
 } from '../../domain/errors';
 import type { AuthUser } from '@features/auth/domain/entities/auth-user.entity';
 import { RESTAURANT_REPOSITORY } from '@features/restaurants/application/ports/restaurant-repository.port';
 import type { RestaurantRepositoryPort } from '@features/restaurants/application/ports/restaurant-repository.port';
 import { UserNotFoundError } from '@features/auth/domain/errors/user-not-found.error';
 import { OWNER_UPGRADE_REQUEST_REPOSITORY } from '../../owner-upgrade.tokens';
+import type {
+  ListOwnerUpgradeRequestsQuery,
+  PaginatedOwnerUpgradeResponse,
+} from '../dto';
 
 @Injectable()
 export class OwnerUpgradeService {
@@ -34,6 +39,26 @@ export class OwnerUpgradeService {
     @Inject(OWNER_UPGRADE_REQUEST_REPOSITORY)
     private readonly upgradeRepository: OwnerUpgradeRequestRepositoryPort,
   ) {}
+
+  async listRequests(
+    query: ListOwnerUpgradeRequestsQuery,
+  ): Promise<PaginatedOwnerUpgradeResponse> {
+    const result = await this.upgradeRepository.paginate(query);
+    return {
+      ...result,
+      results: result.results.map((request) =>
+        OwnerUpgradeResponseDto.fromEntity(request),
+      ),
+    };
+  }
+
+  async findRequestById(requestId: string): Promise<OwnerUpgradeResponseDto> {
+    const entity = await this.upgradeRepository.findById(requestId);
+    if (!entity) {
+      throw new OwnerUpgradeRequestNotFoundError(requestId);
+    }
+    return OwnerUpgradeResponseDto.fromEntity(entity);
+  }
 
   async apply(
     dto: OwnerUpgradeRequestDto,

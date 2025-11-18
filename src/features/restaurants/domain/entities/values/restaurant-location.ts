@@ -84,11 +84,15 @@ export class RestaurantLocation {
     }
 
     if (input.city && input.city.length > 120) {
-      throw new InvalidRestaurantDataError('City must be at most 120 characters');
+      throw new InvalidRestaurantDataError(
+        'City must be at most 120 characters',
+      );
     }
 
     if (input.country && input.country.length > 120) {
-      throw new InvalidRestaurantDataError('Country must be at most 120 characters');
+      throw new InvalidRestaurantDataError(
+        'Country must be at most 120 characters',
+      );
     }
 
     this.validateCoordinate(input.latitude, 'latitude');
@@ -114,7 +118,10 @@ export class RestaurantLocation {
     return value;
   }
 
-  private validateCoordinate(value: number | null, field: 'latitude' | 'longitude'): void {
+  private validateCoordinate(
+    value: number | null,
+    field: 'latitude' | 'longitude',
+  ): void {
     if (value === null || value === undefined) {
       return;
     }
@@ -124,11 +131,15 @@ export class RestaurantLocation {
     }
 
     if (field === 'latitude' && (value < -90 || value > 90)) {
-      throw new InvalidRestaurantDataError('Latitude must be between -90 and 90');
+      throw new InvalidRestaurantDataError(
+        'Latitude must be between -90 and 90',
+      );
     }
 
     if (field === 'longitude' && (value < -180 || value > 180)) {
-      throw new InvalidRestaurantDataError('Longitude must be between -180 and 180');
+      throw new InvalidRestaurantDataError(
+        'Longitude must be between -180 and 180',
+      );
     }
   }
 }

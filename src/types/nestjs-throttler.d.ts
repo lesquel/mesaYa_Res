@@ -21,7 +21,9 @@ declare module '@nestjs/throttler' {
   // Accept a flexible argument shape because the project uses the decorator
   // both with positional args and with an options object ({ default: { ttl, limit } }).
   export function Throttle(...args: any[]): MethodDecorator & ClassDecorator;
-  export function SkipThrottle(...args: any[]): MethodDecorator & ClassDecorator;
+  export function SkipThrottle(
+    ...args: any[]
+  ): MethodDecorator & ClassDecorator;
 
   // Guard stub
   export class ThrottlerGuard {

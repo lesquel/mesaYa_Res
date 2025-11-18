@@ -19,7 +19,8 @@ export class ImagesController {
   @ApiOperation({ summary: 'Listar imágenes (público)' })
   @ApiPaginationQuery()
   async list(
-    @PaginationParams({ defaultRoute: '/public/images' }) query: ListImagesQuery,
+    @PaginationParams({ defaultRoute: '/public/images' })
+    query: ListImagesQuery,
   ) {
     return this.images.list(query);
   }

@@ -152,6 +152,7 @@ export class AdminReservationsController {
       ...dto,
       reservationId: id,
       userId: user.userId,
+      enforceOwnership: false,
     };
     return this.reservationsService.update(command);
   }
@@ -170,6 +171,7 @@ export class AdminReservationsController {
     const command: DeleteReservationCommand = {
       reservationId: id,
       userId: user.userId,
+      enforceOwnership: false,
     };
     return this.reservationsService.delete(command);
   }

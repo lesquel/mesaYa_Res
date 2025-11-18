@@ -72,7 +72,10 @@ export class RestaurantLocationDto {
   @Max(90)
   latitude?: number;
 
-  @ApiPropertyOptional({ description: 'Longitud del mapa', example: -78.467834 })
+  @ApiPropertyOptional({
+    description: 'Longitud del mapa',
+    example: -78.467834,
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
@@ -80,7 +83,9 @@ export class RestaurantLocationDto {
   @Max(180)
   longitude?: number;
 
-  @ApiPropertyOptional({ description: 'Identificador del lugar (Google Place ID, etc.)' })
+  @ApiPropertyOptional({
+    description: 'Identificador del lugar (Google Place ID, etc.)',
+  })
   @IsOptional()
   @IsString()
   @MinLength(2)

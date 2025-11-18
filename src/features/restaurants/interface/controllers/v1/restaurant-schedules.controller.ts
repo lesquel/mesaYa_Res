@@ -99,7 +99,10 @@ export class RestaurantSchedulesController {
     @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
     @CurrentUser() user: CurrentUserPayload,
   ) {
-    const rows = await this.scheduleService.listSlots(restaurantId, user.userId);
+    const rows = await this.scheduleService.listSlots(
+      restaurantId,
+      user.userId,
+    );
     return rows.map(ScheduleSlotResponseDto.fromRecord);
   }
 
@@ -117,7 +120,11 @@ export class RestaurantSchedulesController {
     @Body() dto: CreateScheduleSlotDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<ScheduleSlotResponseDto> {
-    const rec = await this.scheduleService.createSlot(restaurantId, user.userId, dto as any);
+    const rec = await this.scheduleService.createSlot(
+      restaurantId,
+      user.userId,
+      dto as any,
+    );
     return ScheduleSlotResponseDto.fromRecord(rec);
   }
 

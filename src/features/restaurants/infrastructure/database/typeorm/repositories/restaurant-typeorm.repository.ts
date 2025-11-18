@@ -169,7 +169,9 @@ export class RestaurantTypeOrmRepository
 
   async findNearby(
     query: ListNearbyRestaurantsQuery,
-  ): Promise<Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>> {
+  ): Promise<
+    Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>
+  > {
     const alias = 'restaurant';
     const distanceExpression = this.buildDistanceExpression(alias);
 
@@ -196,9 +198,10 @@ export class RestaurantTypeOrmRepository
 
     return entities.map((entity, index) => {
       const rawDistance = raw[index]?.distanceKm;
-      const distance = rawDistance === null || rawDistance === undefined
-        ? null
-        : Number(rawDistance);
+      const distance =
+        rawDistance === null || rawDistance === undefined
+          ? null
+          : Number(rawDistance);
       const restaurant = RestaurantOrmMapper.toDomain(entity);
       restaurant.setComputedDistance(distance);
       return { restaurant, distanceKm: distance ?? null };

@@ -1,5 +1,7 @@
 import { OwnerUpgradeRequestEntity } from '../../domain/owner-upgrade-request.entity';
 import { OwnerUpgradeRequestStatus } from '../../domain/owner-upgrade-request-status.enum';
+import type { PaginatedResult } from '@shared/application/types/pagination';
+import type { ListOwnerUpgradeRequestsQuery } from '../dto';
 
 export interface OwnerUpgradeRequestRepositoryPort {
   create(
@@ -12,4 +14,8 @@ export interface OwnerUpgradeRequestRepositoryPort {
     userId: string,
     status?: OwnerUpgradeRequestStatus,
   ): Promise<OwnerUpgradeRequestEntity | null>;
+  findById(id: string): Promise<OwnerUpgradeRequestEntity | null>;
+  paginate(
+    query: ListOwnerUpgradeRequestsQuery,
+  ): Promise<PaginatedResult<OwnerUpgradeRequestEntity>>;
 }

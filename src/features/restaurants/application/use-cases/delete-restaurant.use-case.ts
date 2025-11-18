@@ -19,6 +19,7 @@ export class DeleteRestaurantUseCase
     const restaurant = await this.restaurantDomainService.deleteRestaurant({
       restaurantId: command.restaurantId,
       ownerId: command.ownerId,
+      enforceOwnership: command.enforceOwnership,
     });
 
     return {

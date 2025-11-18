@@ -1,14 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import {
-  ListNearbyRestaurantsQuery,
-  RestaurantResponseDto,
-} from '../dto';
+import { ListNearbyRestaurantsQuery, RestaurantResponseDto } from '../dto';
 import { RestaurantMapper } from '../mappers';
-import {
-  RESTAURANT_REPOSITORY,
-  RestaurantRepositoryPort,
-} from '../ports';
+import { RESTAURANT_REPOSITORY, RestaurantRepositoryPort } from '../ports';
 
 @Injectable()
 export class ListNearbyRestaurantsUseCase
@@ -24,7 +18,9 @@ export class ListNearbyRestaurantsUseCase
   ): Promise<RestaurantResponseDto[]> {
     const matches = await this.restaurantRepository.findNearby(query);
     return matches.map(({ restaurant, distanceKm }) =>
-      RestaurantMapper.toResponse(restaurant, { distanceKm: distanceKm ?? undefined }),
+      RestaurantMapper.toResponse(restaurant, {
+        distanceKm: distanceKm ?? undefined,
+      }),
     );
   }
 }

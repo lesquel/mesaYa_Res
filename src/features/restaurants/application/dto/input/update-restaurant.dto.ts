@@ -6,4 +6,5 @@ export class UpdateRestaurantDto extends PartialType(CreateRestaurantDto) {}
 export type UpdateRestaurantCommand = UpdateRestaurantDto & {
   restaurantId: string;
   ownerId: string;
+  enforceOwnership?: boolean;
 };
