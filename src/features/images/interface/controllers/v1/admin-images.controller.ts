@@ -25,6 +25,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
