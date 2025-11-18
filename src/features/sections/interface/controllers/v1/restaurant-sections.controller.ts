@@ -62,7 +62,9 @@ export class RestaurantSectionsController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
     const command: CreateSectionCommand = { ...dto };
-    return this.sectionsService.createForOwner(command, user.userId);
+    const section = await this.sectionsService.createForOwner(command, user.userId);
+    console.log('Created section with ID:', section.id);
+    return section;
   }
 
   @Get('analytics')

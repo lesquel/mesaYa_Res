@@ -9,6 +9,7 @@ export class CreateSectionUseCase
   constructor(private readonly sectionDomainService: SectionDomainService) {}
 
   async execute(command: CreateSectionCommand): Promise<SectionResponseDto> {
+    console.log('Creating section with command:', command);
     const saved = await this.sectionDomainService.createSection({
       restaurantId: command.restaurantId,
       name: command.name,
@@ -16,6 +17,7 @@ export class CreateSectionUseCase
       width: command.width,
       height: command.height,
     });
+    console.log('Created section with ID:', saved.id);
     return SectionMapper.toResponse(saved);
   }
 }

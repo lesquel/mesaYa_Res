@@ -7,7 +7,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
@@ -25,7 +24,7 @@ export class SectionOrmEntity {
   @JoinColumn({ name: 'restaurant_id', referencedColumnName: 'id' })
   restaurant: RestaurantOrmEntity;
 
-  @RelationId((section: SectionOrmEntity) => section.restaurant)
+  @Column({ type: 'uuid', name: 'restaurant_id' })
   restaurantId: string;
 
   @Column({ type: 'varchar', length: 50, name: 'name', nullable: false })

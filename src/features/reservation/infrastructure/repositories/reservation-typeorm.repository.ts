@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
@@ -26,6 +26,8 @@ import { RestaurantOrmEntity } from '../../../restaurants';
 export class ReservationTypeOrmRepository
   implements ReservationRepositoryPort, IReservationRepositoryPort
 {
+  private readonly logger = new Logger(ReservationTypeOrmRepository.name);
+
   constructor(
     @InjectRepository(ReservationOrmEntity)
     private readonly reservations: Repository<ReservationOrmEntity>,
@@ -228,11 +230,28 @@ export class ReservationTypeOrmRepository
       ],
     });
 
+    const mappedResults = paginationResult.results
+      .map((entity) => this.safeToDomain(entity))
+      .filter((entity): entity is ReservationEntity => Boolean(entity));
+
     return {
       ...paginationResult,
-      results: paginationResult.results.map((entity) =>
-        ReservationOrmMapper.toDomain(entity),
-      ),
+      results: mappedResults,
     };
+  }
+
+  private safeToDomain(entity: ReservationOrmEntity): ReservationEntity | null {
+    try {
+      return ReservationOrmMapper.toDomain(entity);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unknown reservation mapping error';
+      this.logger.warn(
+        `Skipping reservation ${entity?.id ?? 'unknown'} due to invalid payload: ${message}`,
+      );
+      return null;
+    }
   }
 }
