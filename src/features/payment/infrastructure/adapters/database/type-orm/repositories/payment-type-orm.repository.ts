@@ -8,6 +8,7 @@ import {
   PaymentCreate,
   PaymentUpdate,
   PaymentCreationFailedError,
+  PaymentTypeEnum,
 } from '@features/payment/domain';
 import { PaymentOrmMapperPort } from '@features/payment/application';
 import { PAYMENT_ORM_MAPPER } from '@features/payment/payment.tokens';
@@ -72,6 +73,7 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
     query: ListPaymentsQuery,
   ): Promise<PaginatedResult<PaymentEntity>> {
     const qb = this.buildBaseQuery();
+    this.applyFilters(qb, query);
     return this.executePagination(qb, query);
   }
 
@@ -108,7 +110,66 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
 
   private buildBaseQuery(): SelectQueryBuilder<PaymentOrmEntity> {
     const alias = 'payment';
-    return this.payments.createQueryBuilder(alias);
+    return this.payments
+      .createQueryBuilder(alias)
+      .leftJoinAndSelect('payment.reservation', 'reservation')
+      .leftJoinAndSelect('payment.subscription', 'subscription');
+  }
+
+  private applyFilters(
+    qb: SelectQueryBuilder<PaymentOrmEntity>,
+    query: ListPaymentsQuery,
+  ): void {
+    const alias = qb.alias;
+
+    if (query.status) {
+      qb.andWhere(`${alias}.paymentStatus = :status`, {
+        status: query.status,
+      });
+    }
+
+    if (query.type === PaymentTypeEnum.RESERVATION) {
+      qb.andWhere(`${alias}.reservationId IS NOT NULL`);
+    } else if (query.type === PaymentTypeEnum.SUBSCRIPTION) {
+      qb.andWhere(`${alias}.subscriptionId IS NOT NULL`);
+    }
+
+    if (query.reservationId) {
+      qb.andWhere(`${alias}.reservationId = :reservationId`, {
+        reservationId: query.reservationId,
+      });
+    }
+
+    if (query.restaurantId) {
+      qb.andWhere(
+        '(reservation.restaurantId = :restaurantId OR subscription.restaurantId = :restaurantId)',
+        { restaurantId: query.restaurantId },
+      );
+    }
+
+    if (query.startDate) {
+      qb.andWhere(`${alias}.createdAt >= :startDate`, {
+        startDate: query.startDate,
+      });
+    }
+
+    if (query.endDate) {
+      qb.andWhere(`${alias}.createdAt <= :endDate`, {
+        endDate: query.endDate,
+      });
+    }
+
+    if (typeof query.minAmount === 'number') {
+      qb.andWhere(`${alias}.amount >= :minAmount`, {
+        minAmount: query.minAmount,
+      });
+    }
+
+    if (typeof query.maxAmount === 'number') {
+      qb.andWhere(`${alias}.amount <= :maxAmount`, {
+        maxAmount: query.maxAmount,
+      });
+    }
   }
 
   private async executePagination(
@@ -121,6 +182,8 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
       amount: `${alias}.amount`,
       paymentStatus: `${alias}.paymentStatus`,
       createdAt: `${alias}.createdAt`,
+      date: `${alias}.createdAt`,
+      status: `${alias}.paymentStatus`,
     };
 
     const sortByColumn =

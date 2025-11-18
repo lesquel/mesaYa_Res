@@ -16,6 +16,7 @@ import {
   ApiParam,
   ApiBearerAuth,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
@@ -45,6 +46,7 @@ import {
   PaymentAnalyticsRequestDto,
   PaymentAnalyticsResponseDto,
 } from '@features/payment/presentation/dto';
+import { PaymentStatusEnum, PaymentTypeEnum } from '@features/payment/domain/enums';
 
 @ApiTags('Payments - Admin')
 @Controller({ path: 'admin/payments', version: '1' })
@@ -67,8 +69,47 @@ export class AdminPaymentController {
     model: PaymentResponseSwaggerDto,
     description: 'Paginated collection of payments',
   })
+  @ApiQuery({ name: 'status', required: false, enum: PaymentStatusEnum })
+  @ApiQuery({ name: 'type', required: false, enum: PaymentTypeEnum })
+  @ApiQuery({
+    name: 'reservationId',
+    required: false,
+    type: String,
+    description: 'Filter by reservation identifier',
+  })
+  @ApiQuery({
+    name: 'restaurantId',
+    required: false,
+    type: String,
+    description: 'Filter by restaurant identifier',
+  })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'ISO date or datetime (inclusive start)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'ISO date or datetime (inclusive end)',
+  })
+  @ApiQuery({
+    name: 'minAmount',
+    required: false,
+    type: Number,
+    description: 'Minimum payment amount',
+  })
+  @ApiQuery({
+    name: 'maxAmount',
+    required: false,
+    type: Number,
+    description: 'Maximum payment amount',
+  })
   async getPayments(
-    @PaginationParams() params: PaginatedQueryParams,
+    @PaginationParams({ allowExtraParams: true })
+    params: PaginatedQueryParams,
   ): Promise<PaymentListResponseDto> {
     return this.paymentService.getAllPayments(params);
   }

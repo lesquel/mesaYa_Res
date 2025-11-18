@@ -10,6 +10,7 @@ export interface PaginatedQueryParams {
   sortOrder?: 'ASC' | 'DESC';
   search?: string;
   route: string;
+  filters?: Record<string, string>;
 }
 
 export interface PaginatedResult<T> {

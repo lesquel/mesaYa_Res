@@ -56,6 +56,10 @@ export const PaginationParams = createParamDecorator(
 
     const effectiveLimit = dto.limit ?? (dto as any).pageSize ?? undefined;
 
+    const filters = options.allowExtraParams
+      ? extractFilterParams(request.query)
+      : undefined;
+
     return {
       pagination: {
         page: dto.page,
@@ -66,6 +70,53 @@ export const PaginationParams = createParamDecorator(
       sortOrder: dto.sortOrder,
       search: allowSearch ? (dto.q ?? undefined) : undefined,
       route,
+      filters,
     };
   },
 );
+
+const RESERVED_QUERY_KEYS = new Set([
+  'page',
+  'pageSize',
+  'limit',
+  'offset',
+  'sortBy',
+  'sortOrder',
+  'q',
+]);
+
+function extractFilterParams(query: Request['query']): Record<string, string> | undefined {
+  if (!query || typeof query !== 'object') {
+    return undefined;
+  }
+
+  const filters: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(query)) {
+    if (RESERVED_QUERY_KEYS.has(key)) {
+      continue;
+    }
+
+    const normalized = normalizeQueryValue(value);
+    if (!normalized) {
+      continue;
+    }
+
+    filters[key] = normalized;
+  }
+
+  return Object.keys(filters).length > 0 ? filters : undefined;
+}
+
+function normalizeQueryValue(value: unknown): string | undefined {
+  if (Array.isArray(value)) {
+    return normalizeQueryValue(value[0]);
+  }
+
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+
+  const trimmed = String(value).trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
