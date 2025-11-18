@@ -64,9 +64,9 @@ export class GetAllPaymentsUseCase
       return {};
     }
 
-    const normalizedEntries: [string, string][] = Object.entries(rawFilters).map(
-      ([key, value]) => [key.toLowerCase(), value],
-    );
+    const normalizedEntries: [string, string][] = Object.entries(
+      rawFilters,
+    ).map(([key, value]) => [key.toLowerCase(), value]);
 
     const toReturn: Partial<ListPaymentsQuery> = {};
 
