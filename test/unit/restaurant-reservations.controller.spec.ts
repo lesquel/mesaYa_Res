@@ -28,9 +28,9 @@ describe('RestaurantReservationsController (unit)', () => {
       userId: 'owner-1',
     };
 
-    await expect(
-      controller.list(pagination, raw, user),
-    ).rejects.toThrow(BadRequestException);
+    await expect(controller.list(pagination, raw, user)).rejects.toThrow(
+      BadRequestException,
+    );
     expect(listOwnerReservations.execute).not.toHaveBeenCalled();
   });
 });
