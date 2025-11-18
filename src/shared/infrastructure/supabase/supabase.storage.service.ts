@@ -60,8 +60,13 @@ export class SupabaseStorageService {
     const { error } = await this.withRetries(uploadAttempt, 3, 250);
 
     if (error) {
-      this.logger.error(`Supabase upload failed: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to upload image to storage');
+      this.logger.error(
+        `Supabase upload failed: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to upload image to storage',
+      );
     }
 
     const { data } = this.client.storage.from(this.bucket).getPublicUrl(path, {
@@ -70,7 +75,9 @@ export class SupabaseStorageService {
 
     if (!data?.publicUrl) {
       this.logger.error('Supabase public URL not available after upload', path);
-      throw new InternalServerErrorException('Unable to resolve public URL for uploaded file');
+      throw new InternalServerErrorException(
+        'Unable to resolve public URL for uploaded file',
+      );
     }
 
     return { path, publicUrl: data.publicUrl };
@@ -78,11 +85,17 @@ export class SupabaseStorageService {
 
   async remove(path: string): Promise<void> {
     if (!path) return;
-    const removeAttempt = async () => this.client.storage.from(this.bucket).remove([path]);
+    const removeAttempt = async () =>
+      this.client.storage.from(this.bucket).remove([path]);
     const { error } = await this.withRetries(removeAttempt, 2, 200);
     if (error) {
-      this.logger.error(`Supabase remove failed: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to remove file from storage');
+      this.logger.error(
+        `Supabase remove failed: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to remove file from storage',
+      );
     }
   }
 
@@ -153,8 +166,10 @@ export class SupabaseStorageService {
     const e = err as any;
     // DNS lookup or network errors
     if (e?.code === 'EAI_AGAIN') return true;
-    if (typeof e?.message === 'string' && e.message.includes('getaddrinfo')) return true;
-    if (typeof e?.name === 'string' && /fetch|network/i.test(e.name)) return true;
+    if (typeof e?.message === 'string' && e.message.includes('getaddrinfo'))
+      return true;
+    if (typeof e?.name === 'string' && /fetch|network/i.test(e.name))
+      return true;
     return false;
   }
 
