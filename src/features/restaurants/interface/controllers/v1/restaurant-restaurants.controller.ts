@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   ParseUUIDPipe,
@@ -70,7 +71,9 @@ export class RestaurantRestaurantsController {
       restaurantId: id,
     });
     if (restaurant.ownerId !== user.userId) {
-      throw new Error('Restaurant does not belong to authenticated owner');
+      throw new ForbiddenException(
+        'Restaurant does not belong to authenticated owner',
+      );
     }
     return restaurant;
   }
