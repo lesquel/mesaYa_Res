@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,6 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { isUUID } from 'class-validator';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -99,8 +101,9 @@ export class RestaurantReservationsController {
       query.status = raw.status as ListOwnerReservationsQuery['status'];
     }
 
-    if (typeof raw.restaurantId === 'string') {
-      query.restaurantId = raw.restaurantId;
+    const restaurantId = parseRestaurantIdFilter(raw.restaurantId);
+    if (restaurantId) {
+      query.restaurantId = restaurantId;
     }
 
     if (typeof raw.date === 'string') {
@@ -154,4 +157,25 @@ export class RestaurantReservationsController {
     };
     return this.deleteOwnerReservation.execute(command);
   }
+}
+
+function parseRestaurantIdFilter(value: unknown): string | undefined {
+  if (Array.isArray(value)) {
+    value = value[0];
+  }
+
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  if (trimmed.length === 0) {
+    return undefined;
+  }
+
+  if (!isUUID(trimmed)) {
+    throw new BadRequestException('restaurantId must be a valid UUID');
+  }
+
+  return trimmed;
 }
