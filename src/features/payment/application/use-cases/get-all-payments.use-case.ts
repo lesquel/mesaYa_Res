@@ -58,20 +58,19 @@ export class GetAllPaymentsUseCase
   }
 
   private extractFilters(
-    rawFilters?: Record<string, string> | undefined,
+    rawFilters?: Record<string, string>,
   ): Partial<ListPaymentsQuery> {
     if (!rawFilters || Object.keys(rawFilters).length === 0) {
       return {};
     }
 
-    const normalizedEntries = Object.entries(rawFilters).map(([key, value]) => [
-      key.toLowerCase(),
-      value,
-    ]) as Array<[string, string]>;
+    const normalizedEntries: [string, string][] = Object.entries(rawFilters).map(
+      ([key, value]) => [key.toLowerCase(), value],
+    );
 
     const toReturn: Partial<ListPaymentsQuery> = {};
 
-    const lookup = new Map(normalizedEntries);
+    const lookup = new Map<string, string>(normalizedEntries);
 
     const status = this.parseStatus(lookup.get('status'));
     if (status) {

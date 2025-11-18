@@ -111,7 +111,9 @@ export class RestaurantScheduleService {
       close: normalized.close,
     });
     if (overlaps) {
-      throw new ConflictException('Schedule slot overlaps with an existing slot');
+      throw new ConflictException(
+        'Schedule slot overlaps with an existing slot',
+      );
     }
 
     return this.slotsRepo.create({ restaurantId, ...normalized });
