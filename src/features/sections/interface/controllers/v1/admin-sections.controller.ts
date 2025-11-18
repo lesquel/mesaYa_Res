@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -30,6 +31,7 @@ import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import {
   ThrottleCreate,
   ThrottleModify,
+  ThrottleRead,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 import {
@@ -41,6 +43,10 @@ import type {
   CreateSectionCommand,
   DeleteSectionCommand,
   DeleteSectionResponseDto,
+  FindSectionQuery,
+  ListRestaurantSectionsQuery,
+  ListSectionsQuery,
+  PaginatedSectionResponse,
   UpdateSectionCommand,
   SectionResponseDto,
 } from '../../../application';
@@ -50,6 +56,10 @@ import {
   SectionAnalyticsRequestDto,
   SectionAnalyticsResponseDto,
 } from '@features/sections/interface/dto';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 
 const hasRole = (
   user: CurrentUserPayload | undefined,
@@ -87,6 +97,44 @@ export class AdminSectionsController {
     return this.sectionsService.createForOwner(command, user.userId);
   }
 
+  @Get()
+  @ThrottleRead()
+  @Permissions('section:read')
+  @ApiOperation({ summary: 'Listar secciones (permiso section:read)' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: SectionResponseSwaggerDto,
+    description: 'Listado paginado de secciones',
+  })
+  async findAll(
+    @PaginationParams({
+      defaultRoute: '/admin/sections',
+      allowExtraParams: true,
+    })
+    pagination: PaginatedQueryParams,
+    @Query('restaurantId') restaurantId: string | undefined,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<PaginatedSectionResponse> {
+    if (isAdmin(user)) {
+      const query: ListSectionsQuery = { ...pagination };
+      return this.sectionsService.list(query);
+    }
+
+    const normalizedRestaurant = restaurantId?.trim();
+    if (!normalizedRestaurant) {
+      throw new BadRequestException(
+        'restaurantId is required for owners to list sections',
+      );
+    }
+
+    const query: ListRestaurantSectionsQuery = {
+      ...pagination,
+      restaurantId: normalizedRestaurant,
+    };
+
+    return this.sectionsService.listByRestaurantForOwner(query, user.userId);
+  }
+
   @Get('analytics')
   @ThrottleSearch()
   @Permissions('section:read')
@@ -102,6 +150,27 @@ export class AdminSectionsController {
           user.userId,
         );
     return SectionAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get(':id')
+  @ThrottleRead()
+  @Permissions('section:read')
+  @ApiOperation({ summary: 'Obtener sección por ID (permiso section:read)' })
+  @ApiParam({ name: 'id', description: 'UUID de la sección' })
+  @ApiOkResponse({
+    description: 'Detalle de la sección',
+    type: SectionResponseSwaggerDto,
+  })
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<SectionResponseDto> {
+    const query: FindSectionQuery = { sectionId: id };
+    if (isAdmin(user)) {
+      return this.sectionsService.findOne(query);
+    }
+
+    return this.sectionsService.findOneForOwner(query, user.userId);
   }
 
   @Patch(':id')

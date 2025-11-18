@@ -13,6 +13,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -23,12 +24,16 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import {
   ThrottleCreate,
   ThrottleModify,
+  ThrottleRead,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators/index';
 import {
   ObjectsService,
   type CreateGraphicObjectCommand,
   type DeleteGraphicObjectCommand,
+  type FindGraphicObjectQuery,
+  type ListGraphicObjectsQuery,
+  type PaginatedGraphicObjectResponse,
   UpdateGraphicObjectDto,
   UpdateGraphicObjectCommand,
   CreateGraphicObjectDto,
@@ -37,7 +42,12 @@ import {
 import {
   GraphicObjectAnalyticsRequestDto,
   GraphicObjectAnalyticsResponseDto,
+  GraphicObjectResponseSwaggerDto,
 } from '../../dto/index';
+import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
+import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
+import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 
 @ApiTags('Objects - Admin')
 @Controller({ path: 'admin/objects', version: '1' })
@@ -49,6 +59,23 @@ export class AdminObjectsController {
     private readonly getGraphicObjectAnalytics: GetGraphicObjectAnalyticsUseCase,
   ) {}
 
+  @Get()
+  @ThrottleRead()
+  @Permissions('object:read')
+  @ApiOperation({ summary: 'Listar objetos gráficos (permiso object:read)' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: GraphicObjectResponseSwaggerDto,
+    description: 'Listado paginado de objetos gráficos',
+  })
+  async list(
+    @PaginationParams({ defaultRoute: '/admin/objects' })
+    pagination: PaginatedQueryParams,
+  ): Promise<PaginatedGraphicObjectResponse> {
+    const query: ListGraphicObjectsQuery = { ...pagination };
+    return this.objects.list(query);
+  }
+
   @Post()
   @ThrottleCreate()
   @Permissions('object:create')
@@ -57,6 +84,22 @@ export class AdminObjectsController {
   async create(@Body() dto: CreateGraphicObjectDto) {
     const command: CreateGraphicObjectCommand = { ...dto };
     return this.objects.create(command);
+  }
+
+  @Get(':id')
+  @ThrottleRead()
+  @Permissions('object:read')
+  @ApiOperation({
+    summary: 'Obtener objeto gráfico por ID (permiso object:read)',
+  })
+  @ApiParam({ name: 'id', description: 'UUID del objeto' })
+  @ApiOkResponse({
+    description: 'Detalle del objeto gráfico',
+    type: GraphicObjectResponseSwaggerDto,
+  })
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const query: FindGraphicObjectQuery = { objectId: id };
+    return this.objects.findOne(query);
   }
 
   @Get('analytics')

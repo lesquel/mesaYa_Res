@@ -13,6 +13,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -24,6 +25,7 @@ import { CurrentUser } from '@features/auth/interface/decorators/current-user.de
 import {
   ThrottleCreate,
   ThrottleModify,
+  ThrottleRead,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 import {
@@ -35,6 +37,7 @@ import {
   type ReservationResponseDto,
   type DeleteReservationResponseDto,
   type ListReservationsQuery,
+  type FindReservationQuery,
   type PaginatedReservationResponse,
 } from '@features/reservation/application/dto';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
@@ -133,6 +136,24 @@ export class AdminReservationsController {
       query.toQuery(),
     );
     return ReservationAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get(':id')
+  @ThrottleRead()
+  @Permissions('reservation:read')
+  @ApiOperation({
+    summary: 'Obtener reserva por ID (permiso reservation:read)',
+  })
+  @ApiParam({ name: 'id', description: 'UUID de la reserva' })
+  @ApiOkResponse({
+    description: 'Detalle de la reserva',
+    type: ReservationResponseSwaggerDto,
+  })
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ReservationResponseDto> {
+    const query: FindReservationQuery = { reservationId: id };
+    return this.reservationsService.findOne(query);
   }
 
   @Patch(':id')

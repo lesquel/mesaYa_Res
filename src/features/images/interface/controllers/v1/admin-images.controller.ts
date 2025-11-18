@@ -47,6 +47,7 @@ import {
   UpdateImageDto,
   type CreateImageCommand,
   type DeleteImageCommand,
+  type FindImageQuery,
   type UpdateImageCommand,
   GetImageAnalyticsUseCase,
   type PaginatedImageResponse,
@@ -140,6 +141,20 @@ export class AdminImagesController {
 
     const command: CreateImageCommand = { ...dto, file: payload };
     return this.images.create(command);
+  }
+
+  @Get(':id')
+  @ThrottleRead()
+  @Permissions('image:read')
+  @ApiOperation({ summary: 'Obtener imagen por ID (Admin)' })
+  @ApiParam({ name: 'id', description: 'UUID de la imagen' })
+  @ApiOkResponse({
+    description: 'Detalle de la imagen',
+    type: ImageResponseSwaggerDto,
+  })
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const query: FindImageQuery = { imageId: id };
+    return this.images.findOne(query);
   }
 
   @Get('analytics')

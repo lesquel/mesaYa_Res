@@ -83,6 +83,23 @@ export class AdminRestaurantsController {
     return this.restaurantsService.list(query);
   }
 
+  @Get(':id')
+  @ThrottleRead()
+  @Permissions('restaurant:read')
+  @ApiOperation({
+    summary: 'Obtener restaurante por ID (permiso restaurant:read)',
+  })
+  @ApiParam({ name: 'id', description: 'UUID del restaurante' })
+  @ApiOkResponse({
+    description: 'Detalle del restaurante',
+    type: RestaurantResponseSwaggerDto,
+  })
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<RestaurantResponseDto> {
+    return this.restaurantsService.findOne({ restaurantId: id });
+  }
+
   @Get('owners')
   @ThrottleRead()
   @Permissions('restaurant:read')
