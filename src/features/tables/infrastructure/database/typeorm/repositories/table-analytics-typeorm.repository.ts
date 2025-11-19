@@ -125,12 +125,15 @@ export class TableAnalyticsTypeOrmRepository
   ): SelectQueryBuilder<TableOrmEntity> {
     const qb = this.repository
       .createQueryBuilder('table')
-      .select('table.sectionId', 'id')
+      .leftJoin('table.section', 'sectionDistribution')
+      .select('sectionDistribution.id', 'id')
       .addSelect('COUNT(table.id)', 'count');
 
     this.applyFilters(qb, filters);
 
-    qb.groupBy('table.sectionId').orderBy('COUNT(table.id)', 'DESC').limit(10);
+    qb.groupBy('sectionDistribution.id')
+      .orderBy('COUNT(table.id)', 'DESC')
+      .limit(10);
 
     return qb;
   }
@@ -158,17 +161,31 @@ export class TableAnalyticsTypeOrmRepository
     filters: TableAnalyticsQuery,
   ): void {
     if (filters.sectionId) {
-      qb.andWhere('table.sectionId = :sectionId', {
+      const alias = this.ensureSectionJoin(qb);
+      qb.andWhere(`${alias}.id = :sectionId`, {
         sectionId: filters.sectionId,
       });
     }
 
     if (filters.restaurantId) {
-      qb.leftJoin('table.section', 'sectionFilter').andWhere(
-        'sectionFilter.restaurantId = :restaurantId',
-        { restaurantId: filters.restaurantId },
-      );
+      const alias = this.ensureSectionJoin(qb);
+      qb.andWhere(`${alias}.restaurantId = :restaurantId`, {
+        restaurantId: filters.restaurantId,
+      });
     }
+  }
+
+  private ensureSectionJoin(qb: SelectQueryBuilder<TableOrmEntity>): string {
+    const alias = 'sectionFilter';
+    const hasJoin = qb.expressionMap.joinAttributes.some(
+      (join) => join.alias?.name === alias,
+    );
+
+    if (!hasJoin) {
+      qb.leftJoin('table.section', alias);
+    }
+
+    return alias;
   }
 
   private toNumber(value: string | number | null | undefined): number {
