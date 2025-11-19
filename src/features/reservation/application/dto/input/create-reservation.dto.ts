@@ -12,10 +12,12 @@ export class CreateReservationDto {
   tableId: string;
 
   @ApiProperty({ description: 'Reservation date in ISO 8601 format' })
+  @Type(() => Date)
   @IsDate()
   reservationDate: string;
 
   @ApiProperty({ description: 'Reservation time in ISO 8601 format' })
+  @Type(() => Date)
   @IsDate()
   reservationTime: string;
 
