@@ -17,7 +17,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { ThrottleCreate, ThrottleRead } from '@shared/infrastructure/decorators';
+import {
+  ThrottleCreate,
+  ThrottleRead,
+} from '@shared/infrastructure/decorators';
 import {
   CreateReservationCommand,
   CreateReservationDto,
