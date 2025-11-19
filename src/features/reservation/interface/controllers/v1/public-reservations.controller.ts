@@ -1,9 +1,29 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { ThrottleRead } from '@shared/infrastructure/decorators';
 import {
+  ThrottleCreate,
+  ThrottleRead,
+} from '@shared/infrastructure/decorators';
+import {
+  CreateReservationCommand,
+  CreateReservationDto,
   FindReservationQuery,
   type ListReservationsQuery,
   type ListRestaurantReservationsQuery,
@@ -11,11 +31,36 @@ import {
   type PaginatedReservationResponse,
 } from '@features/reservation/application/dto';
 import { ReservationService } from '@features/reservation/application';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
 
 @ApiTags('Reservations - Public')
 @Controller({ path: 'public/reservations', version: '1' })
 export class PublicReservationsController {
   constructor(private readonly reservationsService: ReservationService) {}
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ThrottleCreate()
+  @ApiOperation({ summary: 'Crear una reserva pública autenticada' })
+  @ApiBody({ type: CreateReservationDto })
+  async create(
+    @Body() dto: CreateReservationDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<ReservationResponseDto> {
+    if (!user?.userId) {
+      throw new UnauthorizedException();
+    }
+    const command: CreateReservationCommand = {
+      ...dto,
+      userId: user.userId,
+    };
+    return this.reservationsService.create(command);
+  }
 
   @Get()
   @ThrottleRead()

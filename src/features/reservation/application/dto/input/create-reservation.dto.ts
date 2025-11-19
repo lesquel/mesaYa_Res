@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsUUID, Min, IsDate } from 'class-validator';
 
@@ -12,12 +12,14 @@ export class CreateReservationDto {
   tableId: string;
 
   @ApiProperty({ description: 'Reservation date in ISO 8601 format' })
+  @Type(() => Date)
   @IsDate()
-  reservationDate: string;
+  reservationDate: Date;
 
   @ApiProperty({ description: 'Reservation time in ISO 8601 format' })
+  @Type(() => Date)
   @IsDate()
-  reservationTime: string;
+  reservationTime: Date;
 
   @ApiProperty({ description: 'Number of guests' })
   @IsInt()
