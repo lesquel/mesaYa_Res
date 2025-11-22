@@ -39,6 +39,7 @@ export class TableDomainService {
       posX: request.posX,
       posY: request.posY,
       width: request.width,
+      height: request.height ?? request.width,
       tableImageId: request.tableImageId,
       chairImageId: request.chairImageId,
     });
@@ -164,11 +165,25 @@ export class TableDomainService {
     snapshot: TableSnapshot,
   ): void {
     const { posX, posY, width, height } = snapshot;
-    const fitsHorizontally = posX >= 0 && posX + width <= section.width;
-    const fitsVertically = posY >= 0 && posY + height <= section.height;
+
+    let sectionWidth = section.width;
+    let sectionHeight = section.height;
+
+    // Fix for legacy sections stored in grid units (e.g. 12x8) instead of pixels
+    // If the section is smaller than the table, it's likely using grid units.
+    if (sectionWidth < width || sectionHeight < height) {
+      if (sectionWidth < 100) sectionWidth *= 80; // Assume 80px grid
+      if (sectionHeight < 100) sectionHeight *= 80;
+    }
+
+    const fitsHorizontally = posX >= 0 && posX + width <= sectionWidth;
+    const fitsVertically = posY >= 0 && posY + height <= sectionHeight;
 
     if (!fitsHorizontally || !fitsVertically) {
-      throw new TableLayoutOutOfBoundsError(section.sectionId);
+      throw new TableLayoutOutOfBoundsError(section.sectionId, {
+        table: { x: posX, y: posY, width, height },
+        section: { width: section.width, height: section.height },
+      });
     }
   }
 

@@ -15,11 +15,11 @@ import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
 
 @Module({
   imports: [
+    AuthModule,
+    ReservationModule,
     RestaurantsModule,
     SectionsModule,
-    AuthModule,
     ReviewsModule,
-    ReservationModule,
     TablesModule,
     ObjectsModule,
     SectionObjectsModule,
@@ -30,11 +30,11 @@ import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
     OwnerUpgradeModule,
   ],
   exports: [
+    AuthModule,
+    ReservationModule,
     RestaurantsModule,
     SectionsModule,
-    AuthModule,
     ReviewsModule,
-    ReservationModule,
     TablesModule,
     ObjectsModule,
     SectionObjectsModule,

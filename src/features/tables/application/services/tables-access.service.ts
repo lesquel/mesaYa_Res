@@ -98,10 +98,10 @@ export class TablesAccessService {
       .leftJoinAndSelect('section.restaurant', 'restaurant')
       .where('section.id = :sectionId', { sectionId })
       .select([
-        'section.section_id',
-        'section.restaurant_id',
-        'restaurant.restaurant_id',
-        'restaurant.owner_id',
+        'section.id',
+        'section.restaurantId',
+        'restaurant.id',
+        'restaurant.ownerId',
       ])
       .getOne();
 
@@ -125,12 +125,12 @@ export class TablesAccessService {
       .leftJoinAndSelect('section.restaurant', 'restaurant')
       .where('table.id = :tableId', { tableId })
       .select([
-        'table.table_id',
-        'table.section_id',
-        'section.section_id',
-        'section.restaurant_id',
-        'restaurant.restaurant_id',
-        'restaurant.owner_id',
+        'table.id',
+        'table.sectionId',
+        'section.id',
+        'section.restaurantId',
+        'restaurant.id',
+        'restaurant.ownerId',
       ])
       .getOne();
 

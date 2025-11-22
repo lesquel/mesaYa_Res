@@ -29,9 +29,7 @@ export function configureApp(app: INestApplication) {
   configureGlobalPipes(app);
   configureLogger(app);
   configureInterceptors(app);
-  if (configService.get<string>('NODE_ENV') !== 'production') {
-    configureFilters(app);
-  }
+  configureFilters(app);
 
   return app;
 }

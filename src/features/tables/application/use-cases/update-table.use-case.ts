@@ -21,6 +21,7 @@ export class UpdateTableUseCase
       posX: command.posX,
       posY: command.posY,
       width: command.width,
+      height: command.height,
       tableImageId: command.tableImageId,
       chairImageId: command.chairImageId,
     });
