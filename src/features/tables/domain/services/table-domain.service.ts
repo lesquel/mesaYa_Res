@@ -39,6 +39,7 @@ export class TableDomainService {
       posX: request.posX,
       posY: request.posY,
       width: request.width,
+      height: request.height ?? request.width,
       tableImageId: request.tableImageId,
       chairImageId: request.chairImageId,
     });

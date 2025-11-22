@@ -31,6 +31,11 @@ export class CreateTableDto {
   @Min(1)
   width: number;
 
+  @ApiProperty({ description: 'Height (> 0)' })
+  @IsInt()
+  @Min(1)
+  height: number;
+
   @ApiProperty({ example: 'abc123-uuid-image' })
   @IsString()
   tableImageId: string;

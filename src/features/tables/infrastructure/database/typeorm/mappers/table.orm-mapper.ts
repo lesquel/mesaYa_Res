@@ -18,6 +18,7 @@ export class TableOrmMapper {
     entity.posX = s.posX;
     entity.posY = s.posY;
     entity.width = s.width;
+    entity.height = s.height;
     entity.tableImageId = s.tableImageId;
     entity.chairImageId = s.chairImageId;
     return entity;
@@ -32,7 +33,7 @@ export class TableOrmMapper {
       posX: entity.posX,
       posY: entity.posY,
       width: entity.width,
-      height: entity.width,
+      height: entity.height ?? entity.width,
       status: 'AVAILABLE',
       isAvailable: true,
       tableImageId: entity.tableImageId,
