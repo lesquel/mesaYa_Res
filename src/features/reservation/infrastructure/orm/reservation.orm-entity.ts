@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
@@ -28,10 +27,10 @@ export class ReservationOrmEntity {
   @JoinColumn({ name: 'restaurant_id', referencedColumnName: 'id' })
   restaurant: RestaurantOrmEntity;
 
-  @RelationId((reservation: ReservationOrmEntity) => reservation.restaurant)
+  @Column({ type: 'uuid', name: 'restaurant_id', nullable: false })
   restaurantId: string;
 
-  @RelationId((reservation: ReservationOrmEntity) => reservation.user)
+  @Column({ type: 'uuid', name: 'user_id', nullable: false })
   userId: string;
 
   @ManyToOne(() => TableOrmEntity, { nullable: false, onDelete: 'CASCADE' })

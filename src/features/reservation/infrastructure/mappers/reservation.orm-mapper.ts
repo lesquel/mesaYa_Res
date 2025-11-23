@@ -45,6 +45,8 @@ export class ReservationOrmMapper {
     entity.status = snapshot.status;
     entity.createdAt = snapshot.createdAt;
     entity.updatedAt = snapshot.updatedAt;
+    entity.restaurantId = snapshot.restaurantId;
+    entity.userId = snapshot.userId;
 
     if (relations.restaurant) {
       entity.restaurant = relations.restaurant;
