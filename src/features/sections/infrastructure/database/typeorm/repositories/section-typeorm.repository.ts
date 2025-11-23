@@ -64,7 +64,7 @@ export class SectionTypeOrmRepository
   async findById(id: string): Promise<Section | null> {
     const entity = await this.sections.findOne({
       where: { id },
-      relations: ['restaurant'],
+      relations: ['restaurant', 'tables'],
     });
 
     return entity ? SectionOrmMapper.toDomain(entity) : null;
@@ -120,7 +120,8 @@ export class SectionTypeOrmRepository
     const alias = 'section';
     return this.sections
       .createQueryBuilder(alias)
-      .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant');
+      .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant')
+      .leftJoinAndSelect(`${alias}.tables`, 'tables');
   }
 
   private async executePagination(

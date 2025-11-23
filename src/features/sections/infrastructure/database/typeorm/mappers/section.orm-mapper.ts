@@ -1,6 +1,7 @@
 import { Section } from '../../../../domain';
 import { SectionOrmEntity } from '../orm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
+import { TableOrmMapper } from '@features/tables/infrastructure/database/typeorm/mappers';
 
 export interface SectionOrmMapperOptions {
   existing?: SectionOrmEntity;
@@ -25,6 +26,9 @@ export class SectionOrmMapper {
         zIndex: 0,
         notes: null,
       },
+      tables: entity.tables
+        ? entity.tables.map((t) => TableOrmMapper.toDomain(t).snapshot())
+        : undefined,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     });
