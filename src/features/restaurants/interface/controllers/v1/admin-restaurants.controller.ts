@@ -83,6 +83,19 @@ export class AdminRestaurantsController {
     return this.restaurantsService.list(query);
   }
 
+  @Get('owners')
+  @ThrottleRead()
+  @Permissions('restaurant:read')
+  @ApiOperation({ summary: 'Listar propietarios de restaurantes' })
+  @ApiOkResponse({
+    description: 'Opciones de propietarios disponibles',
+    type: RestaurantOwnerOptionDto,
+    isArray: true,
+  })
+  async listOwners(): Promise<RestaurantOwnerOptionDto[]> {
+    return this.restaurantsService.listOwners();
+  }
+
   @Get(':id')
   @ThrottleRead()
   @Permissions('restaurant:read')
@@ -98,19 +111,6 @@ export class AdminRestaurantsController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<RestaurantResponseDto> {
     return this.restaurantsService.findOne({ restaurantId: id });
-  }
-
-  @Get('owners')
-  @ThrottleRead()
-  @Permissions('restaurant:read')
-  @ApiOperation({ summary: 'Listar propietarios de restaurantes' })
-  @ApiOkResponse({
-    description: 'Opciones de propietarios disponibles',
-    type: RestaurantOwnerOptionDto,
-    isArray: true,
-  })
-  async listOwners(): Promise<RestaurantOwnerOptionDto[]> {
-    return this.restaurantsService.listOwners();
   }
 
   @Post()
