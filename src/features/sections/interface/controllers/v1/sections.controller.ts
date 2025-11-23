@@ -113,6 +113,8 @@ export class SectionsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ThrottleRead()
   @ApiOperation({ summary: 'List sections' })
   @ApiPaginatedResponse({
@@ -123,9 +125,9 @@ export class SectionsController {
   async findAll(
     @PaginationParams({ defaultRoute: '/sections', allowExtraParams: true })
     query: ListSectionsQuery,
-    @CurrentUser() user?: CurrentUserPayload,
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<PaginatedSectionResponse> {
-    if (user?.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
       return this.sectionsService.listForOwner(query, user.userId);
     }
     return this.sectionsService.list(query);

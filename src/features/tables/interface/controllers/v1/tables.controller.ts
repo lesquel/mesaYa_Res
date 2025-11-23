@@ -109,6 +109,8 @@ export class TablesController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ThrottleRead()
   @ApiOperation({ summary: 'List tables' })
   @ApiPaginatedResponse({
@@ -119,9 +121,9 @@ export class TablesController {
   async findAll(
     @PaginationParams({ defaultRoute: '/tables', allowExtraParams: true })
     query: ListTablesQuery,
-    @CurrentUser() user?: CurrentUserPayload,
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<PaginatedTableResponse> {
-    if (user?.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
       return this.tablesService.listForOwner(query, user.userId);
     }
     return this.tablesService.list(query);
