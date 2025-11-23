@@ -21,7 +21,6 @@ import { ThrottlerBehindProxyGuard } from '@shared/infrastructure/guards/throttl
     ThrottlerModule.forRoot(THROTTLER_CONFIG),
     SeedModule,
     FeaturesModule,
-    ReservationModule,
   ],
   controllers: [AppController],
   providers: [

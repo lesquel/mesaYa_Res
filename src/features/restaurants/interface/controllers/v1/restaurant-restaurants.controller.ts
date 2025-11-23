@@ -35,6 +35,8 @@ import type {
   ListOwnerRestaurantsQuery,
 } from '@features/restaurants/application';
 
+const RESTAURANT_ID_PARAM = ':id';
+
 @ApiTags('Restaurants - Restaurant')
 @Controller({ path: 'restaurant', version: '1' })
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -58,7 +60,8 @@ export class RestaurantRestaurantsController {
     return this.restaurantsService.listByOwner(query);
   }
 
-  @Get(':id')
+  // Regex-bound param prevents clashes with /restaurant/reservations route
+  @Get(RESTAURANT_ID_PARAM)
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({ summary: 'Obtener restaurante por ID (propietario)' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
@@ -78,7 +81,7 @@ export class RestaurantRestaurantsController {
     return restaurant;
   }
 
-  @Patch(':id')
+  @Patch(RESTAURANT_ID_PARAM)
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({ summary: 'Actualizar restaurante (propietario)' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
