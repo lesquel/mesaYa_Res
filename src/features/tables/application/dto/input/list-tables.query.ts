@@ -1,3 +1,7 @@
 import { PaginatedQueryParams } from '@shared/application/types/pagination';
 
-export type ListTablesQuery = PaginatedQueryParams;
+export interface ListTablesQuery extends PaginatedQueryParams {
+  sectionId?: string;
+  restaurantId?: string;
+  restaurantIds?: string[];
+}

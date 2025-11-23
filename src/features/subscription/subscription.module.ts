@@ -25,10 +25,8 @@ import {
   SubscriptionPlanAnalyticsTypeOrmRepository,
 } from './infrastructure';
 import {
-  AdminSubscriptionPlanController,
-  PublicSubscriptionPlanController,
-  AdminSubscriptionController,
-  RestaurantSubscriptionController,
+  SubscriptionPlansController,
+  SubscriptionsController,
 } from './presentation';
 import {
   ISubscriptionPlanRepositoryPort,
@@ -49,12 +47,7 @@ import { KafkaService } from '@shared/infrastructure/kafka';
       RestaurantOrmEntity,
     ]),
   ],
-  controllers: [
-    AdminSubscriptionController,
-    RestaurantSubscriptionController,
-    AdminSubscriptionPlanController,
-    PublicSubscriptionPlanController,
-  ],
+  controllers: [SubscriptionsController, SubscriptionPlansController],
   providers: [
     {
       provide: SUBSCRIPTION_ORM_MAPPER,

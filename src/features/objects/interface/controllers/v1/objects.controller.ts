@@ -48,61 +48,32 @@ import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoi
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 
-@ApiTags('Objects - Admin')
-@Controller({ path: 'admin/objects', version: '1' })
-@UseGuards(JwtAuthGuard, PermissionsGuard)
-@ApiBearerAuth()
-export class AdminObjectsController {
+@ApiTags('Objects')
+@Controller({ path: 'objects', version: '1' })
+export class ObjectsController {
   constructor(
     private readonly objects: ObjectsService,
     private readonly getGraphicObjectAnalytics: GetGraphicObjectAnalyticsUseCase,
   ) {}
 
+  // --- Public Endpoints ---
+
   @Get()
   @ThrottleRead()
-  @Permissions('object:read')
-  @ApiOperation({ summary: 'Listar objetos gráficos (permiso object:read)' })
-  @PaginatedEndpoint()
-  @ApiPaginatedResponse({
-    model: GraphicObjectResponseSwaggerDto,
-    description: 'Listado paginado de objetos gráficos',
-  })
+  @ApiOperation({ summary: 'Listar objetos gráficos públicos (paginado)' })
+  @ApiPaginationQuery()
   async list(
-    @PaginationParams({ defaultRoute: '/admin/objects' })
-    pagination: PaginatedQueryParams,
-  ): Promise<PaginatedGraphicObjectResponse> {
-    const query: ListGraphicObjectsQuery = { ...pagination };
+    @PaginationParams({ defaultRoute: '/objects', allowExtraParams: true })
+    query: ListGraphicObjectsQuery,
+  ) {
     return this.objects.list(query);
   }
 
-  @Post()
-  @ThrottleCreate()
-  @Permissions('object:create')
-  @ApiOperation({ summary: 'Crear objeto gráfico (permiso object:create)' })
-  @ApiBody({ type: CreateGraphicObjectDto })
-  async create(@Body() dto: CreateGraphicObjectDto) {
-    const command: CreateGraphicObjectCommand = { ...dto };
-    return this.objects.create(command);
-  }
-
-  @Get(':id')
-  @ThrottleRead()
-  @Permissions('object:read')
-  @ApiOperation({
-    summary: 'Obtener objeto gráfico por ID (permiso object:read)',
-  })
-  @ApiParam({ name: 'id', description: 'UUID del objeto' })
-  @ApiOkResponse({
-    description: 'Detalle del objeto gráfico',
-    type: GraphicObjectResponseSwaggerDto,
-  })
-  async findOne(@Param('id', UUIDPipe) id: string) {
-    const query: FindGraphicObjectQuery = { objectId: id };
-    return this.objects.findOne(query);
-  }
-
-  @Get('analytics')
+  @Get('analytics/stats')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleSearch()
   @Permissions('object:read')
   @ApiOperation({ summary: 'Datos analíticos de objetos gráficos' })
@@ -115,7 +86,32 @@ export class AdminObjectsController {
     return GraphicObjectAnalyticsResponseDto.fromApplication(analytics);
   }
 
+  @Get(':id')
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Obtener objeto gráfico público por ID' })
+  @ApiParam({ name: 'id', description: 'UUID del objeto' })
+  async findOne(@Param('id', UUIDPipe) id: string) {
+    const query: FindGraphicObjectQuery = { objectId: id };
+    return this.objects.findOne(query);
+  }
+
+  // --- Admin / Protected Endpoints ---
+
+  @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
+  @ThrottleCreate()
+  @Permissions('object:create')
+  @ApiOperation({ summary: 'Crear objeto gráfico (permiso object:create)' })
+  @ApiBody({ type: CreateGraphicObjectDto })
+  async create(@Body() dto: CreateGraphicObjectDto) {
+    const command: CreateGraphicObjectCommand = { ...dto };
+    return this.objects.create(command);
+  }
+
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('object:update')
   @ApiOperation({ summary: 'Actualizar objeto (permiso object:update)' })
@@ -130,6 +126,8 @@ export class AdminObjectsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('object:delete')
   @ApiOperation({ summary: 'Eliminar objeto (permiso object:delete)' })

@@ -115,7 +115,7 @@ export class AuthController {
     return AuthUserResponseDto.fromDomain(user);
   }
 
-  @Get('admin/check')
+  @Get('check')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Verifica que el usuario sea ADMIN' })
@@ -166,7 +166,7 @@ export class AuthController {
     return AuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
-  @Get('admin/users')
+  @Get('users')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Listar usuarios (ADMIN) — incluye roles y estado' })
@@ -187,7 +187,7 @@ export class AuthController {
   @ApiQuery({ name: 'restaurantId', required: false, type: String })
   async listUsersAdmin(
     @PaginationParams({
-      defaultRoute: '/auth/admin/users',
+      defaultRoute: '/auth/users',
       allowExtraParams: true,
     })
     params: PaginatedQueryParams,
@@ -222,7 +222,7 @@ export class AuthController {
     };
   }
 
-  @Get('admin/users/:id')
+  @Get('users/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Detalle de usuario (ADMIN)' })
@@ -239,7 +239,7 @@ export class AuthController {
     return AdminAuthUserResponseDto.fromDomain(user);
   }
 
-  @Patch('admin/users/:id/roles')
+  @Patch('users/:id/roles')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Cambiar roles de un usuario (ADMIN)' })
@@ -263,7 +263,7 @@ export class AuthController {
     return AuthUserResponseDto.fromDomain(user);
   }
 
-  @Patch('admin/roles/:name/permissions')
+  @Patch('roles/:name/permissions')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Cambiar permisos de un rol (ADMIN)' })
@@ -287,7 +287,7 @@ export class AuthController {
     return RoleResponseDto.fromDomain(role);
   }
 
-  @Get('admin/roles')
+  @Get('roles')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Listar roles (ADMIN)' })
@@ -301,7 +301,7 @@ export class AuthController {
     return roles.map((role) => RoleResponseDto.fromDomain(role));
   }
 
-  @Get('admin/permissions')
+  @Get('permissions')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Listar permisos (ADMIN)' })

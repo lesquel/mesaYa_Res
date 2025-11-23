@@ -6,10 +6,7 @@ import { OwnerUpgradeService } from './application/services/owner-upgrade.servic
 import { OwnerUpgradeRequestRepository } from './infrastructure/database/typeorm/repositories/owner-upgrade-request.repository';
 import { OwnerUpgradeRequestOrmEntity } from './infrastructure/database/typeorm/orm/owner-upgrade-request.orm-entity';
 import { OWNER_UPGRADE_REQUEST_REPOSITORY } from './owner-upgrade.tokens';
-import {
-  AdminOwnerUpgradeController,
-  OwnerUpgradeController,
-} from './interface/controllers';
+import { OwnerUpgradesController } from './interface/controllers';
 
 @Module({
   imports: [
@@ -17,7 +14,7 @@ import {
     RestaurantsModule,
     TypeOrmModule.forFeature([OwnerUpgradeRequestOrmEntity]),
   ],
-  controllers: [AdminOwnerUpgradeController, OwnerUpgradeController],
+  controllers: [OwnerUpgradesController],
   providers: [
     OwnerUpgradeService,
     {

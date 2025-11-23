@@ -60,7 +60,7 @@ Resumen rápido:
 
 ```powershell
 # Subir imagen (multipart) - campo file
-curl -X POST "http://localhost:3000/api/v1/admin/images" \
+curl -X POST "http://localhost:3000/api/v1/images" \
   -H "Authorization: Bearer <token>" \
   -F "file=@C:\ruta\a\imagen.jpg" \
   -F "altText=Foto del local" \
@@ -137,7 +137,7 @@ curl -X POST "http://localhost:3000/api/v1/admin/images" \
   - Si la política es no commitear artefactos generados, añadir un job en CI que genere y compare y falle si hay diffs.
 
 - Tests de contrato (sugeridos):
-  - Test que valida que `GET /api/v1/admin/restaurants` responde con `data` + `pagination`.
+  - Test que valida que `GET /api/v1/restaurants` responde con `data` + `pagination`.
   - Test que valida `multipart/form-data` schema para imagen.
   - Test que verifica que una FK violation se convierte en 409 (ejecutar un request de borrado que falla y comprobar código y body).
 
@@ -146,25 +146,25 @@ curl -X POST "http://localhost:3000/api/v1/admin/images" \
 ## 9) Ejemplos concretos de endpoints recomendados
 
 - Reservations — cambiar estado
-  - PATCH /api/v1/admin/reservations/{id}/status
+  - PATCH /api/v1/reservations/{id}/status
   - Body: `{ "status": "confirmed|cancelled|seated", "adminNote": "..." }`
 
 - Restaurants — cambiar estado
-  - PATCH /api/v1/admin/restaurants/{id}/status
+  - PATCH /api/v1/restaurants/{id}/status
   - Body: `{ "status": "ACTIVE|SUSPENDED|ARCHIVED", "adminNote": "..." }`
 
 - Images — metadata
-  - PATCH /api/v1/admin/images/{id}/metadata
+  - PATCH /api/v1/images/{id}/metadata
   - Content-Type: application/json
   - Body: `{ "altText": "...", "title": "...", "entityId": "..." }`
 
 - Images — upload
-  - POST /api/v1/admin/images
+  - POST /api/v1/images
   - Content-Type: multipart/form-data
   - Fields: `file` (binary), `altText`, `entityId`
 
 - Reviews — moderación
-  - POST /api/v1/admin/reviews/{id}/moderate
+  - POST /api/v1/reviews/{id}/moderate
   - Body: `{ "action": "approve|reject|hide", "moderationNotes": "..." }`
 
 ## 10) Contrato pequeño (inputs/outputs, errores) — plantilla para cada endpoint

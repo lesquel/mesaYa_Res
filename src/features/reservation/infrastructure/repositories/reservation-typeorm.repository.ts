@@ -18,9 +18,9 @@ import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate
 import { type ReservationRepositoryPort } from '../../application/ports';
 import { IReservationRepositoryPort } from '../../domain/repositories';
 import type { ReservationWindowQuery } from '../../domain/types';
-import { ReservationOrmEntity } from '../orm';
+import { ReservationOrmEntity } from '../orm/reservation.orm-entity';
 import { ReservationOrmMapper } from '../mappers';
-import { RestaurantOrmEntity } from '../../../restaurants';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 
 @Injectable()
 export class ReservationTypeOrmRepository

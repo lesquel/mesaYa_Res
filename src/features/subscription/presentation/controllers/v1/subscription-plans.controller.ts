@@ -25,6 +25,7 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import {
   ThrottleCreate,
   ThrottleModify,
+  ThrottleRead,
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 
@@ -36,6 +37,7 @@ import type {
   SubscriptionPlanResponseDto,
   DeleteSubscriptionPlanDto,
   DeleteSubscriptionPlanResponseDto,
+  SubscriptionPlanListResponseDto,
 } from '@features/subscription/application';
 import {
   CreateSubscriptionPlanRequestDto,
@@ -50,11 +52,9 @@ import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoi
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 
-@ApiTags('Subscription Plans - Admin')
-@Controller({ path: 'admin/subscription-plans', version: '1' })
-@UseGuards(JwtAuthGuard, PermissionsGuard)
-@ApiBearerAuth()
-export class AdminSubscriptionPlanController {
+@ApiTags('Subscription Plans')
+@Controller({ path: 'subscription-plans', version: '1' })
+export class SubscriptionPlansController {
   constructor(
     private readonly subscriptionPlanService: SubscriptionPlanService,
     private readonly getSubscriptionPlanAnalytics: GetSubscriptionPlanAnalyticsUseCase,
@@ -62,9 +62,8 @@ export class AdminSubscriptionPlanController {
 
   @Get('analytics')
   @ThrottleSearch()
-  @Permissions('subscription-plan:read')
   @ApiOkResponse({
-    description: 'Resumen analítico de planes de suscripción',
+    description: 'Subscription plan analytics',
     type: SubscriptionPlanAnalyticsResponseDto,
   })
   async analytics(
@@ -77,73 +76,66 @@ export class AdminSubscriptionPlanController {
   }
 
   @Get()
+  @ThrottleRead()
+  @ApiOperation({ summary: 'List subscription plans' })
   @PaginatedEndpoint()
-  @Permissions('subscription-plan:read')
   @ApiPaginatedResponse({
     model: SubscriptionPlanResponseSwaggerDto,
-    description: 'Listado paginado de planes de suscripción (admin)',
+    description: 'List of subscription plans',
   })
-  async listSubscriptionPlans(
-    @PaginationParams({
-      defaultRoute: '/admin/subscription-plans',
-      allowExtraParams: true,
-    })
+  async findAll(
+    @PaginationParams({ defaultRoute: '/subscription-plans', allowExtraParams: true })
     params: PaginatedQueryParams,
-  ) {
-    const paginated = await this.subscriptionPlanService.findAll(params);
-    return {
-      data: paginated.results,
-      pagination: {
-        page: paginated.page,
-        pageSize: paginated.limit,
-        totalItems: paginated.total,
-        totalPages: paginated.pages,
-      },
-    };
+  ): Promise<SubscriptionPlanListResponseDto> {
+    return this.subscriptionPlanService.findAll(params);
   }
 
   @Get(':subscriptionPlanId')
-  @Permissions('subscription-plan:read')
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Get subscription plan details' })
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
     description: 'Subscription plan details',
     type: SubscriptionPlanResponseSwaggerDto,
   })
-  async getSubscriptionPlan(
+  async findOne(
     @Param('subscriptionPlanId', UUIDPipe) subscriptionPlanId: string,
   ): Promise<SubscriptionPlanResponseDto> {
-    const plan = await this.subscriptionPlanService.findById({
+    return this.subscriptionPlanService.findById({
       subscriptionPlanId,
     });
-    return plan;
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleCreate()
   @Permissions('subscription-plan:create')
-  @ApiOperation({ summary: 'Create subscription plan (admin)' })
+  @ApiOperation({ summary: 'Create subscription plan' })
   @ApiBody({ type: CreateSubscriptionPlanRequestDto })
   @ApiCreatedResponse({
     description: 'Subscription plan created',
     type: SubscriptionPlanResponseSwaggerDto,
   })
-  async createSubscriptionPlan(
+  async create(
     @Body() dto: CreateSubscriptionPlanRequestDto,
   ): Promise<SubscriptionPlanResponseDto> {
     return this.subscriptionPlanService.create(dto);
   }
 
   @Patch(':subscriptionPlanId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('subscription-plan:update')
-  @ApiOperation({ summary: 'Update subscription plan (admin)' })
+  @ApiOperation({ summary: 'Update subscription plan' })
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
   @ApiBody({ type: UpdateSubscriptionPlanRequestDto })
   @ApiOkResponse({
     description: 'Subscription plan updated',
     type: SubscriptionPlanResponseSwaggerDto,
   })
-  async updateSubscriptionPlan(
+  async update(
     @Param('subscriptionPlanId', UUIDPipe) subscriptionPlanId: string,
     @Body() dto: UpdateSubscriptionPlanRequestDto,
   ): Promise<SubscriptionPlanResponseDto> {
@@ -154,15 +146,17 @@ export class AdminSubscriptionPlanController {
   }
 
   @Delete(':subscriptionPlanId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('subscription-plan:delete')
-  @ApiOperation({ summary: 'Delete subscription plan (admin)' })
+  @ApiOperation({ summary: 'Delete subscription plan' })
   @ApiParam({ name: 'subscriptionPlanId', type: 'string', format: 'uuid' })
   @ApiOkResponse({
     description: 'Subscription plan deleted',
     type: DeleteSubscriptionPlanResponseSwaggerDto,
   })
-  async deleteSubscriptionPlan(
+  async delete(
     @Param('subscriptionPlanId', UUIDPipe) subscriptionPlanId: string,
   ): Promise<DeleteSubscriptionPlanResponseDto> {
     const dto: DeleteSubscriptionPlanDto = { subscriptionPlanId };

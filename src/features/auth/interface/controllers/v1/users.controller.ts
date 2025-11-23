@@ -4,6 +4,7 @@ import {
   Param,
   Query,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
@@ -11,6 +12,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import {
@@ -26,10 +28,14 @@ import { ListUsersUseCase } from '@features/auth/application/use-cases/list-user
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { PublicAuthAnalyticsResponseDto } from '../../dto/public-auth-analytics.response.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
+import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
+import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
 
-@ApiTags('Users - Public')
-@Controller({ path: 'public/users', version: '1' })
-export class PublicUsersController {
+@ApiTags('Users')
+@Controller({ path: 'users', version: '1' })
+export class UsersController {
   constructor(
     private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
@@ -45,10 +51,10 @@ export class PublicUsersController {
     description: 'Paginated users list (public view)',
   })
   async list(
-    @PaginationParams({ defaultRoute: '/public/users' })
+    @PaginationParams({ defaultRoute: '/users', allowExtraParams: true })
     params: PaginatedQueryParams,
   ) {
-    const query = { pagination: params, route: '/public/users' } as any;
+    const query = { pagination: params, route: '/users' } as any;
     const paginated = await this.listUsersUseCase.execute(query);
     return {
       ...paginated,
@@ -71,6 +77,29 @@ export class PublicUsersController {
       query.toQuery(),
     );
     return PublicAuthAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get('analytics/restaurant/:restaurantId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
+  @ThrottleSearch()
+  // Use a restaurant-scoped permission for analytics access
+  @Permissions('restaurant:read')
+  @ApiOperation({
+    summary: 'Indicadores de usuarios para un restaurante (owner/admin)',
+  })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiOkResponse({
+    description: 'Analytics scoped to restaurant users',
+    type: AuthAnalyticsResponseDto,
+  })
+  async analyticsByRestaurant(
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @Query() query: AuthAnalyticsRequestDto,
+  ) {
+    const q = { ...query.toQuery(), restaurantId };
+    const analytics = await this.getAuthAnalyticsUseCase.execute(q);
+    return AuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
   @Get('reservations')

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import {
   ApiTags,
   ApiQuery,
   ApiParam,
+  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
@@ -23,6 +25,7 @@ import { CurrentUser } from '@features/auth/interface/decorators/current-user.de
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
 import { OwnerUpgradeDecisionDto } from '../../dto/owner-upgrade-decision.dto';
 import { OwnerUpgradeResponseDto } from '../../dto/owner-upgrade-response.dto';
+import { OwnerUpgradeRequestDto } from '../../dto/owner-upgrade-request.dto';
 import { OwnerUpgradeService } from '@features/owner-upgrade/application/services/owner-upgrade.service';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
@@ -35,14 +38,28 @@ import {
 } from '@features/owner-upgrade/application/dto';
 import { OwnerUpgradeRequestStatus } from '@features/owner-upgrade/domain/owner-upgrade-request-status.enum';
 
-@ApiTags('owners')
-@Controller({ path: 'owners', version: '1' })
+@ApiTags('Owner Upgrades')
+@Controller({ path: 'owner-upgrades', version: '1' })
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
-export class AdminOwnerUpgradeController {
+export class OwnerUpgradesController {
   constructor(private readonly ownerUpgradeService: OwnerUpgradeService) {}
 
-  @Get('upgrade-requests')
+  // --- User ---
+
+  @Post()
+  @ApiOperation({ summary: 'Solicita upgrade de usuario a owner' })
+  @ApiCreatedResponse({ type: OwnerUpgradeResponseDto })
+  async apply(
+    @Body() dto: OwnerUpgradeRequestDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<OwnerUpgradeResponseDto> {
+    return this.ownerUpgradeService.apply(dto, user.userId);
+  }
+
+  // --- Admin ---
+
+  @Get()
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Listar solicitudes de upgrade de owner (ADMIN)' })
   @ApiBearerAuth()
@@ -59,7 +76,7 @@ export class AdminOwnerUpgradeController {
   @ApiQuery({ name: 'userId', required: false, type: String })
   async listUpgradeRequests(
     @PaginationParams({
-      defaultRoute: '/owners/upgrade-requests',
+      defaultRoute: '/owner-upgrades',
       allowExtraParams: true,
     })
     pagination: PaginatedQueryParams,
@@ -81,7 +98,7 @@ export class AdminOwnerUpgradeController {
     return this.ownerUpgradeService.listRequests(query);
   }
 
-  @Get('upgrade-requests/:requestId')
+  @Get(':requestId')
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Obtiene detalle de solicitud de upgrade (ADMIN)' })
   @ApiBearerAuth()
@@ -92,15 +109,15 @@ export class AdminOwnerUpgradeController {
     return this.ownerUpgradeService.findRequestById(requestId);
   }
 
-  @Patch(':ownerId/approve')
+  @Patch(':requestId/decision')
   @Roles(AuthRoleName.ADMIN)
   @ApiOperation({ summary: 'Aprueba o rechaza solicitudes de owner' })
   @ApiResponse({ type: OwnerUpgradeResponseDto })
   async approve(
-    @Param('ownerId', UUIDPipe) ownerId: string,
+    @Param('requestId', UUIDPipe) requestId: string,
     @Body() decision: OwnerUpgradeDecisionDto,
     @CurrentUser() admin: CurrentUserPayload,
   ): Promise<OwnerUpgradeResponseDto> {
-    return this.ownerUpgradeService.process(ownerId, decision, admin.userId);
+    return this.ownerUpgradeService.process(requestId, decision, admin.userId);
   }
 }

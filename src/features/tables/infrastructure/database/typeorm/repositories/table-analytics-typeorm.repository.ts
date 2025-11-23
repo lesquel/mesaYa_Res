@@ -149,9 +149,7 @@ export class TableAnalyticsTypeOrmRepository
 
     this.applyFilters(qb, filters);
 
-    qb.groupBy('section.restaurantId')
-      .orderBy('COUNT(t.id)', 'DESC')
-      .limit(10);
+    qb.groupBy('section.restaurantId').orderBy('COUNT(t.id)', 'DESC').limit(10);
 
     return qb;
   }

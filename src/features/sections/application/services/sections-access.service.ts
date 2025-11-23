@@ -24,6 +24,22 @@ export class SectionsAccessService {
     private readonly restaurants: Repository<RestaurantOrmEntity>,
   ) {}
 
+  async findRestaurantIdByOwner(ownerId: string): Promise<string | null> {
+    const restaurant = await this.restaurants.findOne({
+      where: { ownerId },
+      select: { id: true },
+    });
+    return restaurant?.id ?? null;
+  }
+
+  async findRestaurantIdsByOwner(ownerId: string): Promise<string[]> {
+    const restaurants = await this.restaurants.find({
+      where: { ownerId },
+      select: { id: true },
+    });
+    return restaurants.map((r) => r.id);
+  }
+
   async assertRestaurantOwnership(
     restaurantId: string,
     ownerId: string,

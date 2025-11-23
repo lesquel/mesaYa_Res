@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RestaurantOrmEntity } from '../restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import {
   DishService,
   MenuService,
@@ -9,12 +10,11 @@ import {
   MENU_ANALYTICS_REPOSITORY,
   GetDishAnalyticsUseCase,
   DISH_ANALYTICS_REPOSITORY,
+  MenusAccessService,
 } from './application';
 import {
-  AdminDishesController,
-  AdminMenusController,
-  PublicDishesController,
-  PublicMenusController,
+  DishesController,
+  MenusController,
 } from './presentation/controllers/v1';
 import {
   DishOrmEntity,
@@ -60,15 +60,14 @@ const menuServiceProvider = {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MenuOrmEntity, DishOrmEntity]),
+    TypeOrmModule.forFeature([
+      MenuOrmEntity,
+      DishOrmEntity,
+      RestaurantOrmEntity,
+    ]),
     LoggerModule,
   ],
-  controllers: [
-    AdminMenusController,
-    PublicMenusController,
-    AdminDishesController,
-    PublicDishesController,
-  ],
+  controllers: [MenusController, DishesController],
   providers: [
     DishMapper,
     menuMapperProvider,
@@ -92,6 +91,7 @@ const menuServiceProvider = {
     },
     GetMenuAnalyticsUseCase,
     GetDishAnalyticsUseCase,
+    MenusAccessService,
   ],
   exports: [
     DishService,
@@ -100,6 +100,7 @@ const menuServiceProvider = {
     GetDishAnalyticsUseCase,
     IDishRepositoryPort,
     IMenuRepositoryPort,
+    MenusAccessService,
   ],
 })
 export class MenusModule {}

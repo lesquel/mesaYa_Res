@@ -66,6 +66,10 @@ export class SectionsService {
     return this.create(command);
   }
 
+  async findRestaurantIdByOwner(ownerId: string): Promise<string | null> {
+    return this.accessControl.findRestaurantIdByOwner(ownerId);
+  }
+
   async list(query: ListSectionsQuery): Promise<PaginatedSectionResponse> {
     return this.listSectionsUseCase.execute(query);
   }
@@ -74,6 +78,57 @@ export class SectionsService {
     query: ListRestaurantSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
     return this.listRestaurantSectionsUseCase.execute(query);
+  }
+
+  async listForOwner(
+    query: ListSectionsQuery,
+    ownerId: string,
+  ): Promise<PaginatedSectionResponse> {
+    const restaurantIds = await this.accessControl.findRestaurantIdsByOwner(
+      ownerId,
+    );
+
+    if (restaurantIds.length === 0) {
+      const page = query.pagination?.page ?? 1;
+      const limit = query.pagination?.limit ?? 10;
+      return {
+        results: [],
+        total: 0,
+        limit,
+        page,
+        pages: 0,
+        offset: 0,
+        hasNext: false,
+        hasPrev: false,
+      };
+    }
+
+    // If restaurantId is provided in query, verify ownership
+    if (query.restaurantId) {
+      // @ts-ignore
+      if (!restaurantIds.includes(query.restaurantId)) {
+        const page = query.pagination?.page ?? 1;
+        const limit = query.pagination?.limit ?? 10;
+        return {
+          results: [],
+          total: 0,
+          limit,
+          page,
+          pages: 0,
+          offset: 0,
+          hasNext: false,
+          hasPrev: false,
+        };
+      }
+      // If valid, just use the original query which has restaurantId
+      return this.listSectionsUseCase.execute(query);
+    }
+
+    // If no specific restaurant requested, filter by all owned restaurants
+    return this.listSectionsUseCase.execute({
+      ...query,
+      restaurantIds,
+    });
   }
 
   async listByRestaurantForOwner(

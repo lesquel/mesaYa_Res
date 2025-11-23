@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { RestaurantOrmEntity } from '@features/restaurants/infrastructure';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import { TableOrmEntity } from '@features/tables/infrastructure/database/typeorm/orm/table.orm-entity';
 
 @Entity({ name: 'reservation' })

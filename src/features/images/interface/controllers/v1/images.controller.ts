@@ -61,37 +61,78 @@ import {
   ImageAnalyticsResponseDto,
   ImageResponseSwaggerDto,
 } from '../../dto/index';
+import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
-@ApiTags('Images - Admin')
-@Controller({ path: 'admin/images', version: '1' })
-@UseGuards(JwtAuthGuard, PermissionsGuard)
-@ApiBearerAuth()
-export class AdminImagesController {
+@ApiTags('Images')
+@Controller({ path: 'images', version: '1' })
+export class ImagesController {
   constructor(
     private readonly images: ImagesService,
     private readonly getImageAnalytics: GetImageAnalyticsUseCase,
   ) {}
 
+  // --- Public Endpoints ---
+
   @Get()
   @ThrottleRead()
-  @Permissions('image:read')
-  @ApiOperation({ summary: 'Listar imágenes (Admin)' })
-  @PaginatedEndpoint()
-  @ApiPaginatedResponse({
-    model: ImageResponseSwaggerDto,
-    description: 'Listado paginado de imágenes',
-  })
-  async findAll(
-    @PaginationParams({ defaultRoute: '/admin/images' })
-    pagination: PaginatedQueryParams,
-  ): Promise<PaginatedImageResponse> {
-    const query: ListImagesQuery = { ...pagination };
+  @ApiOperation({ summary: 'Listar imágenes (público)' })
+  @ApiPaginationQuery()
+  async list(
+    @PaginationParams({ defaultRoute: '/images', allowExtraParams: true })
+    query: ListImagesQuery,
+  ) {
     return this.images.list(query);
   }
 
+  @Get('analytics/stats')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
+  @ThrottleSearch()
+  @Permissions('image:read')
+  @ApiOperation({ summary: 'Analíticas de imágenes (Admin)' })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'Fecha inicial (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'Fecha final (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'entityId',
+    required: false,
+    type: String,
+    description: 'Filtra por entidad asociada',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  async analytics(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    query: ImageAnalyticsRequestDto,
+  ): Promise<ImageAnalyticsResponseDto> {
+    const analytics = await this.getImageAnalytics.execute(query.toQuery());
+    return ImageAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get(':id')
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Obtener imagen por ID (público)' })
+  @ApiParam({ name: 'id', description: 'UUID de la imagen' })
+  async findOne(@Param('id', UUIDPipe) id: string) {
+    const query: FindImageQuery = { imageId: id };
+    return this.images.findOne(query);
+  }
+
+  // --- Admin / Protected Endpoints ---
+
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleCreate()
   @Permissions('image:create')
   @ApiOperation({ summary: 'Crear imagen (Admin)' })
@@ -144,52 +185,9 @@ export class AdminImagesController {
     return this.images.create(command);
   }
 
-  @Get(':id')
-  @ThrottleRead()
-  @Permissions('image:read')
-  @ApiOperation({ summary: 'Obtener imagen por ID (Admin)' })
-  @ApiParam({ name: 'id', description: 'UUID de la imagen' })
-  @ApiOkResponse({
-    description: 'Detalle de la imagen',
-    type: ImageResponseSwaggerDto,
-  })
-  async findOne(@Param('id', UUIDPipe) id: string) {
-    const query: FindImageQuery = { imageId: id };
-    return this.images.findOne(query);
-  }
-
-  @Get('analytics')
-  @ThrottleSearch()
-  @Permissions('image:read')
-  @ApiOperation({ summary: 'Analíticas de imágenes (Admin)' })
-  @ApiQuery({
-    name: 'startDate',
-    required: false,
-    type: String,
-    description: 'Fecha inicial (ISO 8601)',
-  })
-  @ApiQuery({
-    name: 'endDate',
-    required: false,
-    type: String,
-    description: 'Fecha final (ISO 8601)',
-  })
-  @ApiQuery({
-    name: 'entityId',
-    required: false,
-    type: String,
-    description: 'Filtra por entidad asociada',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  async analytics(
-    @Query(new ValidationPipe({ transform: true, whitelist: true }))
-    query: ImageAnalyticsRequestDto,
-  ): Promise<ImageAnalyticsResponseDto> {
-    const analytics = await this.getImageAnalytics.execute(query.toQuery());
-    return ImageAnalyticsResponseDto.fromApplication(analytics);
-  }
-
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('image:update')
   @ApiOperation({ summary: 'Actualizar imagen (Admin)' })
@@ -247,6 +245,8 @@ export class AdminImagesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('image:delete')
   @ApiOperation({ summary: 'Eliminar imagen (Admin)' })
@@ -257,6 +257,8 @@ export class AdminImagesController {
   }
 
   @Patch(':id/metadata')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('image:update')
   @ApiOperation({

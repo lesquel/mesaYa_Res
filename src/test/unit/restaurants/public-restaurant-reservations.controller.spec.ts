@@ -12,7 +12,7 @@ describe('PublicRestaurantReservationsController', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(NotFoundException);
       expect((error as NotFoundException).getResponse()).toMatchObject({
-        movedTo: '/api/v1/public/reservations',
+        movedTo: '/api/v1/reservations',
       });
     }
   });

@@ -6,7 +6,7 @@ import {
   TableSectionNotFoundError,
   ITableDomainRepositoryPort,
 } from '../../../../domain';
-import { TableOrmEntity } from '../orm';
+import { TableOrmEntity } from '../orm/table.orm-entity';
 import { TableOrmMapper } from '../mappers';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
@@ -15,7 +15,7 @@ import {
   ListSectionTablesQuery,
 } from '../../../../application/dto';
 import { type TableRepositoryPort } from '../../../../application/ports';
-import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm/section.orm-entity';
 
 // Nota: Este repositorio mapea entre la entidad ORM (`TableOrmEntity`) y el
 // agregado de dominio `Table`. Las transformaciones se realizan mediante
@@ -93,6 +93,20 @@ export class TableTypeOrmRepository
 
   async paginate(query: ListTablesQuery): Promise<PaginatedResult<Table>> {
     const qb = this.buildBaseQuery();
+    if (query.sectionId) {
+      qb.andWhere('section.id = :sectionId', { sectionId: query.sectionId });
+    }
+    if (query.restaurantId) {
+      qb.andWhere('section.restaurantId = :restaurantId', {
+        restaurantId: query.restaurantId,
+      });
+    }
+    if (query.restaurantIds && query.restaurantIds.length > 0) {
+      qb.andWhere('section.restaurantId IN (:...restaurantIds)', {
+        restaurantIds: query.restaurantIds,
+      });
+    }
+    // @ts-ignore
     return this.execPagination(qb, query);
   }
 

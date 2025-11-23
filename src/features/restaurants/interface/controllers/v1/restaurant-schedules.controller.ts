@@ -36,22 +36,22 @@ import {
   ScheduleSlotResponseDto,
 } from '@features/restaurants/interface/dto';
 
-@ApiTags('Schedules - Restaurant')
-@Controller({ path: 'restaurant/schedules', version: '1' })
+@ApiTags('Schedules')
+@Controller({ path: 'restaurants/:restaurantId/schedules', version: '1' })
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class RestaurantSchedulesController {
   constructor(private readonly scheduleService: RestaurantScheduleService) {}
 
-  @Post('restaurant/:restaurantId')
+  @Post()
   @Roles(AuthRoleName.OWNER)
   @ApiOperation({
-    summary: 'Crear excepción de horario para restaurante (propietario)',
+    summary: 'Create schedule exception (Owner)',
   })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
   @ApiBody({ type: CreateScheduleExceptionDto })
   @ApiCreatedResponse({
-    description: 'Excepción creada',
+    description: 'Exception created',
     type: ScheduleExceptionResponseDto,
   })
   async create(
@@ -67,12 +67,12 @@ export class RestaurantSchedulesController {
     return ScheduleExceptionResponseDto.fromRecord(rec);
   }
 
-  @Get('restaurant/:restaurantId')
+  @Get()
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Listar excepciones de horario (propietario)' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiOperation({ summary: 'List schedule exceptions (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
   @ApiOkResponse({
-    description: 'Lista de excepciones',
+    description: 'List of exceptions',
     type: ScheduleExceptionResponseDto,
     isArray: true,
   })
@@ -87,12 +87,12 @@ export class RestaurantSchedulesController {
     return rows.map(ScheduleExceptionResponseDto.fromRecord);
   }
 
-  @Get('restaurant/:restaurantId/slots')
+  @Get('slots')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Listar horarios base (propietario)' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiOperation({ summary: 'List base schedule slots (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
   @ApiOkResponse({
-    description: 'Lista de horarios',
+    description: 'List of slots',
     type: ScheduleSlotResponseDto,
     isArray: true,
   })
@@ -107,13 +107,13 @@ export class RestaurantSchedulesController {
     return rows.map(ScheduleSlotResponseDto.fromRecord);
   }
 
-  @Post('restaurant/:restaurantId/slots')
+  @Post('slots')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Crear horario base (propietario)' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @ApiOperation({ summary: 'Create base schedule slot (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
   @ApiBody({ type: CreateScheduleSlotDto })
   @ApiCreatedResponse({
-    description: 'Horario creado',
+    description: 'Slot created',
     type: ScheduleSlotResponseDto,
   })
   async createSlot(
@@ -129,12 +129,12 @@ export class RestaurantSchedulesController {
     return ScheduleSlotResponseDto.fromRecord(rec);
   }
 
-  @Delete('restaurant/:restaurantId/slots/:id')
+  @Delete('slots/:id')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Eliminar horario base (propietario)' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiParam({ name: 'id', description: 'UUID del horario' })
-  @ApiOkResponse({ description: 'Horario eliminado' })
+  @ApiOperation({ summary: 'Delete base schedule slot (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
+  @ApiParam({ name: 'id', description: 'Slot UUID' })
+  @ApiOkResponse({ description: 'Slot deleted' })
   async deleteSlot(
     @Param('restaurantId', UUIDPipe) restaurantId: string,
     @Param('id', UUIDPipe) id: string,
@@ -144,11 +144,11 @@ export class RestaurantSchedulesController {
     return { ok: true };
   }
 
-  @Patch(':id/restaurant/:restaurantId')
+  @Patch(':id')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Actualizar excepción de horario (propietario)' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiParam({ name: 'id', description: 'UUID de la excepción' })
+  @ApiOperation({ summary: 'Update schedule exception (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
+  @ApiParam({ name: 'id', description: 'Exception UUID' })
   @ApiBody({ type: UpdateScheduleExceptionDto })
   async update(
     @Param('restaurantId', UUIDPipe) restaurantId: string,
@@ -165,12 +165,12 @@ export class RestaurantSchedulesController {
     return ScheduleExceptionResponseDto.fromRecord(rec);
   }
 
-  @Delete(':id/restaurant/:restaurantId')
+  @Delete(':id')
   @Roles(AuthRoleName.OWNER)
-  @ApiOperation({ summary: 'Eliminar excepción de horario (propietario)' })
-  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
-  @ApiParam({ name: 'id', description: 'UUID de la excepción' })
-  @ApiOkResponse({ description: 'Eliminada' })
+  @ApiOperation({ summary: 'Delete schedule exception (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
+  @ApiParam({ name: 'id', description: 'Exception UUID' })
+  @ApiOkResponse({ description: 'Deleted' })
   async remove(
     @Param('restaurantId', UUIDPipe) restaurantId: string,
     @Param('id', UUIDPipe) id: string,

@@ -12,7 +12,7 @@ import {
 } from '../../../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { RestaurantRepositoryPort } from '../../../../application/ports';
-import { RestaurantOrmEntity } from '../orm';
+import { RestaurantOrmEntity } from '../orm/restaurant.orm-entity';
 import { RestaurantOrmMapper } from '../mappers';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';

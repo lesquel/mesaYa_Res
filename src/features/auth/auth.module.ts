@@ -4,8 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './interface/controllers/v1/auth.controller';
-import { PublicUsersController } from './interface/controllers/v1/public-users.controller';
-import { RestaurantUsersController } from './interface/controllers/v1/restaurant-users.controller';
+import { UsersController } from './interface/controllers/v1/users.controller';
 import { UserOrmEntity } from './infrastructure/database/typeorm/entities/user.orm-entity';
 import { RoleOrmEntity } from './infrastructure/database/typeorm/entities/role.orm-entity';
 import { PermissionOrmEntity } from './infrastructure/database/typeorm/entities/permission.orm-entity';
@@ -59,11 +58,7 @@ import { AuthService } from './application/services/auth.service';
       }),
     }),
   ],
-  controllers: [
-    AuthController,
-    PublicUsersController,
-    RestaurantUsersController,
-  ],
+  controllers: [AuthController, UsersController],
   providers: [
     {
       provide: AUTH_USER_REPOSITORY,

@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm/section.orm-entity';
 import type { ReservationOrmEntity } from '@features/reservation/infrastructure/orm/reservation.orm-entity';
 
 @Entity({ name: 'table' })
@@ -54,6 +54,9 @@ export class TableOrmEntity {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @OneToMany('ReservationOrmEntity', (reservation: ReservationOrmEntity) => reservation.table)
+  @OneToMany(
+    'ReservationOrmEntity',
+    (reservation: ReservationOrmEntity) => reservation.table,
+  )
   reservations: ReservationOrmEntity[];
 }

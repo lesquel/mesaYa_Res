@@ -5,12 +5,14 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -21,6 +23,11 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
+import {
+  ThrottleCreate,
   ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
@@ -40,6 +47,7 @@ import type { PaginatedQueryParams } from '@shared/application/types/pagination'
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import {
+  CreateSubscriptionRequestDto,
   DeleteSubscriptionResponseSwaggerDto,
   SubscriptionAnalyticsRequestDto,
   SubscriptionAnalyticsResponseDto,
@@ -48,15 +56,58 @@ import {
   UpdateSubscriptionStateRequestDto,
 } from '@features/subscription/presentation/dto';
 
-@ApiTags('Subscriptions - Admin')
-@Controller({ path: 'admin/subscriptions', version: '1' })
+@ApiTags('Subscriptions')
+@Controller({ path: 'subscriptions', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class AdminSubscriptionController {
+export class SubscriptionsController {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly getSubscriptionAnalytics: GetSubscriptionAnalyticsUseCase,
   ) {}
+
+  // --- Restaurant ---
+
+  @Post()
+  @ThrottleCreate()
+  @Permissions('subscription:create')
+  @ApiOperation({
+    summary: 'Suscribir mi restaurante a un plan (propietario)',
+  })
+  @ApiBody({ type: CreateSubscriptionRequestDto })
+  @ApiCreatedResponse({
+    description: 'Suscripción creada exitosamente',
+    type: SubscriptionResponseSwaggerDto,
+  })
+  async subscribeRestaurant(
+    @Body() dto: CreateSubscriptionRequestDto,
+    @CurrentUser() user: { userId: string },
+  ): Promise<SubscriptionResponseDto> {
+    return this.subscriptionService.createForOwner(dto, user.userId);
+  }
+
+  @Get('restaurant/:restaurantId')
+  @ThrottleRead()
+  @Permissions('subscription:read')
+  @ApiOperation({
+    summary: 'Ver la suscripción activa de mi restaurante (propietario)',
+  })
+  @ApiParam({ name: 'restaurantId', type: 'string', format: 'uuid' })
+  @ApiOkResponse({
+    description: 'Suscripción del restaurante',
+    type: SubscriptionResponseSwaggerDto,
+  })
+  async getRestaurantSubscription(
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<SubscriptionResponseDto> {
+    return this.subscriptionService.findByRestaurantForOwner(
+      { restaurantId },
+      user.userId,
+    );
+  }
+
+  // --- Admin ---
 
   @Get('analytics')
   @ThrottleSearch()
@@ -85,7 +136,7 @@ export class AdminSubscriptionController {
     isArray: true,
   })
   async getSubscriptions(
-    @PaginationParams() params: PaginatedQueryParams,
+    @PaginationParams({ allowExtraParams: true }) params: PaginatedQueryParams,
   ): Promise<SubscriptionListResponseDto> {
     const paginated = await this.subscriptionService.findAll(params);
     return {

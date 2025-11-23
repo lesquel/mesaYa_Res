@@ -39,11 +39,11 @@ import type {
   UpdateSectionObjectCommand,
 } from '../../../application/dto';
 
-@ApiTags('Section Objects - Admin')
-@Controller({ path: 'admin/section-objects', version: '1' })
+@ApiTags('Section Objects')
+@Controller({ path: 'section-objects', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class AdminSectionObjectsController {
+export class SectionObjectsController {
   constructor(private readonly service: SectionObjectsService) {}
 
   @Post()
@@ -64,7 +64,7 @@ export class AdminSectionObjectsController {
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
   @ApiPaginationQuery()
   async list(
-    @PaginationParams({ defaultRoute: '/admin/section-objects' })
+    @PaginationParams({ defaultRoute: '/section-objects', allowExtraParams: true })
     query: ListSectionObjectsQuery,
   ) {
     return this.service.list(query);

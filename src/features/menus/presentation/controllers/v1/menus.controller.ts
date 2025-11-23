@@ -22,10 +22,14 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
+import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
+import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import {
   ThrottleCreate,
   ThrottleRead,
   ThrottleModify,
+  ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
@@ -38,35 +42,53 @@ import type {
   MenuListResponseDto,
   ListMenusQuery,
 } from '@features/menus/application';
-import { MenuService } from '@features/menus/application';
+import {
+  MenuService,
+  GetMenuAnalyticsUseCase,
+  MenusAccessService,
+} from '@features/menus/application';
 import {
   CreateMenuRequestDto,
   DeleteMenuResponseSwaggerDto,
   MenuResponseSwaggerDto,
   UpdateMenuRequestDto,
+  MenuAnalyticsRequestDto,
+  MenuAnalyticsResponseDto,
 } from '@features/menus/presentation/dto';
 
-@ApiTags('Menus - Admin')
-@Controller({ path: 'admin/menus', version: '1' })
-@UseGuards(JwtAuthGuard, PermissionsGuard)
-@ApiBearerAuth()
-export class AdminMenusController {
-  constructor(private readonly menuService: MenuService) {}
+@ApiTags('Menus')
+@Controller({ path: 'menus', version: '1' })
+export class MenusController {
+  constructor(
+    private readonly menuService: MenuService,
+    private readonly getMenuAnalyticsUseCase: GetMenuAnalyticsUseCase,
+    private readonly accessService: MenusAccessService,
+  ) {}
 
   @Get()
   @ThrottleRead()
-  @Permissions('menu:read')
-  @ApiOperation({ summary: 'Listar menús administrativamente (paginado)' })
+  @ApiOperation({ summary: 'Listar menús (paginado)' })
   @PaginatedEndpoint()
   @ApiPaginatedResponse({
     model: MenuResponseSwaggerDto,
     description: 'Listado paginado de menús',
   })
   async findAll(
-    @PaginationParams({ defaultRoute: '/admin/menus' })
+    @PaginationParams({ defaultRoute: '/menus', allowExtraParams: true })
     pagination: PaginatedQueryParams,
     @Query('restaurantId') restaurantId?: string,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<MenuListResponseDto> {
+    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
+      if (!restaurantId) {
+        const foundId = await this.accessService.findRestaurantIdByOwner(
+          user.userId,
+        );
+        if (foundId) {
+          restaurantId = foundId;
+        }
+      }
+    }
     const query: ListMenusQuery = {
       ...pagination,
       restaurantId,
@@ -74,9 +96,47 @@ export class AdminMenusController {
     return this.menuService.findAll(query);
   }
 
+  @Get('restaurant/:restaurantId')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Listar menús por restaurante (paginado)',
+  })
+  @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: MenuResponseSwaggerDto,
+    description: 'Listado paginado de menús de un restaurante',
+  })
+  findByRestaurant(
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @PaginationParams({
+      defaultRoute: '/menus/restaurant',
+      allowExtraParams: true,
+    })
+    query: PaginatedQueryParams,
+  ): Promise<MenuListResponseDto> {
+    return this.menuService.findByRestaurant(restaurantId, {
+      ...query,
+      route: `/menus/restaurant/${restaurantId}`,
+    });
+  }
+
+  @Get('analytics')
+  @ThrottleSearch()
+  @ApiOperation({ summary: 'Analytics de menús' })
+  @ApiOkResponse({
+    description: 'Menu analytics',
+    type: MenuAnalyticsResponseDto,
+  })
+  async getAnalytics(
+    @Query() dto: MenuAnalyticsRequestDto,
+  ): Promise<MenuAnalyticsResponseDto> {
+    const analytics = await this.getMenuAnalyticsUseCase.execute(dto.toQuery());
+    return MenuAnalyticsResponseDto.fromApplication(analytics);
+  }
+
   @Get(':menuId')
   @ThrottleRead()
-  @Permissions('menu:read')
   @ApiOperation({ summary: 'Obtener detalles de un menú' })
   @ApiParam({ name: 'menuId', description: 'UUID del menú' })
   @ApiOkResponse({
@@ -90,6 +150,8 @@ export class AdminMenusController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleCreate()
   @Permissions('menu:create')
   @ApiBody({ type: CreateMenuRequestDto })
@@ -102,6 +164,8 @@ export class AdminMenusController {
   }
 
   @Patch(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('menu:update')
   @ApiBody({ type: UpdateMenuRequestDto })
@@ -117,13 +181,17 @@ export class AdminMenusController {
   }
 
   @Delete(':menuId')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @ApiBearerAuth()
   @ThrottleModify()
   @Permissions('menu:delete')
   @ApiOkResponse({
     description: 'Menu deleted',
     type: DeleteMenuResponseSwaggerDto,
   })
-  delete(@Param('menuId', UUIDPipe) menuId: string): Promise<DeleteMenuResponseDto> {
+  delete(
+    @Param('menuId', UUIDPipe) menuId: string,
+  ): Promise<DeleteMenuResponseDto> {
     const deleteDto: DeleteMenuDto = { menuId };
     return this.menuService.delete(deleteDto);
   }

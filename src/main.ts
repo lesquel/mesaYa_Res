@@ -19,7 +19,6 @@ async function bootstrap() {
     next();
   });
 
-
   const configService = app.get(ConfigService);
   const HOST = configService.get<string>('APP_HOST');
   const PORT = configService.get<number>('APP_PORT', 3000);

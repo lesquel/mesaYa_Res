@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
+import { ReservationModule } from '@features/reservation/reservation.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
-  AdminRestaurantsController,
-  PublicRestaurantReservationsController,
-  PublicRestaurantsController,
-  RestaurantRestaurantsController,
+  RestaurantsController,
   RestaurantSchedulesController,
 } from './interface/index';
 import { RestaurantScheduleExceptionOrmEntity } from './infrastructure/database/typeorm/orm/restaurant-schedule-exception.orm-entity';
@@ -54,14 +52,9 @@ import type {
       RestaurantScheduleSlotOrmEntity,
     ]),
     AuthModule,
+    ReservationModule,
   ],
-  controllers: [
-    PublicRestaurantReservationsController,
-    AdminRestaurantsController,
-    PublicRestaurantsController,
-    RestaurantRestaurantsController,
-    RestaurantSchedulesController,
-  ],
+  controllers: [RestaurantsController, RestaurantSchedulesController],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,

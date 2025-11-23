@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import { TableOrmEntity } from '../../../../../tables/infrastructure/database/typeorm/orm';
 
 @Entity({ name: 'section' })

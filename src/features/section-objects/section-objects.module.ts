@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { AdminSectionObjectsController } from './interface';
+import { SectionObjectsController } from './interface';
 import { SectionObjectsService } from './application';
 import { SectionObjectOrmEntity } from './infrastructure';
 import { SectionObjectTypeOrmRepository } from './infrastructure/database/typeorm/repositories/section-object-typeorm.repository';
@@ -39,7 +39,7 @@ import {
     ]),
     AuthModule,
   ],
-  controllers: [AdminSectionObjectsController],
+  controllers: [SectionObjectsController],
   providers: [
     SectionObjectTypeOrmRepository,
     SectionTypeOrmReaderForSectionObject,
