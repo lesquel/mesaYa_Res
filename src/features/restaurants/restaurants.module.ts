@@ -55,7 +55,11 @@ import type {
     AuthModule,
     ReservationModule,
   ],
-  controllers: [AdminRestaurantsController, RestaurantsController, RestaurantSchedulesController],
+  controllers: [
+    AdminRestaurantsController,
+    RestaurantsController,
+    RestaurantSchedulesController,
+  ],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,
