@@ -105,6 +105,9 @@ export class TableTypeOrmRepository
       qb.andWhere('section.restaurantId IN (:...restaurantIds)', {
         restaurantIds: query.restaurantIds,
       });
+    } else if (query.restaurantIds && query.restaurantIds.length === 0) {
+      // If restaurantIds is provided but empty (e.g. owner with no restaurants), return no results
+      qb.andWhere('1=0');
     }
     // @ts-ignore
     return this.execPagination(qb, query);

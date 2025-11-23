@@ -64,7 +64,10 @@ export class SectionObjectsController {
   @ApiOperation({ summary: 'Listar relaciones sección-objeto (paginado)' })
   @ApiPaginationQuery()
   async list(
-    @PaginationParams({ defaultRoute: '/section-objects', allowExtraParams: true })
+    @PaginationParams({
+      defaultRoute: '/section-objects',
+      allowExtraParams: true,
+    })
     query: ListSectionObjectsQuery,
   ) {
     return this.service.list(query);

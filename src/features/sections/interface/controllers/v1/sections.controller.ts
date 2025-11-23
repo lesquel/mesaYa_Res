@@ -21,6 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
@@ -82,7 +83,7 @@ export class SectionsController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
     const command: CreateSectionCommand = { ...dto };
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.sectionsService.create(command);
     }
     return this.sectionsService.createForOwner(command, user.userId);
@@ -98,7 +99,7 @@ export class SectionsController {
     @Query() query: SectionAnalyticsRequestDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionAnalyticsResponseDto> {
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       const analytics = await this.sectionsService.getAnalytics(
         query.toQuery(),
       );
@@ -113,7 +114,7 @@ export class SectionsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtOptionalAuthGuard)
   @ApiBearerAuth()
   @ThrottleRead()
   @ApiOperation({ summary: 'List sections' })
@@ -125,15 +126,18 @@ export class SectionsController {
   async findAll(
     @PaginationParams({ defaultRoute: '/sections', allowExtraParams: true })
     query: ListSectionsQuery,
-    @CurrentUser() user: CurrentUserPayload,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<PaginatedSectionResponse> {
-    if (user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
+      console.log('Listing sections for owner', user.userId);
       return this.sectionsService.listForOwner(query, user.userId);
     }
+    console.log('Listing sections for public');
     return this.sectionsService.list(query);
   }
 
   @Get('restaurant/:restaurantId')
+  @UseGuards(JwtOptionalAuthGuard)
   @ThrottleRead()
   @ApiOperation({ summary: 'List sections by restaurant' })
   @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
@@ -156,7 +160,7 @@ export class SectionsController {
       restaurantId,
     };
 
-    if (user && user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (user && user.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
       return this.sectionsService.listByRestaurantForOwner(query, user.userId);
     }
 
@@ -164,6 +168,7 @@ export class SectionsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtOptionalAuthGuard)
   @ThrottleRead()
   @ApiOperation({ summary: 'Get section by ID' })
   @ApiParam({ name: 'id', description: 'Section UUID' })
@@ -192,7 +197,7 @@ export class SectionsController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
     const command: UpdateSectionCommand = { sectionId: id, ...dto };
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.sectionsService.update(command);
     }
     return this.sectionsService.updateForOwner(command, user.userId);
@@ -209,7 +214,7 @@ export class SectionsController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<any> {
     const command: DeleteSectionCommand = { sectionId: id };
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.sectionsService.delete(command);
     }
     return this.sectionsService.deleteForOwner(command, user.userId);

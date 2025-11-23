@@ -78,11 +78,12 @@ export class TablesService {
     query: ListTablesQuery,
     ownerId: string,
   ): Promise<PaginatedTableResponse> {
-    const restaurantIds = await this.accessControl.findRestaurantIdsByOwner(
-      ownerId,
-    );
+    const restaurantIds =
+      await this.accessControl.findRestaurantIdsByOwner(ownerId);
+      console.log('Owner restaurant IDs:', restaurantIds);
 
     if (restaurantIds.length === 0) {
+      console.log('Owner has no restaurants, returning empty result set.');
       const page = query.pagination?.page ?? 1;
       const limit = query.pagination?.limit ?? 10;
       return {
@@ -99,8 +100,8 @@ export class TablesService {
 
     // If restaurantId is provided in query, verify ownership
     if (query.restaurantId) {
-      // @ts-ignore
       if (!restaurantIds.includes(query.restaurantId)) {
+        console.log(`Owner does not own restaurant ${query.restaurantId}, returning empty result set.`);
         const page = query.pagination?.page ?? 1;
         const limit = query.pagination?.limit ?? 10;
         return {

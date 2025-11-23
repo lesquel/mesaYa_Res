@@ -22,6 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
@@ -80,7 +81,7 @@ export class TablesController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableResponseDto> {
     const command: CreateTableCommand = { ...dto };
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.tablesService.create(command);
     }
     return this.tablesService.createForOwner(command, user.userId);
@@ -96,7 +97,7 @@ export class TablesController {
     @Query() query: TableAnalyticsRequestDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableAnalyticsResponseDto> {
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       const analytics = await this.tablesService.getAnalytics(query.toQuery());
       return TableAnalyticsResponseDto.fromApplication(analytics);
     } else {
@@ -109,7 +110,7 @@ export class TablesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtOptionalAuthGuard)
   @ApiBearerAuth()
   @ThrottleRead()
   @ApiOperation({ summary: 'List tables' })
@@ -121,15 +122,18 @@ export class TablesController {
   async findAll(
     @PaginationParams({ defaultRoute: '/tables', allowExtraParams: true })
     query: ListTablesQuery,
-    @CurrentUser() user: CurrentUserPayload,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<PaginatedTableResponse> {
-    if (user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
+      console.log('Listing tables for owner', user.userId);
       return this.tablesService.listForOwner(query, user.userId);
     }
+    console.log('Listing tables for public');
     return this.tablesService.list(query);
   }
 
   @Get('section/:sectionId')
+  @UseGuards(JwtOptionalAuthGuard)
   @ThrottleRead()
   @ApiOperation({ summary: 'List tables by section' })
   @ApiParam({ name: 'sectionId', description: 'Section UUID' })
@@ -159,7 +163,10 @@ export class TablesController {
       sectionId,
     };
 
-    if (user && user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (
+      user &&
+      user.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))
+    ) {
       return this.tablesService.listSectionForOwner(query, user.userId);
     }
 
@@ -167,6 +174,7 @@ export class TablesController {
   }
 
   @Get(':id')
+  @UseGuards(JwtOptionalAuthGuard)
   @ThrottleRead()
   @ApiOperation({ summary: 'Get table by ID' })
   @ApiParam({ name: 'id', description: 'Table UUID' })
@@ -184,7 +192,10 @@ export class TablesController {
 
     const query: FindTableQuery = { tableId: id };
 
-    if (user && user.roles?.some((r) => r.name === AuthRoleName.OWNER)) {
+    if (
+      user &&
+      user.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))
+    ) {
       // Assuming findOneForOwner exists or findOne checks it?
       // The service likely has findOne and findOneForOwner.
       // I'll use findOne for now as it seems public.
@@ -209,7 +220,7 @@ export class TablesController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableResponseDto> {
     const command: UpdateTableCommand = { tableId: id, ...dto };
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.tablesService.update(command);
     }
     return this.tablesService.updateForOwner(command, user.userId);
@@ -226,7 +237,7 @@ export class TablesController {
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<any> {
     const command: DeleteTableCommand = { tableId: id };
-    if (user.roles?.some((r) => r.name === AuthRoleName.ADMIN)) {
+    if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.tablesService.delete(command);
     }
     return this.tablesService.deleteForOwner(command, user.userId);

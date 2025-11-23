@@ -84,9 +84,9 @@ export class SectionsService {
     query: ListSectionsQuery,
     ownerId: string,
   ): Promise<PaginatedSectionResponse> {
-    const restaurantIds = await this.accessControl.findRestaurantIdsByOwner(
-      ownerId,
-    );
+    const restaurantIds =
+      await this.accessControl.findRestaurantIdsByOwner(ownerId);
+      console.log('Owner restaurant IDs:', restaurantIds);
 
     if (restaurantIds.length === 0) {
       const page = query.pagination?.page ?? 1;
@@ -105,7 +105,7 @@ export class SectionsService {
 
     // If restaurantId is provided in query, verify ownership
     if (query.restaurantId) {
-      // @ts-ignore
+      console.log(`Verifying ownership for restaurantId: ${query.restaurantId}`);
       if (!restaurantIds.includes(query.restaurantId)) {
         const page = query.pagination?.page ?? 1;
         const limit = query.pagination?.limit ?? 10;

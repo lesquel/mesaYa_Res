@@ -84,7 +84,10 @@ export class SubscriptionPlansController {
     description: 'List of subscription plans',
   })
   async findAll(
-    @PaginationParams({ defaultRoute: '/subscription-plans', allowExtraParams: true })
+    @PaginationParams({
+      defaultRoute: '/subscription-plans',
+      allowExtraParams: true,
+    })
     params: PaginatedQueryParams,
   ): Promise<SubscriptionPlanListResponseDto> {
     return this.subscriptionPlanService.findAll(params);

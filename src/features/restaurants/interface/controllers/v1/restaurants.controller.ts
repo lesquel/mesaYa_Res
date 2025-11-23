@@ -36,9 +36,7 @@ import {
   RestaurantsService,
   GetRestaurantAnalyticsUseCase,
 } from '@features/restaurants/application';
-import {
-  ListRestaurantReservationsUseCase,
-} from '@features/reservation/application/use-cases/list-restaurant-reservation.use-case';
+import { ListRestaurantReservationsUseCase } from '@features/reservation/application/use-cases/list-restaurant-reservation.use-case';
 import {
   ListRestaurantReservationsQuery,
   PaginatedReservationResponse,
