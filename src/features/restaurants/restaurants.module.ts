@@ -4,6 +4,7 @@ import { AuthModule } from '@features/auth/auth.module';
 import { ReservationModule } from '@features/reservation/reservation.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
+  AdminRestaurantsController,
   RestaurantsController,
   RestaurantSchedulesController,
 } from './interface/index';
@@ -54,7 +55,7 @@ import type {
     AuthModule,
     ReservationModule,
   ],
-  controllers: [RestaurantsController, RestaurantSchedulesController],
+  controllers: [AdminRestaurantsController, RestaurantsController, RestaurantSchedulesController],
   providers: [
     RestaurantTypeOrmRepository,
     OwnerTypeOrmProvider,
