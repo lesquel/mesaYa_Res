@@ -19,9 +19,9 @@ Utilizamos `@nestjs/throttler`, el paquete oficial de NestJS para rate limiting.
 La configuración se encuentra en `src/shared/core/config/throttler.config.ts`:
 
 ```typescript
-- short: 3 peticiones por segundo
-- medium: 20 peticiones cada 10 segundos
-- long: 100 peticiones por minuto
+- short: 20 peticiones por segundo
+- medium: 100 peticiones cada 10 segundos
+- long: 300 peticiones por minuto
 ```
 
 ### Guard Personalizado

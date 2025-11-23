@@ -8,9 +8,16 @@ import { WinstonLoggerAdapter } from '@shared/infrastructure/adapters/logger/wis
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new WinstonLoggerAdapter(),
-    
   });
   configureApp(app);
+
+  // TODO: Delete later
+  app.use((req, res, next) => {
+    console.log('[REQUEST]', req.method, req.originalUrl);
+    console.log('  params:', req.params);
+    console.log('  query:', req.query);
+    next();
+  });
 
   const configService = app.get(ConfigService);
   const HOST = configService.get<string>('APP_HOST');

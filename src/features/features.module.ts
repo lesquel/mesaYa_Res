@@ -17,7 +17,6 @@ import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
   imports: [
     AuthModule,
     ReservationModule,
-    RestaurantsModule,
     SectionsModule,
     ReviewsModule,
     TablesModule,
@@ -28,11 +27,11 @@ import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
     PaymentModule,
     SubscriptionModule,
     OwnerUpgradeModule,
+    RestaurantsModule,
   ],
   exports: [
     AuthModule,
     ReservationModule,
-    RestaurantsModule,
     SectionsModule,
     ReviewsModule,
     TablesModule,
@@ -43,6 +42,7 @@ import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
     PaymentModule,
     SubscriptionModule,
     OwnerUpgradeModule,
+    RestaurantsModule,
   ],
 })
 export class FeaturesModule {}

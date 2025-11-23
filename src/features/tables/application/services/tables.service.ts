@@ -66,8 +66,64 @@ export class TablesService {
     return this.create(command);
   }
 
+  async findRestaurantIdByOwner(ownerId: string): Promise<string | null> {
+    return this.accessControl.findRestaurantIdByOwner(ownerId);
+  }
+
   async list(query: ListTablesQuery): Promise<PaginatedTableResponse> {
     return this.listTables.execute(query);
+  }
+
+  async listForOwner(
+    query: ListTablesQuery,
+    ownerId: string,
+  ): Promise<PaginatedTableResponse> {
+    const restaurantIds =
+      await this.accessControl.findRestaurantIdsByOwner(ownerId);
+      console.log('Owner restaurant IDs:', restaurantIds);
+
+    if (restaurantIds.length === 0) {
+      console.log('Owner has no restaurants, returning empty result set.');
+      const page = query.pagination?.page ?? 1;
+      const limit = query.pagination?.limit ?? 10;
+      return {
+        results: [],
+        total: 0,
+        limit,
+        page,
+        pages: 0,
+        offset: 0,
+        hasNext: false,
+        hasPrev: false,
+      };
+    }
+
+    // If restaurantId is provided in query, verify ownership
+    if (query.restaurantId) {
+      if (!restaurantIds.includes(query.restaurantId)) {
+        console.log(`Owner does not own restaurant ${query.restaurantId}, returning empty result set.`);
+        const page = query.pagination?.page ?? 1;
+        const limit = query.pagination?.limit ?? 10;
+        return {
+          results: [],
+          total: 0,
+          limit,
+          page,
+          pages: 0,
+          offset: 0,
+          hasNext: false,
+          hasPrev: false,
+        };
+      }
+      // If valid, just use the original query which has restaurantId
+      return this.listTables.execute(query);
+    }
+
+    // If no specific restaurant requested, filter by all owned restaurants
+    return this.listTables.execute({
+      ...query,
+      restaurantIds,
+    });
   }
 
   async listSection(

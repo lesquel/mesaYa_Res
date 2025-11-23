@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import {
-  AdminTablesController,
-  PublicTablesController,
-  RestaurantTablesController,
-} from './interface';
+import { TablesController } from './interface';
 import {
   TableOrmEntity,
   SectionTypeOrmTableProvider,
@@ -29,8 +25,8 @@ import {
   TABLE_EVENT_PUBLISHER,
   TABLE_ANALYTICS_REPOSITORY,
 } from './application/ports';
-import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm';
-import { RestaurantOrmEntity } from '../restaurants/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/section.orm-entity';
+import { RestaurantOrmEntity } from '../restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import type {
   TableRepositoryPort,
   TableEventPublisherPort,
@@ -52,11 +48,7 @@ import {
     ]),
     AuthModule,
   ],
-  controllers: [
-    AdminTablesController,
-    PublicTablesController,
-    RestaurantTablesController,
-  ],
+  controllers: [TablesController],
   providers: [
     TableTypeOrmRepository,
     SectionTypeOrmTableProvider,

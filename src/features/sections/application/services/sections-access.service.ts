@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SectionOrmEntity } from '../../infrastructure/database/typeorm/orm/section.orm-entity';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import {
   SectionForbiddenError,
   SectionNotFoundError,
@@ -23,6 +23,22 @@ export class SectionsAccessService {
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
   ) {}
+
+  async findRestaurantIdByOwner(ownerId: string): Promise<string | null> {
+    const restaurant = await this.restaurants.findOne({
+      where: { ownerId },
+      select: { id: true },
+    });
+    return restaurant?.id ?? null;
+  }
+
+  async findRestaurantIdsByOwner(ownerId: string): Promise<string[]> {
+    const restaurants = await this.restaurants.find({
+      where: { ownerId },
+      select: { id: true },
+    });
+    return restaurants.map((r) => r.id);
+  }
 
   async assertRestaurantOwnership(
     restaurantId: string,

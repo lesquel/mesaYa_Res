@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { AdminReviewsController, PublicReviewsController } from './interface';
+import { ReviewsController } from './interface';
 import {
   ReviewOrmEntity,
   ReviewTypeOrmRepository,
@@ -26,6 +26,7 @@ import {
   REVIEW_ANALYTICS_REPOSITORY,
   type ReviewRepositoryPort,
   type ReviewAnalyticsRepositoryPort,
+  ReviewsAccessService,
 } from './application';
 import {
   ReviewDomainService,
@@ -47,12 +48,13 @@ import { RestaurantOrmEntity } from '../restaurants';
     ]),
     AuthModule,
   ],
-  controllers: [AdminReviewsController, PublicReviewsController],
+  controllers: [ReviewsController],
   providers: [
     ReviewTypeOrmRepository,
     RestaurantTypeOrmReviewProvider,
     UserTypeOrmReviewProvider,
     ReviewAnalyticsTypeOrmRepository,
+    ReviewsAccessService,
     {
       provide: REVIEW_REPOSITORY,
       useExisting: ReviewTypeOrmRepository,
@@ -187,6 +189,7 @@ import { RestaurantOrmEntity } from '../restaurants';
     ReviewsService,
     GetReviewAnalyticsUseCase,
     REVIEW_REPOSITORY,
+    ReviewsAccessService,
   ],
 })
 export class ReviewsModule {}

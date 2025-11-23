@@ -19,6 +19,10 @@ export class DomainExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(DomainExceptionFilter.name);
 
   catch(exception: unknown, host: ArgumentsHost): void {
+    if (exception instanceof Error) {
+      this.logger.error(`[Traceback] ${exception.message}`, exception.stack);
+    }
+
     if (exception instanceof HttpException) {
       this.respondFromHttpException(exception, host);
       return;

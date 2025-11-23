@@ -10,6 +10,7 @@ export class ListSectionsUseCase
 
   async execute(query: ListSectionsQuery): Promise<PaginatedSectionResponse> {
     const result = await this.sectionRepository.paginate(query);
+    console.log('ListSectionsUseCase result:', result);
 
     return {
       ...result,

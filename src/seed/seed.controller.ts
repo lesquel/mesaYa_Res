@@ -7,6 +7,14 @@ import { SeedService } from './seed.service';
 export class SeedController {
   constructor(private readonly seedService: SeedService) {}
 
+  @Get('auth-only')
+  @ApiOperation({
+    summary: 'Ejecutar seeding solo de autenticación (roles y permisos)',
+  })
+  async executeAuthOnly(): Promise<{ message: string; success: boolean }> {
+    return await this.seedService.seedAuthOnly();
+  }
+
   @Get()
   @ApiOperation({
     summary: 'Ejecutar seeding de la base de datos',

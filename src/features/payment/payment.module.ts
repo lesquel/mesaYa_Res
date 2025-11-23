@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import {
-  AdminPaymentController,
-  UserPaymentController,
-  RestaurantPaymentController,
-} from './presentation';
+import { PaymentsController } from './presentation';
 import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
@@ -41,11 +37,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     ]),
     LoggerModule,
   ],
-  controllers: [
-    AdminPaymentController,
-    UserPaymentController,
-    RestaurantPaymentController,
-  ],
+  controllers: [PaymentsController],
   providers: [
     {
       provide: PaymentEntityDTOMapper,

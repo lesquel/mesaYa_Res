@@ -2,11 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import {
-  AdminReservationsController,
-  PublicReservationsController,
-  RestaurantReservationsController,
-} from './interface';
+import { ReservationsController } from './interface';
 import {
   ReservationOrmEntity,
   ReservationTypeOrmRepository,
@@ -33,7 +29,7 @@ import {
   GetReservationAnalyticsUseCase,
   ReservationOwnerAccessService,
 } from './application';
-import { RestaurantOrmEntity } from '../restaurants';
+import { RestaurantOrmEntity } from '../restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import { ReservationService } from './application';
 import { ReservationEventNoopProvider } from './infrastructure';
 import {
@@ -57,11 +53,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     ]),
     AuthModule,
   ],
-  controllers: [
-    AdminReservationsController,
-    PublicReservationsController,
-    RestaurantReservationsController,
-  ],
+  controllers: [ReservationsController],
   providers: [
     ReservationTypeOrmRepository,
     ReservationAnalyticsTypeOrmRepository,

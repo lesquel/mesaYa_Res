@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TableOrmEntity } from '../../infrastructure/database/typeorm/orm/table.orm-entity';
 import { SectionOrmEntity } from '../../../sections/infrastructure/database/typeorm/orm/section.orm-entity';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import {
   TableForbiddenError,
   TableNotFoundError,
@@ -31,6 +31,22 @@ export class TablesAccessService {
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
   ) {}
+
+  async findRestaurantIdByOwner(ownerId: string): Promise<string | null> {
+    const restaurant = await this.restaurants.findOne({
+      where: { ownerId },
+      select: { id: true },
+    });
+    return restaurant?.id ?? null;
+  }
+
+  async findRestaurantIdsByOwner(ownerId: string): Promise<string[]> {
+    const restaurants = await this.restaurants.find({
+      where: { ownerId },
+      select: { id: true },
+    });
+    return restaurants.map((r) => r.id);
+  }
 
   async assertRestaurantOwnership(
     restaurantId: string,
@@ -120,13 +136,12 @@ export class TablesAccessService {
     tableId: string,
   ): Promise<TableOwnershipSnapshot | null> {
     const table = await this.tables
-      .createQueryBuilder('table')
-      .leftJoinAndSelect('table.section', 'section')
+      .createQueryBuilder('t')
+      .leftJoinAndSelect('t.section', 'section')
       .leftJoinAndSelect('section.restaurant', 'restaurant')
-      .where('table.id = :tableId', { tableId })
+      .where('t.id = :tableId', { tableId })
       .select([
-        'table.id',
-        'table.sectionId',
+        't.id',
         'section.id',
         'section.restaurantId',
         'restaurant.id',
@@ -140,7 +155,7 @@ export class TablesAccessService {
 
     return {
       tableId: table.id,
-      sectionId: table.sectionId,
+      sectionId: table.section.id,
       restaurantId:
         table.section?.restaurantId ?? table.section?.restaurant?.id ?? null,
       restaurantOwnerId: table.section?.restaurant?.ownerId ?? null,

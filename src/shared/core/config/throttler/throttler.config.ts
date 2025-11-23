@@ -15,17 +15,17 @@ export const THROTTLER_CONFIG: ThrottlerModuleOptions = {
     {
       name: 'short',
       ttl: 1000, // 1 segundo
-      limit: 3, // 3 peticiones por segundo
+      limit: 20, // 20 peticiones por segundo
     },
     {
       name: 'medium',
       ttl: 10000, // 10 segundos
-      limit: 20, // 20 peticiones cada 10 segundos
+      limit: 100, // 100 peticiones cada 10 segundos
     },
     {
       name: 'long',
       ttl: 60000, // 60 segundos (1 minuto)
-      limit: 100, // 100 peticiones por minuto
+      limit: 300, // 300 peticiones por minuto
     },
   ],
 };

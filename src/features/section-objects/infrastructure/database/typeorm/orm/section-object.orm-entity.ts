@@ -8,7 +8,7 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm';
 import { GraphicObjectOrmEntity } from '../../../../../objects/infrastructure/database/typeorm/orm';
 
 @Entity({ name: 'section_object' })

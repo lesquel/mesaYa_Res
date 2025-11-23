@@ -7,9 +7,9 @@ import {
   SectionRestaurantNotFoundError,
 } from '../../../../domain';
 import { ISectionDomainRepositoryPort } from '../../../../domain/repositories';
-import { SectionOrmEntity } from '../orm';
+import { SectionOrmEntity } from '../orm/section.orm-entity';
 import { SectionOrmMapper } from '../mappers';
-import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import {
   ListRestaurantSectionsQuery,
   ListSectionsQuery,
@@ -72,6 +72,20 @@ export class SectionTypeOrmRepository
 
   async paginate(query: ListSectionsQuery): Promise<PaginatedResult<Section>> {
     const qb = this.buildBaseQuery();
+    if (query.restaurantId) {
+      qb.andWhere('restaurant.id = :restaurantId', {
+        restaurantId: query.restaurantId,
+      });
+    }
+    if (query.restaurantIds && query.restaurantIds.length > 0) {
+      qb.andWhere('restaurant.id IN (:...restaurantIds)', {
+        restaurantIds: query.restaurantIds,
+      });
+    } else if (query.restaurantIds && query.restaurantIds.length === 0) {
+      // If restaurantIds is provided but empty (e.g. owner with no restaurants), return no results
+      qb.andWhere('1=0');
+    }
+    // @ts-ignore
     return this.executePagination(qb, query);
   }
 

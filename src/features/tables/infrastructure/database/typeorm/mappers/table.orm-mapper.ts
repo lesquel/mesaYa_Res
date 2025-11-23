@@ -1,6 +1,6 @@
 import { Table } from '../../../../domain';
 import { TableOrmEntity } from '../orm';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm';
 
 export class TableOrmMapper {
   // Mapper responsable de convertir entre Table <-> TableOrmEntity.

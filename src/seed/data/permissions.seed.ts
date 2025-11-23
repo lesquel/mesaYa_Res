@@ -19,4 +19,14 @@ export const permissionsSeed = [
   { name: 'MANAGE_ROLES' },
   { name: 'MANAGE_PERMISSIONS' },
   { name: 'VIEW_ANALYTICS' },
+  // Section permissions
+  { name: 'section:create' },
+  { name: 'section:read' },
+  { name: 'section:update' },
+  { name: 'section:delete' },
+  // Table permissions
+  { name: 'table:create' },
+  { name: 'table:read' },
+  { name: 'table:update' },
+  { name: 'table:delete' },
 ];

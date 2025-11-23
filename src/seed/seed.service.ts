@@ -92,4 +92,34 @@ export class SeedService {
       throw error;
     }
   }
+
+  /**
+   * Ejecuta solo el proceso de seeding de autenticación.
+   *
+   * @returns {Promise<{ message: string; success: boolean }>}
+   * Objeto con el mensaje de éxito y estado de la operación
+   *
+   * @throws {Error} Si ocurre algún error durante el seeding
+   *
+   * @example
+   * ```typescript
+   * const result = await seedService.seedAuthOnly();
+   * console.log(result); // { message: 'Auth seeded successfully', success: true }
+   * ```
+   */
+  async seedAuthOnly(): Promise<{ message: string; success: boolean }> {
+    try {
+      this.logger.log('🌱 Starting auth seeding only...');
+      await this.authSeedService.seedPermissions();
+      await this.authSeedService.seedRoles();
+      this.logger.log('✅ Auth seeding completed successfully!');
+      return {
+        message: 'Auth seeded successfully',
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error('❌ Error seeding auth:', error);
+      throw error;
+    }
+  }
 }

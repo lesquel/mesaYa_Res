@@ -6,7 +6,7 @@ import {
   TableSectionNotFoundError,
   ITableDomainRepositoryPort,
 } from '../../../../domain';
-import { TableOrmEntity } from '../orm';
+import { TableOrmEntity } from '../orm/table.orm-entity';
 import { TableOrmMapper } from '../mappers';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
 import { PaginatedResult } from '@shared/application/types/pagination';
@@ -15,7 +15,7 @@ import {
   ListSectionTablesQuery,
 } from '../../../../application/dto';
 import { type TableRepositoryPort } from '../../../../application/ports';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm/section.orm-entity';
 
 // Nota: Este repositorio mapea entre la entidad ORM (`TableOrmEntity`) y el
 // agregado de dominio `Table`. Las transformaciones se realizan mediante
@@ -74,18 +74,18 @@ export class TableTypeOrmRepository
     number: number,
   ): Promise<Table | null> {
     const entity = await this.tables
-      .createQueryBuilder('table')
-      .leftJoin('table.section', 'section')
+      .createQueryBuilder('t')
+      .leftJoin('t.section', 'section')
       .where('section.id = :sectionId', { sectionId })
-      .andWhere('table.number = :number', { number })
+      .andWhere('t.number = :number', { number })
       .getOne();
     return entity ? TableOrmMapper.toDomain(entity) : null;
   }
 
   async listBySection(sectionId: string): Promise<Table[]> {
     const entities = await this.tables
-      .createQueryBuilder('table')
-      .leftJoin('table.section', 'section')
+      .createQueryBuilder('t')
+      .leftJoin('t.section', 'section')
       .where('section.id = :sectionId', { sectionId })
       .getMany();
     return entities.map((entity) => TableOrmMapper.toDomain(entity));
@@ -93,6 +93,23 @@ export class TableTypeOrmRepository
 
   async paginate(query: ListTablesQuery): Promise<PaginatedResult<Table>> {
     const qb = this.buildBaseQuery();
+    if (query.sectionId) {
+      qb.andWhere('section.id = :sectionId', { sectionId: query.sectionId });
+    }
+    if (query.restaurantId) {
+      qb.andWhere('section.restaurantId = :restaurantId', {
+        restaurantId: query.restaurantId,
+      });
+    }
+    if (query.restaurantIds && query.restaurantIds.length > 0) {
+      qb.andWhere('section.restaurantId IN (:...restaurantIds)', {
+        restaurantIds: query.restaurantIds,
+      });
+    } else if (query.restaurantIds && query.restaurantIds.length === 0) {
+      // If restaurantIds is provided but empty (e.g. owner with no restaurants), return no results
+      qb.andWhere('1=0');
+    }
+    // @ts-ignore
     return this.execPagination(qb, query);
   }
 

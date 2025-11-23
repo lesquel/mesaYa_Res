@@ -24,43 +24,48 @@ export class AuthSeedService {
     this.logger.log('🔑 Seeding permissions...');
 
     const existing = await this.permissionRepository.findAll();
-    if (existing.length > 0) {
-      this.logger.log('⏭️  Permissions already exist, skipping...');
-      return;
-    }
+    const existingNames = new Set(existing.map((p) => p.name));
 
+    let createdCount = 0;
     for (const permissionData of permissionsSeed) {
-      const permission = new AuthPermission({
-        name: permissionData.name,
-      });
-      await this.permissionRepository.save(permission);
+      if (!existingNames.has(permissionData.name)) {
+        const permission = new AuthPermission({
+          name: permissionData.name,
+        });
+        await this.permissionRepository.save(permission);
+        createdCount++;
+      }
     }
 
-    this.logger.log(`✅ Created ${permissionsSeed.length} permissions`);
+    if (createdCount > 0) {
+      this.logger.log(`✅ Created ${createdCount} new permissions`);
+    } else {
+      this.logger.log('⏭️  All permissions already exist');
+    }
   }
 
   async seedRoles(): Promise<void> {
     this.logger.log('👥 Seeding roles...');
-
-    const existing = await this.roleRepository.findAll();
-    if (existing.length > 0) {
-      this.logger.log('⏭️  Roles already exist, skipping...');
-      return;
-    }
 
     for (const roleSeed of rolesSeed) {
       const permissions = await this.permissionRepository.findByNames(
         roleSeed.permissions,
       );
 
-      const role = new AuthRole({
-        name: roleSeed.name,
-        permissions,
-      });
+      let role = await this.roleRepository.findByName(roleSeed.name);
 
-      await this.roleRepository.save(role);
+      if (role) {
+        role.setPermissions(permissions);
+        await this.roleRepository.save(role);
+        this.logger.log(`🔄 Updated role ${roleSeed.name}`);
+      } else {
+        role = new AuthRole({
+          name: roleSeed.name,
+          permissions,
+        });
+        await this.roleRepository.save(role);
+        this.logger.log(`✅ Created role ${roleSeed.name}`);
+      }
     }
-
-    this.logger.log(`✅ Created ${rolesSeed.length} roles`);
   }
 }

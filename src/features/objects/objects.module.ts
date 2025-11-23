@@ -23,14 +23,11 @@ import {
   GraphicObjectDomainService,
   IGraphicObjectDomainRepositoryPort,
 } from './domain/index';
-import {
-  AdminObjectsController,
-  PublicObjectsController,
-} from './interface/controllers/v1/index';
+import { ObjectsController } from './interface/controllers/v1/index';
 
 @Module({
   imports: [TypeOrmModule.forFeature([GraphicObjectOrmEntity]), AuthModule],
-  controllers: [AdminObjectsController, PublicObjectsController],
+  controllers: [ObjectsController],
   providers: [
     GraphicObjectTypeOrmRepository,
     GraphicObjectEventNoopProvider,
