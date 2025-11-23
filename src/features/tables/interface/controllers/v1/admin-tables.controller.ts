@@ -5,12 +5,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -154,7 +154,7 @@ export class AdminTablesController {
     type: TableResponseSwaggerDto,
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableResponseDto> {
     const query: FindTableQuery = { tableId: id };
@@ -172,7 +172,7 @@ export class AdminTablesController {
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   @ApiBody({ type: UpdateTableDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateTableDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableResponseDto> {
@@ -190,7 +190,7 @@ export class AdminTablesController {
   @ApiOperation({ summary: 'Eliminar mesa (permiso table:delete)' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<DeleteTableResponseDto> {
     const command: DeleteTableCommand = { tableId: id };

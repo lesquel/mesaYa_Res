@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiOperation,
   ApiParam,
@@ -49,13 +50,13 @@ export class PublicTablesController {
   })
   @ApiPaginationQuery()
   async findBySection(
-    @Param('sectionId', ParseUUIDPipe) sectionId: string,
-    @PaginationParams({ defaultRoute: '/public/tables/section' })
-    pagination: ListTablesQuery,
+    @Param('sectionId', UUIDPipe) sectionId: string,
+    @PaginationParams({ defaultRoute: '/public/tables/section/:sectionId' })
+    pagination: ListSectionTablesQuery,
   ): Promise<PaginatedTableResponse> {
     const query: ListSectionTablesQuery = {
-      sectionId,
       ...pagination,
+      sectionId,
     };
     return this.tablesService.listSection(query);
   }
@@ -69,7 +70,7 @@ export class PublicTablesController {
     type: TableResponseSwaggerDto,
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<TableResponseDto> {
     const query: FindTableQuery = { tableId: id };
     return this.tablesService.findOne(query);

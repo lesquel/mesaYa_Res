@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
@@ -29,7 +30,7 @@ export class PublicObjectsController {
   @ThrottleRead()
   @ApiOperation({ summary: 'Obtener objeto gráfico público por ID' })
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', UUIDPipe) id: string) {
     const query: FindGraphicObjectQuery = { objectId: id };
     return this.objects.findOne(query);
   }

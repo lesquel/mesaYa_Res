@@ -9,7 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure';
+import { TableOrmEntity } from '@features/tables/infrastructure/database/typeorm/orm/table.orm-entity';
 
 @Entity({ name: 'reservation' })
 export class ReservationOrmEntity {
@@ -33,7 +34,11 @@ export class ReservationOrmEntity {
   @RelationId((reservation: ReservationOrmEntity) => reservation.user)
   userId: string;
 
-  @Column({ type: 'uuid', name: 'table_id', nullable: false })
+  @ManyToOne(() => TableOrmEntity, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'table_id', referencedColumnName: 'id' })
+  table: TableOrmEntity;
+
+  @RelationId((reservation: ReservationOrmEntity) => reservation.table)
   tableId: string;
 
   @Column({ type: 'timestamptz', name: 'reservation_time', nullable: false })

@@ -4,11 +4,11 @@ import {
   ForbiddenException,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -64,7 +64,7 @@ export class RestaurantRestaurantsController {
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiOkResponse({ description: 'Restaurante encontrado' })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<RestaurantResponseDto> {
     const restaurant = await this.restaurantsService.findOne({
@@ -84,7 +84,7 @@ export class RestaurantRestaurantsController {
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiBody({ type: UpdateRestaurantDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateRestaurantDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<RestaurantResponseDto> {

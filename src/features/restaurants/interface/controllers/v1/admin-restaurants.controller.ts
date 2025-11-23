@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -95,7 +95,7 @@ export class AdminRestaurantsController {
     type: RestaurantResponseSwaggerDto,
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<RestaurantResponseDto> {
     return this.restaurantsService.findOne({ restaurantId: id });
   }
@@ -168,7 +168,7 @@ export class AdminRestaurantsController {
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiBody({ type: UpdateRestaurantStatusRequestDto })
   async updateStatus(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateRestaurantStatusRequestDto,
     @CurrentUser() user: { userId: string },
   ): Promise<RestaurantResponseDto> {
@@ -192,7 +192,7 @@ export class AdminRestaurantsController {
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiBody({ type: UpdateRestaurantDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateRestaurantDto,
     @CurrentUser() user: { userId: string },
   ): Promise<RestaurantResponseDto> {
@@ -211,7 +211,7 @@ export class AdminRestaurantsController {
   @ApiOperation({ summary: 'Eliminar restaurante (permiso restaurant:delete)' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
   ): Promise<DeleteRestaurantResponseDto> {
     const command: DeleteRestaurantCommand = {

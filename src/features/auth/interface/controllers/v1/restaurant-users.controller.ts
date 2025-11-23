@@ -2,10 +2,10 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -43,7 +43,7 @@ export class RestaurantUsersController {
     type: AuthAnalyticsResponseDto,
   })
   async analyticsByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @Query() query: AuthAnalyticsRequestDto,
   ) {
     const q = { ...query.toQuery(), restaurantId };

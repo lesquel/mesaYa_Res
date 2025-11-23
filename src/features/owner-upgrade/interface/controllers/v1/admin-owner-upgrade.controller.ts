@@ -4,10 +4,10 @@ import {
   Get,
   Param,
   Patch,
-  ParseUUIDPipe,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -87,7 +87,7 @@ export class AdminOwnerUpgradeController {
   @ApiBearerAuth()
   @ApiParam({ name: 'requestId', description: 'UUID de la solicitud' })
   async getUpgradeRequest(
-    @Param('requestId', ParseUUIDPipe) requestId: string,
+    @Param('requestId', UUIDPipe) requestId: string,
   ): Promise<OwnerUpgradeResponseDto> {
     return this.ownerUpgradeService.findRequestById(requestId);
   }
@@ -97,7 +97,7 @@ export class AdminOwnerUpgradeController {
   @ApiOperation({ summary: 'Aprueba o rechaza solicitudes de owner' })
   @ApiResponse({ type: OwnerUpgradeResponseDto })
   async approve(
-    @Param('ownerId', ParseUUIDPipe) ownerId: string,
+    @Param('ownerId', UUIDPipe) ownerId: string,
     @Body() decision: OwnerUpgradeDecisionDto,
     @CurrentUser() admin: CurrentUserPayload,
   ): Promise<OwnerUpgradeResponseDto> {

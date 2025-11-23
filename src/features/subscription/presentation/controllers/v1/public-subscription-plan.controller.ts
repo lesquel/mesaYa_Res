@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -47,8 +48,8 @@ export class PublicSubscriptionPlanController {
     description: 'Subscription plan details',
     type: SubscriptionPlanResponseSwaggerDto,
   })
-  async getSubscriptionPlanById(
-    @Param('subscriptionPlanId', ParseUUIDPipe) subscriptionPlanId: string,
+  async findOne(
+    @Param('subscriptionPlanId', UUIDPipe) subscriptionPlanId: string,
   ): Promise<SubscriptionPlanResponseDto> {
     return this.subscriptionPlanService.findById({
       subscriptionPlanId,

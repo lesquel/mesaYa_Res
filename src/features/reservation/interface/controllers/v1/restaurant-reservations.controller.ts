@@ -5,11 +5,11 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import { isUUID } from 'class-validator';
 import {
   ApiBearerAuth,
@@ -90,6 +90,7 @@ export class RestaurantReservationsController {
     })
     pagination: PaginatedQueryParams,
     @Query() raw: Record<string, unknown>,
+    @Query('restaurantId') restaurantIdParam: string | undefined,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<PaginatedReservationResponse> {
     const query: ListOwnerReservationsQuery = {
@@ -101,7 +102,7 @@ export class RestaurantReservationsController {
       query.status = raw.status as ListOwnerReservationsQuery['status'];
     }
 
-    const restaurantId = parseRestaurantIdFilter(raw.restaurantId);
+    const restaurantId = parseRestaurantIdFilter(restaurantIdParam ?? raw.restaurantId);
     if (restaurantId) {
       query.restaurantId = restaurantId;
     }
@@ -118,7 +119,7 @@ export class RestaurantReservationsController {
   @ApiOperation({ summary: 'Obtener una reserva propia por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<ReservationResponseDto> {
     await this.ownerAccess.assertReservationOwnership(id, user.userId);
@@ -131,7 +132,7 @@ export class RestaurantReservationsController {
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   @ApiBody({ type: UpdateOwnerReservationDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateOwnerReservationDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<ReservationResponseDto> {
@@ -148,7 +149,7 @@ export class RestaurantReservationsController {
   @ApiOperation({ summary: 'Eliminar una reserva propia por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<DeleteReservationResponseDto> {
     const command: DeleteOwnerReservationCommand = {
@@ -173,7 +174,9 @@ function parseRestaurantIdFilter(value: unknown): string | undefined {
     return undefined;
   }
 
-  if (!isUUID(trimmed)) {
+  // Allow any UUID version (v1-v8)
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(trimmed)) {
     throw new BadRequestException('restaurantId must be a valid UUID');
   }
 

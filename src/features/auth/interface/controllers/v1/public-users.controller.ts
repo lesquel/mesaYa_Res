@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -66,6 +73,15 @@ export class PublicUsersController {
     return PublicAuthAnalyticsResponseDto.fromApplication(analytics);
   }
 
+  @Get('reservations')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Prevent UUID validation error for reservations path',
+  })
+  getReservations() {
+    throw new NotFoundException('Resource not found');
+  }
+
   @Get(':id')
   @ThrottleRead()
   @ApiOperation({ summary: 'Obtener perfil público de un usuario por ID' })
@@ -74,7 +90,7 @@ export class PublicUsersController {
     description: 'Perfil público del usuario',
     type: AuthUserResponseDto,
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', UUIDPipe) id: string) {
     const user = await this.findUserByIdUseCase.execute(id);
     return user ? AuthUserResponseDto.fromDomain(user) : null;
   }

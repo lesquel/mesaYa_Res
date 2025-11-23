@@ -3,10 +3,11 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -19,7 +20,10 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  type CurrentUserPayload,
+} from '@features/auth/interface/decorators/current-user.decorator';
 import {
   ThrottleCreate,
   ThrottleRead,
@@ -67,9 +71,9 @@ export class RestaurantSubscriptionController {
     description: 'Suscripción del restaurante',
     type: SubscriptionResponseSwaggerDto,
   })
-  async getRestaurantSubscription(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @CurrentUser() user: { userId: string },
+  async getSubscription(
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<SubscriptionResponseDto> {
     return this.subscriptionService.findByRestaurantForOwner(
       { restaurantId },

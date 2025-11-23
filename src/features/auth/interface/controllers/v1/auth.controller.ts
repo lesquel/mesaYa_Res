@@ -4,7 +4,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -12,6 +11,7 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -230,7 +230,7 @@ export class AuthController {
   @ApiParam({ name: 'id', description: 'UUID del usuario' })
   @ApiOkResponse({ type: AdminAuthUserResponseDto })
   async getUserAdmin(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<AdminAuthUserResponseDto> {
     const user = await this.authService.getCurrentUser(id);
     if (!user) {
@@ -252,7 +252,7 @@ export class AuthController {
   })
   @ApiForbiddenResponse({ description: 'Requiere rol ADMIN' })
   async updateUserRoles(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body(new ValidationPipe({ whitelist: true }))
     dto: UpdateUserRolesRequestDto,
   ): Promise<AuthUserResponseDto> {

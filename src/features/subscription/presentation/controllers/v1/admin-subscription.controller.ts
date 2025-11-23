@@ -4,11 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
   ApiOkResponse,
@@ -108,8 +108,8 @@ export class AdminSubscriptionController {
     description: 'Subscription details',
     type: SubscriptionResponseSwaggerDto,
   })
-  async getSubscriptionById(
-    @Param('subscriptionId', ParseUUIDPipe) subscriptionId: string,
+  async getSubscription(
+    @Param('subscriptionId', UUIDPipe) subscriptionId: string,
   ): Promise<SubscriptionResponseDto> {
     return this.subscriptionService.findById({ subscriptionId });
   }
@@ -125,7 +125,7 @@ export class AdminSubscriptionController {
     type: SubscriptionResponseSwaggerDto,
   })
   async updateSubscription(
-    @Param('subscriptionId', ParseUUIDPipe) subscriptionId: string,
+    @Param('subscriptionId', UUIDPipe) subscriptionId: string,
     @Body() dto: UpdateSubscriptionRequestDto,
   ): Promise<SubscriptionResponseDto> {
     return this.subscriptionService.update({
@@ -145,7 +145,7 @@ export class AdminSubscriptionController {
     type: SubscriptionResponseSwaggerDto,
   })
   async updateSubscriptionState(
-    @Param('subscriptionId', ParseUUIDPipe) subscriptionId: string,
+    @Param('subscriptionId', UUIDPipe) subscriptionId: string,
     @Body() dto: UpdateSubscriptionStateRequestDto,
   ): Promise<SubscriptionResponseDto> {
     return this.subscriptionService.updateState({
@@ -164,7 +164,7 @@ export class AdminSubscriptionController {
     type: DeleteSubscriptionResponseSwaggerDto,
   })
   async deleteSubscription(
-    @Param('subscriptionId', ParseUUIDPipe) subscriptionId: string,
+    @Param('subscriptionId', UUIDPipe) subscriptionId: string,
   ): Promise<DeleteSubscriptionResponseDto> {
     const dto: DeleteSubscriptionDto = { subscriptionId };
     return this.subscriptionService.delete(dto);

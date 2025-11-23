@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -150,7 +150,7 @@ export class AdminReservationsController {
     type: ReservationResponseSwaggerDto,
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<ReservationResponseDto> {
     const query: FindReservationQuery = { reservationId: id };
     return this.reservationsService.findOne(query);
@@ -165,7 +165,7 @@ export class AdminReservationsController {
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   @ApiBody({ type: UpdateReservationDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateReservationDto,
     @CurrentUser() user: { userId: string },
   ): Promise<ReservationResponseDto> {
@@ -186,7 +186,7 @@ export class AdminReservationsController {
   })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
   ): Promise<DeleteReservationResponseDto> {
     const command: DeleteReservationCommand = {

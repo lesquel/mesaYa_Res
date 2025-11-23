@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -88,7 +88,7 @@ export class AdminReviewsController {
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
   @ApiOkResponse({ type: ReviewResponseSwaggerDto })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<ReviewResponseDto> {
     const query: FindReviewQuery = { reviewId: id };
     return this.reviewsService.findOne(query);
@@ -128,7 +128,7 @@ export class AdminReviewsController {
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
   @ApiBody({ type: UpdateReviewDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateReviewDto,
     @CurrentUser() user: { userId: string },
   ): Promise<ReviewResponseDto> {
@@ -146,7 +146,7 @@ export class AdminReviewsController {
   @ApiOperation({ summary: 'Eliminar reseña propia (permiso review:delete)' })
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: { userId: string },
   ): Promise<DeleteReviewResponseDto> {
     const command: DeleteReviewCommand = {
@@ -164,7 +164,7 @@ export class AdminReviewsController {
   @ApiBody({ type: ModerateReviewDto })
   @ApiOkResponse({ type: ReviewResponseSwaggerDto })
   async moderate(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: ModerateReviewDto,
   ): Promise<ReviewResponseDto> {
     // Support both field-based moderation (rating/comment/hideComment)

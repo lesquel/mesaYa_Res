@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -84,7 +84,7 @@ export class AdminDishesController {
     type: DishResponseSwaggerDto,
   })
   findById(
-    @Param('dishId', ParseUUIDPipe) dishId: string,
+    @Param('dishId', UUIDPipe) dishId: string,
   ): Promise<DishResponseDto> {
     return this.dishService.findById({ dishId });
   }
@@ -110,7 +110,7 @@ export class AdminDishesController {
     type: DishResponseSwaggerDto,
   })
   update(
-    @Param('dishId') dishId: string,
+    @Param('dishId', UUIDPipe) dishId: string,
     @Body() dto: UpdateDishRequestDto,
   ): Promise<DishResponseDto> {
     return this.dishService.update({ ...dto, dishId });
@@ -123,7 +123,7 @@ export class AdminDishesController {
     description: 'Dish deleted',
     type: DeleteDishResponseSwaggerDto,
   })
-  delete(@Param('dishId') dishId: string): Promise<DeleteDishResponseDto> {
+  delete(@Param('dishId', UUIDPipe) dishId: string): Promise<DeleteDishResponseDto> {
     const deleteDto: DeleteDishDto = { dishId };
     return this.dishService.delete(deleteDto);
   }

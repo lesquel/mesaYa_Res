@@ -5,12 +5,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -162,7 +162,7 @@ export class AdminSectionsController {
     type: SectionResponseSwaggerDto,
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
     const query: FindSectionQuery = { sectionId: id };
@@ -180,7 +180,7 @@ export class AdminSectionsController {
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiBody({ type: UpdateSectionDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateSectionDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
@@ -205,7 +205,7 @@ export class AdminSectionsController {
     type: DeleteSectionResponseSwaggerDto,
   })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<DeleteSectionResponseDto> {
     const command: DeleteSectionCommand = { sectionId: id };

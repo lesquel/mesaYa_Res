@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -97,7 +97,7 @@ export class AdminObjectsController {
     description: 'Detalle del objeto gráfico',
     type: GraphicObjectResponseSwaggerDto,
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', UUIDPipe) id: string) {
     const query: FindGraphicObjectQuery = { objectId: id };
     return this.objects.findOne(query);
   }
@@ -122,7 +122,7 @@ export class AdminObjectsController {
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
   @ApiBody({ type: UpdateGraphicObjectDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateGraphicObjectDto,
   ) {
     const command: UpdateGraphicObjectCommand = { objectId: id, ...dto };
@@ -134,7 +134,7 @@ export class AdminObjectsController {
   @Permissions('object:delete')
   @ApiOperation({ summary: 'Eliminar objeto (permiso object:delete)' })
   @ApiParam({ name: 'id', description: 'UUID del objeto' })
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', UUIDPipe) id: string) {
     const command: DeleteGraphicObjectCommand = { objectId: id };
     return this.objects.delete(command);
   }

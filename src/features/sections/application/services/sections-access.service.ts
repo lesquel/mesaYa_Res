@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SectionOrmEntity } from '../../infrastructure/database/typeorm/orm/section.orm-entity';
-import { RestaurantOrmEntity } from '../../../restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
+import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import {
   SectionForbiddenError,
   SectionNotFoundError,

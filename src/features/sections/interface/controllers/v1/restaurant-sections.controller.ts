@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -88,7 +88,7 @@ export class RestaurantSectionsController {
   @ApiOperation({ summary: 'Listar secciones por restaurante (propietario)' })
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   async findByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @Query() query: any,
     @CurrentUser() user: CurrentUserPayload,
   ) {
@@ -105,7 +105,7 @@ export class RestaurantSectionsController {
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiOkResponse({ type: SectionResponseSwaggerDto })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
     return this.sectionsService.findOneForOwner({ sectionId: id }, user.userId);
@@ -117,7 +117,7 @@ export class RestaurantSectionsController {
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiBody({ type: UpdateSectionDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateSectionDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<SectionResponseDto> {
@@ -131,7 +131,7 @@ export class RestaurantSectionsController {
   @ApiParam({ name: 'id', description: 'UUID de la sección' })
   @ApiOkResponse({ description: 'Sección eliminada correctamente' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<DeleteSectionResponseDto> {
     const command: DeleteSectionCommand = { sectionId: id };

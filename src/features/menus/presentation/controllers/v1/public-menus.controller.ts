@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -62,7 +63,7 @@ export class PublicMenusController {
     description: 'Listado paginado de menús de un restaurante',
   })
   findByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @PaginationParams({ defaultRoute: '/public/menus/restaurant' })
     query: PaginatedQueryParams,
   ): Promise<MenuListResponseDto> {
@@ -95,7 +96,7 @@ export class PublicMenusController {
     type: MenuResponseSwaggerDto,
   })
   findById(
-    @Param('menuId', ParseUUIDPipe) menuId: string,
+    @Param('menuId', UUIDPipe) menuId: string,
   ): Promise<MenuResponseDto> {
     return this.menuService.findById({ menuId });
   }

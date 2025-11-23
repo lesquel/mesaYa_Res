@@ -4,11 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -54,7 +55,7 @@ export class RestaurantSchedulesController {
     type: ScheduleExceptionResponseDto,
   })
   async create(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @Body() dto: CreateScheduleExceptionDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<ScheduleExceptionResponseDto> {
@@ -75,10 +76,10 @@ export class RestaurantSchedulesController {
     type: ScheduleExceptionResponseDto,
     isArray: true,
   })
-  async list(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+  async findAll(
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @CurrentUser() user: CurrentUserPayload,
-  ) {
+  ): Promise<ScheduleExceptionResponseDto[]> {
     const rows = await this.scheduleService.listExceptions(
       restaurantId,
       user.userId,
@@ -96,7 +97,7 @@ export class RestaurantSchedulesController {
     isArray: true,
   })
   async listSlots(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @CurrentUser() user: CurrentUserPayload,
   ) {
     const rows = await this.scheduleService.listSlots(
@@ -116,7 +117,7 @@ export class RestaurantSchedulesController {
     type: ScheduleSlotResponseDto,
   })
   async createSlot(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @Body() dto: CreateScheduleSlotDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<ScheduleSlotResponseDto> {
@@ -135,8 +136,8 @@ export class RestaurantSchedulesController {
   @ApiParam({ name: 'id', description: 'UUID del horario' })
   @ApiOkResponse({ description: 'Horario eliminado' })
   async deleteSlot(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ) {
     await this.scheduleService.deleteSlot(restaurantId, user.userId, id);
@@ -150,8 +151,8 @@ export class RestaurantSchedulesController {
   @ApiParam({ name: 'id', description: 'UUID de la excepción' })
   @ApiBody({ type: UpdateScheduleExceptionDto })
   async update(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateScheduleExceptionDto,
     @CurrentUser() user: CurrentUserPayload,
   ) {
@@ -171,8 +172,8 @@ export class RestaurantSchedulesController {
   @ApiParam({ name: 'id', description: 'UUID de la excepción' })
   @ApiOkResponse({ description: 'Eliminada' })
   async remove(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ) {
     await this.scheduleService.deleteException(restaurantId, user.userId, id);

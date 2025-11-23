@@ -3,10 +3,10 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -72,7 +72,7 @@ export class RestaurantPaymentController {
     isArray: true,
   })
   async getRestaurantPayments(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto[]> {
     return this.paymentService.getPaymentsByRestaurantForOwner(
@@ -93,7 +93,7 @@ export class RestaurantPaymentController {
     type: PaymentResponseSwaggerDto,
   })
   async getPaymentById(
-    @Param('paymentId', ParseUUIDPipe) paymentId: string,
+    @Param('paymentId', UUIDPipe) paymentId: string,
     @CurrentUser() user: { userId: string },
   ): Promise<PaymentResponseDto> {
     return this.paymentService.getOwnerPaymentById(paymentId, user.userId);

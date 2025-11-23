@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
@@ -34,7 +35,7 @@ export class PublicReviewsController {
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiPaginationQuery()
   async findByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @PaginationParams({ defaultRoute: '/public/reviews/restaurant' })
     pagination: ListReviewsQuery,
   ): Promise<PaginatedReviewResponse> {
@@ -50,7 +51,7 @@ export class PublicReviewsController {
   @ApiOperation({ summary: 'Obtener una reseña pública por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reseña' })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<ReviewResponseDto> {
     const query: FindReviewQuery = { reviewId: id };
     return this.reviewsService.findOne(query);

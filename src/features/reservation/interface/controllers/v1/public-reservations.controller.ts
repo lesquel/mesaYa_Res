@@ -3,11 +3,12 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   Post,
   UnauthorizedException,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -79,7 +80,7 @@ export class PublicReservationsController {
   @ApiParam({ name: 'restaurantId', description: 'UUID del restaurante' })
   @ApiPaginationQuery()
   async findByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
     @PaginationParams({ defaultRoute: '/public/reservations/restaurant' })
     pagination: ListReservationsQuery,
   ): Promise<PaginatedReservationResponse> {
@@ -90,12 +91,21 @@ export class PublicReservationsController {
     return this.reservationsService.listByRestaurant(query);
   }
 
+  @Get('reservations')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Prevent UUID validation error for reservations path',
+  })
+  getReservations() {
+    throw new NotFoundException('Resource not found');
+  }
+
   @Get(':id')
   @ThrottleRead()
   @ApiOperation({ summary: 'Obtener una reserva pública por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la reserva' })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<ReservationResponseDto> {
     const query: FindReservationQuery = { reservationId: id };
     return this.reservationsService.findOne(query);

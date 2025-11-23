@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -84,7 +84,7 @@ export class AdminMenusController {
     type: MenuResponseSwaggerDto,
   })
   findById(
-    @Param('menuId', ParseUUIDPipe) menuId: string,
+    @Param('menuId', UUIDPipe) menuId: string,
   ): Promise<MenuResponseDto> {
     return this.menuService.findById({ menuId });
   }
@@ -110,7 +110,7 @@ export class AdminMenusController {
     type: MenuResponseSwaggerDto,
   })
   update(
-    @Param('menuId') menuId: string,
+    @Param('menuId', UUIDPipe) menuId: string,
     @Body() dto: UpdateMenuRequestDto,
   ): Promise<MenuResponseDto> {
     return this.menuService.update({ ...dto, menuId });
@@ -123,7 +123,7 @@ export class AdminMenusController {
     description: 'Menu deleted',
     type: DeleteMenuResponseSwaggerDto,
   })
-  delete(@Param('menuId') menuId: string): Promise<DeleteMenuResponseDto> {
+  delete(@Param('menuId', UUIDPipe) menuId: string): Promise<DeleteMenuResponseDto> {
     const deleteDto: DeleteMenuDto = { menuId };
     return this.menuService.delete(deleteDto);
   }

@@ -4,11 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -75,7 +75,7 @@ export class AdminSectionObjectsController {
   @Permissions('section-object:read')
   @ApiOperation({ summary: 'Obtener relación por ID' })
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', UUIDPipe) id: string) {
     const query: FindSectionObjectQuery = { sectionObjectId: id };
     return this.service.findOne(query);
   }
@@ -89,7 +89,7 @@ export class AdminSectionObjectsController {
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
   @ApiBody({ type: UpdateSectionObjectDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateSectionObjectDto,
   ) {
     const command: UpdateSectionObjectCommand = {
@@ -106,7 +106,7 @@ export class AdminSectionObjectsController {
     summary: 'Eliminar relación (permiso section-object:delete)',
   })
   @ApiParam({ name: 'id', description: 'UUID de la relación' })
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', UUIDPipe) id: string) {
     const command: DeleteSectionObjectCommand = { sectionObjectId: id };
     return this.service.delete(command);
   }

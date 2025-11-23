@@ -15,8 +15,8 @@ import {
   UseGuards,
   UseInterceptors,
   ValidationPipe,
-  ParseUUIDPipe,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -153,7 +153,7 @@ export class AdminImagesController {
     description: 'Detalle de la imagen',
     type: ImageResponseSwaggerDto,
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', UUIDPipe) id: string) {
     const query: FindImageQuery = { imageId: id };
     return this.images.findOne(query);
   }
@@ -219,7 +219,7 @@ export class AdminImagesController {
     }),
   )
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateImageDto,
     @UploadedFile() file?: Multer.File,
   ) {
@@ -251,7 +251,7 @@ export class AdminImagesController {
   @Permissions('image:delete')
   @ApiOperation({ summary: 'Eliminar imagen (Admin)' })
   @ApiParam({ name: 'id', description: 'UUID de la imagen' })
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', UUIDPipe) id: string) {
     const command: DeleteImageCommand = { imageId: id };
     return this.images.delete(command);
   }
@@ -266,7 +266,7 @@ export class AdminImagesController {
   @ApiParam({ name: 'id', description: 'UUID de la imagen' })
   @ApiBody({ type: UpdateImageDto })
   async updateMetadata(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateImageDto,
   ) {
     const command: UpdateImageCommand = {

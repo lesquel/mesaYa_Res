@@ -86,14 +86,14 @@ export class TableAnalyticsTypeOrmRepository
   private buildTotalsQuery(
     filters: TableAnalyticsQuery,
   ): SelectQueryBuilder<TableOrmEntity> {
-    const qb = this.repository.createQueryBuilder('table');
+    const qb = this.repository.createQueryBuilder('t');
 
     this.applyFilters(qb, filters);
 
-    qb.select('COUNT(table.id)', 'totalTables')
-      .addSelect('AVG(table.capacity)', 'averageCapacity')
-      .addSelect('MIN(table.capacity)', 'minCapacity')
-      .addSelect('MAX(table.capacity)', 'maxCapacity');
+    qb.select('COUNT(t.id)', 'totalTables')
+      .addSelect('AVG(t.capacity)', 'averageCapacity')
+      .addSelect('MIN(t.capacity)', 'minCapacity')
+      .addSelect('MAX(t.capacity)', 'maxCapacity');
 
     return qb;
   }
@@ -101,19 +101,19 @@ export class TableAnalyticsTypeOrmRepository
   private buildCapacityDistributionQuery(
     filters: TableAnalyticsQuery,
   ): SelectQueryBuilder<TableOrmEntity> {
-    const qb = this.repository.createQueryBuilder('table');
+    const qb = this.repository.createQueryBuilder('t');
 
     this.applyFilters(qb, filters);
 
     qb.select(
       `CASE
-        WHEN table.capacity <= 2 THEN 'SMALL'
-        WHEN table.capacity <= 4 THEN 'MEDIUM'
+        WHEN t.capacity <= 2 THEN 'SMALL'
+        WHEN t.capacity <= 4 THEN 'MEDIUM'
         ELSE 'LARGE'
       END`,
       'bucket',
     )
-      .addSelect('COUNT(table.id)', 'count')
+      .addSelect('COUNT(t.id)', 'count')
       .groupBy('bucket')
       .orderBy('bucket', 'ASC');
 
@@ -124,15 +124,15 @@ export class TableAnalyticsTypeOrmRepository
     filters: TableAnalyticsQuery,
   ): SelectQueryBuilder<TableOrmEntity> {
     const qb = this.repository
-      .createQueryBuilder('table')
-      .leftJoin('table.section', 'sectionDistribution')
+      .createQueryBuilder('t')
+      .leftJoin('t.section', 'sectionDistribution')
       .select('sectionDistribution.id', 'id')
-      .addSelect('COUNT(table.id)', 'count');
+      .addSelect('COUNT(t.id)', 'count');
 
     this.applyFilters(qb, filters);
 
     qb.groupBy('sectionDistribution.id')
-      .orderBy('COUNT(table.id)', 'DESC')
+      .orderBy('COUNT(t.id)', 'DESC')
       .limit(10);
 
     return qb;
@@ -142,15 +142,15 @@ export class TableAnalyticsTypeOrmRepository
     filters: TableAnalyticsQuery,
   ): SelectQueryBuilder<TableOrmEntity> {
     const qb = this.repository
-      .createQueryBuilder('table')
-      .leftJoin('table.section', 'section')
+      .createQueryBuilder('t')
+      .leftJoin('t.section', 'section')
       .select('section.restaurantId', 'id')
-      .addSelect('COUNT(table.id)', 'count');
+      .addSelect('COUNT(t.id)', 'count');
 
     this.applyFilters(qb, filters);
 
     qb.groupBy('section.restaurantId')
-      .orderBy('COUNT(table.id)', 'DESC')
+      .orderBy('COUNT(t.id)', 'DESC')
       .limit(10);
 
     return qb;
@@ -182,7 +182,7 @@ export class TableAnalyticsTypeOrmRepository
     );
 
     if (!hasJoin) {
-      qb.leftJoin('table.section', alias);
+      qb.leftJoin('t.section', alias);
     }
 
     return alias;

@@ -2,10 +2,11 @@ import {
   Controller,
   Get,
   Param,
-  ParseUUIDPipe,
   Query,
   ValidationPipe,
+  NotFoundException,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
@@ -54,12 +55,21 @@ export class PublicRestaurantsController {
     return this.restaurantsService.listNearby(query);
   }
 
+  @Get('reservations')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Prevent UUID validation error for reservations path',
+  })
+  getReservations() {
+    throw new NotFoundException('Resource not found');
+  }
+
   @Get(':id')
   @ThrottleRead()
   @ApiOperation({ summary: 'Obtener un restaurante público por ID' })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<RestaurantResponseDto> {
     const query: FindRestaurantQuery = { restaurantId: id };
     return this.restaurantsService.findOne(query);

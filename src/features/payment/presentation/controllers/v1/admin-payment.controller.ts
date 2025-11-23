@@ -4,11 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
   ApiOkResponse,
@@ -148,7 +148,7 @@ export class AdminPaymentController {
     type: PaymentResponseSwaggerDto,
   })
   async getPaymentById(
-    @Param('paymentId', ParseUUIDPipe) paymentId: string,
+    @Param('paymentId', UUIDPipe) paymentId: string,
   ): Promise<PaymentResponseDto> {
     return this.paymentService.getPaymentById({ paymentId });
   }
@@ -166,7 +166,7 @@ export class AdminPaymentController {
     type: PaymentResponseSwaggerDto,
   })
   async updatePaymentStatus(
-    @Param('paymentId', ParseUUIDPipe) paymentId: string,
+    @Param('paymentId', UUIDPipe) paymentId: string,
     @Body() dto: UpdatePaymentStatusRequestDto,
   ): Promise<PaymentResponseDto> {
     return this.paymentService.updatePaymentStatus({
@@ -187,7 +187,7 @@ export class AdminPaymentController {
     type: DeletePaymentResponseSwaggerDto,
   })
   async deletePayment(
-    @Param('paymentId', ParseUUIDPipe) paymentId: string,
+    @Param('paymentId', UUIDPipe) paymentId: string,
   ): Promise<DeletePaymentResponseDto> {
     return this.paymentService.deletePayment({ paymentId });
   }

@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -49,15 +50,11 @@ export class PublicSectionsController {
     description: 'Listado paginado de secciones por restaurante',
   })
   async findByRestaurant(
-    @Param('restaurantId', ParseUUIDPipe) restaurantId: string,
-    @PaginationParams({ defaultRoute: '/public/sections/restaurant' })
-    pagination: ListSectionsQuery,
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @PaginationParams({ defaultRoute: '/public/sections/restaurant/:restaurantId' })
+    query: ListRestaurantSectionsQuery,
   ): Promise<PaginatedSectionResponse> {
-    const query: ListRestaurantSectionsQuery = {
-      ...pagination,
-      restaurantId,
-    };
-    return this.sectionsService.listByRestaurant(query);
+    return this.sectionsService.listByRestaurant({ ...query, restaurantId });
   }
 
   @Get(':id')
@@ -69,7 +66,7 @@ export class PublicSectionsController {
     type: SectionResponseSwaggerDto,
   })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
   ): Promise<SectionResponseDto> {
     const query: FindSectionQuery = { sectionId: id };
     return this.sectionsService.findOne(query);

@@ -4,12 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
+import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -83,7 +84,7 @@ export class RestaurantTablesController {
   @ApiOperation({ summary: 'Listar mesas por sección (propietario)' })
   @ApiParam({ name: 'sectionId', description: 'UUID de la sección' })
   async listBySection(
-    @Param('sectionId', ParseUUIDPipe) sectionId: string,
+    @Param('sectionId', UUIDPipe) sectionId: string,
     @Query() query: any,
     @CurrentUser() user: CurrentUserPayload,
   ) {
@@ -97,7 +98,7 @@ export class RestaurantTablesController {
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   @ApiOkResponse({ description: 'Mesa encontrada' })
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableResponseDto> {
     return this.tablesService.findOneForOwner({ tableId: id }, user.userId);
@@ -109,7 +110,7 @@ export class RestaurantTablesController {
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   @ApiBody({ type: UpdateTableDto })
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateTableDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<TableResponseDto> {
@@ -122,7 +123,7 @@ export class RestaurantTablesController {
   @ApiOperation({ summary: 'Eliminar mesa (propietario)' })
   @ApiParam({ name: 'id', description: 'UUID de la mesa' })
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<DeleteTableResponseDto> {
     const command: DeleteTableCommand = { tableId: id };

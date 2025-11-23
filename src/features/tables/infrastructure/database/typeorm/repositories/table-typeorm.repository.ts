@@ -15,7 +15,7 @@ import {
   ListSectionTablesQuery,
 } from '../../../../application/dto';
 import { type TableRepositoryPort } from '../../../../application/ports';
-import { SectionOrmEntity } from '../../../../../sections/infrastructure/database/typeorm/orm';
+import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm';
 
 // Nota: Este repositorio mapea entre la entidad ORM (`TableOrmEntity`) y el
 // agregado de dominio `Table`. Las transformaciones se realizan mediante
@@ -74,18 +74,18 @@ export class TableTypeOrmRepository
     number: number,
   ): Promise<Table | null> {
     const entity = await this.tables
-      .createQueryBuilder('table')
-      .leftJoin('table.section', 'section')
+      .createQueryBuilder('t')
+      .leftJoin('t.section', 'section')
       .where('section.id = :sectionId', { sectionId })
-      .andWhere('table.number = :number', { number })
+      .andWhere('t.number = :number', { number })
       .getOne();
     return entity ? TableOrmMapper.toDomain(entity) : null;
   }
 
   async listBySection(sectionId: string): Promise<Table[]> {
     const entities = await this.tables
-      .createQueryBuilder('table')
-      .leftJoin('table.section', 'section')
+      .createQueryBuilder('t')
+      .leftJoin('t.section', 'section')
       .where('section.id = :sectionId', { sectionId })
       .getMany();
     return entities.map((entity) => TableOrmMapper.toDomain(entity));
