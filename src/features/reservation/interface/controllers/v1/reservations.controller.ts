@@ -51,6 +51,7 @@ import {
   ListOwnerReservationsUseCase,
   UpdateOwnerReservationUseCase,
   DeleteOwnerReservationUseCase,
+  ChangeReservationStatusUseCase,
 } from '@features/reservation/application';
 import { ReservationResponseSwaggerDto } from '../../dto';
 import { ReservationAnalyticsRequestDto } from '@features/reservation/interface/dto';
@@ -169,7 +170,6 @@ export class ReservationsController {
     return this.reservationsService.findOne({ reservationId: id });
   }
 
-          ChangeReservationStatusUseCase,
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

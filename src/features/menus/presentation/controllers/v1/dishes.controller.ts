@@ -167,7 +167,7 @@ export class DishesController {
     description: 'Dish updated',
     type: DishResponseSwaggerDto,
   })
-  update(
+  async update(
     @Param('dishId', UUIDPipe) dishId: string,
     @Body() dto: UpdateDishRequestDto,
     @CurrentUser() user?: CurrentUserPayload,
@@ -187,7 +187,7 @@ export class DishesController {
     description: 'Dish deleted',
     type: DeleteDishResponseSwaggerDto,
   })
-  delete(
+  async delete(
     @Param('dishId', UUIDPipe) dishId: string,
     @CurrentUser() user?: CurrentUserPayload,
   ): Promise<DeleteDishResponseDto> {
@@ -198,7 +198,7 @@ export class DishesController {
     return this.dishService.delete(deleteDto);
   }
 
-  private isOwner(user?: CurrentUserPayload): boolean {
+  private isOwner(user?: CurrentUserPayload): user is CurrentUserPayload {
     return Boolean(
       user?.roles?.some((role) => role.name === (AuthRoleName.OWNER as string)),
     );

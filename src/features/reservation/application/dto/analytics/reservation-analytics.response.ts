@@ -1,3 +1,5 @@
+import type { ReservationStatus } from '../../../domain/types/reservation-status.type';
+
 export interface ReservationAnalyticsTrendPoint {
   readonly date: string;
   readonly count: number;
@@ -21,7 +23,7 @@ export interface ReservationAnalyticsResponse {
     readonly byDate: ReservationAnalyticsTrendPoint[];
   };
   readonly statuses: Array<{
-    readonly status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+    readonly status: ReservationStatus;
     readonly count: number;
   }>;
   readonly guestSegments: Array<{
@@ -51,7 +53,7 @@ export interface ReservationAnalyticsRepositoryResult {
   readonly totals: ReservationAnalyticsRepositoryTotals;
   readonly reservationsByDate: ReservationAnalyticsTrendPoint[];
   readonly statusDistribution: Array<{
-    status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+    status: ReservationStatus;
     count: number;
   }>;
   readonly guestDistribution: Array<{ segment: string; count: number }>;

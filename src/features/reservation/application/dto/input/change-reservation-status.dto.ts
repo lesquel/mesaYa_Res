@@ -1,9 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
-import {
-  RESERVATION_STATUSES,
-  ReservationStatus,
-} from '../../domain/types/reservation-status.type';
+import type { ReservationStatus } from '../../../domain/types/reservation-status.type';
+import { RESERVATION_STATUSES } from '../../../domain/types/reservation-status.type';
 
 export class ChangeReservationStatusDto {
   @ApiProperty({ enum: RESERVATION_STATUSES })

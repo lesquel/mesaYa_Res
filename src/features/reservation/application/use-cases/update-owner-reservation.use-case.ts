@@ -6,7 +6,7 @@ import {
   RESERVATION_EVENT_PUBLISHER,
   type ReservationEventPublisherPort,
 } from '../ports';
-import { ReservationOwnerAccessService } from '../services';
+import { ReservationOwnerAccessService } from '../services/reservation-owner-access.service';
 import {
   ReservationDomainService,
   IReservationRepositoryPort,

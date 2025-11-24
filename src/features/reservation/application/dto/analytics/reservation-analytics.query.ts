@@ -1,4 +1,4 @@
-import { ReservationStatus } from '../../../domain/types/reservation-status.type';
+import type { ReservationStatus } from '../../../domain/types/reservation-status.type';
 
 export interface ReservationAnalyticsQuery {
   readonly startDate?: Date;

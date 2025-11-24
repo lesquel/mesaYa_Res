@@ -7,7 +7,7 @@ import {
   type ReservationEventPublisherPort,
 } from '../ports';
 import { ReservationDomainService } from '../../domain/services/reservation-domain.service';
-import { ReservationOwnerAccessService } from '../services';
+import { ReservationOwnerAccessService } from '../services/reservation-owner-access.service';
 
 @Injectable()
 export class ChangeReservationStatusUseCase

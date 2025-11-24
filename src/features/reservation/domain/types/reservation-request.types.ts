@@ -1,4 +1,4 @@
-import { ReservationStatus } from './reservation-status.type';
+import type { ReservationStatus } from './reservation-status.type';
 
 export interface ReservationScheduleRequest {
   reservationId: string;

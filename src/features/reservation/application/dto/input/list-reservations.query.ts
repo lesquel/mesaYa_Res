@@ -1,5 +1,5 @@
 import { PaginatedQueryParams } from '@shared/application/types/pagination';
-import { ReservationStatus } from '../../domain/types/reservation-status.type';
+import type { ReservationStatus } from '../../../domain/types/reservation-status.type';
 
 export interface ListReservationsQuery extends PaginatedQueryParams {
   status?: ReservationStatus;

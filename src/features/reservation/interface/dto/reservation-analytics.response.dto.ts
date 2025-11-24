@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import type { ReservationAnalyticsResponse } from '../../application/dto/analytics/reservation-analytics.response';
+import type { ReservationStatus } from '../../domain/types/reservation-status.type';
+import { RESERVATION_STATUSES } from '../../domain/types/reservation-status.type';
 
 class ReservationAnalyticsSummaryDto {
   @ApiProperty()
@@ -44,8 +46,8 @@ class ReservationAnalyticsReservationsDto {
 }
 
 class ReservationAnalyticsStatusItemDto {
-  @ApiProperty()
-  status!: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  @ApiProperty({ enum: RESERVATION_STATUSES })
+  status!: ReservationStatus;
 
   @ApiProperty()
   count!: number;

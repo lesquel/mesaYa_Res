@@ -178,7 +178,7 @@ export class MenusController {
     description: 'Menu updated',
     type: MenuResponseSwaggerDto,
   })
-  update(
+  async update(
     @Param('menuId', UUIDPipe) menuId: string,
     @Body() dto: UpdateMenuRequestDto,
     @CurrentUser() user?: CurrentUserPayload,
@@ -198,7 +198,7 @@ export class MenusController {
     description: 'Menu deleted',
     type: DeleteMenuResponseSwaggerDto,
   })
-  delete(
+  async delete(
     @Param('menuId', UUIDPipe) menuId: string,
     @CurrentUser() user?: CurrentUserPayload,
   ): Promise<DeleteMenuResponseDto> {
@@ -209,7 +209,7 @@ export class MenusController {
     return this.menuService.delete(deleteDto);
   }
 
-  private isOwner(user?: CurrentUserPayload): boolean {
+  private isOwner(user?: CurrentUserPayload): user is CurrentUserPayload {
     return Boolean(
       user?.roles?.some((role) => role.name === (AuthRoleName.OWNER as string)),
     );

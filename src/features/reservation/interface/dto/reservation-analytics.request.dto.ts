@@ -9,10 +9,8 @@ import {
   Min,
 } from 'class-validator';
 import type { ReservationAnalyticsQuery } from '../../application/dto/analytics/reservation-analytics.query';
-import {
-  ReservationStatus,
-  RESERVATION_STATUSES,
-} from '../../domain/types/reservation-status.type';
+import type { ReservationStatus } from '../../domain/types/reservation-status.type';
+import { RESERVATION_STATUSES } from '../../domain/types/reservation-status.type';
 
 export class ReservationAnalyticsRequestDto {
   @ApiPropertyOptional({ description: 'Fecha inicial (ISO 8601)' })
