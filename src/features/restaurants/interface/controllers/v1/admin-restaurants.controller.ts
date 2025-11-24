@@ -100,23 +100,6 @@ export class AdminRestaurantsController {
     return this.restaurantsService.listOwners();
   }
 
-  @Get(':id')
-  @ThrottleRead()
-  @Permissions('restaurant:read')
-  @ApiOperation({
-    summary: 'Obtener restaurante por ID (permiso restaurant:read)',
-  })
-  @ApiParam({ name: 'id', description: 'UUID del restaurante' })
-  @ApiOkResponse({
-    description: 'Detalle del restaurante',
-    type: RestaurantResponseSwaggerDto,
-  })
-  async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<RestaurantResponseDto> {
-    return this.restaurantsService.findOne({ restaurantId: id });
-  }
-
   @Post()
   @ThrottleCreate()
   @Permissions('restaurant:create')
@@ -161,6 +144,23 @@ export class AdminRestaurantsController {
       query.toQuery(),
     );
     return RestaurantAnalyticsResponseDto.fromApplication(analytics);
+  }
+
+  @Get(':id')
+  @ThrottleRead()
+  @Permissions('restaurant:read')
+  @ApiOperation({
+    summary: 'Obtener restaurante por ID (permiso restaurant:read)',
+  })
+  @ApiParam({ name: 'id', description: 'UUID del restaurante' })
+  @ApiOkResponse({
+    description: 'Detalle del restaurante',
+    type: RestaurantResponseSwaggerDto,
+  })
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<RestaurantResponseDto> {
+    return this.restaurantsService.findOne({ restaurantId: id });
   }
 
   @Patch(':id/status')
