@@ -21,7 +21,9 @@ export class MenuCategoryDomainService {
     return category;
   }
 
-  async updateCategory(update: MenuCategoryUpdate): Promise<MenuCategoryEntity> {
+  async updateCategory(
+    update: MenuCategoryUpdate,
+  ): Promise<MenuCategoryEntity> {
     const category = await this.repository.update(update);
 
     if (!category) {

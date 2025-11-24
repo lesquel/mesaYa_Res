@@ -7,5 +7,7 @@ export abstract class IMenuCategoryRepositoryPort extends IBaseRepositoryPort<
   MenuCategoryCreate,
   MenuCategoryUpdate
 > {
-  abstract findByRestaurant(restaurantId: string): Promise<MenuCategoryEntity[]>;
+  abstract findByRestaurant(
+    restaurantId: string,
+  ): Promise<MenuCategoryEntity[]>;
 }

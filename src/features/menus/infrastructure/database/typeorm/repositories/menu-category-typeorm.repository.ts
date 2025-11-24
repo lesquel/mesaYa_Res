@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IMenuCategoryRepositoryPort } from '@features/menus/domain';
-import { MenuCategoryCreate, MenuCategoryEntity, MenuCategoryUpdate } from '@features/menus/domain';
+import {
+  MenuCategoryCreate,
+  MenuCategoryEntity,
+  MenuCategoryUpdate,
+} from '@features/menus/domain';
 import { MenuCategoryOrmEntity } from '../orm';
 import { MenuCategoryOrmMapper } from '../mappers';
 
@@ -22,7 +26,9 @@ export class MenuCategoryTypeOrmRepository extends IMenuCategoryRepositoryPort {
   }
 
   async update(data: MenuCategoryUpdate): Promise<MenuCategoryEntity | null> {
-    const category = await this.categories.findOne({ where: { id: data.categoryId } });
+    const category = await this.categories.findOne({
+      where: { id: data.categoryId },
+    });
 
     if (!category) {
       return null;
@@ -43,7 +49,9 @@ export class MenuCategoryTypeOrmRepository extends IMenuCategoryRepositoryPort {
 
   async findAll(): Promise<MenuCategoryEntity[]> {
     const categories = await this.categories.find();
-    return categories.map((category) => MenuCategoryOrmMapper.toDomain(category));
+    return categories.map((category) =>
+      MenuCategoryOrmMapper.toDomain(category),
+    );
   }
 
   async delete(id: string): Promise<boolean> {
@@ -56,6 +64,8 @@ export class MenuCategoryTypeOrmRepository extends IMenuCategoryRepositoryPort {
       where: { restaurantId },
       order: { position: 'ASC', createdAt: 'ASC' },
     });
-    return categories.map((category) => MenuCategoryOrmMapper.toDomain(category));
+    return categories.map((category) =>
+      MenuCategoryOrmMapper.toDomain(category),
+    );
   }
 }
