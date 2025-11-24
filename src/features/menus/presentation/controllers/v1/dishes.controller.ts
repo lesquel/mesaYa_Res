@@ -211,7 +211,9 @@ export class DishesController {
     if (!this.isOwner(user)) {
       return dto;
     }
-    const restaurantId = await this.accessService.ensureOwnerRestaurant(user.userId);
+    const restaurantId = await this.accessService.ensureOwnerRestaurant(
+      user.userId,
+    );
     return { ...dto, restaurantId };
   }
 
@@ -219,7 +221,8 @@ export class DishesController {
     ownerId: string,
     dishId: string,
   ): Promise<void> {
-    const restaurantId = await this.accessService.ensureOwnerRestaurant(ownerId);
+    const restaurantId =
+      await this.accessService.ensureOwnerRestaurant(ownerId);
     const dish = await this.dishService.findById({ dishId });
     if (dish.restaurantId !== restaurantId) {
       throw new ForbiddenException(

@@ -222,7 +222,9 @@ export class MenusController {
     if (!this.isOwner(user)) {
       return dto;
     }
-    const restaurantId = await this.accessService.ensureOwnerRestaurant(user.userId);
+    const restaurantId = await this.accessService.ensureOwnerRestaurant(
+      user.userId,
+    );
     return { ...dto, restaurantId };
   }
 
@@ -230,12 +232,11 @@ export class MenusController {
     ownerId: string,
     menuId: string,
   ): Promise<void> {
-    const restaurantId = await this.accessService.ensureOwnerRestaurant(ownerId);
+    const restaurantId =
+      await this.accessService.ensureOwnerRestaurant(ownerId);
     const menu = await this.menuService.findById({ menuId });
     if (menu.restaurantId !== restaurantId) {
-      throw new ForbiddenException(
-        'No tiene permiso para modificar este menú',
-      );
+      throw new ForbiddenException('No tiene permiso para modificar este menú');
     }
   }
 }

@@ -21,9 +21,7 @@ export class MenusAccessService {
   async ensureOwnerRestaurant(ownerId: string): Promise<string> {
     const restaurantId = await this.findRestaurantIdByOwner(ownerId);
     if (!restaurantId) {
-      throw new ForbiddenException(
-        'El owner no tiene un restaurante asignado',
-      );
+      throw new ForbiddenException('El owner no tiene un restaurante asignado');
     }
     return restaurantId;
   }
