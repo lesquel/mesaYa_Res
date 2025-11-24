@@ -17,9 +17,13 @@ export const RESERVATION_STATUSES: readonly ReservationStatus[] = [
   'NO_SHOW',
 ];
 
-export function isReservationStatus(value: unknown): value is ReservationStatus {
+export function isReservationStatus(
+  value: unknown,
+): value is ReservationStatus {
   if (typeof value !== 'string') {
     return false;
   }
-  return RESERVATION_STATUSES.includes(value.toUpperCase() as ReservationStatus);
+  return RESERVATION_STATUSES.includes(
+    value.toUpperCase() as ReservationStatus,
+  );
 }
