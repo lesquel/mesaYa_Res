@@ -34,6 +34,12 @@ export interface RestaurantUpdateRequest {
   imageId?: string | null;
 }
 
+export interface RestaurantOwnerAssignmentRequest {
+  restaurantId: string;
+  ownerId: string;
+  enforceOwnership?: boolean;
+}
+
 export interface RestaurantStatusUpdateRequest {
   restaurantId: string;
   ownerId: string;

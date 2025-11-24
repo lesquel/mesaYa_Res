@@ -11,6 +11,7 @@ import type {
   FindRestaurantQuery,
   ListOwnerRestaurantsQuery,
   ListRestaurantsQuery,
+  ReassignRestaurantOwnerCommand,
   UpdateRestaurantCommand,
   UpdateRestaurantStatusCommand,
   ListNearbyRestaurantsQuery,
@@ -26,6 +27,7 @@ import {
   ListOwnerRestaurantsUseCase,
   ListNearbyRestaurantsUseCase,
   ListRestaurantsUseCase,
+  ReassignRestaurantOwnerUseCase,
   UpdateRestaurantUseCase,
   UpdateRestaurantStatusUseCase,
   ListRestaurantOwnersUseCase,
@@ -43,6 +45,7 @@ export class RestaurantsService {
     private readonly updateRestaurantStatusUseCase: UpdateRestaurantStatusUseCase,
     private readonly deleteRestaurantUseCase: DeleteRestaurantUseCase,
     private readonly listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
+    private readonly reassignRestaurantOwnerUseCase: ReassignRestaurantOwnerUseCase,
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
@@ -110,6 +113,23 @@ export class RestaurantsService {
     command: UpdateRestaurantCommand,
   ): Promise<RestaurantResponseDto> {
     return this.updateRestaurantUseCase.execute(command);
+  }
+
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [ReassignRestaurantOwnerCommand];
+      return {
+        action: 'restaurant.owner.reassigned',
+        entity: toPlain(result),
+        performedBy: command.ownerId,
+      };
+    },
+  })
+  async reassignOwner(
+    command: ReassignRestaurantOwnerCommand,
+  ): Promise<RestaurantResponseDto> {
+    return this.reassignRestaurantOwnerUseCase.execute(command);
   }
 
   @KafkaEmit({

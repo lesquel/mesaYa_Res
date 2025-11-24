@@ -37,6 +37,7 @@ import {
   CreateRestaurantCommand,
   CreateRestaurantDto,
   DeleteRestaurantCommand,
+  ReassignRestaurantOwnerCommand,
   UpdateRestaurantCommand,
   UpdateRestaurantStatusCommand,
   UpdateRestaurantDto,
@@ -53,7 +54,7 @@ import type {
 } from '@features/restaurants/application';
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
-import { RestaurantResponseSwaggerDto } from '@features/restaurants/interface/dto';
+import { RestaurantResponseSwaggerDto, ReassignRestaurantOwnerRequestDto } from '@features/restaurants/interface/dto';
 import { UpdateRestaurantStatusRequestDto } from '@features/restaurants/interface/dto';
 
 @ApiTags('Restaurants - Admin')
@@ -203,6 +204,29 @@ export class AdminRestaurantsController {
       ...dto,
     };
     return this.restaurantsService.update(command);
+  }
+
+  @Post(':id/owners')
+  @ThrottleModify()
+  @Permissions('restaurant:update')
+  @ApiOperation({ summary: 'Reasignar propietario del restaurante (permiso restaurant:update)' })
+  @ApiParam({ name: 'id', description: 'UUID del restaurante' })
+  @ApiBody({ type: ReassignRestaurantOwnerRequestDto })
+  @ApiOkResponse({
+    description: 'Restaurante con propietario reasignado',
+    type: RestaurantResponseSwaggerDto,
+  })
+  async reassignOwner(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ReassignRestaurantOwnerRequestDto,
+  ): Promise<RestaurantResponseDto> {
+    const command: ReassignRestaurantOwnerCommand = {
+      restaurantId: id,
+      ownerId: dto.ownerId,
+      enforceOwnership: false,
+    };
+
+    return this.restaurantsService.reassignOwner(command);
   }
 
   @Delete(':id')

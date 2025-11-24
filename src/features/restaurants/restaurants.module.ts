@@ -25,6 +25,7 @@ import {
   ListNearbyRestaurantsUseCase,
   ListOwnerRestaurantsUseCase,
   ListRestaurantOwnersUseCase,
+  ReassignRestaurantOwnerUseCase,
   FindRestaurantUseCase,
   UpdateRestaurantUseCase,
   UpdateRestaurantStatusUseCase,
@@ -143,6 +144,12 @@ import type {
       inject: [RestaurantDomainService],
     },
     {
+      provide: ReassignRestaurantOwnerUseCase,
+      useFactory: (restaurantDomainService: RestaurantDomainService) =>
+        new ReassignRestaurantOwnerUseCase(restaurantDomainService),
+      inject: [RestaurantDomainService],
+    },
+    {
       provide: DeleteRestaurantUseCase,
       useFactory: (restaurantDomainService: RestaurantDomainService) =>
         new DeleteRestaurantUseCase(restaurantDomainService),
@@ -160,6 +167,7 @@ import type {
         updateRestaurantStatusUseCase: UpdateRestaurantStatusUseCase,
         deleteRestaurantUseCase: DeleteRestaurantUseCase,
         listRestaurantOwnersUseCase: ListRestaurantOwnersUseCase,
+        reassignRestaurantOwnerUseCase: ReassignRestaurantOwnerUseCase,
         kafkaService: KafkaService,
       ) =>
         new RestaurantsService(
@@ -172,6 +180,7 @@ import type {
           updateRestaurantStatusUseCase,
           deleteRestaurantUseCase,
           listRestaurantOwnersUseCase,
+          reassignRestaurantOwnerUseCase,
           kafkaService,
         ),
       inject: [
@@ -184,6 +193,7 @@ import type {
         UpdateRestaurantStatusUseCase,
         DeleteRestaurantUseCase,
         ListRestaurantOwnersUseCase,
+        ReassignRestaurantOwnerUseCase,
         KafkaService,
       ],
     },
@@ -199,6 +209,7 @@ import type {
     CreateRestaurantUseCase,
     ListRestaurantsUseCase,
     ListOwnerRestaurantsUseCase,
+    ReassignRestaurantOwnerUseCase,
     ListRestaurantOwnersUseCase,
     ListNearbyRestaurantsUseCase,
     FindRestaurantUseCase,

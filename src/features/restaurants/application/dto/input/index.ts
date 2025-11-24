@@ -6,3 +6,4 @@ export * from './list-restaurants.query';
 export * from './list-nearby-restaurants.query';
 export * from './update-restaurant.dto';
 export * from './update-restaurant-status.command';
+export * from './reassign-restaurant-owner.command';

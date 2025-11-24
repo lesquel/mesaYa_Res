@@ -9,6 +9,7 @@ import { IRestaurantOwnerPort } from '../ports/restaurant-owner.port';
 import {
   type RestaurantCreateRequest,
   type RestaurantDeleteRequest,
+  type RestaurantOwnerAssignmentRequest,
   type RestaurantUpdateRequest,
   type RestaurantStatusUpdateRequest,
 } from '../types/restaurant-domain.types';
@@ -70,6 +71,17 @@ export class RestaurantDomainService {
     restaurant.update(updatePayload);
 
     return this.restaurantRepository.save(restaurant);
+  }
+
+  async reassignOwner(
+    request: RestaurantOwnerAssignmentRequest,
+  ): Promise<RestaurantEntity> {
+    const ownerId = this.normalizeId(request.ownerId);
+    await this.ensureOwner(ownerId);
+
+    const restaurant = await this.ensureRestaurant(request.restaurantId);
+
+    return this.restaurantRepository.assignOwner(restaurant.id, ownerId);
   }
 
   async changeStatus(
