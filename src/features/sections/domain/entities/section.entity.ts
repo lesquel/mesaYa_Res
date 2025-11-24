@@ -15,6 +15,7 @@ import type {
   SectionLayoutMetadata,
   SectionStatus,
 } from '../types/section-layout-metadata.type';
+import type { TableSnapshot } from '@features/tables/domain/entities/table.entity';
 
 interface SectionProps {
   restaurantId: SectionRestaurantId;
@@ -26,6 +27,7 @@ interface SectionProps {
   posY: number;
   status: SectionStatus;
   layoutMetadata: SectionLayoutMetadata;
+  tables?: TableSnapshot[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -63,6 +65,7 @@ export class Section {
       posY: snapshot.posY,
       status: snapshot.status,
       layoutMetadata: snapshot.layoutMetadata,
+      tables: snapshot.tables,
     };
 
     return new Section(aggregated, snapshot.id);
@@ -147,6 +150,7 @@ export class Section {
       posY: this.props.posY,
       status: this.props.status,
       layoutMetadata: this.props.layoutMetadata,
+      tables: this.props.tables,
       createdAt: this.props.createdAt ?? new Date(),
       updatedAt: this.props.updatedAt ?? new Date(),
     };

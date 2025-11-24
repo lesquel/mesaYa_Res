@@ -3,6 +3,7 @@ import type {
   SectionStatus,
 } from '@features/sections/domain/types';
 import { PaginatedResult } from '@shared/application/types/pagination';
+import type { TableResponseDto } from '@features/tables/application/dto/output/table.response.dto';
 
 export interface SectionResponseDto {
   id: string;
@@ -15,6 +16,7 @@ export interface SectionResponseDto {
   posY: number;
   status: SectionStatus;
   layoutMetadata: SectionLayoutMetadata;
+  tables?: TableResponseDto[];
   createdAt: Date;
   updatedAt: Date;
 }
