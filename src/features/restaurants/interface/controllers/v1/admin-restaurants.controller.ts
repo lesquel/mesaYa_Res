@@ -54,7 +54,10 @@ import type {
 } from '@features/restaurants/application';
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { RestaurantAnalyticsResponseDto } from '@features/restaurants/interface/dto/restaurant-analytics.response.dto';
-import { RestaurantResponseSwaggerDto, ReassignRestaurantOwnerRequestDto } from '@features/restaurants/interface/dto';
+import {
+  RestaurantResponseSwaggerDto,
+  ReassignRestaurantOwnerRequestDto,
+} from '@features/restaurants/interface/dto';
 import { UpdateRestaurantStatusRequestDto } from '@features/restaurants/interface/dto';
 
 @ApiTags('Restaurants - Admin')
@@ -209,7 +212,10 @@ export class AdminRestaurantsController {
   @Post(':id/owners')
   @ThrottleModify()
   @Permissions('restaurant:update')
-  @ApiOperation({ summary: 'Reasignar propietario del restaurante (permiso restaurant:update)' })
+  @ApiOperation({
+    summary:
+      'Reasignar propietario del restaurante (permiso restaurant:update)',
+  })
   @ApiParam({ name: 'id', description: 'UUID del restaurante' })
   @ApiBody({ type: ReassignRestaurantOwnerRequestDto })
   @ApiOkResponse({
