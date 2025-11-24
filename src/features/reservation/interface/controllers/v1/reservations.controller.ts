@@ -35,6 +35,7 @@ import {
   ThrottleSearch,
 } from '@shared/infrastructure/decorators';
 import {
+  ChangeReservationStatusDto,
   CreateReservationDto,
   CreateReservationCommand,
   UpdateReservationDto,
@@ -64,6 +65,7 @@ export class ReservationsController {
     private readonly listOwnerReservations: ListOwnerReservationsUseCase,
     private readonly updateOwnerReservation: UpdateOwnerReservationUseCase,
     private readonly deleteOwnerReservation: DeleteOwnerReservationUseCase,
+    private readonly changeReservationStatus: ChangeReservationStatusUseCase,
   ) {}
 
   @Get('analytics')
@@ -167,6 +169,7 @@ export class ReservationsController {
     return this.reservationsService.findOne({ reservationId: id });
   }
 
+          ChangeReservationStatusUseCase,
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -222,5 +225,32 @@ export class ReservationsController {
     } else {
       throw new ForbiddenException('Not allowed');
     }
+  }
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ThrottleModify()
+  @ApiOperation({ summary: 'Change reservation status' })
+  @ApiParam({ name: 'id', description: 'Reservation UUID' })
+  @ApiBody({ type: ChangeReservationStatusDto })
+  async changeStatus(
+    @Param('id', UUIDPipe) id: string,
+    @Body() dto: ChangeReservationStatusDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<ReservationResponseDto> {
+    const isAdmin = user.roles?.some((r) => r.name === AuthRoleName.ADMIN);
+    const isOwner = user.roles?.some((r) => r.name === AuthRoleName.OWNER);
+    if (!isAdmin && !isOwner) {
+      throw new ForbiddenException('Not allowed');
+    }
+
+    return this.changeReservationStatus.execute({
+      reservationId: id,
+      status: dto.status,
+      reason: dto.reason,
+      notifyCustomer: dto.notifyCustomer,
+      actor: isAdmin ? 'admin' : 'owner',
+      ownerId: isOwner ? user.userId : undefined,
+      enforceOwnership: !isAdmin && isOwner,
+    });
   }
 }

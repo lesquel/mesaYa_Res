@@ -115,6 +115,14 @@ export class ReservationEntity {
     this.props = updatedProps;
   }
 
+  changeStatus(nextStatus: ReservationStatus): void {
+    this.props = {
+      ...this.props,
+      status: nextStatus,
+      updatedAt: new Date(),
+    };
+  }
+
   snapshot(): ReservationSnapshot {
     return {
       id: this._id,

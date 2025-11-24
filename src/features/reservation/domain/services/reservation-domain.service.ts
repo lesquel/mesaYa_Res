@@ -17,6 +17,7 @@ import { ReservationEntity } from '../entities/reservation.entity';
 import {
   ReservationCancellationRequest,
   ReservationScheduleRequest,
+  ReservationStatusChangeRequest,
   ReservationUpdateRequest,
 } from '../types';
 import { IReservationRepositoryPort } from '../repositories';
@@ -213,6 +214,21 @@ export class ReservationDomainService {
 
     await this.reservationRepository.delete(reservation.id);
     return reservation;
+  }
+
+  async changeReservationStatus(
+    request: ReservationStatusChangeRequest,
+  ): Promise<ReservationEntity> {
+    const reservation = await this.reservationRepository.findById(
+      request.reservationId,
+    );
+
+    if (!reservation) {
+      throw new ReservationNotFoundError(request.reservationId);
+    }
+
+    reservation.changeStatus(request.status);
+    return this.reservationRepository.save(reservation);
   }
 
   private async ensureRestaurant(

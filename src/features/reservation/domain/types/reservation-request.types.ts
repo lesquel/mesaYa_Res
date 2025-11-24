@@ -1,3 +1,5 @@
+import { ReservationStatus } from './reservation-status.type';
+
 export interface ReservationScheduleRequest {
   reservationId: string;
   userId: string;
@@ -23,6 +25,11 @@ export interface ReservationCancellationRequest {
   reservationId: string;
   userId: string;
   enforceOwnership?: boolean;
+}
+
+export interface ReservationStatusChangeRequest {
+  reservationId: string;
+  status: ReservationStatus;
 }
 
 export interface ReservationWindowQuery {

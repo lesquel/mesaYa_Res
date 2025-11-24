@@ -21,6 +21,7 @@ import {
   DeleteReservatioUseCase,
   UpdateOwnerReservationUseCase,
   DeleteOwnerReservationUseCase,
+  ChangeReservationStatusUseCase,
   RESERVATION_REPOSITORY,
   RESTAURANT_RESERVATION_READER,
   USER_RESERVATION_READER,
@@ -129,6 +130,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     DeleteReservatioUseCase,
     UpdateOwnerReservationUseCase,
     DeleteOwnerReservationUseCase,
+    ChangeReservationStatusUseCase,
     GetReservationAnalyticsUseCase,
   ],
   exports: [
@@ -141,6 +143,7 @@ import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/or
     DeleteReservatioUseCase,
     UpdateOwnerReservationUseCase,
     DeleteOwnerReservationUseCase,
+    ChangeReservationStatusUseCase,
     GetReservationAnalyticsUseCase,
     RESERVATION_REPOSITORY,
     IReservationRepositoryPort,

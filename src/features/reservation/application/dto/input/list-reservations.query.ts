@@ -1,7 +1,8 @@
 import { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { ReservationStatus } from '../../domain/types/reservation-status.type';
 
 export interface ListReservationsQuery extends PaginatedQueryParams {
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  status?: ReservationStatus;
   restaurantId?: string;
   // date in YYYY-MM-DD format to filter reservations on that date
   date?: string;
