@@ -4,8 +4,10 @@ import { RestaurantOrmEntity } from '../restaurants/infrastructure/database/type
 import {
   DishService,
   MenuService,
+  MenuCategoryService,
   DishMapper,
   MenuMapper,
+  MenuCategoryMapper,
   GetMenuAnalyticsUseCase,
   MENU_ANALYTICS_REPOSITORY,
   GetDishAnalyticsUseCase,
@@ -15,16 +17,23 @@ import {
 import {
   DishesController,
   MenusController,
+  MenuCategoriesController,
 } from './presentation/controllers/v1';
 import {
   DishOrmEntity,
   MenuOrmEntity,
+  MenuCategoryOrmEntity,
   DishTypeOrmRepository,
   MenuTypeOrmRepository,
+  MenuCategoryTypeOrmRepository,
   MenuAnalyticsTypeOrmRepository,
   DishAnalyticsTypeOrmRepository,
 } from './infrastructure';
-import { IDishRepositoryPort, IMenuRepositoryPort } from './domain';
+import {
+  IDishRepositoryPort,
+  IMenuRepositoryPort,
+  IMenuCategoryRepositoryPort,
+} from './domain';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
@@ -63,16 +72,35 @@ const menuServiceProvider = {
     TypeOrmModule.forFeature([
       MenuOrmEntity,
       DishOrmEntity,
+      MenuCategoryOrmEntity,
       RestaurantOrmEntity,
     ]),
     LoggerModule,
   ],
-  controllers: [MenusController, DishesController],
+  controllers: [MenusController, DishesController, MenuCategoriesController],
   providers: [
     DishMapper,
     menuMapperProvider,
     dishServiceProvider,
     menuServiceProvider,
+    {
+      provide: IMenuCategoryRepositoryPort,
+      useClass: MenuCategoryTypeOrmRepository,
+    },
+    {
+      provide: MenuCategoryMapper,
+      useFactory: () => new MenuCategoryMapper(),
+      inject: [],
+    },
+    {
+      provide: MenuCategoryService,
+      useFactory: (
+        logger: ILoggerPort,
+        repository: IMenuCategoryRepositoryPort,
+        mapper: MenuCategoryMapper,
+      ) => new MenuCategoryService(logger, repository, mapper),
+      inject: [LOGGER, IMenuCategoryRepositoryPort, MenuCategoryMapper],
+    },
     {
       provide: IDishRepositoryPort,
       useClass: DishTypeOrmRepository,
@@ -96,10 +124,12 @@ const menuServiceProvider = {
   exports: [
     DishService,
     MenuService,
+    MenuCategoryService,
     GetMenuAnalyticsUseCase,
     GetDishAnalyticsUseCase,
     IDishRepositoryPort,
     IMenuRepositoryPort,
+    IMenuCategoryRepositoryPort,
     MenusAccessService,
   ],
 })

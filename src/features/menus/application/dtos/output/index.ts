@@ -6,3 +6,5 @@ export * from './menu.dto';
 export * from './menu-response.dto';
 export * from './menu-list-response.dto';
 export * from './delete-menu-response.dto';
+export * from './menu-category-response.dto';
+export * from './delete-menu-category-response.dto';

@@ -10,3 +10,7 @@ export * from './menu-analytics.request.dto';
 export * from './menu-analytics.response.dto';
 export * from './dish-analytics.request.dto';
 export * from './dish-analytics.response.dto';
+export * from './menu-category-response.swagger.dto';
+export * from './create-menu-category.request.swagger.dto';
+export * from './update-menu-category.request.swagger.dto';
+export * from './delete-menu-category-response.swagger.dto';

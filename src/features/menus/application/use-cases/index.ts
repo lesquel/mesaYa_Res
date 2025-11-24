@@ -10,3 +10,8 @@ export * from './update-menu.use-case';
 export * from './delete-menu.use-case';
 export * from './get-menu-analytics.use-case';
 export * from './get-dish-analytics.use-case';
+export * from './create-menu-category.use-case';
+export * from './update-menu-category.use-case';
+export * from './delete-menu-category.use-case';
+export * from './list-menu-categories.use-case';
+export * from './get-menu-category-by-id.use-case';

@@ -54,4 +54,8 @@ export class MenuCategoryDomainService {
   async findByRestaurant(restaurantId: string): Promise<MenuCategoryEntity[]> {
     return this.repository.findByRestaurant(restaurantId);
   }
+
+  async findAll(): Promise<MenuCategoryEntity[]> {
+    return this.repository.findAll();
+  }
 }

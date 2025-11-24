@@ -8,3 +8,8 @@ export * from './get-menu-by-id.dto';
 export * from './delete-menu.dto';
 export * from './list-menus.query';
 export * from './list-dishes.query';
+export * from './create-menu-category.dto';
+export * from './update-menu-category.dto';
+export * from './delete-menu-category.dto';
+export * from './get-menu-category-by-id.dto';
+export * from './list-menu-categories.query';
