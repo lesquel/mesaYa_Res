@@ -6,3 +6,7 @@ export * from './menu-update-failed.error';
 export * from './dish-update-failed.error';
 export * from './menu-deletion-failed.error';
 export * from './dish-deletion-failed.error';
+export * from './menu-category-creation-failed.error';
+export * from './menu-category-update-failed.error';
+export * from './menu-category-deletion-failed.error';
+export * from './menu-category-not-found.error';
