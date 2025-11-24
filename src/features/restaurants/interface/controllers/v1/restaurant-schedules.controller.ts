@@ -33,6 +33,7 @@ import {
   UpdateScheduleExceptionDto,
   ScheduleExceptionResponseDto,
   CreateScheduleSlotDto,
+  UpdateScheduleSlotDto,
   ScheduleSlotResponseDto,
 } from '@features/restaurants/interface/dto';
 
@@ -178,5 +179,30 @@ export class RestaurantSchedulesController {
   ) {
     await this.scheduleService.deleteException(restaurantId, user.userId, id);
     return { ok: true };
+  }
+
+  @Patch('slots/:id')
+  @Roles(AuthRoleName.OWNER)
+  @ApiOperation({ summary: 'Update base schedule slot (Owner)' })
+  @ApiParam({ name: 'restaurantId', description: 'Restaurant UUID' })
+  @ApiParam({ name: 'id', description: 'Slot UUID' })
+  @ApiBody({ type: UpdateScheduleSlotDto })
+  @ApiOkResponse({
+    description: 'Slot updated',
+    type: ScheduleSlotResponseDto,
+  })
+  async updateSlot(
+    @Param('restaurantId', UUIDPipe) restaurantId: string,
+    @Param('id', UUIDPipe) id: string,
+    @Body() dto: UpdateScheduleSlotDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<ScheduleSlotResponseDto> {
+    const rec = await this.scheduleService.updateSlot(
+      restaurantId,
+      user.userId,
+      id,
+      dto as any,
+    );
+    return ScheduleSlotResponseDto.fromRecord(rec!);
   }
 }

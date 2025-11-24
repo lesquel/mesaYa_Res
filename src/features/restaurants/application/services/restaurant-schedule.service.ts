@@ -104,19 +104,73 @@ export class RestaurantScheduleService {
 
     const normalized = this.normalizeSlotPayload(payload);
 
-    const overlaps = await this.slotsRepo.hasOverlap({
+    const overlapping = await this.slotsRepo.findOverlapping({
       restaurantId,
       day: normalized.day,
       open: normalized.open,
       close: normalized.close,
     });
-    if (overlaps) {
+    if (overlapping) {
       throw new ConflictException(
-        'Schedule slot overlaps with an existing slot',
+        `Schedule slot overlaps with an existing slot: ${overlapping.day} ${overlapping.open}-${overlapping.close} (ID: ${overlapping.id})`,
       );
     }
 
     return this.slotsRepo.create({ restaurantId, ...normalized });
+  }
+
+  async updateSlot(
+    restaurantId: string,
+    ownerId: string,
+    id: string,
+    payload: Partial<{
+      summary: string;
+      day: string;
+      open: string;
+      close: string;
+    }>,
+  ) {
+    await this.ensureOwnership(restaurantId, ownerId);
+    const slot = await this.slotsRepo.findById(id);
+    if (!slot || slot.restaurantId !== restaurantId) {
+      throw new NotFoundException('Schedule slot not found');
+    }
+
+    // If updating time/day, check overlaps
+    if (payload.day || payload.open || payload.close) {
+      const day = payload.day ? this.normalizeWeekday(payload.day) : slot.day;
+      const open = (payload.open ?? slot.open).trim();
+      const close = (payload.close ?? slot.close).trim();
+
+      if (open >= close) {
+        throw new BadRequestException('Schedule slot has invalid time range');
+      }
+
+      const overlapping = await this.slotsRepo.findOverlapping({
+        restaurantId,
+        day,
+        open,
+        close,
+        excludeId: id,
+      });
+
+      if (overlapping) {
+        throw new ConflictException(
+          `Schedule slot overlaps with an existing slot: ${overlapping.day} ${overlapping.open}-${overlapping.close} (ID: ${overlapping.id})`,
+        );
+      }
+
+      // Update payload with normalized values
+      payload.day = day;
+      payload.open = open;
+      payload.close = close;
+    }
+
+    if (payload.summary) {
+      payload.summary = payload.summary.trim();
+    }
+
+    return this.slotsRepo.update(id, payload);
   }
 
   async deleteSlot(restaurantId: string, ownerId: string, id: string) {

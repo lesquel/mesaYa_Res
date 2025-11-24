@@ -6,9 +6,11 @@ export class TableLayoutOutOfBoundsError extends Error {
       section: { width: number; height: number };
     },
   ) {
-    let message = `Table layout exceeds the boundaries of section '${sectionId}'. Adjust position or width to fit within the section.`;
+    let message = `Table layout exceeds the boundaries of section '${sectionId}'.`;
     if (details) {
-      message += ` Table: [x=${details.table.x}, y=${details.table.y}, w=${details.table.width}, h=${details.table.height}]. Section: [w=${details.section.width}, h=${details.section.height}].`;
+      message += ` The table (w=${details.table.width}, h=${details.table.height}) at (x=${details.table.x}, y=${details.table.y}) does not fit within the section dimensions (w=${details.section.width}, h=${details.section.height}).`;
+    } else {
+      message += ` Adjust position or width to fit within the section.`;
     }
     super(message);
     this.name = 'TableLayoutOutOfBoundsError';

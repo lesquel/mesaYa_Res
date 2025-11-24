@@ -198,7 +198,7 @@ export class TableDomainService {
     if (!fitsHorizontally || !fitsVertically) {
       throw new TableLayoutOutOfBoundsError(section.sectionId, {
         table: { x: posX, y: posY, width, height },
-        section: { width: section.width, height: section.height },
+        section: { width: sectionWidth, height: sectionHeight },
       });
     }
   }

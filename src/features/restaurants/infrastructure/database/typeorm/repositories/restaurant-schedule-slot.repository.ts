@@ -56,13 +56,13 @@ export class RestaurantScheduleSlotRepository {
     await this.repo.delete(id);
   }
 
-  async hasOverlap(options: {
+  async findOverlapping(options: {
     restaurantId: string;
     day: string;
     open: string;
     close: string;
     excludeId?: string;
-  }): Promise<boolean> {
+  }): Promise<ScheduleSlotRecord | null> {
     const qb = this.repo
       .createQueryBuilder('slot')
       .where('slot.restaurantId = :restaurantId', {
@@ -78,8 +78,40 @@ export class RestaurantScheduleSlotRepository {
       qb.andWhere('slot.id <> :excludeId', { excludeId: options.excludeId });
     }
 
-    const count = await qb.getCount();
-    return count > 0;
+    const entity = await qb.getOne();
+    return entity ? this.mapRecord(entity) : null;
+  }
+
+  async hasOverlap(options: {
+    restaurantId: string;
+    day: string;
+    open: string;
+    close: string;
+    excludeId?: string;
+  }): Promise<boolean> {
+    const found = await this.findOverlapping(options);
+    return !!found;
+  }
+
+  async update(
+    id: string,
+    payload: Partial<{
+      summary: string;
+      day: string;
+      open: string;
+      close: string;
+    }>,
+  ): Promise<ScheduleSlotRecord | null> {
+    const updateData: Partial<RestaurantScheduleSlotOrmEntity> = {};
+    if (payload.summary !== undefined) updateData.summary = payload.summary;
+    if (payload.day !== undefined) updateData.day = payload.day;
+    if (payload.open !== undefined) updateData.openTime = payload.open;
+    if (payload.close !== undefined) updateData.closeTime = payload.close;
+
+    if (Object.keys(updateData).length > 0) {
+      await this.repo.update({ id }, updateData);
+    }
+    return this.findById(id);
   }
 
   private mapRecord(row: RestaurantScheduleSlotOrmEntity): ScheduleSlotRecord {
