@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -79,7 +80,7 @@ export class MenusController {
     @Query('restaurantId') restaurantId?: string,
     @CurrentUser() user?: CurrentUserPayload,
   ): Promise<MenuListResponseDto> {
-    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
+    if (this.isOwner(user)) {
       if (!restaurantId) {
         const foundId = await this.accessService.findRestaurantIdByOwner(
           user.userId,
@@ -159,8 +160,12 @@ export class MenusController {
     description: 'Menu created',
     type: MenuResponseSwaggerDto,
   })
-  create(@Body() dto: CreateMenuRequestDto): Promise<MenuResponseDto> {
-    return this.menuService.create(dto);
+  async create(
+    @Body() dto: CreateMenuRequestDto,
+    @CurrentUser() user?: CurrentUserPayload,
+  ): Promise<MenuResponseDto> {
+    const payload = await this.mapOwnerRestaurant(dto, user);
+    return this.menuService.create(payload);
   }
 
   @Patch(':menuId')
@@ -176,7 +181,11 @@ export class MenusController {
   update(
     @Param('menuId', UUIDPipe) menuId: string,
     @Body() dto: UpdateMenuRequestDto,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<MenuResponseDto> {
+    if (this.isOwner(user)) {
+      await this.ensureOwnerOwnsMenu(user.userId, menuId);
+    }
     return this.menuService.update({ ...dto, menuId });
   }
 
@@ -191,8 +200,42 @@ export class MenusController {
   })
   delete(
     @Param('menuId', UUIDPipe) menuId: string,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<DeleteMenuResponseDto> {
+    if (this.isOwner(user)) {
+      await this.ensureOwnerOwnsMenu(user.userId, menuId);
+    }
     const deleteDto: DeleteMenuDto = { menuId };
     return this.menuService.delete(deleteDto);
+  }
+
+  private isOwner(user?: CurrentUserPayload): boolean {
+    return Boolean(
+      user?.roles?.some((role) => role.name === (AuthRoleName.OWNER as string)),
+    );
+  }
+
+  private async mapOwnerRestaurant(
+    dto: CreateMenuRequestDto,
+    user?: CurrentUserPayload,
+  ): Promise<CreateMenuRequestDto> {
+    if (!this.isOwner(user)) {
+      return dto;
+    }
+    const restaurantId = await this.accessService.ensureOwnerRestaurant(user.userId);
+    return { ...dto, restaurantId };
+  }
+
+  private async ensureOwnerOwnsMenu(
+    ownerId: string,
+    menuId: string,
+  ): Promise<void> {
+    const restaurantId = await this.accessService.ensureOwnerRestaurant(ownerId);
+    const menu = await this.menuService.findById({ menuId });
+    if (menu.restaurantId !== restaurantId) {
+      throw new ForbiddenException(
+        'No tiene permiso para modificar este menú',
+      );
+    }
   }
 }

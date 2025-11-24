@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -148,8 +149,12 @@ export class DishesController {
     description: 'Dish created',
     type: DishResponseSwaggerDto,
   })
-  create(@Body() dto: CreateDishRequestDto): Promise<DishResponseDto> {
-    return this.dishService.create(dto);
+  async create(
+    @Body() dto: CreateDishRequestDto,
+    @CurrentUser() user?: CurrentUserPayload,
+  ): Promise<DishResponseDto> {
+    const payload = await this.mapOwnerDish(dto, user);
+    return this.dishService.create(payload);
   }
 
   @Patch(':dishId')
@@ -165,7 +170,11 @@ export class DishesController {
   update(
     @Param('dishId', UUIDPipe) dishId: string,
     @Body() dto: UpdateDishRequestDto,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<DishResponseDto> {
+    if (this.isOwner(user)) {
+      await this.ensureOwnerOwnsDish(user.userId, dishId);
+    }
     return this.dishService.update({ ...dto, dishId });
   }
 
@@ -180,8 +189,42 @@ export class DishesController {
   })
   delete(
     @Param('dishId', UUIDPipe) dishId: string,
+    @CurrentUser() user?: CurrentUserPayload,
   ): Promise<DeleteDishResponseDto> {
+    if (this.isOwner(user)) {
+      await this.ensureOwnerOwnsDish(user.userId, dishId);
+    }
     const deleteDto: DeleteDishDto = { dishId };
     return this.dishService.delete(deleteDto);
+  }
+
+  private isOwner(user?: CurrentUserPayload): boolean {
+    return Boolean(
+      user?.roles?.some((role) => role.name === (AuthRoleName.OWNER as string)),
+    );
+  }
+
+  private async mapOwnerDish(
+    dto: CreateDishRequestDto,
+    user?: CurrentUserPayload,
+  ): Promise<CreateDishRequestDto> {
+    if (!this.isOwner(user)) {
+      return dto;
+    }
+    const restaurantId = await this.accessService.ensureOwnerRestaurant(user.userId);
+    return { ...dto, restaurantId };
+  }
+
+  private async ensureOwnerOwnsDish(
+    ownerId: string,
+    dishId: string,
+  ): Promise<void> {
+    const restaurantId = await this.accessService.ensureOwnerRestaurant(ownerId);
+    const dish = await this.dishService.findById({ dishId });
+    if (dish.restaurantId !== restaurantId) {
+      throw new ForbiddenException(
+        'No tiene permiso para modificar este plato',
+      );
+    }
   }
 }
