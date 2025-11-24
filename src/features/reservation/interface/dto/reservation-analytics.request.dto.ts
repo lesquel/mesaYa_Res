@@ -9,9 +9,10 @@ import {
   Min,
 } from 'class-validator';
 import type { ReservationAnalyticsQuery } from '../../application/dto/analytics/reservation-analytics.query';
-
-const RESERVATION_STATUS = ['PENDING', 'CONFIRMED', 'CANCELLED'] as const;
-type ReservationStatus = (typeof RESERVATION_STATUS)[number];
+import {
+  ReservationStatus,
+  RESERVATION_STATUSES,
+} from '../../domain/types/reservation-status.type';
 
 export class ReservationAnalyticsRequestDto {
   @ApiPropertyOptional({ description: 'Fecha inicial (ISO 8601)' })
@@ -34,10 +35,10 @@ export class ReservationAnalyticsRequestDto {
 
   @ApiPropertyOptional({
     description: 'Estado de la reserva',
-    enum: RESERVATION_STATUS,
+    enum: RESERVATION_STATUSES,
   })
   @IsOptional()
-  @IsIn(RESERVATION_STATUS)
+  @IsIn(RESERVATION_STATUSES)
   status?: ReservationStatus;
 
   @ApiPropertyOptional({ description: 'Cantidad mínima de invitados' })

@@ -1,4 +1,5 @@
 import { InvalidReservationDataError } from '../errors';
+import { ReservationStatus } from '../types';
 
 export interface ReservartionProps {
   userId: string;
@@ -9,7 +10,7 @@ export interface ReservartionProps {
   numberOfGuests: number;
   createdAt: Date;
   updatedAt: Date;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  status: ReservationStatus;
 }
 
 export type CreateReservationProps = Omit<
@@ -86,7 +87,7 @@ export class ReservationEntity {
   get updatedAt(): Date {
     return this.props.updatedAt;
   }
-  get status(): 'PENDING' | 'CONFIRMED' | 'CANCELLED' {
+  get status(): ReservationStatus {
     return this.props.status;
   }
 

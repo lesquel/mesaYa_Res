@@ -11,6 +11,7 @@ import {
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import { TableOrmEntity } from '@features/tables/infrastructure/database/typeorm/orm/table.orm-entity';
+import { ReservationStatus } from '../../domain/types/reservation-status.type';
 
 @Entity({ name: 'reservation' })
 export class ReservationOrmEntity {
@@ -51,7 +52,7 @@ export class ReservationOrmEntity {
   numberOfGuests: number;
 
   @Column({ type: 'varchar', name: 'status', length: 20, nullable: false })
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  status: ReservationStatus;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

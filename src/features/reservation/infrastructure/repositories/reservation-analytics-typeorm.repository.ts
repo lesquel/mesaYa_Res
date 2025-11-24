@@ -9,6 +9,7 @@ import type {
 } from '../../application/dto/analytics/reservation-analytics.response';
 import type { ReservationAnalyticsRepositoryPort } from '../../application/ports/reservation-analytics.repository.port';
 import { ReservationOrmEntity } from '../orm';
+import { ReservationStatus } from '../../domain/types/reservation-status.type';
 
 interface TotalsRaw {
   totalReservations: string | number | null;
@@ -20,7 +21,7 @@ interface TotalsRaw {
 }
 
 interface StatusDistributionRaw {
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  status: ReservationStatus;
   count: string | number | null;
 }
 
