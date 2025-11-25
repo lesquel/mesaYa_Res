@@ -7,7 +7,7 @@ export class MenuDto {
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  imageId: string | null;
   dishes?: DishDto[];
   categories?: MenuCategoryDto[];
   createdAt: Date;

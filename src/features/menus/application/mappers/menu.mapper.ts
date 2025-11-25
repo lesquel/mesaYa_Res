@@ -25,7 +25,7 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
       name: entity.name,
       description: entity.description,
       price: entity.price.amount,
-      imageUrl: entity.imageUrl,
+      imageId: entity.imageId,
       dishes,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
@@ -43,7 +43,7 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
       name: dto.name,
       description: dto.description,
       price,
-      imageUrl: dto.imageUrl,
+      imageId: dto.imageId,
       dishes,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
@@ -58,7 +58,7 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
       name: dto.name,
       description: dto.description,
       price,
-      imageUrl: dto.imageUrl,
+      imageId: dto.imageId,
       dishes: dto.dishes?.map((dishDto) =>
         this.dishMapper.fromCreateDtoToDomain(dishDto),
       ),
@@ -73,7 +73,7 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
     if (dto.name !== undefined) update.name = dto.name;
     if (dto.description !== undefined) update.description = dto.description;
     if (dto.price !== undefined) update.price = new MoneyVO(dto.price);
-    if (dto.imageUrl !== undefined) update.imageUrl = dto.imageUrl;
+    if (dto.imageId !== undefined) update.imageId = dto.imageId;
     if (dto.dishes !== undefined) {
       update.dishes = dto.dishes.map((dishDto) =>
         this.dishMapper.fromUpdateDtoToDomain(dishDto),

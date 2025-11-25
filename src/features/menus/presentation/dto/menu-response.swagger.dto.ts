@@ -25,8 +25,13 @@ export class MenuResponseSwaggerDto implements MenuDto {
   @ApiProperty({ description: 'Precio del menú', example: 15.5 })
   price: number;
 
-  @ApiProperty({ description: 'URL de la imagen' })
-  imageUrl: string;
+  @ApiProperty({
+    description: 'ID de la imagen del menú',
+    format: 'uuid',
+    nullable: true,
+    required: false,
+  })
+  imageId: string | null;
 
   @ApiProperty({
     description: 'Platos del menú',

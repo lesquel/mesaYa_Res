@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   Min,
   ValidateNested,
@@ -30,10 +31,14 @@ export class UpdateMenuRequestDto implements Omit<UpdateMenuDto, 'menuId'> {
   @Min(0)
   price?: number;
 
-  @ApiPropertyOptional({ description: 'URL de la imagen' })
+  @ApiPropertyOptional({
+    description: 'UUID de la imagen subida',
+    format: 'uuid',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
   @IsOptional()
-  @IsString()
-  imageUrl?: string;
+  @IsUUID()
+  imageId?: string | null;
 
   @ApiPropertyOptional({
     description: 'Platos asociados al menú',

@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ImageOrmEntity } from '@features/images/infrastructure/database/typeorm/orm';
 
 @Entity({ name: 'menu' })
 export class MenuOrmEntity {
@@ -29,8 +32,12 @@ export class MenuOrmEntity {
   })
   price: number;
 
-  @Column({ type: 'varchar', length: 255, name: 'image_url', nullable: false })
-  imageUrl: string;
+  @Column({ type: 'uuid', name: 'image_id', nullable: true })
+  imageId: string | null;
+
+  @ManyToOne(() => ImageOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'image_id' })
+  image?: ImageOrmEntity;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

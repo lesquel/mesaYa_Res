@@ -18,7 +18,7 @@ export class MenuOrmMapper {
       name: menu.name,
       description: menu.description,
       price: new MoneyVO(Number(menu.price)),
-      imageUrl: menu.imageUrl,
+      imageId: menu.imageId,
       dishes: dishSnapshots.length > 0 ? dishSnapshots : undefined,
       createdAt: menu.createdAt,
       updatedAt: menu.updatedAt,
@@ -31,7 +31,7 @@ export class MenuOrmMapper {
     entity.name = data.name;
     entity.description = data.description;
     entity.price = data.price.amount;
-    entity.imageUrl = data.imageUrl;
+    entity.imageId = data.imageId;
     return entity;
   }
 
@@ -48,8 +48,8 @@ export class MenuOrmMapper {
       entity.price = data.price.amount;
     }
 
-    if (data.imageUrl !== undefined) {
-      entity.imageUrl = data.imageUrl;
+    if (data.imageId !== undefined) {
+      entity.imageId = data.imageId;
     }
 
     return entity;

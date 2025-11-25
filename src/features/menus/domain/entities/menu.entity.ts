@@ -7,7 +7,7 @@ export interface MenuProps {
   name: string;
   description: string;
   price: MoneyVO;
-  imageUrl: string;
+  imageId: string | null;
   dishes?: DishSnapshot[];
   categories?: MenuCategorySnapshot[];
   createdAt?: Date;
@@ -82,8 +82,8 @@ export class MenuEntity {
     return this.props.price;
   }
 
-  get imageUrl(): string {
-    return this.props.imageUrl;
+  get imageId(): string | null {
+    return this.props.imageId;
   }
 
   get dishes(): DishSnapshot[] | undefined {
@@ -116,10 +116,6 @@ export class MenuEntity {
 
     if (!props.description || !props.description.trim()) {
       throw new Error('Menu must have a valid description');
-    }
-
-    if (!props.imageUrl || !props.imageUrl.trim()) {
-      throw new Error('Menu must have a valid imageUrl');
     }
 
     if (!(props.price instanceof MoneyVO)) {

@@ -7,7 +7,7 @@ export interface MenuCreate {
   name: string;
   description: string;
   price: MoneyVO;
-  imageUrl: string;
+  imageId: string | null;
   dishes?: DishCreate[];
 }
 
@@ -16,7 +16,7 @@ export interface MenuUpdate {
   name?: string;
   description?: string;
   price?: MoneyVO;
-  imageUrl?: string;
+  imageId?: string | null;
   dishes?: DishUpdate[];
 }
 

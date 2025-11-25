@@ -5,6 +5,6 @@ export interface UpdateMenuDto {
   name?: string;
   description?: string;
   price?: number;
-  imageUrl?: string;
+  imageId?: string | null;
   dishes?: UpdateDishDto[];
 }

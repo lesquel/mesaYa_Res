@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   Min,
   ValidateNested,
@@ -38,10 +39,14 @@ export class CreateMenuRequestDto implements CreateMenuDto {
   @Min(0)
   price: number;
 
-  @ApiProperty({ description: 'URL de la imagen representativa' })
-  @IsString()
-  @IsNotEmpty()
-  imageUrl: string;
+  @ApiPropertyOptional({
+    description: 'UUID de la imagen subida',
+    format: 'uuid',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @IsOptional()
+  @IsUUID()
+  imageId?: string | null;
 
   @ApiPropertyOptional({
     description: 'Platos asociados al menú',

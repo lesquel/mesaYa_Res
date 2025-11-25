@@ -5,6 +5,6 @@ export interface CreateMenuDto {
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  imageId?: string | null;
   dishes?: CreateDishDto[];
 }
