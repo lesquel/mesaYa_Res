@@ -52,6 +52,8 @@ import { NearbyRestaurantsQueryDto } from '@features/restaurants/application';
 import { RestaurantResponseSwaggerDto } from '@features/restaurants/interface/dto';
 import { UpdateRestaurantStatusRequestDto } from '@features/restaurants/interface/dto';
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
+import { ScheduleSlotResponseDto } from '@features/restaurants/interface/dto';
+import { RestaurantScheduleSlotRepository } from '@features/restaurants/infrastructure/database/typeorm/repositories/restaurant-schedule-slot.repository';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
@@ -63,6 +65,7 @@ export class RestaurantsController {
     private readonly restaurantsService: RestaurantsService,
     private readonly getRestaurantAnalytics: GetRestaurantAnalyticsUseCase,
     private readonly listRestaurantReservations: ListRestaurantReservationsUseCase,
+    private readonly scheduleSlotRepository: RestaurantScheduleSlotRepository,
   ) {}
 
   @Get()
@@ -130,6 +133,22 @@ export class RestaurantsController {
     @Param('id', UUIDPipe) id: string,
   ): Promise<RestaurantResponseDto> {
     return this.restaurantsService.findOne({ restaurantId: id });
+  }
+
+  @Get(':id/schedule-slots')
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Get public schedule slots for a restaurant' })
+  @ApiParam({ name: 'id', description: 'Restaurant UUID' })
+  @ApiOkResponse({
+    description: 'List of schedule slots',
+    type: ScheduleSlotResponseDto,
+    isArray: true,
+  })
+  async getPublicScheduleSlots(
+    @Param('id', UUIDPipe) id: string,
+  ): Promise<ScheduleSlotResponseDto[]> {
+    const slots = await this.scheduleSlotRepository.listByRestaurant(id);
+    return slots.map(ScheduleSlotResponseDto.fromRecord);
   }
 
   @Post()
