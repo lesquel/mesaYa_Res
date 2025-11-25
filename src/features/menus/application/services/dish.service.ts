@@ -109,6 +109,16 @@ export class DishService {
     });
   }
 
+  async findByMenu(
+    menuId: string,
+    query: ListDishesQuery,
+  ): Promise<DishListResponseDto> {
+    return this.listDishesUseCase.execute({
+      ...query,
+      menuId,
+    });
+  }
+
   @KafkaEmit({
     topic: KAFKA_TOPICS.DISH_UPDATED,
     payload: ({ result, args, toPlain }) => {

@@ -50,7 +50,11 @@ export class DishDomainService {
   }
 
   async listDishes(query: DishListQuery): Promise<PaginatedResult<DishEntity>> {
-    const { restaurantId, ...pagination } = query;
+    const { restaurantId, menuId, ...pagination } = query;
+
+    if (menuId) {
+      return this.dishRepository.paginateByMenu(menuId, pagination);
+    }
 
     if (restaurantId) {
       return this.dishRepository.paginateByRestaurant(restaurantId, pagination);

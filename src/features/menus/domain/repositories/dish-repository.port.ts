@@ -20,4 +20,9 @@ export abstract class IDishRepositoryPort extends IBaseRepositoryPort<
     restaurantId: string,
     params: PaginatedQueryParams,
   ): Promise<PaginatedResult<DishEntity>>;
+
+  abstract paginateByMenu(
+    menuId: string,
+    params: PaginatedQueryParams,
+  ): Promise<PaginatedResult<DishEntity>>;
 }

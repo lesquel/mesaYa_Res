@@ -116,6 +116,31 @@ export class DishesController {
     });
   }
 
+  @Get('menu/:menuId')
+  @ThrottleRead()
+  @ApiOperation({
+    summary: 'Listar platos de un menú (paginado)',
+  })
+  @ApiParam({ name: 'menuId', description: 'UUID del menú' })
+  @PaginatedEndpoint()
+  @ApiPaginatedResponse({
+    model: DishResponseSwaggerDto,
+    description: 'Listado paginado de platos para un menú',
+  })
+  findByMenu(
+    @Param('menuId', UUIDPipe) menuId: string,
+    @PaginationParams({
+      defaultRoute: '/dishes/menu',
+      allowExtraParams: true,
+    })
+    query: ListDishesQuery,
+  ): Promise<DishListResponseDto> {
+    return this.dishService.findByMenu(menuId, {
+      ...query,
+      route: `/dishes/menu/${menuId}`,
+    });
+  }
+
   @Get('analytics')
   @ThrottleSearch()
   @ApiOkResponse({

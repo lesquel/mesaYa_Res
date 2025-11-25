@@ -80,6 +80,16 @@ export class DishTypeOrmRepository extends IDishRepositoryPort {
     return this.execPagination(qb, params);
   }
 
+  async paginateByMenu(
+    menuId: string,
+    params: PaginatedQueryParams,
+  ): Promise<PaginatedResult<DishEntity>> {
+    const qb = this.buildBaseQuery().where('dish.menuId = :menuId', {
+      menuId,
+    });
+    return this.execPagination(qb, params);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<DishOrmEntity> {
     return this.dishes.createQueryBuilder('dish');
   }
