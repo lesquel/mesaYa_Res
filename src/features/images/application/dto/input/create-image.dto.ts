@@ -6,13 +6,13 @@ export class CreateImageDto {
   @ApiProperty({ example: 'Banner' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(20)
+  @MaxLength(100)
   title: string;
 
   @ApiProperty({ example: 'Main banner for the landing section' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(100)
+  @MaxLength(255)
   description: string;
 
   @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })

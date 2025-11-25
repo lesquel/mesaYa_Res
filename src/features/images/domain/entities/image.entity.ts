@@ -84,13 +84,13 @@ export class Image {
       throw new InvalidImageDataError('storagePath cannot be empty');
     if (!props.title || props.title.trim().length === 0)
       throw new InvalidImageDataError('title cannot be empty');
-    if (props.title.trim().length > 20)
-      throw new InvalidImageDataError('title must be at most 20 characters');
+    if (props.title.trim().length > 100)
+      throw new InvalidImageDataError('title must be at most 100 characters');
     if (!props.description || props.description.trim().length === 0)
       throw new InvalidImageDataError('description cannot be empty');
-    if (props.description.trim().length > 100)
+    if (props.description.trim().length > 255)
       throw new InvalidImageDataError(
-        'description must be at most 100 characters',
+        'description must be at most 255 characters',
       );
     if (
       typeof props.entityId !== 'string' ||

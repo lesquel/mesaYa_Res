@@ -58,7 +58,7 @@ export class MenuMapper extends EntityDTOMapper<MenuEntity, MenuDto> {
       name: dto.name,
       description: dto.description,
       price,
-      imageId: dto.imageId,
+      imageId: dto.imageId ?? null,
       dishes: dto.dishes?.map((dishDto) =>
         this.dishMapper.fromCreateDtoToDomain(dishDto),
       ),

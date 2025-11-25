@@ -34,6 +34,13 @@ export class MenuResponseSwaggerDto implements MenuDto {
   imageId: string | null;
 
   @ApiProperty({
+    description: 'URL de la imagen del menú',
+    nullable: true,
+    required: false,
+  })
+  imageUrl?: string | null;
+
+  @ApiProperty({
     description: 'Platos del menú',
     type: () => DishResponseSwaggerDto,
     isArray: true,

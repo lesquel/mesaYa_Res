@@ -45,7 +45,7 @@ export class MenuSeedService {
         name: menuSeed.name,
         description: menuSeed.description,
         price: menuSeed.price,
-        imageUrl: menuSeed.imageUrl,
+        imageId: null, // Images are uploaded separately
       });
 
       // Guardar el ID generado automáticamente

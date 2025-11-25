@@ -8,6 +8,7 @@ export class MenuDto {
   description: string;
   price: number;
   imageId: string | null;
+  imageUrl?: string | null;
   dishes?: DishDto[];
   categories?: MenuCategoryDto[];
   createdAt: Date;

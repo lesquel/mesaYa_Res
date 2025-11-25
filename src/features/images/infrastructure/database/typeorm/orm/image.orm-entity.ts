@@ -36,12 +36,12 @@ export class ImageOrmEntity {
   })
   updatedAt!: Date;
 
-  @Column({ type: 'varchar', length: 20, name: 'titulo', nullable: false })
+  @Column({ type: 'varchar', length: 100, name: 'titulo', nullable: false })
   title!: string;
 
   @Column({
     type: 'varchar',
-    length: 100,
+    length: 255,
     name: 'descripcion',
     nullable: false,
   })
