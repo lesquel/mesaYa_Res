@@ -1,8 +1,16 @@
 import { ReservationEntity } from '../../domain';
 import { ReservationResponseDto as ReservationResponseDto } from '../dto';
 
+export interface ReservationMapperContext {
+  userName?: string;
+  userEmail?: string;
+}
+
 export class ReservationMapper {
-  static toResponse(reservation: ReservationEntity): ReservationResponseDto {
+  static toResponse(
+    reservation: ReservationEntity,
+    context?: ReservationMapperContext,
+  ): ReservationResponseDto {
     const snapshot = reservation.snapshot();
     return {
       id: snapshot.id,
@@ -15,6 +23,8 @@ export class ReservationMapper {
       status: snapshot.status,
       createdAt: snapshot.createdAt,
       updatedAt: snapshot.updatedAt,
+      userName: context?.userName,
+      userEmail: context?.userEmail,
     };
   }
 }

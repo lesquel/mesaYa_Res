@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
@@ -39,7 +38,7 @@ export class ReservationOrmEntity {
   @JoinColumn({ name: 'table_id', referencedColumnName: 'id' })
   table: TableOrmEntity;
 
-  @RelationId((reservation: ReservationOrmEntity) => reservation.table)
+  @Column({ type: 'uuid', name: 'table_id', nullable: false })
   tableId: string;
 
   @Column({ type: 'timestamptz', name: 'reservation_time', nullable: false })

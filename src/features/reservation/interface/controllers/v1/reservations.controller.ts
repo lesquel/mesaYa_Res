@@ -226,6 +226,8 @@ export class ReservationsController {
       throw new ForbiddenException('Not allowed');
     }
   }
+
+  @Patch(':id/status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ThrottleModify()

@@ -12,6 +12,10 @@ export interface ReservationResponseDto {
   status: ReservationStatus;
   createdAt: Date;
   updatedAt: Date;
+  /** Name of the user who made the reservation */
+  userName?: string;
+  /** Email of the user who made the reservation */
+  userEmail?: string;
 }
 
 export type PaginatedReservationResponse =

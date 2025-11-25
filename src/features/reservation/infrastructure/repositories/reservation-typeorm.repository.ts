@@ -143,7 +143,7 @@ export class ReservationTypeOrmRepository
 
   async paginateByOwner(
     query: ListOwnerReservationsQuery,
-  ): Promise<PaginatedResult<ReservationEntity>> {
+  ): Promise<PaginatedResult<ReservationEntity> & { userSnapshots?: Map<string, { name?: string; email?: string; phone?: string }> }> {
     const qb = this.buildBaseQuery().where('restaurant.ownerId = :ownerId', {
       ownerId: query.ownerId,
     });
@@ -154,7 +154,7 @@ export class ReservationTypeOrmRepository
       });
     }
 
-    return this.executePagination(qb, query);
+    return this.executePaginationWithUserSnapshots(qb, query);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<ReservationOrmEntity> {
@@ -172,8 +172,10 @@ export class ReservationTypeOrmRepository
     const alias = qb.alias;
     // Apply optional filters (status, restaurantId, date)
     if ((query as any).status) {
+      // Normalize status to uppercase for case-insensitive comparison
+      const normalizedStatus = String((query as any).status).toUpperCase();
       qb.andWhere(`${alias}.status = :status`, {
-        status: (query as any).status,
+        status: normalizedStatus,
       });
     }
 
@@ -237,6 +239,94 @@ export class ReservationTypeOrmRepository
     return {
       ...paginationResult,
       results: mappedResults,
+    };
+  }
+
+  private async executePaginationWithUserSnapshots(
+    qb: SelectQueryBuilder<ReservationOrmEntity>,
+    query: ListReservationsQuery,
+  ): Promise<PaginatedResult<ReservationEntity> & { userSnapshots?: Map<string, { name?: string; email?: string; phone?: string }> }> {
+    const alias = qb.alias;
+    // Apply optional filters (status, restaurantId, date)
+    if ((query as any).status) {
+      const normalizedStatus = String((query as any).status).toUpperCase();
+      qb.andWhere(`${alias}.status = :status`, {
+        status: normalizedStatus,
+      });
+    }
+
+    if ((query as any).restaurantId) {
+      qb.andWhere('restaurant.id = :restaurantId', {
+        restaurantId: (query as any).restaurantId,
+      });
+    }
+
+    if ((query as any).date) {
+      try {
+        const date = new Date((query as any).date);
+        if (!isNaN(date.getTime())) {
+          const start = new Date(date);
+          start.setHours(0, 0, 0, 0);
+          const end = new Date(start);
+          end.setDate(start.getDate() + 1);
+          qb.andWhere(
+            `${alias}.reservationDate BETWEEN :startDate AND :endDate`,
+            {
+              startDate: start.toISOString(),
+              endDate: end.toISOString(),
+            },
+          );
+        }
+      } catch (e) {
+        // ignore invalid dates
+      }
+    }
+
+    const sortMap: Record<string, string> = {
+      createdAt: `${alias}.createdAt`,
+      reservationDate: `${alias}.reservationDate`,
+      restaurant: `restaurant.name`,
+      user: `user.name`,
+    };
+
+    const sortByColumn =
+      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
+
+    const paginationResult = await paginateQueryBuilder(qb, {
+      ...query.pagination,
+      route: query.route,
+      sortBy: sortByColumn,
+      sortOrder: query.sortOrder,
+      q: query.search,
+      allowedSorts: Object.values(sortMap),
+      searchable: [
+        `${alias}.status`,
+        `restaurant.name`,
+        `user.name`,
+        `user.email`,
+      ],
+    });
+
+    // Build user snapshots map from ORM entities before converting to domain
+    const userSnapshots = new Map<string, { name?: string; email?: string; phone?: string }>();
+    for (const entity of paginationResult.results) {
+      if (entity.user) {
+        userSnapshots.set(entity.id, {
+          name: entity.user.name,
+          email: entity.user.email,
+          phone: entity.user.phone,
+        });
+      }
+    }
+
+    const mappedResults = paginationResult.results
+      .map((entity) => this.safeToDomain(entity))
+      .filter((entity): entity is ReservationEntity => Boolean(entity));
+
+    return {
+      ...paginationResult,
+      results: mappedResults,
+      userSnapshots,
     };
   }
 
