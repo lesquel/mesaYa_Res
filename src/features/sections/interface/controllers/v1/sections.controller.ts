@@ -125,14 +125,20 @@ export class SectionsController {
   @ApiPaginationQuery()
   async findAll(
     @PaginationParams({ defaultRoute: '/sections', allowExtraParams: true })
-    query: ListSectionsQuery,
+    paginationQuery: ListSectionsQuery,
     @CurrentUser() user?: CurrentUserPayload,
   ): Promise<PaginatedSectionResponse> {
+    // Extract restaurantId from filters if present
+    const query: ListSectionsQuery = {
+      ...paginationQuery,
+      restaurantId: (paginationQuery.filters as Record<string, string> | undefined)?.restaurantId ?? paginationQuery.restaurantId,
+    };
+
     if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
-      console.log('Listing sections for owner', user.userId);
+      console.log('Listing sections for owner', user.userId, 'restaurantId:', query.restaurantId);
       return this.sectionsService.listForOwner(query, user.userId);
     }
-    console.log('Listing sections for public');
+    console.log('Listing sections for public, restaurantId:', query.restaurantId);
     return this.sectionsService.list(query);
   }
 
