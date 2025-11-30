@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { SectionAnalyticsQuery } from '../../../../application/dto/analytics/section-analytics.query';
 import type {
   SectionAnalyticsRepositoryResult,
   SectionAnalyticsRepositoryTotals,
-  SectionAnalyticsAreaBucket,
-  SectionAnalyticsDistributionItem,
+  // SectionAnalyticsAreaBucket,
+  // SectionAnalyticsDistributionItem,
   SectionAnalyticsDimensionExtremes,
 } from '../../../../application/dto/analytics/section-analytics.response';
 import type { SectionAnalyticsRepositoryPort } from '../../../../application/ports/section-analytics.repository.port';
@@ -64,28 +65,28 @@ export class SectionAnalyticsTypeOrmRepository
     );
 
     const totals: SectionAnalyticsRepositoryTotals = {
-      totalSections: this.toNumber(totalsRaw?.totalSections),
-      averageWidth: this.toNumber(totalsRaw?.averageWidth),
-      averageHeight: this.toNumber(totalsRaw?.averageHeight),
-      averageArea: this.toNumber(totalsRaw?.averageArea),
+      totalSections: toNumber(totalsRaw?.totalSections),
+      averageWidth: toNumber(totalsRaw?.averageWidth),
+      averageHeight: toNumber(totalsRaw?.averageHeight),
+      averageArea: toNumber(totalsRaw?.averageArea),
     };
 
     const dimensionExtremes: SectionAnalyticsDimensionExtremes = {
-      minWidth: this.toNumber(dimensionRaw?.minWidth),
-      maxWidth: this.toNumber(dimensionRaw?.maxWidth),
-      minHeight: this.toNumber(dimensionRaw?.minHeight),
-      maxHeight: this.toNumber(dimensionRaw?.maxHeight),
+      minWidth: toNumber(dimensionRaw?.minWidth),
+      maxWidth: toNumber(dimensionRaw?.maxWidth),
+      minHeight: toNumber(dimensionRaw?.minHeight),
+      maxHeight: toNumber(dimensionRaw?.maxHeight),
     };
 
     return {
       totals,
       areaDistribution: areaRaw.map((row) => ({
         bucket: row.bucket,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       restaurantDistribution: restaurantRaw.map((row) => ({
         restaurantId: row.restaurantId,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       dimensionExtremes,
     };
@@ -169,18 +170,5 @@ export class SectionAnalyticsTypeOrmRepository
         restaurantId: filters.restaurantId,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

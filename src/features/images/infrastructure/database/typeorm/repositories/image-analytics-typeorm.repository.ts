@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { ImageAnalyticsQuery } from '../../../../application/dto/analytics/image-analytics.query';
 import type {
   ImageAnalyticsRepositoryResult,
@@ -53,16 +54,16 @@ export class ImageAnalyticsTypeOrmRepository
 
     return {
       totals: {
-        totalImages: this.toNumber(totalsRaw?.totalImages),
-        uniqueEntities: this.toNumber(totalsRaw?.uniqueEntities),
+        totalImages: toNumber(totalsRaw?.totalImages),
+        uniqueEntities: toNumber(totalsRaw?.uniqueEntities),
       },
       entityDistribution: entitiesRaw.map((row) => ({
         entityId: row.entityId,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       uploadsByDate: trendRaw.map<ImageAnalyticsTrendPoint>((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
     };
   }
@@ -141,18 +142,5 @@ export class ImageAnalyticsTypeOrmRepository
         entityId: filters.entityId,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

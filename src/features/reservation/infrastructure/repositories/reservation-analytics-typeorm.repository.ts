@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { ReservationAnalyticsQuery } from '../../application/dto/analytics/reservation-analytics.query';
 import type {
   ReservationAnalyticsRepositoryResult,
@@ -87,36 +88,36 @@ export class ReservationAnalyticsTypeOrmRepository
 
     return {
       totals: {
-        totalReservations: this.toNumber(totalsRaw?.totalReservations),
-        confirmedReservations: this.toNumber(totalsRaw?.confirmedReservations),
-        cancelledReservations: this.toNumber(totalsRaw?.cancelledReservations),
-        pendingReservations: this.toNumber(totalsRaw?.pendingReservations),
-        upcomingReservations: this.toNumber(totalsRaw?.upcomingReservations),
-        averageGuestsPerReservation: this.toNumber(
+        totalReservations: toNumber(totalsRaw?.totalReservations),
+        confirmedReservations: toNumber(totalsRaw?.confirmedReservations),
+        cancelledReservations: toNumber(totalsRaw?.cancelledReservations),
+        pendingReservations: toNumber(totalsRaw?.pendingReservations),
+        upcomingReservations: toNumber(totalsRaw?.upcomingReservations),
+        averageGuestsPerReservation: toNumber(
           totalsRaw?.averageGuestsPerReservation,
         ),
       },
       statusDistribution: statusRaw.map((row) => ({
         status: row.status,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       guestDistribution: guestRaw.map((row) => ({
         segment: row.segment,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       restaurantDistribution: restaurantRaw.map((row) => ({
         restaurantId: row.restaurantId,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       hourDistribution: hourRaw.map((row) => ({
-        hour: this.toNumber(row.hour),
-        count: this.toNumber(row.count),
+        hour: toNumber(row.hour),
+        count: toNumber(row.count),
       })),
       reservationsByDate: trendRaw.map<ReservationAnalyticsTrendPoint>(
         (row) => ({
           date: row.date,
-          count: this.toNumber(row.count),
-          guests: this.toNumber(row.guests),
+          count: toNumber(row.count),
+          guests: toNumber(row.guests),
         }),
       ),
     };
@@ -291,18 +292,5 @@ export class ReservationAnalyticsTypeOrmRepository
         maxGuests: filters.maxGuests,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

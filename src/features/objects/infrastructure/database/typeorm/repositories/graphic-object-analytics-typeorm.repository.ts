@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { GraphicObjectAnalyticsQuery } from '../../../../application/dto/analytics/graphic-object-analytics.query';
 import type {
   GraphicObjectAnalyticsRepositoryResult,
@@ -76,29 +77,29 @@ export class GraphicObjectAnalyticsTypeOrmRepository
 
     return {
       totals: {
-        totalObjects: this.toNumber(totalsRaw?.totalObjects),
-        uniqueImages: this.toNumber(totalsRaw?.uniqueImages),
-        averageWidth: this.toNumber(totalsRaw?.averageWidth),
-        averageHeight: this.toNumber(totalsRaw?.averageHeight),
-        averageArea: this.toNumber(totalsRaw?.averageArea),
-        averagePositionX: this.toNumber(totalsRaw?.averagePositionX),
-        averagePositionY: this.toNumber(totalsRaw?.averagePositionY),
+        totalObjects: toNumber(totalsRaw?.totalObjects),
+        uniqueImages: toNumber(totalsRaw?.uniqueImages),
+        averageWidth: toNumber(totalsRaw?.averageWidth),
+        averageHeight: toNumber(totalsRaw?.averageHeight),
+        averageArea: toNumber(totalsRaw?.averageArea),
+        averagePositionX: toNumber(totalsRaw?.averagePositionX),
+        averagePositionY: toNumber(totalsRaw?.averagePositionY),
       },
       objectsByImage: imagesRaw.map((row) => ({
         imageId: row.imageId,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       sizeDistribution: sizeRaw.map((row) => ({
         bucket: row.bucket,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       orientationDistribution: orientationRaw.map((row) => ({
         orientation: row.orientation,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       objectsByDate: trendRaw.map<GraphicObjectAnalyticsTrendPoint>((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
     };
   }
@@ -243,18 +244,5 @@ export class GraphicObjectAnalyticsTypeOrmRepository
         maxHeight: filters.maxHeight,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

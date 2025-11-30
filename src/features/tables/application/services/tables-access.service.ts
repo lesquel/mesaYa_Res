@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TableOrmEntity } from '../../infrastructure/database/typeorm/orm/table.orm-entity';
 import { SectionOrmEntity } from '../../../sections/infrastructure/database/typeorm/orm/section.orm-entity';
-import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
+import {
+  RESTAURANT_OWNERSHIP_PORT,
+  type IRestaurantOwnershipPort,
+} from '@shared/application/ports/restaurant-ownership.port';
+import { NotFoundError, ForbiddenError } from '@shared/domain/errors';
 import {
   TableForbiddenError,
   TableNotFoundError,
@@ -28,43 +32,34 @@ export class TablesAccessService {
     private readonly tables: Repository<TableOrmEntity>,
     @InjectRepository(SectionOrmEntity)
     private readonly sections: Repository<SectionOrmEntity>,
-    @InjectRepository(RestaurantOrmEntity)
-    private readonly restaurants: Repository<RestaurantOrmEntity>,
+    @Inject(RESTAURANT_OWNERSHIP_PORT)
+    private readonly restaurantOwnership: IRestaurantOwnershipPort,
   ) {}
 
   async findRestaurantIdByOwner(ownerId: string): Promise<string | null> {
-    const restaurant = await this.restaurants.findOne({
-      where: { ownerId },
-      select: { id: true },
-    });
-    return restaurant?.id ?? null;
+    return this.restaurantOwnership.findRestaurantIdByOwner(ownerId);
   }
 
   async findRestaurantIdsByOwner(ownerId: string): Promise<string[]> {
-    const restaurants = await this.restaurants.find({
-      where: { ownerId },
-      select: { id: true },
-    });
-    return restaurants.map((r) => r.id);
+    return this.restaurantOwnership.findRestaurantIdsByOwner(ownerId);
   }
 
   async assertRestaurantOwnership(
     restaurantId: string,
     ownerId: string,
   ): Promise<void> {
-    const restaurant = await this.restaurants.findOne({
-      where: { id: restaurantId },
-      select: { id: true, ownerId: true },
-    });
-
-    if (!restaurant) {
-      throw new TableRestaurantNotFoundError(restaurantId);
-    }
-
-    if (restaurant.ownerId !== ownerId) {
-      throw new TableForbiddenError(
-        'Restaurant does not belong to authenticated owner',
-      );
+    try {
+      await this.restaurantOwnership.assertRestaurantOwnership(restaurantId, ownerId);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw new TableRestaurantNotFoundError(restaurantId);
+      }
+      if (error instanceof ForbiddenError) {
+        throw new TableForbiddenError(
+          'Restaurant does not belong to authenticated owner',
+        );
+      }
+      throw error;
     }
   }
 

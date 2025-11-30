@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { TableAnalyticsQuery } from '../../../../application/dto/analytics/table-analytics.query';
 import type {
   TableAnalyticsRepositoryResult,
@@ -60,25 +61,25 @@ export class TableAnalyticsTypeOrmRepository
       ]);
 
     const totals: TableAnalyticsRepositoryTotals = {
-      totalTables: this.toNumber(totalsRaw?.totalTables),
-      averageCapacity: this.toNumber(totalsRaw?.averageCapacity),
-      minCapacity: this.toNumber(totalsRaw?.minCapacity),
-      maxCapacity: this.toNumber(totalsRaw?.maxCapacity),
+      totalTables: toNumber(totalsRaw?.totalTables),
+      averageCapacity: toNumber(totalsRaw?.averageCapacity),
+      minCapacity: toNumber(totalsRaw?.minCapacity),
+      maxCapacity: toNumber(totalsRaw?.maxCapacity),
     };
 
     return {
       totals,
       capacityDistribution: capacityRaw.map((row) => ({
         bucket: row.bucket,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       sectionDistribution: sectionRaw.map((row) => ({
         id: row.id,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       restaurantDistribution: restaurantRaw.map((row) => ({
         id: row.id,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
     };
   }
@@ -184,18 +185,5 @@ export class TableAnalyticsTypeOrmRepository
     }
 
     return alias;
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

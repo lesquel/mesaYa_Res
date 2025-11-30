@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { MenuAnalyticsQuery } from '../../../../application/dtos/analytics/menu-analytics.query';
 import type {
   MenuAnalyticsRepositoryResult,
@@ -65,23 +66,23 @@ export class MenuAnalyticsTypeOrmRepository
 
     return {
       totals: {
-        totalMenus: this.toNumber(totalsRaw?.totalMenus),
-        restaurantsWithMenus: this.toNumber(totalsRaw?.restaurantsWithMenus),
-        averagePrice: this.toNumber(totalsRaw?.averagePrice),
-        minPrice: this.toNumber(totalsRaw?.minPrice),
-        maxPrice: this.toNumber(totalsRaw?.maxPrice),
+        totalMenus: toNumber(totalsRaw?.totalMenus),
+        restaurantsWithMenus: toNumber(totalsRaw?.restaurantsWithMenus),
+        averagePrice: toNumber(totalsRaw?.averagePrice),
+        minPrice: toNumber(totalsRaw?.minPrice),
+        maxPrice: toNumber(totalsRaw?.maxPrice),
       },
       menusByRestaurant: restaurantsRaw.map((row) => ({
         restaurantId: row.restaurantId,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       priceDistribution: priceRaw.map((row) => ({
         bucket: row.bucket,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       menusByDate: trendRaw.map<MenuAnalyticsTrendPoint>((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
     };
   }
@@ -195,18 +196,5 @@ export class MenuAnalyticsTypeOrmRepository
         maxPrice: filters.maxPrice,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

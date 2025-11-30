@@ -8,7 +8,6 @@ import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.modu
 import { AppController } from './app.controller';
 import { KafkaModule } from '@shared/infrastructure/kafka';
 import { FeaturesModule } from '@features/features.module';
-import { ReservationModule } from '@features/reservation';
 import { THROTTLER_CONFIG } from '@shared/core/config';
 import { ThrottlerBehindProxyGuard } from '@shared/infrastructure/guards/throttler-behind-proxy.guard';
 

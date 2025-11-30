@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query';
 import type {
   AuthAnalyticsRepositoryResult,
@@ -59,21 +60,21 @@ export class AuthAnalyticsTypeOrmRepository
 
     return {
       totals: {
-        totalUsers: this.toNumber(totalsRaw?.totalUsers),
-        activeUsers: this.toNumber(totalsRaw?.activeUsers),
-        inactiveUsers: this.toNumber(totalsRaw?.inactiveUsers),
+        totalUsers: toNumber(totalsRaw?.totalUsers),
+        activeUsers: toNumber(totalsRaw?.activeUsers),
+        inactiveUsers: toNumber(totalsRaw?.inactiveUsers),
       },
       roleDistribution: rolesRaw.map((row) => ({
         role: row.role as string,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       permissionDistribution: permissionsRaw.map((row) => ({
         permission: row.permission as string,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       registrationsByDate: trendRaw.map<AuthAnalyticsTrendPoint>((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
     };
   }
@@ -236,16 +237,5 @@ export class AuthAnalyticsTypeOrmRepository
     if (filters.endDate) {
       qb.andWhere('user.createdAt <= :endDate', { endDate: filters.endDate });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

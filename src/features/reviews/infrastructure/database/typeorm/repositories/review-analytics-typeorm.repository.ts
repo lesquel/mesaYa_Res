@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { ReviewAnalyticsQuery } from '../../../../application/dto/analytics/review-analytics.query';
 import type {
   ReviewAnalyticsRepositoryResult,
@@ -58,27 +59,27 @@ export class ReviewAnalyticsTypeOrmRepository
     ]);
 
     const totals: ReviewAnalyticsRepositoryTotals = {
-      totalReviews: this.toNumber(totalsRaw?.totalReviews),
-      averageRating: this.toNumber(totalsRaw?.averageRating),
-      positiveReviews: this.toNumber(totalsRaw?.positiveReviews),
-      neutralReviews: this.toNumber(totalsRaw?.neutralReviews),
-      negativeReviews: this.toNumber(totalsRaw?.negativeReviews),
+      totalReviews: toNumber(totalsRaw?.totalReviews),
+      averageRating: toNumber(totalsRaw?.averageRating),
+      positiveReviews: toNumber(totalsRaw?.positiveReviews),
+      neutralReviews: toNumber(totalsRaw?.neutralReviews),
+      negativeReviews: toNumber(totalsRaw?.negativeReviews),
     };
 
     return {
       totals,
       ratingDistribution: ratingRaw.map((row) => ({
         key: String(row.key ?? 'UNKNOWN'),
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       restaurantDistribution: restaurantRaw.map((row) => ({
         key: String(row.key ?? 'UNKNOWN'),
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       trend: trendRaw.map((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
-        averageRating: this.toNumber(row.averageRating),
+        count: toNumber(row.count),
+        averageRating: toNumber(row.averageRating),
       })),
     };
   }
@@ -184,18 +185,5 @@ export class ReviewAnalyticsTypeOrmRepository
         endDate: filters.endDate,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

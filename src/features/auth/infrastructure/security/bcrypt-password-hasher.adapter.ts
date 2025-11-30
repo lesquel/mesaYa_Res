@@ -21,13 +21,13 @@ export class BcryptPasswordHasherAdapter implements AuthPasswordHasherPort {
 
       this.bcryptImpl = require('bcrypt');
       this.useBcrypt = true;
-    } catch (err) {
+    } catch (_) {
       try {
         // Fallback to bcryptjs if available (pure JS)
 
         this.bcryptImpl = require('bcryptjs');
         this.useBcrypt = true;
-      } catch (err2) {
+      } catch (_2) {
         this.useBcrypt = false;
         this.bcryptImpl = null;
       }
@@ -58,7 +58,7 @@ export class BcryptPasswordHasherAdapter implements AuthPasswordHasherPort {
         const [, salt, derivedHex] = hashed.split('$');
         const derived = (await scrypt(plain, salt, 64)) as Buffer;
         return derived.toString('hex') === derivedHex;
-      } catch (err) {
+      } catch (_) {
         return false;
       }
     })();

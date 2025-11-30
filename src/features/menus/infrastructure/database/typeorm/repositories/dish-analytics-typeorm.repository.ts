@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { DishAnalyticsQuery } from '../../../../application/dtos/analytics/dish-analytics.query';
 import type {
   DishAnalyticsRepositoryResult,
@@ -74,33 +75,33 @@ export class DishAnalyticsTypeOrmRepository
       ]);
 
     const totals: DishAnalyticsRepositoryTotals = {
-      totalDishes: this.toNumber(totalsRaw?.totalDishes),
-      averagePrice: this.toNumber(totalsRaw?.averagePrice),
-      minPrice: this.toNumber(totalsRaw?.minPrice),
-      maxPrice: this.toNumber(totalsRaw?.maxPrice),
-      menusWithDishes: this.toNumber(totalsRaw?.menusWithDishes),
+      totalDishes: toNumber(totalsRaw?.totalDishes),
+      averagePrice: toNumber(totalsRaw?.averagePrice),
+      minPrice: toNumber(totalsRaw?.minPrice),
+      maxPrice: toNumber(totalsRaw?.maxPrice),
+      menusWithDishes: toNumber(totalsRaw?.menusWithDishes),
     };
 
     return {
       totals,
       priceDistribution: priceRaw.map((bucket) => ({
         bucket: bucket.bucket,
-        count: this.toNumber(bucket.count),
+        count: toNumber(bucket.count),
       })),
       restaurantDistribution: restaurantRaw.map((row) => ({
         restaurantId: row.restaurantId ?? '',
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       topDishes: topDishesRaw.map((row) => ({
         id: row.id,
         name: row.name,
-        price: this.toNumber(row.price),
+        price: toNumber(row.price),
         restaurantId: String(row.restaurantId ?? ''),
       })),
       creationTrend: trendRaw.map((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
-        averagePrice: this.toNumber(row.averagePrice),
+        count: toNumber(row.count),
+        averagePrice: toNumber(row.averagePrice),
       })),
     };
   }
@@ -222,18 +223,5 @@ export class DishAnalyticsTypeOrmRepository
         endDate: filters.endDate,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : Number(value);
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

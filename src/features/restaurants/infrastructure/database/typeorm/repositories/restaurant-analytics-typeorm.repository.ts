@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { RestaurantAnalyticsQuery } from '../../../../application/dto/analytics/restaurant-analytics.query';
 import type {
   RestaurantAnalyticsRepositoryResult,
@@ -79,33 +80,33 @@ export class RestaurantAnalyticsTypeOrmRepository
     ]);
 
     const totals: RestaurantAnalyticsRepositoryTotals = {
-      totalRestaurants: this.toNumber(totalsRaw?.totalRestaurants),
-      activeRestaurants: this.toNumber(totalsRaw?.activeRestaurants),
-      inactiveRestaurants: this.toNumber(totalsRaw?.inactiveRestaurants),
-      averageCapacity: this.toNumber(totalsRaw?.averageCapacity),
+      totalRestaurants: toNumber(totalsRaw?.totalRestaurants),
+      activeRestaurants: toNumber(totalsRaw?.activeRestaurants),
+      inactiveRestaurants: toNumber(totalsRaw?.inactiveRestaurants),
+      averageCapacity: toNumber(totalsRaw?.averageCapacity),
     };
 
     return {
       totals,
       capacityDistribution: capacityRaw.map((row) => ({
         bucket: row.bucket,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       locationDistribution: locationRaw.map((row) => ({
         key: row.key ?? 'UNKNOWN',
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       ownerDistribution: ownerRaw.map((row) => ({
         key: row.key,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       subscriptionDistribution: subscriptionRaw.map((row) => ({
         key: row.key,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       creationTrend: trendRaw.map<RestaurantAnalyticsTrendPoint>((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
     };
   }
@@ -274,18 +275,5 @@ export class RestaurantAnalyticsTypeOrmRepository
         subscriptionId: filters.subscriptionId,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }
