@@ -283,7 +283,7 @@ export class TablesService {
   async selectTable(command: SelectTableCommand): Promise<TableSelectionResponse> {
     // Verify the table exists
     const table = await this.findTable.execute({ tableId: command.tableId });
-    
+
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5-minute hold
 
