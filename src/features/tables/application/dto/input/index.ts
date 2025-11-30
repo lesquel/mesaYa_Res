@@ -4,3 +4,4 @@ export * from './list-tables.query';
 export * from './list-section-tables.query';
 export * from './find-table.query';
 export * from './delete-table.command';
+export * from './table-selection.dto';

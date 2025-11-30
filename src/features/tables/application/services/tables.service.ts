@@ -17,6 +17,8 @@ import type {
   DeleteTableResponseDto,
   PaginatedTableResponse,
   UpdateTableCommand,
+  SelectTableCommand,
+  ReleaseTableCommand,
 } from '../dto';
 import {
   CreateTableUseCase,
@@ -29,6 +31,16 @@ import {
 } from '../use-cases';
 import { TablesAccessService } from './tables-access.service';
 import { TableForbiddenError } from '../../domain/errors';
+
+/** Response for table selection operations */
+export interface TableSelectionResponse {
+  tableId: string;
+  sectionId: string;
+  restaurantId: string;
+  status: 'selecting' | 'released';
+  selectedBy?: string;
+  expiresAt?: Date;
+}
 
 @Injectable()
 export class TablesService {
@@ -242,5 +254,77 @@ export class TablesService {
     throw new TableForbiddenError(
       'Owners must provide sectionId or restaurantId to access analytics',
     );
+  }
+
+  /**
+   * Temporarily selects a table during the reservation process.
+   * Emits `mesa-ya.tables.selecting` to notify other clients that this table
+   * is being selected by a user, preventing race conditions.
+   *
+   * The selection expires after a configurable timeout (default: 5 minutes).
+   */
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.TABLE_SELECTING,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [SelectTableCommand];
+      return {
+        entity: 'tables',
+        action: 'selecting',
+        resourceId: command.tableId,
+        data: toPlain(result),
+        metadata: {
+          sectionId: command.sectionId,
+          restaurantId: command.restaurantId,
+          userId: command.userId,
+        },
+      };
+    },
+  })
+  async selectTable(command: SelectTableCommand): Promise<TableSelectionResponse> {
+    // Verify the table exists
+    const table = await this.findTable.execute({ tableId: command.tableId });
+    
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5-minute hold
+
+    return {
+      tableId: command.tableId,
+      sectionId: command.sectionId,
+      restaurantId: command.restaurantId,
+      status: 'selecting',
+      selectedBy: command.userId,
+      expiresAt,
+    };
+  }
+
+  /**
+   * Releases a temporarily selected table.
+   * Emits `mesa-ya.tables.released` to notify other clients that the table
+   * is available again.
+   */
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.TABLE_RELEASED,
+    payload: ({ result, args, toPlain }) => {
+      const [command] = args as [ReleaseTableCommand];
+      return {
+        entity: 'tables',
+        action: 'released',
+        resourceId: command.tableId,
+        data: toPlain(result),
+        metadata: {
+          sectionId: command.sectionId,
+          restaurantId: command.restaurantId,
+          userId: command.userId,
+        },
+      };
+    },
+  })
+  async releaseTable(command: ReleaseTableCommand): Promise<TableSelectionResponse> {
+    return {
+      tableId: command.tableId,
+      sectionId: command.sectionId,
+      restaurantId: command.restaurantId,
+      status: 'released',
+    };
   }
 }

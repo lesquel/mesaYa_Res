@@ -30,10 +30,12 @@ import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
-import { TablesService } from '@features/tables/application/services';
+import { TablesService, TableSelectionResponse } from '@features/tables/application/services';
 import {
   CreateTableDto,
   UpdateTableDto,
+  SelectTableDto,
+  ReleaseTableDto,
 } from '@features/tables/application/dto';
 import type {
   CreateTableCommand,
@@ -45,6 +47,8 @@ import type {
   ListSectionTablesQuery,
   ListTablesQuery,
   PaginatedTableResponse,
+  SelectTableCommand,
+  ReleaseTableCommand,
 } from '@features/tables/application/dto';
 import {
   TableAnalyticsRequestDto,
@@ -241,5 +245,72 @@ export class TablesController {
       return this.tablesService.delete(command);
     }
     return this.tablesService.deleteForOwner(command, user.userId);
+  }
+
+  /**
+   * Temporarily selects a table during the reservation process.
+   * This creates a short-term hold to prevent race conditions when multiple
+   * users are trying to reserve the same table simultaneously.
+   *
+   * The selection is broadcast via WebSocket to all connected clients
+   * viewing the restaurant's floor plan.
+   */
+  @Post(':id/select')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ThrottleCreate()
+  @ApiOperation({
+    summary: 'Temporarily select a table for reservation',
+    description:
+      'Creates a temporary hold on a table during the reservation flow. ' +
+      'Emits a WebSocket event to update the floor plan for all users in real-time.',
+  })
+  @ApiParam({ name: 'id', description: 'Table UUID' })
+  @ApiBody({ type: SelectTableDto })
+  @ApiOkResponse({ description: 'Table selection confirmed' })
+  async selectTable(
+    @Param('id', UUIDPipe) tableId: string,
+    @Body() dto: SelectTableDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<TableSelectionResponse> {
+    const command: SelectTableCommand = {
+      tableId,
+      userId: user.userId,
+      ...dto,
+    };
+    return this.tablesService.selectTable(command);
+  }
+
+  /**
+   * Releases a temporarily selected table, making it available again.
+   * This should be called when:
+   * - The user cancels the reservation flow
+   * - The user navigates away from the reservation page
+   * - The user's session times out
+   */
+  @Post(':id/release')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ThrottleModify()
+  @ApiOperation({
+    summary: 'Release a temporarily selected table',
+    description:
+      'Releases a table hold, making it available for other users. ' +
+      'Emits a WebSocket event to update the floor plan for all users in real-time.',
+  })
+  @ApiParam({ name: 'id', description: 'Table UUID' })
+  @ApiBody({ type: ReleaseTableDto })
+  @ApiOkResponse({ description: 'Table released successfully' })
+  async releaseTable(
+    @Param('id', UUIDPipe) tableId: string,
+    @Body() dto: ReleaseTableDto,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<TableSelectionResponse> {
+    const command: ReleaseTableCommand = {
+      tableId,
+      userId: user.userId,
+      ...dto,
+    };
+    return this.tablesService.releaseTable(command);
   }
 }

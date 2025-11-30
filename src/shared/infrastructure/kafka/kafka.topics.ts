@@ -11,6 +11,10 @@ export const KAFKA_TOPICS = {
   TABLE_CREATED: 'mesa-ya.tables.created',
   TABLE_UPDATED: 'mesa-ya.tables.updated',
   TABLE_DELETED: 'mesa-ya.tables.deleted',
+  /** Emitted when a user temporarily selects a table during reservation flow */
+  TABLE_SELECTING: 'mesa-ya.tables.selecting',
+  /** Emitted when a user releases a temporarily selected table */
+  TABLE_RELEASED: 'mesa-ya.tables.released',
   OBJECT_CREATED: 'mesa-ya.objects.created',
   OBJECT_UPDATED: 'mesa-ya.objects.updated',
   OBJECT_DELETED: 'mesa-ya.objects.deleted',
