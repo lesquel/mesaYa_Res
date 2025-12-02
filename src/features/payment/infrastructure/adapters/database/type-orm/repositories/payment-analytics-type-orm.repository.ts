@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type { PaymentAnalyticsQuery } from '@features/payment/application/dtos/analytics/payment-analytics.query';
 import type {
   PaymentAnalyticsRepositoryResult,
@@ -85,33 +86,33 @@ export class PaymentAnalyticsTypeOrmRepository
 
     return {
       totals: {
-        totalPayments: this.toNumber(totalsRaw?.totalPayments),
-        totalAmount: this.toNumber(totalsRaw?.totalAmount),
-        averageAmount: this.toNumber(totalsRaw?.averageAmount),
-        completedPayments: this.toNumber(totalsRaw?.completedPayments),
-        pendingPayments: this.toNumber(totalsRaw?.pendingPayments),
-        cancelledPayments: this.toNumber(totalsRaw?.cancelledPayments),
-        minAmount: this.toNumber(totalsRaw?.minAmount),
-        maxAmount: this.toNumber(totalsRaw?.maxAmount),
+        totalPayments: toNumber(totalsRaw?.totalPayments),
+        totalAmount: toNumber(totalsRaw?.totalAmount),
+        averageAmount: toNumber(totalsRaw?.averageAmount),
+        completedPayments: toNumber(totalsRaw?.completedPayments),
+        pendingPayments: toNumber(totalsRaw?.pendingPayments),
+        cancelledPayments: toNumber(totalsRaw?.cancelledPayments),
+        minAmount: toNumber(totalsRaw?.minAmount),
+        maxAmount: toNumber(totalsRaw?.maxAmount),
       },
       statusDistribution: statusRaw.map((row) => ({
         status: row.status,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       typeDistribution: typesRaw.map((row) => ({
         type: row.type,
-        count: this.toNumber(row.count),
-        amount: this.toNumber(row.amount),
+        count: toNumber(row.count),
+        amount: toNumber(row.amount),
       })),
       restaurantDistribution: restaurantsRaw.map((row) => ({
         restaurantId: row.restaurantId,
-        count: this.toNumber(row.count),
-        amount: this.toNumber(row.amount),
+        count: toNumber(row.count),
+        amount: toNumber(row.amount),
       })),
       revenueByDate: revenueRaw.map<PaymentAnalyticsTrendPoint>((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
-        amount: this.toNumber(row.amount),
+        count: toNumber(row.count),
+        amount: toNumber(row.amount),
       })),
     };
   }
@@ -270,18 +271,5 @@ export class PaymentAnalyticsTypeOrmRepository
         maxAmount: filters.maxAmount,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { TableAnalyticsQuery } from '../dto/analytics/table-analytics.query';
 import type { TableAnalyticsResponse } from '../dto/analytics/table-analytics.response';
 import {
@@ -18,7 +19,7 @@ export class GetTableAnalyticsUseCase {
     return {
       summary: {
         totalTables: analytics.totals.totalTables,
-        averageCapacity: this.toRounded(analytics.totals.averageCapacity),
+        averageCapacity: toRounded(analytics.totals.averageCapacity),
         minCapacity: analytics.totals.minCapacity,
         maxCapacity: analytics.totals.maxCapacity,
       },
@@ -35,9 +36,5 @@ export class GetTableAnalyticsUseCase {
         count: item.count,
       })),
     };
-  }
-
-  private toRounded(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }

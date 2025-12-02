@@ -4,6 +4,7 @@ import {
   RestaurantOwnerNotFoundError,
   RestaurantOwnershipError,
 } from '../errors/index';
+import { normalizeId } from '@shared/application/utils';
 import { IRestaurantDomainRepositoryPort } from '../repositories/restaurant-domain-repository.port';
 import { IRestaurantOwnerPort } from '../ports/restaurant-owner.port';
 import {
@@ -24,7 +25,7 @@ export class RestaurantDomainService {
   async createRestaurant(
     request: RestaurantCreateRequest,
   ): Promise<RestaurantEntity> {
-    const ownerId = this.normalizeId(request.ownerId);
+    const ownerId = normalizeId(request.ownerId);
     await this.ensureOwner(ownerId);
 
     const restaurant = RestaurantEntity.create({
@@ -50,7 +51,7 @@ export class RestaurantDomainService {
     request: RestaurantUpdateRequest,
   ): Promise<RestaurantEntity> {
     const restaurant = await this.ensureRestaurant(request.restaurantId);
-    const ownerId = this.normalizeId(request.ownerId);
+    const ownerId = normalizeId(request.ownerId);
     this.ensureOwnership(restaurant, ownerId, request.enforceOwnership ?? true);
 
     const updatePayload: RestaurantUpdate = {
@@ -76,7 +77,7 @@ export class RestaurantDomainService {
   async reassignOwner(
     request: RestaurantOwnerAssignmentRequest,
   ): Promise<RestaurantEntity> {
-    const ownerId = this.normalizeId(request.ownerId);
+    const ownerId = normalizeId(request.ownerId);
     await this.ensureOwner(ownerId);
 
     const restaurant = await this.ensureRestaurant(request.restaurantId);
@@ -88,7 +89,7 @@ export class RestaurantDomainService {
     request: RestaurantStatusUpdateRequest,
   ): Promise<RestaurantEntity> {
     const restaurant = await this.ensureRestaurant(request.restaurantId);
-    const ownerId = this.normalizeId(request.ownerId);
+    const ownerId = normalizeId(request.ownerId);
     this.ensureOwnership(restaurant, ownerId, request.enforceOwnership ?? true);
 
     restaurant.setStatus(request.status, request.adminNote);
@@ -100,7 +101,7 @@ export class RestaurantDomainService {
     request: RestaurantDeleteRequest,
   ): Promise<RestaurantEntity> {
     const restaurant = await this.ensureRestaurant(request.restaurantId);
-    const ownerId = this.normalizeId(request.ownerId);
+    const ownerId = normalizeId(request.ownerId);
     this.ensureOwnership(restaurant, ownerId, request.enforceOwnership ?? true);
 
     await this.restaurantRepository.delete(restaurant.id);
@@ -118,7 +119,7 @@ export class RestaurantDomainService {
   private async ensureRestaurant(
     restaurantId: string,
   ): Promise<RestaurantEntity> {
-    const normalizedId = this.normalizeId(restaurantId);
+    const normalizedId = normalizeId(restaurantId);
     const restaurant = await this.restaurantRepository.findById(normalizedId);
     if (!restaurant) {
       throw new RestaurantNotFoundError(normalizedId);
@@ -137,9 +138,5 @@ export class RestaurantDomainService {
     if (restaurant.ownerId !== ownerId) {
       throw new RestaurantOwnershipError();
     }
-  }
-
-  private normalizeId(value: string): string {
-    return value.trim();
   }
 }

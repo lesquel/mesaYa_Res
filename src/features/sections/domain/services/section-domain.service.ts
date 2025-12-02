@@ -4,6 +4,7 @@ import {
   SectionNotFoundError,
   SectionRestaurantNotFoundError,
 } from '../errors';
+import { normalizeId } from '@shared/application/utils';
 import { ISectionDomainRepositoryPort } from '../repositories';
 import {
   ISectionRestaurantPort,
@@ -44,7 +45,7 @@ export class SectionDomainService {
 
     const nextRestaurantId =
       request.restaurantId !== undefined
-        ? this.normalizeId(request.restaurantId)
+        ? normalizeId(request.restaurantId)
         : currentSnapshot.restaurantId;
 
     await this.ensureRestaurant(nextRestaurantId);
@@ -105,7 +106,7 @@ export class SectionDomainService {
   private async ensureRestaurant(
     restaurantId: string,
   ): Promise<SectionRestaurantSnapshot> {
-    const normalized = this.normalizeId(restaurantId);
+    const normalized = normalizeId(restaurantId);
     const restaurant = await this.restaurantPort.loadById(normalized);
     if (!restaurant) {
       throw new SectionRestaurantNotFoundError(normalized);
@@ -127,9 +128,5 @@ export class SectionDomainService {
     if (existing && existing.id !== excludeSectionId) {
       throw new SectionNameConflictError(restaurantId, normalizedName);
     }
-  }
-
-  private normalizeId(value: string): string {
-    return value.trim();
   }
 }

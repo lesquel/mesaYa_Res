@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { RestaurantAnalyticsQuery } from '../dto/analytics/restaurant-analytics.query';
 import {
   type RestaurantAnalyticsResponse,
@@ -23,7 +24,7 @@ export class GetRestaurantAnalyticsUseCase {
         totalRestaurants: analytics.totals.totalRestaurants,
         activeRestaurants: analytics.totals.activeRestaurants,
         inactiveRestaurants: analytics.totals.inactiveRestaurants,
-        averageCapacity: this.toRounded(analytics.totals.averageCapacity),
+        averageCapacity: toRounded(analytics.totals.averageCapacity),
       },
       capacityBuckets: analytics.capacityDistribution.map((bucket) => ({
         bucket: bucket.bucket,
@@ -48,9 +49,5 @@ export class GetRestaurantAnalyticsUseCase {
         count: point.count,
       })),
     };
-  }
-
-  private toRounded(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }

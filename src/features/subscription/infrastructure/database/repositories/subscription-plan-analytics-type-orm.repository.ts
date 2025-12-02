@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { toNumber } from '@shared/application/utils';
 import type {
   SubscriptionPlanAnalyticsQuery,
   SubscriptionPlanAnalyticsRepositoryPort,
@@ -91,40 +92,40 @@ export class SubscriptionPlanAnalyticsTypeOrmRepository
       ]);
 
     const totals: SubscriptionPlanAnalyticsRepositoryTotals = {
-      totalPlans: this.toNumber(totalsRaw?.totalPlans),
-      activePlans: this.toNumber(totalsRaw?.activePlans),
-      inactivePlans: this.toNumber(totalsRaw?.inactivePlans),
-      averagePrice: this.toNumber(totalsRaw?.averagePrice),
-      minPrice: this.toNumber(totalsRaw?.minPrice),
-      maxPrice: this.toNumber(totalsRaw?.maxPrice),
+      totalPlans: toNumber(totalsRaw?.totalPlans),
+      activePlans: toNumber(totalsRaw?.activePlans),
+      inactivePlans: toNumber(totalsRaw?.inactivePlans),
+      averagePrice: toNumber(totalsRaw?.averagePrice),
+      minPrice: toNumber(totalsRaw?.minPrice),
+      maxPrice: toNumber(totalsRaw?.maxPrice),
     };
 
     return {
       totals,
       priceDistribution: priceRaw.map((row) => ({
         bucket: row.bucket,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       periodDistribution: periodRaw.map((row) => ({
         period: row.period as SubscriptionPlanPeriodsEnum,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       stateDistribution: stateRaw.map((row) => ({
         state: row.state as SubscriptionPlanStatesEnum,
-        count: this.toNumber(row.count),
+        count: toNumber(row.count),
       })),
       subscriptionUsage: usageRaw.map((row) => ({
         planId: row.planId,
         planName: row.planName,
-        price: this.toNumber(row.price),
-        subscriptions: this.toNumber(row.subscriptions),
-        activeSubscriptions: this.toNumber(row.activeSubscriptions),
-        revenue: this.toNumber(row.revenue),
+        price: toNumber(row.price),
+        subscriptions: toNumber(row.subscriptions),
+        activeSubscriptions: toNumber(row.activeSubscriptions),
+        revenue: toNumber(row.revenue),
       })),
       creationTrend: trendRaw.map((row) => ({
         date: row.date,
-        count: this.toNumber(row.count),
-        averagePrice: this.toNumber(row.averagePrice),
+        count: toNumber(row.count),
+        averagePrice: toNumber(row.averagePrice),
       })),
     };
   }
@@ -287,18 +288,5 @@ export class SubscriptionPlanAnalyticsTypeOrmRepository
         endDate: filters.endDate,
       });
     }
-  }
-
-  private toNumber(value: string | number | null | undefined): number {
-    if (value === null || value === undefined) {
-      return 0;
-    }
-
-    if (typeof value === 'number') {
-      return Number.isNaN(value) ? 0 : value;
-    }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? 0 : parsed;
   }
 }

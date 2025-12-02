@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { ReservationAnalyticsQuery } from '../dto/analytics/reservation-analytics.query';
 import type {
   ReservationAnalyticsResponse,
@@ -30,7 +31,7 @@ export class GetReservationAnalyticsUseCase {
         pendingReservations: analytics.totals.pendingReservations,
         cancelledReservations: analytics.totals.cancelledReservations,
         upcomingReservations: analytics.totals.upcomingReservations,
-        averageGuestsPerReservation: this.toRounded(
+        averageGuestsPerReservation: toRounded(
           analytics.totals.averageGuestsPerReservation,
         ),
         confirmationRate,
@@ -73,11 +74,7 @@ export class GetReservationAnalyticsUseCase {
       (analytics.totals.confirmedReservations /
         analytics.totals.totalReservations) *
       100;
-    return Number(rate.toFixed(2));
-  }
-
-  private toRounded(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
+    return toRounded(rate);
   }
 
   private resolveGuestSegmentLabel(segment: string): string {

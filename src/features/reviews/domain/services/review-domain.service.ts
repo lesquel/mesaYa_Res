@@ -5,6 +5,7 @@ import {
   ReviewRestaurantNotFoundError,
   ReviewUserNotFoundError,
 } from '../errors';
+import { normalizeId } from '@shared/application/utils';
 import type { IReviewDomainRepositoryPort } from '../repositories';
 import type { ReviewRestaurantPort, ReviewUserPort } from '../ports';
 import {
@@ -22,10 +23,10 @@ export class ReviewDomainService {
   ) {}
 
   async createReview(request: ReviewCreateRequest): Promise<Review> {
-    const restaurantId = this.normalizeId(request.restaurantId);
+    const restaurantId = normalizeId(request.restaurantId);
     await this.ensureRestaurant(restaurantId);
 
-    const userId = this.normalizeId(request.userId);
+    const userId = normalizeId(request.userId);
     await this.ensureUser(userId);
 
     const existing = await this.reviewRepository.findByUserAndRestaurant(
@@ -53,7 +54,7 @@ export class ReviewDomainService {
 
   async updateReview(request: ReviewUpdateRequest): Promise<Review> {
     const review = await this.ensureReview(request.reviewId);
-    const userId = this.normalizeId(request.userId);
+    const userId = normalizeId(request.userId);
     this.ensureOwnership(review, userId);
 
     review.update({
@@ -66,7 +67,7 @@ export class ReviewDomainService {
 
   async deleteReview(request: ReviewDeleteRequest): Promise<Review> {
     const review = await this.ensureReview(request.reviewId);
-    const userId = this.normalizeId(request.userId);
+    const userId = normalizeId(request.userId);
     this.ensureOwnership(review, userId);
 
     await this.reviewRepository.delete(review.id);
@@ -89,7 +90,7 @@ export class ReviewDomainService {
   }
 
   private async ensureReview(reviewId: string): Promise<Review> {
-    const normalizedId = this.normalizeId(reviewId);
+    const normalizedId = normalizeId(reviewId);
     const review = await this.reviewRepository.findById(normalizedId);
     if (!review) {
       throw new ReviewNotFoundError(normalizedId);
@@ -115,9 +116,5 @@ export class ReviewDomainService {
     if (review.userId !== userId) {
       throw new ReviewOwnershipError();
     }
-  }
-
-  private normalizeId(value: string): string {
-    return value.trim();
   }
 }

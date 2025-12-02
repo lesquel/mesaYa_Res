@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { GraphicObjectAnalyticsQuery } from '../dto/analytics/graphic-object-analytics.query';
 import type {
   GraphicObjectAnalyticsResponse,
@@ -34,11 +35,11 @@ export class GetGraphicObjectAnalyticsUseCase {
       summary: {
         totalObjects: analytics.totals.totalObjects,
         uniqueImages: analytics.totals.uniqueImages,
-        averageWidth: this.toFixed(analytics.totals.averageWidth),
-        averageHeight: this.toFixed(analytics.totals.averageHeight),
-        averageArea: this.toFixed(analytics.totals.averageArea),
-        averagePositionX: this.toFixed(analytics.totals.averagePositionX),
-        averagePositionY: this.toFixed(analytics.totals.averagePositionY),
+        averageWidth: toRounded(analytics.totals.averageWidth),
+        averageHeight: toRounded(analytics.totals.averageHeight),
+        averageArea: toRounded(analytics.totals.averageArea),
+        averagePositionX: toRounded(analytics.totals.averagePositionX),
+        averagePositionY: toRounded(analytics.totals.averagePositionY),
         objectsLast30Days,
       },
       objects: {
@@ -76,10 +77,6 @@ export class GetGraphicObjectAnalyticsUseCase {
       }
       return parsed.getTime() >= cutoff ? total + point.count : total;
     }, 0);
-  }
-
-  private toFixed(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 
   private resolveSizeBucketLabel(bucket: string): string {

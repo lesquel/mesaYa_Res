@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { SubscriptionPlanAnalyticsQuery } from '../dtos/analytics/subscription-plan-analytics.query';
 import type { SubscriptionPlanAnalyticsResponse } from '../dtos/analytics/subscription-plan-analytics.response';
 import {
@@ -22,9 +23,9 @@ export class GetSubscriptionPlanAnalyticsUseCase {
         totalPlans: analytics.totals.totalPlans,
         activePlans: analytics.totals.activePlans,
         inactivePlans: analytics.totals.inactivePlans,
-        averagePrice: this.toCurrency(analytics.totals.averagePrice),
-        minPrice: this.toCurrency(analytics.totals.minPrice),
-        maxPrice: this.toCurrency(analytics.totals.maxPrice),
+        averagePrice: toRounded(analytics.totals.averagePrice),
+        minPrice: toRounded(analytics.totals.minPrice),
+        maxPrice: toRounded(analytics.totals.maxPrice),
       },
       priceDistribution: analytics.priceDistribution.map((bucket) => ({
         bucket: bucket.bucket,
@@ -41,20 +42,16 @@ export class GetSubscriptionPlanAnalyticsUseCase {
       subscriptionUsage: analytics.subscriptionUsage.map((usage) => ({
         planId: usage.planId,
         planName: usage.planName,
-        price: this.toCurrency(usage.price),
+        price: toRounded(usage.price),
         subscriptions: usage.subscriptions,
         activeSubscriptions: usage.activeSubscriptions,
-        revenue: this.toCurrency(usage.revenue),
+        revenue: toRounded(usage.revenue),
       })),
       creationTrend: analytics.creationTrend.map((point) => ({
         date: point.date,
         count: point.count,
-        averagePrice: this.toCurrency(point.averagePrice),
+        averagePrice: toRounded(point.averagePrice),
       })),
     };
-  }
-
-  private toCurrency(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }

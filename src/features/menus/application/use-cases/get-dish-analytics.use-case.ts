@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { DishAnalyticsQuery } from '../dtos/analytics/dish-analytics.query';
 import type { DishAnalyticsResponse } from '../dtos/analytics/dish-analytics.response';
 import {
@@ -18,9 +19,9 @@ export class GetDishAnalyticsUseCase {
     return {
       summary: {
         totalDishes: analytics.totals.totalDishes,
-        averagePrice: this.toRounded(analytics.totals.averagePrice),
-        minPrice: this.toRounded(analytics.totals.minPrice),
-        maxPrice: this.toRounded(analytics.totals.maxPrice),
+        averagePrice: toRounded(analytics.totals.averagePrice),
+        minPrice: toRounded(analytics.totals.minPrice),
+        maxPrice: toRounded(analytics.totals.maxPrice),
         menusWithDishes: analytics.totals.menusWithDishes,
       },
       priceDistribution: analytics.priceDistribution.map((bucket) => ({
@@ -34,18 +35,14 @@ export class GetDishAnalyticsUseCase {
       topDishes: analytics.topDishes.map((dish) => ({
         id: dish.id,
         name: dish.name,
-        price: this.toRounded(dish.price),
+        price: toRounded(dish.price),
         restaurantId: dish.restaurantId,
       })),
       creationTrend: analytics.creationTrend.map((point) => ({
         date: point.date,
         count: point.count,
-        averagePrice: this.toRounded(point.averagePrice),
+        averagePrice: toRounded(point.averagePrice),
       })),
     };
-  }
-
-  private toRounded(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }

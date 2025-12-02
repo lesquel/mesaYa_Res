@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import { parseAnalyticsDate } from '@shared/application/utils';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsEnum, IsOptional } from 'class-validator';
 import type { SubscriptionPlanAnalyticsQuery } from '@features/subscription/application';
@@ -66,10 +67,10 @@ export class SubscriptionPlanAnalyticsRequestDto {
     const rawEnd = this.endDate ?? this.rangeEnd;
 
     const startDate = rawStart
-      ? this.parseDate(rawStart, false, 'startDate')
+      ? parseAnalyticsDate(rawStart, false, 'startDate')
       : undefined;
     const endDate = rawEnd
-      ? this.parseDate(rawEnd, true, 'endDate')
+      ? parseAnalyticsDate(rawEnd, true, 'endDate')
       : undefined;
 
     if (startDate && endDate && startDate.getTime() > endDate.getTime()) {
@@ -94,24 +95,5 @@ export class SubscriptionPlanAnalyticsRequestDto {
       endDate,
       granularity: this.granularity ?? 'month',
     } as SubscriptionPlanAnalyticsQuery;
-  }
-
-  private parseDate(
-    value: string,
-    endOfDay: boolean,
-    field: 'startDate' | 'endDate',
-  ): Date {
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      throw new BadRequestException(`${field} debe ser una fecha ISO válida.`);
-    }
-
-    if (endOfDay) {
-      parsed.setHours(23, 59, 59, 999);
-    } else {
-      parsed.setHours(0, 0, 0, 0);
-    }
-
-    return parsed;
   }
 }

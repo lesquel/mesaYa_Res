@@ -6,6 +6,7 @@ import {
   TableNumberConflictError,
   TableSectionNotFoundError,
 } from '../errors';
+import { clamp } from '@shared/application/utils';
 import { ITableDomainRepositoryPort } from '../repositories';
 import { ITableSectionPort, type TableSectionSnapshot } from '../ports';
 import {
@@ -279,8 +280,8 @@ export class TableDomainService {
       const maxX = Math.max(0, sectionWidth - width);
       const maxY = Math.max(0, sectionHeight - height);
 
-      const x = Math.min(maxX, Math.max(0, Math.round(rawX)));
-      const y = Math.min(maxY, Math.max(0, Math.round(rawY)));
+      const x = clamp(Math.round(rawX), 0, maxX);
+      const y = clamp(Math.round(rawY), 0, maxY);
 
       const newCandidate: TableLayoutCandidate = {
         ...candidate,

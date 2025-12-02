@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { SectionAnalyticsQuery } from '../dto/analytics/section-analytics.query';
 import type {
   SectionAnalyticsResponse,
@@ -23,9 +24,9 @@ export class GetSectionAnalyticsUseCase {
     return {
       summary: {
         totalSections: analytics.totals.totalSections,
-        averageWidth: this.toRounded(analytics.totals.averageWidth),
-        averageHeight: this.toRounded(analytics.totals.averageHeight),
-        averageArea: this.toRounded(analytics.totals.averageArea),
+        averageWidth: toRounded(analytics.totals.averageWidth),
+        averageHeight: toRounded(analytics.totals.averageHeight),
+        averageArea: toRounded(analytics.totals.averageArea),
       },
       areaBuckets: analytics.areaDistribution.map((bucket) => ({
         bucket: bucket.bucket,
@@ -42,9 +43,5 @@ export class GetSectionAnalyticsUseCase {
         maxHeight: analytics.dimensionExtremes.maxHeight,
       },
     };
-  }
-
-  private toRounded(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }

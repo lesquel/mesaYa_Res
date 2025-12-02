@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { PaymentAnalyticsQuery } from '../dtos/analytics/payment-analytics.query';
 import type {
   PaymentAnalyticsResponse,
@@ -24,22 +25,22 @@ export class GetPaymentAnalyticsUseCase {
     return {
       summary: {
         totalPayments: analytics.totals.totalPayments,
-        totalAmount: this.toCurrency(analytics.totals.totalAmount),
-        averageAmount: this.toCurrency(analytics.totals.averageAmount),
+        totalAmount: toRounded(analytics.totals.totalAmount),
+        averageAmount: toRounded(analytics.totals.averageAmount),
         completedPayments: analytics.totals.completedPayments,
         pendingPayments: analytics.totals.pendingPayments,
         cancelledPayments: analytics.totals.cancelledPayments,
         completionRate,
-        minAmount: this.toCurrency(analytics.totals.minAmount),
-        maxAmount: this.toCurrency(analytics.totals.maxAmount),
+        minAmount: toRounded(analytics.totals.minAmount),
+        maxAmount: toRounded(analytics.totals.maxAmount),
       },
       revenue: {
-        totalAmount: this.toCurrency(analytics.totals.totalAmount),
+        totalAmount: toRounded(analytics.totals.totalAmount),
         totalPayments: analytics.totals.totalPayments,
         byDate: analytics.revenueByDate.map((point) => ({
           date: point.date,
           count: point.count,
-          amount: this.toCurrency(point.amount),
+          amount: toRounded(point.amount),
         })),
       },
       statuses: analytics.statusDistribution.map((row) => ({
@@ -49,12 +50,12 @@ export class GetPaymentAnalyticsUseCase {
       types: analytics.typeDistribution.map((row) => ({
         type: row.type,
         count: row.count,
-        amount: this.toCurrency(row.amount),
+        amount: toRounded(row.amount),
       })),
       topRestaurants: analytics.restaurantDistribution.map((row) => ({
         restaurantId: row.restaurantId,
         count: row.count,
-        amount: this.toCurrency(row.amount),
+        amount: toRounded(row.amount),
       })),
     };
   }
@@ -69,10 +70,6 @@ export class GetPaymentAnalyticsUseCase {
     const rate =
       (analytics.totals.completedPayments / analytics.totals.totalPayments) *
       100;
-    return Number(rate.toFixed(2));
-  }
-
-  private toCurrency(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
+    return toRounded(rate);
   }
 }

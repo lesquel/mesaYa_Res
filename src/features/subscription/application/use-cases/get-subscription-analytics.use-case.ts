@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { SubscriptionAnalyticsQuery } from '../dtos/analytics/subscription-analytics.query';
 import type { SubscriptionAnalyticsResponse } from '../dtos/analytics/subscription-analytics.response';
 import {
@@ -27,8 +28,8 @@ export class GetSubscriptionAnalyticsUseCase {
         totalSubscriptions: analytics.totals.totalSubscriptions,
         activeSubscriptions: analytics.totals.activeSubscriptions,
         inactiveSubscriptions: analytics.totals.inactiveSubscriptions,
-        totalRevenue: this.toCurrency(analytics.totals.totalRevenue),
-        averageRevenuePerSubscription: this.toCurrency(averageRevenue),
+        totalRevenue: toRounded(analytics.totals.totalRevenue),
+        averageRevenuePerSubscription: toRounded(averageRevenue),
         uniqueRestaurants: analytics.totals.uniqueRestaurants,
       },
       stateDistribution: analytics.stateDistribution.map((item) => ({
@@ -38,25 +39,21 @@ export class GetSubscriptionAnalyticsUseCase {
       planPerformance: analytics.planPerformance.map((item) => ({
         planId: item.planId,
         planName: item.planName,
-        price: this.toCurrency(item.price),
+        price: toRounded(item.price),
         subscriptions: item.subscriptions,
         activeSubscriptions: item.activeSubscriptions,
-        revenue: this.toCurrency(item.revenue),
+        revenue: toRounded(item.revenue),
       })),
       periodDistribution: analytics.periodDistribution.map((item) => ({
         period: item.period,
         count: item.count,
-        revenue: this.toCurrency(item.revenue),
+        revenue: toRounded(item.revenue),
       })),
       activationTrend: analytics.activationTrend.map((point) => ({
         date: point.date,
         count: point.count,
-        revenue: this.toCurrency(point.revenue),
+        revenue: toRounded(point.revenue),
       })),
     };
-  }
-
-  private toCurrency(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }

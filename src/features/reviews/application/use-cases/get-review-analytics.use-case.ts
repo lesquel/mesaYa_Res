@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { ReviewAnalyticsQuery } from '../dto/analytics/review-analytics.query';
 import type { ReviewAnalyticsResponse } from '../dto/analytics/review-analytics.response';
 import {
@@ -18,7 +19,7 @@ export class GetReviewAnalyticsUseCase {
     return {
       summary: {
         totalReviews: analytics.totals.totalReviews,
-        averageRating: this.toRounded(analytics.totals.averageRating),
+        averageRating: toRounded(analytics.totals.averageRating),
         positiveReviews: analytics.totals.positiveReviews,
         neutralReviews: analytics.totals.neutralReviews,
         negativeReviews: analytics.totals.negativeReviews,
@@ -34,12 +35,8 @@ export class GetReviewAnalyticsUseCase {
       trend: analytics.trend.map((point) => ({
         date: point.date,
         count: point.count,
-        averageRating: this.toRounded(point.averageRating),
+        averageRating: toRounded(point.averageRating),
       })),
     };
-  }
-
-  private toRounded(value: number): number {
-    return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
   }
 }
