@@ -30,7 +30,10 @@ export class DomainExceptionFilter implements ExceptionFilter {
 
     // Special-case TypeORM DB errors for friendlier client responses
     if (exception instanceof QueryFailedError) {
-      const err = exception as QueryFailedError & { driverError?: { code?: string }; code?: string };
+      const err = exception as QueryFailedError & {
+        driverError?: { code?: string };
+        code?: string;
+      };
       const message = err?.message ?? 'Query failed';
       const sqlCode = err?.driverError?.code ?? err?.code ?? null;
 

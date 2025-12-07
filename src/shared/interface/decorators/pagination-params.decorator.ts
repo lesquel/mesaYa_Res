@@ -54,7 +54,8 @@ export const PaginationParams = createParamDecorator(
 
     const allowSearch = options.allowSearch ?? true;
 
-    const effectiveLimit = dto.limit ?? (dto as Record<string, unknown>).pageSize ?? undefined;
+    const effectiveLimit =
+      dto.limit ?? (dto as Record<string, unknown>).pageSize ?? undefined;
 
     const filters = options.allowExtraParams
       ? extractFilterParams(request.query)

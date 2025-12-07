@@ -26,7 +26,10 @@ import { Permissions } from '@features/auth/interface/decorators/permissions.dec
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
-import { TablesService, TableSelectionResponse } from '@features/tables/application/services';
+import {
+  TablesService,
+  TableSelectionResponse,
+} from '@features/tables/application/services';
 import {
   CreateTableDto,
   UpdateTableDto,

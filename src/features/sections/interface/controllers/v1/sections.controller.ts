@@ -125,7 +125,9 @@ export class SectionsController {
     // Extract restaurantId from filters if present
     const query: ListSectionsQuery = {
       ...paginationQuery,
-      restaurantId: (paginationQuery.filters as Record<string, string>)?.restaurantId ?? paginationQuery.restaurantId,
+      restaurantId:
+        (paginationQuery.filters as Record<string, string>)?.restaurantId ??
+        paginationQuery.restaurantId,
     };
 
     if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {

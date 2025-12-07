@@ -277,7 +277,9 @@ export class TablesService {
       };
     },
   })
-  async selectTable(command: SelectTableCommand): Promise<TableSelectionResponse> {
+  async selectTable(
+    command: SelectTableCommand,
+  ): Promise<TableSelectionResponse> {
     // Verify the table exists
     await this.findTable.execute({ tableId: command.tableId });
 
@@ -316,7 +318,9 @@ export class TablesService {
       };
     },
   })
-  async releaseTable(command: ReleaseTableCommand): Promise<TableSelectionResponse> {
+  async releaseTable(
+    command: ReleaseTableCommand,
+  ): Promise<TableSelectionResponse> {
     return {
       tableId: command.tableId,
       sectionId: command.sectionId,
