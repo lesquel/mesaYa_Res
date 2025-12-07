@@ -5,6 +5,7 @@
 Se han creado los siguientes archivos para integración con SonarQube Cloud:
 
 ### Archivos Creados
+
 - ✅ `.github/workflows/sonarqube.yml` - Workflow para análisis de SonarQube
 - ✅ `.github/workflows/ci.yml` - Workflow de CI general
 - ✅ `scripts/verify-sonarqube-setup.ps1` - Script de verificación (Windows)
@@ -81,6 +82,7 @@ Se han creado los siguientes archivos para integración con SonarQube Cloud:
 ### Paso 4: Hacer Push y Ejecutar
 
 1. **Commit y Push**
+
    ```bash
    git add .
    git commit -m "ci: add SonarQube integration and CI/CD workflows"
@@ -103,6 +105,7 @@ Se han creado los siguientes archivos para integración con SonarQube Cloud:
 Una vez completado el análisis, verás:
 
 ### Métricas Principales
+
 - **Bugs**: Errores de código que deben corregirse
 - **Vulnerabilities**: Problemas de seguridad
 - **Code Smells**: Problemas de mantenibilidad
@@ -111,6 +114,7 @@ Una vez completado el análisis, verás:
 - **Security Hotspots**: Código que requiere revisión de seguridad
 
 ### Quality Gate
+
 - **Status**: Passed ✅ / Failed ❌
 - Muestra si el código cumple con los estándares de calidad
 - Por defecto requiere:
@@ -148,50 +152,64 @@ Agrega estos badges a tu `README.md`:
 ## 🛠️ Comandos Útiles
 
 ### Verificar Configuración Local
+
 \`\`\`powershell
+
 # Windows
+
 .\scripts\verify-sonarqube-setup.ps1
 
 # Linux/Mac
+
 bash scripts/verify-sonarqube-setup.sh
 \`\`\`
 
 ### Generar Reporte de Cobertura Local
+
 \`\`\`bash
 npm run test:cov
 \`\`\`
 
 ### Ver Reporte HTML
+
 Abrir: `coverage/index.html`
 
 ## ❓ Troubleshooting
 
 ### Error: "SONAR_TOKEN not found"
+
 **Causa**: El secret no está configurado o tiene un nombre incorrecto.
 **Solución**: Verifica que el secret se llame exactamente `SONAR_TOKEN` en GitHub Settings.
 
 ### Error: "Shallow clone detected"
+
 **Causa**: Git clone superficial no permite análisis completo.
 **Solución**: El workflow ya incluye `fetch-depth: 0`, no requiere acción.
 
 ### Error: "Project not found"
+
 **Causa**: El proyecto no existe en SonarQube Cloud.
 **Solución**: Completa el Paso 3 (Configurar Proyecto en SonarQube Cloud).
 
 ### Coverage no aparece
+
 **Causa**: El archivo `coverage/lcov.info` no se generó o está vacío.
-**Solución**: 
+**Solución**:
+
 1. Ejecuta `npm run test:cov` localmente
 2. Verifica que se cree el archivo `coverage/lcov.info`
 3. Verifica los logs del workflow en GitHub Actions
 
 ### Workflow falla pero tests pasan localmente
+
 **Posibles causas**:
+
 1. Variables de entorno faltantes
 2. Servicios externos (BD, Kafka) no disponibles en CI
 3. Diferencias en dependencias
 
 **Solución**:
+
 1. Revisa los logs del workflow en GitHub Actions
 2. Considera agregar `continue-on-error: true` temporalmente
 3. Configura servicios necesarios en el workflow
@@ -216,6 +234,7 @@ Abrir: `coverage/index.html`
 ## 🎉 ¡Listo!
 
 Tu proyecto ahora tiene:
+
 - ✅ Análisis automático de calidad de código
 - ✅ Reportes de cobertura de tests
 - ✅ Quality Gate para mantener estándares

@@ -9,6 +9,7 @@ Se ha configurado el análisis automático de SonarQube en GitHub Actions para e
 ### 1. `.github/workflows/sonarqube.yml`
 
 Workflow dedicado para análisis de SonarQube que:
+
 - Se ejecuta en push a `main` y `develop`
 - Se ejecuta en pull requests
 - Genera reporte de cobertura con Jest
@@ -18,6 +19,7 @@ Workflow dedicado para análisis de SonarQube que:
 ### 2. `.github/workflows/ci.yml`
 
 Workflow de CI general que:
+
 - Ejecuta linting
 - Compila el proyecto
 - Ejecuta tests unitarios
@@ -74,6 +76,7 @@ cat sonar-project.properties
 ```
 
 Debe contener:
+
 ```properties
 sonar.projectKey=lesquel_mesaYa_Res
 sonar.organization=lesquel
@@ -112,6 +115,7 @@ git push origin main
 ## Quality Gate
 
 El Quality Gate está configurado para:
+
 - ✅ Verificar automáticamente la calidad del código
 - ⚠️ Continuar aunque falle (configurable)
 - 📊 Mostrar el estado en el workflow
@@ -159,6 +163,7 @@ Puedes agregar badges de SonarQube a tu README.md:
 ### La cobertura no aparece en SonarQube
 
 **Soluciones**:
+
 1. Verifica que `coverage/lcov.info` se está generando: `ls coverage/`
 2. Verifica que el path en `sonar-project.properties` es correcto
 3. Revisa los logs del workflow de GitHub Actions
@@ -166,6 +171,7 @@ Puedes agregar badges de SonarQube a tu README.md:
 ### Tests fallan en CI pero funcionan localmente
 
 **Soluciones**:
+
 1. Verifica las variables de entorno necesarias
 2. Asegúrate de que las dependencias están correctamente instaladas
 3. Revisa si hay diferencias entre el entorno local y CI (base de datos, servicios externos, etc.)
@@ -175,6 +181,7 @@ Puedes agregar badges de SonarQube a tu README.md:
 ### Análisis de Pull Requests
 
 El workflow ya está configurado para analizar pull requests. SonarQube mostrará:
+
 - ✅ Nuevos bugs introducidos
 - ✅ Nueva deuda técnica
 - ✅ Cambios en la cobertura
@@ -183,6 +190,7 @@ El workflow ya está configurado para analizar pull requests. SonarQube mostrar�
 ### Notificaciones
 
 Configura notificaciones en SonarQube Cloud:
+
 1. Ve a **Project Settings** → **Notifications**
 2. Configura notificaciones por email o Slack
 3. Recibe alertas cuando:
@@ -195,6 +203,7 @@ Configura notificaciones en SonarQube Cloud:
 ### Actualizar el Token
 
 Si el token expira:
+
 1. Genera un nuevo token en SonarQube Cloud
 2. Actualiza el secret `SONAR_TOKEN` en GitHub
 
@@ -209,6 +218,7 @@ sonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
 ### Ajustar Quality Gate
 
 En SonarQube Cloud:
+
 1. Ve a **Quality Gates**
 2. Selecciona o crea un Quality Gate personalizado
 3. Asigna el Quality Gate a tu proyecto
