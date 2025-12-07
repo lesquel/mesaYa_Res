@@ -28,11 +28,13 @@ async function bootstrap() {
     await bootstrap();
   } catch (err) {
     const logger = new WinstonLoggerAdapter();
+
     logger.error(
       'Error during application bootstrap',
       (err as Error).stack,
       'Bootstrap',
     );
+
     process.exit(1);
   }
 })();
