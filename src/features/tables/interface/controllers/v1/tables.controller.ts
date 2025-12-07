@@ -41,7 +41,6 @@ import type {
   DeleteTableCommand,
   UpdateTableCommand,
   TableResponseDto,
-  DeleteTableResponse,
   FindTableQuery,
   ListSectionTablesQuery,
   ListTablesQuery,
@@ -228,7 +227,7 @@ export class TablesController {
   async delete(
     @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
-  ): Promise<DeleteTableResponse> {
+  ): Promise<{ table: TableResponseDto }> {
     const command: DeleteTableCommand = { tableId: id };
     if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.tablesService.delete(command);

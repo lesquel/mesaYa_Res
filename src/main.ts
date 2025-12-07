@@ -6,8 +6,9 @@ import { ConfigService } from '@nestjs/config';
 import { WinstonLoggerAdapter } from '@shared/infrastructure/adapters/logger/wiston/winstonLogger.adapter';
 
 async function bootstrap() {
+  const logger = new WinstonLoggerAdapter();
   const app = await NestFactory.create(AppModule, {
-    logger: new WinstonLoggerAdapter(),
+    logger,
   });
   configureApp(app);
 
@@ -15,7 +16,6 @@ async function bootstrap() {
   const HOST = configService.get<string>('APP_HOST');
   const PORT = configService.get<number>('APP_PORT', 3000);
 
-  const logger = app.get(WinstonLoggerAdapter);
   await app.listen(PORT);
   logger.log(
     `Application running on: http://${HOST}:${PORT} — docs: http://${HOST}:${PORT}/docs/api`,
@@ -23,14 +23,16 @@ async function bootstrap() {
   );
 }
 
-try {
-  await bootstrap();
-} catch (err) {
-  const logger = new WinstonLoggerAdapter();
-  logger.error(
-    'Error during application bootstrap',
-    (err as Error).stack,
-    'Bootstrap',
-  );
-  process.exit(1);
-}
+(async () => {
+  try {
+    await bootstrap();
+  } catch (err) {
+    const logger = new WinstonLoggerAdapter();
+    logger.error(
+      'Error during application bootstrap',
+      (err as Error).stack,
+      'Bootstrap',
+    );
+    process.exit(1);
+  }
+})();

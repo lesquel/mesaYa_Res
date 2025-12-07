@@ -100,9 +100,10 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
 
   private buildPagination(result: Record<string, unknown>): PaginationShape {
     const page = this.toNumber(result.page, 1);
+    const resultsArray = Array.isArray(result.results) ? result.results : [];
     const limit = this.toNumber(
       result.limit ?? result.pageSize,
-      result.results?.length ?? 0,
+      resultsArray.length,
     );
     const total = this.toNumber(result.total ?? result.totalItems, 0);
     const pages = this.toNumber(
@@ -125,12 +126,13 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
     }
 
     if (result.links && typeof result.links === 'object') {
+      const links = result.links as Record<string, unknown>;
       pagination.links = {
-        self: this.toLink(result.links.self),
-        next: this.toLink(result.links.next),
-        prev: this.toLink(result.links.prev),
-        first: this.toLink(result.links.first),
-        last: this.toLink(result.links.last),
+        self: this.toLink(links.self),
+        next: this.toLink(links.next),
+        prev: this.toLink(links.prev),
+        first: this.toLink(links.first),
+        last: this.toLink(links.last),
       };
     }
 

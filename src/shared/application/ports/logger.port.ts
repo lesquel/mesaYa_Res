@@ -10,3 +10,6 @@ export interface LoggerPort {
   debug(message: string, context?: string, meta?: unknown): void;
   verbose(message: string, context?: string, meta?: unknown): void;
 }
+
+// Alias for backward compatibility
+export type ILoggerPort = LoggerPort;

@@ -10,12 +10,14 @@ import { KafkaModule } from '@shared/infrastructure/kafka';
 import { FeaturesModule } from '@features/features.module';
 import { THROTTLER_CONFIG } from '@shared/core/config';
 import { ThrottlerBehindProxyGuard } from '@shared/infrastructure/guards/throttler-behind-proxy.guard';
+import { SharedOwnershipModule } from '@shared/infrastructure/shared-ownership.module';
 
 @Module({
   imports: [
     AppConfigModule,
     DatabaseModule,
     LoggerModule,
+    SharedOwnershipModule,
     KafkaModule,
     ThrottlerModule.forRoot(THROTTLER_CONFIG),
     SeedModule,

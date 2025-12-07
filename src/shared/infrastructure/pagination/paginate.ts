@@ -1,6 +1,7 @@
 import { PaginatedResult } from '@shared/application/types/pagination';
 import {
   FindManyOptions,
+  FindOptionsOrder,
   ObjectLiteral,
   Repository,
   SelectQueryBuilder,

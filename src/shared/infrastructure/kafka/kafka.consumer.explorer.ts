@@ -28,9 +28,10 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
       }
 
       const prototype = Object.getPrototypeOf(instance);
-      const methods = this.metadataScanner.getAllFilteredByMetadata(
-        prototype,
-        KAFKA_CONSUMER_METADATA,
+      // Scan all methods in the prototype
+      const methods = Object.getOwnPropertyNames(prototype).filter(
+        (name) =>
+          name !== 'constructor' && typeof prototype[name] === 'function',
       );
 
       methods.forEach((method) => {
@@ -54,7 +55,10 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
     methodName: string,
     metadata: KafkaConsumerMetadata,
   ): void {
-    const handler = instance[methodName];
+    const handler = instance[methodName] as (
+      payload: unknown,
+      context: KafkaContext,
+    ) => Promise<unknown>;
 
     const boundHandler = async (payload: unknown, context: KafkaContext) =>
       handler.call(instance, payload, context);

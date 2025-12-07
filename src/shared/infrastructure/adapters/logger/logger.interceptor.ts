@@ -77,23 +77,24 @@ export class LoggingInterceptor implements NestInterceptor {
       'secret',
     ]);
 
-    function walk(obj: Record<string, unknown>): void {
+    function walk(obj: Record<string, unknown> | object): void {
       if (!obj || typeof obj !== 'object') return;
       for (const key of Object.keys(obj)) {
         const lower = key.toLowerCase();
-        const value = obj[key];
+        const value = (obj as Record<string, unknown>)[key];
         if (sensitiveKeys.has(lower)) {
-          obj[key] = '[REDACTED]';
+          (obj as Record<string, unknown>)[key] = '[REDACTED]';
         } else if (value && typeof value === 'object') {
-          walk(value as Record<string, unknown>);
+          walk(value);
         } else if (typeof value === 'string' && value.length > 1000) {
           // evitar loguear payloads enormes
-          obj[key] = value.slice(0, 1000) + '...[truncated]';
+          (obj as Record<string, unknown>)[key] =
+            value.slice(0, 1000) + '...[truncated]';
         }
       }
     }
 
-    walk(clone);
+    walk(clone as Record<string, unknown>);
     return clone;
   }
 }
