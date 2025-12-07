@@ -9,6 +9,7 @@ Se ha configurado exitosamente la cobertura de tests con Jest y SonarQube Cloud 
 ### 1. `sonar-project.properties`
 
 Archivo de configuración de SonarQube con:
+
 - **projectKey**: `lesquel_mesaYa_Res`
 - **organization**: `lesquel`
 - **Rutas de cobertura**: `coverage/lcov.info`
@@ -52,6 +53,7 @@ npm run test:cov
 ```
 
 Este comando:
+
 1. Ejecuta todos los tests
 2. Genera reportes de cobertura en formato LCOV, HTML y texto
 3. Crea el archivo `coverage/lcov.info` requerido por SonarQube
