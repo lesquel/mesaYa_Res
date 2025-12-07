@@ -3,7 +3,7 @@
 ## ❌ Error Actual
 
 ```
-ERROR You are running CI analysis while Automatic Analysis is enabled. 
+ERROR You are running CI analysis while Automatic Analysis is enabled.
 Please consider disabling one or the other.
 EXECUTION FAILURE
 ```
@@ -45,12 +45,12 @@ La opción se ve así en SonarQube Cloud:
 
 ```
 Administration > Analysis Method
-  
+
   ⚙️ Which method do you want to use?
-  
+
   ( ) Automatic Analysis
       SonarQube Cloud will automatically analyze your code
-      
+
   (●) CI-based Analysis  ← SELECCIONA ESTA
       Integrate with your CI/CD pipeline
 ```
@@ -60,6 +60,7 @@ Administration > Analysis Method
 Si prefieres usar Automatic Analysis en lugar del CI:
 
 1. **Elimina el workflow de GitHub Actions:**
+
    ```bash
    rm .github/workflows/sonarqube.yml
    git add .
