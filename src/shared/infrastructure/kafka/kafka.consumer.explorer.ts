@@ -28,22 +28,21 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
       }
 
       const prototype = Object.getPrototypeOf(instance);
-      this.metadataScanner.scanFromPrototype(instance, prototype, (method) => {
-        const descriptor = prototype[method];
-        if (!descriptor) {
-          return;
-        }
+      const methods = this.metadataScanner.getAllFilteredByMetadata(
+        prototype,
+        KAFKA_CONSUMER_METADATA,
+      );
 
+      methods.forEach((method) => {
+        const descriptor = prototype[method];
         const metadata = this.reflector.get<KafkaConsumerMetadata | undefined>(
           KAFKA_CONSUMER_METADATA,
           descriptor,
         );
 
-        if (!metadata) {
-          return;
+        if (metadata) {
+          this.registerConsumer(instance, method, metadata);
         }
-
-        this.registerConsumer(instance, method, metadata);
       });
     });
 
@@ -51,7 +50,7 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
   }
 
   private registerConsumer(
-    instance: Record<string, any>,
+    instance: Record<string, unknown>,
     methodName: string,
     metadata: KafkaConsumerMetadata,
   ): void {

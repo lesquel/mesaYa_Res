@@ -27,8 +27,8 @@ export interface SearchOption {
 export type PaginationParams = PaginateOptions & SortOption & SearchOption;
 
 // Helper to build link with given query params
-function buildLink(route: string, params: Record<string, any>) {
-  const url = new URL(route, 'http://dummy');
+function buildLink(route: string, params: Record<string, unknown>) {
+  const url = new URL(route, 'https://dummy');
   Object.entries(params).forEach(([k, v]) => {
     if (v !== undefined && v !== null && v !== '')
       url.searchParams.set(k, String(v));
@@ -80,7 +80,7 @@ export async function paginateQueryBuilder<T extends ObjectLiteral>(
   const [items, total] = await qb.take(limit).skip(effOffset).getManyAndCount();
 
   const currentPage =
-    offset !== undefined ? Math.floor(effOffset / limit) + 1 : (page ?? 1);
+    offset === undefined ? (page ?? 1) : Math.floor(effOffset / limit) + 1;
   const pages = Math.max(1, Math.ceil(total / limit));
   const hasNext = currentPage < pages;
   const hasPrev = currentPage > 1;
@@ -149,7 +149,9 @@ export async function paginateRepository<T extends ObjectLiteral>(
 
   const effOffset = offset ?? (page && page > 0 ? page - 1 : 0) * limit;
 
-  const order = sortBy ? ({ [sortBy]: sortOrder } as any) : undefined;
+  const order = sortBy
+    ? ({ [sortBy]: sortOrder } as FindOptionsOrder<T>)
+    : undefined;
 
   const [items, total] = await repo.findAndCount({
     ...baseOptions,
@@ -159,7 +161,7 @@ export async function paginateRepository<T extends ObjectLiteral>(
   });
 
   const currentPage =
-    offset !== undefined ? Math.floor(effOffset / limit) + 1 : (page ?? 1);
+    offset === undefined ? (page ?? 1) : Math.floor(effOffset / limit) + 1;
   const pages = Math.max(1, Math.ceil(total / limit));
   const hasNext = currentPage < pages;
   const hasPrev = currentPage > 1;

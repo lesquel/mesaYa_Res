@@ -24,7 +24,7 @@ interface PaginationShape {
 export class ResponseEnvelopeInterceptor implements NestInterceptor {
   constructor(private readonly reflector: Reflector) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     if (context.getType() !== 'http') {
       return next.handle();
     }
@@ -54,7 +54,8 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
         }
 
         if (this.hasDataEnvelope(payload)) {
-          return this.ensurePaginationDefaults(payload);
+          this.ensurePaginationDefaults(payload);
+          return payload;
         }
 
         if (isPaginatedEndpoint || this.looksLikePaginatedResult(payload)) {
@@ -83,12 +84,12 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
 
   private looksLikePaginatedResult(
     value: unknown,
-  ): value is Record<string, any> {
+  ): value is Record<string, unknown> {
     if (!value || typeof value !== 'object') {
       return false;
     }
 
-    const candidate = value as Record<string, any>;
+    const candidate = value as Record<string, unknown>;
     return (
       Array.isArray(candidate.results) &&
       typeof candidate.total === 'number' &&
@@ -97,7 +98,7 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
     );
   }
 
-  private buildPagination(result: Record<string, any>): PaginationShape {
+  private buildPagination(result: Record<string, unknown>): PaginationShape {
     const page = this.toNumber(result.page, 1);
     const limit = this.toNumber(
       result.limit ?? result.pageSize,
@@ -136,23 +137,34 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
     return pagination;
   }
 
-  private ensurePaginationDefaults<T extends Record<string, any>>(value: T): T {
-    const target = value as Record<string, any>;
+  private ensurePaginationDefaults<T extends Record<string, unknown>>(
+    value: T,
+  ): void {
+    const target = value as Record<string, unknown>;
     const pagination = target.pagination;
 
     if (!pagination || typeof pagination !== 'object') {
-      return value;
+      return;
     }
 
+    const paginationRecord = pagination as Record<string, unknown>;
     const normalized = {
-      ...pagination,
-      pageSize: this.toNumber(pagination.pageSize ?? pagination.limit, 0),
-      totalItems: this.toNumber(pagination.totalItems ?? pagination.total, 0),
-      totalPages: this.toNumber(pagination.totalPages ?? pagination.pages, 0),
+      ...paginationRecord,
+      pageSize: this.toNumber(
+        paginationRecord.pageSize ?? paginationRecord.limit,
+        0,
+      ),
+      totalItems: this.toNumber(
+        paginationRecord.totalItems ?? paginationRecord.total,
+        0,
+      ),
+      totalPages: this.toNumber(
+        paginationRecord.totalPages ?? paginationRecord.pages,
+        0,
+      ),
     };
 
     target.pagination = normalized;
-    return value;
   }
 
   private toNumber(value: unknown, fallback: number): number {
@@ -168,8 +180,8 @@ export class ResponseEnvelopeInterceptor implements NestInterceptor {
     return (
       value !== null &&
       typeof value === 'object' &&
-      typeof (value as any).pipe === 'function' &&
-      typeof (value as any).on === 'function'
+      typeof (value as { pipe?: unknown; on?: unknown }).pipe === 'function' &&
+      typeof (value as { pipe?: unknown; on?: unknown }).on === 'function'
     );
   }
 }

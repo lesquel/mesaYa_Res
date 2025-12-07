@@ -172,41 +172,72 @@ export class DomainExceptionFilter implements ExceptionFilter {
     body: unknown,
     exception: HttpException,
   ): { message: string; error: string; details?: unknown } {
-    let message = exception.message ?? 'Unexpected error';
-    let error = exception.name ?? 'HttpException';
-    let details: unknown;
+    const message = exception.message ?? 'Unexpected error';
+    const error = exception.name ?? 'HttpException';
 
     if (typeof body === 'string') {
-      message = body;
-    } else if (body && typeof body === 'object') {
-      const payload = body as Record<string, unknown>;
-
-      if (typeof payload.message === 'string') {
-        message = payload.message;
-      } else if (Array.isArray(payload.message)) {
-        message = 'Validation failed';
-        details = { issues: payload.message };
-      } else if (payload.message && typeof payload.message === 'object') {
-        message = 'Validation failed';
-        details = payload.message;
-      }
-
-      if (typeof payload.error === 'string') {
-        error = payload.error;
-      }
-
-      if (payload.details !== undefined && details === undefined) {
-        details = payload.details;
-      }
-
-      if (details === undefined) {
-        const { statusCode, message: _, error: __, ...rest } = payload;
-        if (Object.keys(rest).length > 0) {
-          details = rest;
-        }
-      }
+      return { message: body, error };
     }
 
-    return { message, error, details };
+    if (body && typeof body === 'object') {
+      return this.normalizePayloadObject(
+        body as Record<string, unknown>,
+        message,
+        error,
+      );
+    }
+
+    return { message, error };
+  }
+
+  private normalizePayloadObject(
+    payload: Record<string, unknown>,
+    defaultMessage: string,
+    defaultError: string,
+  ): { message: string; error: string; details?: unknown } {
+    const messageData = this.extractMessage(payload);
+    const error =
+      typeof payload.error === 'string' ? payload.error : defaultError;
+    const details = this.extractDetails(payload, messageData.details);
+
+    return { message: messageData.message || defaultMessage, error, details };
+  }
+
+  private extractMessage(payload: Record<string, unknown>): {
+    message?: string;
+    details?: unknown;
+  } {
+    if (typeof payload.message === 'string') {
+      return { message: payload.message };
+    }
+
+    if (Array.isArray(payload.message)) {
+      return {
+        message: 'Validation failed',
+        details: { issues: payload.message },
+      };
+    }
+
+    if (payload.message && typeof payload.message === 'object') {
+      return { message: 'Validation failed', details: payload.message };
+    }
+
+    return {};
+  }
+
+  private extractDetails(
+    payload: Record<string, unknown>,
+    existingDetails?: unknown,
+  ): unknown {
+    if (existingDetails !== undefined) {
+      return existingDetails;
+    }
+
+    if (payload.details !== undefined) {
+      return payload.details;
+    }
+
+    const { statusCode, message: _, error: __, ...rest } = payload;
+    return Object.keys(rest).length > 0 ? rest : undefined;
   }
 }
