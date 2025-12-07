@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   UseGuards,
-  ForbiddenException,
 } from '@nestjs/common';
 import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
@@ -24,8 +23,6 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
-import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
@@ -37,7 +34,6 @@ import {
 import type {
   CreateSectionCommand,
   DeleteSectionCommand,
-  DeleteSectionResponseDto,
   FindSectionQuery,
   ListRestaurantSectionsQuery,
   ListSectionsQuery,
@@ -53,8 +49,6 @@ import {
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   ThrottleCreate,
   ThrottleModify,
@@ -131,14 +125,12 @@ export class SectionsController {
     // Extract restaurantId from filters if present
     const query: ListSectionsQuery = {
       ...paginationQuery,
-      restaurantId: (paginationQuery.filters as Record<string, string> | undefined)?.restaurantId ?? paginationQuery.restaurantId,
+      restaurantId: (paginationQuery.filters as Record<string, string>)?.restaurantId ?? paginationQuery.restaurantId,
     };
 
     if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
-      console.log('Listing sections for owner', user.userId, 'restaurantId:', query.restaurantId);
       return this.sectionsService.listForOwner(query, user.userId);
     }
-    console.log('Listing sections for public, restaurantId:', query.restaurantId);
     return this.sectionsService.list(query);
   }
 
@@ -166,7 +158,7 @@ export class SectionsController {
       restaurantId,
     };
 
-    if (user && user.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
+    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
       return this.sectionsService.listByRestaurantForOwner(query, user.userId);
     }
 

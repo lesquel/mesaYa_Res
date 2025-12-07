@@ -11,25 +11,22 @@ async function bootstrap() {
   });
   configureApp(app);
 
-  // TODO: Delete later
-  app.use((req, res, next) => {
-    console.log('[REQUEST]', req.method, req.originalUrl);
-    console.log('  params:', req.params);
-    console.log('  query:', req.query);
-    next();
-  });
-
   const configService = app.get(ConfigService);
   const HOST = configService.get<string>('APP_HOST');
   const PORT = configService.get<number>('APP_PORT', 3000);
 
+  const logger = app.get(WinstonLoggerAdapter);
   await app.listen(PORT);
-  console.log(
+  logger.log(
     `Application running on: http://${HOST}:${PORT} — docs: http://${HOST}:${PORT}/docs/api`,
+    'Bootstrap',
   );
 }
 
-bootstrap().catch((err) => {
-  console.error('Error during application bootstrap:', err);
-  process.exit(1); // avoids process.exit(0) to be executed
-});
+try {
+  await bootstrap();
+} catch (err) {
+  const logger = new WinstonLoggerAdapter();
+  logger.error('Error during application bootstrap', (err as Error).stack, 'Bootstrap');
+  process.exit(1);
+}

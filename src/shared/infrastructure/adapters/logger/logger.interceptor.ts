@@ -68,26 +68,27 @@ export class LoggingInterceptor implements NestInterceptor {
   private maskSensitive(payload: unknown): unknown {
     if (!payload || typeof payload !== 'object') return payload;
 
-    const clone = JSON.parse(JSON.stringify(payload));
-    const sensitiveKeys = [
+    const clone = structuredClone(payload);
+    const sensitiveKeys = new Set([
       'password',
       'pass',
       'token',
       'authorization',
       'secret',
-    ];
+    ]);
 
-    function walk(obj: any) {
+    function walk(obj: Record<string, unknown>): void {
       if (!obj || typeof obj !== 'object') return;
       for (const key of Object.keys(obj)) {
         const lower = key.toLowerCase();
-        if (sensitiveKeys.includes(lower)) {
+        const value = obj[key];
+        if (sensitiveKeys.has(lower)) {
           obj[key] = '[REDACTED]';
-        } else if (typeof obj[key] === 'object') {
-          walk(obj[key]);
-        } else if (typeof obj[key] === 'string' && obj[key].length > 1000) {
+        } else if (value && typeof value === 'object') {
+          walk(value as Record<string, unknown>);
+        } else if (typeof value === 'string' && value.length > 1000) {
           // evitar loguear payloads enormes
-          obj[key] = obj[key].slice(0, 1000) + '...[truncated]';
+          obj[key] = value.slice(0, 1000) + '...[truncated]';
         }
       }
     }

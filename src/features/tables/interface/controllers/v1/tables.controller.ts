@@ -8,8 +8,6 @@ import {
   Post,
   Query,
   UseGuards,
-  BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
@@ -25,8 +23,6 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
-import { Roles } from '@features/auth/interface/decorators/roles.decorator';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
@@ -42,7 +38,7 @@ import type {
   DeleteTableCommand,
   UpdateTableCommand,
   TableResponseDto,
-  DeleteTableResponseDto,
+  DeleteTableResponse,
   FindTableQuery,
   ListSectionTablesQuery,
   ListTablesQuery,
@@ -58,8 +54,6 @@ import { TableResponseSwaggerDto } from '@features/tables/interface/dto/table-re
 import { ApiPaginationQuery } from '@shared/interface/swagger/decorators/api-pagination-query.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import {
   ThrottleCreate,
   ThrottleModify,
@@ -129,10 +123,8 @@ export class TablesController {
     @CurrentUser() user?: CurrentUserPayload,
   ): Promise<PaginatedTableResponse> {
     if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
-      console.log('Listing tables for owner', user.userId);
       return this.tablesService.listForOwner(query, user.userId);
     }
-    console.log('Listing tables for public');
     return this.tablesService.list(query);
   }
 
@@ -167,10 +159,7 @@ export class TablesController {
       sectionId,
     };
 
-    if (
-      user &&
-      user.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))
-    ) {
+    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
       return this.tablesService.listSectionForOwner(query, user.userId);
     }
 
@@ -196,10 +185,7 @@ export class TablesController {
 
     const query: FindTableQuery = { tableId: id };
 
-    if (
-      user &&
-      user.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))
-    ) {
+    if (user?.roles?.some((r) => r.name === (AuthRoleName.OWNER as string))) {
       // Assuming findOneForOwner exists or findOne checks it?
       // The service likely has findOne and findOneForOwner.
       // I'll use findOne for now as it seems public.
@@ -239,7 +225,7 @@ export class TablesController {
   async delete(
     @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
-  ): Promise<any> {
+  ): Promise<DeleteTableResponse> {
     const command: DeleteTableCommand = { tableId: id };
     if (user.roles?.some((r) => r.name === (AuthRoleName.ADMIN as string))) {
       return this.tablesService.delete(command);
