@@ -51,7 +51,7 @@ TOPICS=(
 
 for topic in "${TOPICS[@]}"; do
   echo "Ensuring topic: ${topic}"
-  kafka-topics \
+  /opt/kafka/bin/kafka-topics.sh \
     --bootstrap-server "${BOOTSTRAP_SERVER}" \
     --create \
     --if-not-exists \

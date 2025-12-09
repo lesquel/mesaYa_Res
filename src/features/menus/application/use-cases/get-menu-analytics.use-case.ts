@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { toRounded } from '@shared/application/utils';
 import type { MenuAnalyticsQuery } from '../dtos/analytics/menu-analytics.query';
 import type { MenuAnalyticsResponse } from '../dtos/analytics/menu-analytics.response';
 import {
@@ -30,9 +31,9 @@ export class GetMenuAnalyticsUseCase {
       summary: {
         totalMenus: analytics.totals.totalMenus,
         restaurantsWithMenus: analytics.totals.restaurantsWithMenus,
-        averagePrice: Number(analytics.totals.averagePrice.toFixed(2)),
-        minPrice: Number(analytics.totals.minPrice.toFixed(2)),
-        maxPrice: Number(analytics.totals.maxPrice.toFixed(2)),
+        averagePrice: toRounded(analytics.totals.averagePrice),
+        minPrice: toRounded(analytics.totals.minPrice),
+        maxPrice: toRounded(analytics.totals.maxPrice),
       },
       menus: {
         total: totalMenusTrend,

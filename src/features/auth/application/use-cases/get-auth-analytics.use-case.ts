@@ -1,4 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import {
+  normalizeDateStart,
+  normalizeDateEnd,
+  toRounded,
+} from '@shared/application/utils';
 import type { AuthAnalyticsQuery } from '../dto/queries/auth-analytics.query';
 import type {
   AuthAnalyticsRepositoryResult,
@@ -77,17 +82,17 @@ export class GetAuthAnalyticsUseCase {
     const firstDate = this.resolveStartDate(points, query);
     const lastDate = this.resolveEndDate(points, query);
     if (!firstDate || !lastDate) {
-      return Number(total.toFixed(2));
+      return toRounded(total);
     }
 
     const diffDays =
       Math.floor((lastDate.getTime() - firstDate.getTime()) / MS_PER_DAY) + 1;
 
     if (diffDays <= 0) {
-      return Number(total.toFixed(2));
+      return toRounded(total);
     }
 
-    return Number((total / diffDays).toFixed(2));
+    return toRounded(total / diffDays);
   }
 
   private resolveStartDate(
@@ -95,7 +100,7 @@ export class GetAuthAnalyticsUseCase {
     query: AuthAnalyticsQuery,
   ): Date | null {
     if (query.startDate) {
-      return this.normalizeDateStart(query.startDate);
+      return normalizeDateStart(query.startDate);
     }
     return this.parsePointDate(points[0]);
   }
@@ -105,7 +110,7 @@ export class GetAuthAnalyticsUseCase {
     query: AuthAnalyticsQuery,
   ): Date | null {
     if (query.endDate) {
-      return this.normalizeDateEnd(query.endDate);
+      return normalizeDateEnd(query.endDate);
     }
     return this.parsePointDate(points[points.length - 1], true);
   }
@@ -134,17 +139,5 @@ export class GetAuthAnalyticsUseCase {
       parsed.setHours(0, 0, 0, 0);
     }
     return parsed;
-  }
-
-  private normalizeDateStart(date: Date): Date {
-    const normalized = new Date(date);
-    normalized.setHours(0, 0, 0, 0);
-    return normalized;
-  }
-
-  private normalizeDateEnd(date: Date): Date {
-    const normalized = new Date(date);
-    normalized.setHours(23, 59, 59, 999);
-    return normalized;
   }
 }
