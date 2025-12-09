@@ -30,8 +30,14 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
       const prototype = Object.getPrototypeOf(instance);
       // Scan all methods in the prototype
       const methods = Object.getOwnPropertyNames(prototype).filter(
-        (name) =>
-          name !== 'constructor' && typeof prototype[name] === 'function',
+        (name) => {
+          if (name === 'constructor') {
+            return false;
+          }
+
+          const descriptor = Object.getOwnPropertyDescriptor(prototype, name);
+          return !!descriptor && typeof descriptor.value === 'function';
+        },
       );
 
       methods.forEach((method) => {
