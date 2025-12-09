@@ -92,10 +92,8 @@ export class TablesService {
   ): Promise<PaginatedTableResponse> {
     const restaurantIds =
       await this.accessControl.findRestaurantIdsByOwner(ownerId);
-      console.log('Owner restaurant IDs:', restaurantIds);
 
     if (restaurantIds.length === 0) {
-      console.log('Owner has no restaurants, returning empty result set.');
       const page = query.pagination?.page ?? 1;
       const limit = query.pagination?.limit ?? 10;
       return {
@@ -113,7 +111,6 @@ export class TablesService {
     // If restaurantId is provided in query, verify ownership
     if (query.restaurantId) {
       if (!restaurantIds.includes(query.restaurantId)) {
-        console.log(`Owner does not own restaurant ${query.restaurantId}, returning empty result set.`);
         const page = query.pagination?.page ?? 1;
         const limit = query.pagination?.limit ?? 10;
         return {
@@ -280,9 +277,11 @@ export class TablesService {
       };
     },
   })
-  async selectTable(command: SelectTableCommand): Promise<TableSelectionResponse> {
+  async selectTable(
+    command: SelectTableCommand,
+  ): Promise<TableSelectionResponse> {
     // Verify the table exists
-    const table = await this.findTable.execute({ tableId: command.tableId });
+    await this.findTable.execute({ tableId: command.tableId });
 
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5-minute hold
@@ -319,7 +318,9 @@ export class TablesService {
       };
     },
   })
-  async releaseTable(command: ReleaseTableCommand): Promise<TableSelectionResponse> {
+  async releaseTable(
+    command: ReleaseTableCommand,
+  ): Promise<TableSelectionResponse> {
     return {
       tableId: command.tableId,
       sectionId: command.sectionId,

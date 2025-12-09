@@ -28,22 +28,22 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
       }
 
       const prototype = Object.getPrototypeOf(instance);
-      this.metadataScanner.scanFromPrototype(instance, prototype, (method) => {
-        const descriptor = prototype[method];
-        if (!descriptor) {
-          return;
-        }
+      // Scan all methods in the prototype
+      const methods = Object.getOwnPropertyNames(prototype).filter(
+        (name) =>
+          name !== 'constructor' && typeof prototype[name] === 'function',
+      );
 
+      methods.forEach((method) => {
+        const descriptor = prototype[method];
         const metadata = this.reflector.get<KafkaConsumerMetadata | undefined>(
           KAFKA_CONSUMER_METADATA,
           descriptor,
         );
 
-        if (!metadata) {
-          return;
+        if (metadata) {
+          this.registerConsumer(instance, method, metadata);
         }
-
-        this.registerConsumer(instance, method, metadata);
       });
     });
 
@@ -51,11 +51,14 @@ export class KafkaConsumerExplorer implements OnApplicationBootstrap {
   }
 
   private registerConsumer(
-    instance: Record<string, any>,
+    instance: Record<string, unknown>,
     methodName: string,
     metadata: KafkaConsumerMetadata,
   ): void {
-    const handler = instance[methodName];
+    const handler = instance[methodName] as (
+      payload: unknown,
+      context: KafkaContext,
+    ) => Promise<unknown>;
 
     const boundHandler = async (payload: unknown, context: KafkaContext) =>
       handler.call(instance, payload, context);

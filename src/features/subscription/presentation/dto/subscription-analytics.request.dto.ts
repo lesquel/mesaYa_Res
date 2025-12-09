@@ -70,7 +70,7 @@ export class SubscriptionAnalyticsRequestDto {
     enum: ['day', 'week', 'month'],
   })
   @IsOptional()
-  @IsEnum(['day', 'week', 'month'] as any)
+  @IsEnum({ day: 'day', week: 'week', month: 'month' })
   granularity?: 'day' | 'week' | 'month';
 
   toQuery(): SubscriptionAnalyticsQuery {

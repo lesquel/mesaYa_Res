@@ -9,6 +9,7 @@ import {
 import {
   ListNearbyRestaurantsQuery,
   ListRestaurantsQuery,
+  RestaurantOwnerOptionDto,
 } from '../../../../application/dto';
 import { PaginatedResult } from '@shared/application/types/pagination';
 import { RestaurantRepositoryPort } from '../../../../application/ports';
@@ -21,7 +22,6 @@ import type {
   RestaurantCreate,
   RestaurantUpdate,
 } from '../../../../domain/types';
-import { RestaurantOwnerOptionDto } from '../../../../application/dto';
 
 @Injectable()
 export class RestaurantTypeOrmRepository

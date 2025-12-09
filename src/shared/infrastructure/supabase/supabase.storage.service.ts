@@ -9,7 +9,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
 
-const FILENAME_SAFE_REGEX = /[^a-zA-Z0-9-_\.]/g;
+const FILENAME_SAFE_REGEX = /[^a-zA-Z0-9-_.]/g;
 
 export interface UploadParams {
   buffer: Buffer;
@@ -163,7 +163,7 @@ export class SupabaseStorageService {
 
   private isTransientError(err: unknown): boolean {
     if (!err) return false;
-    const e = err as any;
+    const e = err as { code?: string; message?: string; name?: string };
     // DNS lookup or network errors
     if (e?.code === 'EAI_AGAIN') return true;
     if (typeof e?.message === 'string' && e.message.includes('getaddrinfo'))
@@ -184,7 +184,7 @@ export class SupabaseStorageService {
 
   private normalizeFilename(originalName: string): string {
     const base = originalName?.trim() || 'file';
-    const sanitized = base.replace(FILENAME_SAFE_REGEX, '-');
+    const sanitized = base.replaceAll(FILENAME_SAFE_REGEX, '-');
     return sanitized.slice(-200);
   }
 }

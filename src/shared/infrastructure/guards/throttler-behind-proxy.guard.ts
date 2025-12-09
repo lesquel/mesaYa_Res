@@ -19,8 +19,7 @@ import { Request } from 'express';
  */
 @Injectable()
 export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
-  // eslint-disable-next-line @typescript-eslint/require-await
-  protected async getTracker(req: Request): Promise<string> {
+  protected getTracker(req: Request): string | Promise<string> {
     // Intenta obtener la IP real desde los headers de proxy
     const forwarded = req.headers['x-forwarded-for'];
     const realIp = req.headers['x-real-ip'];

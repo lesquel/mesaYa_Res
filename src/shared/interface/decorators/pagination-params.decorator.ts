@@ -24,9 +24,10 @@ export interface PaginationParamsOptions {
  */
 export const PaginationParams = createParamDecorator(
   (
-    options: PaginationParamsOptions = {},
+    options: PaginationParamsOptions | undefined,
     ctx: ExecutionContext,
   ): PaginatedQueryParams => {
+    const opts = options ?? {};
     const request = ctx.switchToHttp().getRequest<Request>();
 
     const dto = plainToInstance(PaginationDto, request.query, {
@@ -38,7 +39,7 @@ export const PaginationParams = createParamDecorator(
       skipMissingProperties: true,
       whitelist: true,
       // allowExtraParams toggles whether unknown query params cause validation failure
-      forbidNonWhitelisted: !options.allowExtraParams,
+      forbidNonWhitelisted: !opts.allowExtraParams,
     });
 
     if (validationErrors.length > 0) {
@@ -46,17 +47,19 @@ export const PaginationParams = createParamDecorator(
     }
 
     const route =
-      options.defaultRoute ??
+      opts.defaultRoute ??
       request.baseUrl ??
       request.path ??
       request.originalUrl ??
       '/';
 
-    const allowSearch = options.allowSearch ?? true;
+    const allowSearch = opts.allowSearch ?? true;
 
-    const effectiveLimit = dto.limit ?? (dto as any).pageSize ?? undefined;
+    const pageSize = (dto as Record<string, unknown>).pageSize;
+    const effectiveLimit =
+      dto.limit ?? (typeof pageSize === 'number' ? pageSize : undefined);
 
-    const filters = options.allowExtraParams
+    const filters = opts.allowExtraParams
       ? extractFilterParams(request.query)
       : undefined;
 
