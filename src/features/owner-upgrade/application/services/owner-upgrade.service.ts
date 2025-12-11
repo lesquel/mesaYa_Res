@@ -1,5 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { KafkaEmit, KAFKA_TOPICS } from '@shared/infrastructure/kafka';
+import {
+  KafkaEmit,
+  KafkaProducer,
+  KafkaService,
+  KAFKA_TOPICS,
+  EVENT_TYPES,
+} from '@shared/infrastructure/kafka';
 import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
 import { AuthService } from '@features/auth/application/services/auth.service';
 import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
@@ -38,6 +44,7 @@ export class OwnerUpgradeService {
     private readonly restaurantRepository: RestaurantRepositoryPort,
     @Inject(OWNER_UPGRADE_REQUEST_REPOSITORY)
     private readonly upgradeRepository: OwnerUpgradeRequestRepositoryPort,
+    @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
   async listRequests(
@@ -60,6 +67,17 @@ export class OwnerUpgradeService {
     return OwnerUpgradeResponseDto.fromEntity(entity);
   }
 
+  @KafkaEmit({
+    topic: KAFKA_TOPICS.OWNER_UPGRADE,
+    payload: ({ result, args, toPlain }) => {
+      const entity = result as OwnerUpgradeResponseDto;
+      return {
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: entity.requestId,
+        data: toPlain(entity),
+      };
+    },
+  })
   async apply(
     dto: OwnerUpgradeRequestDto,
     userId: string,
@@ -92,17 +110,19 @@ export class OwnerUpgradeService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.OWNER_UPGRADE_STATUS_CHANGED,
+    topic: KAFKA_TOPICS.OWNER_UPGRADE,
     payload: ({ result, args }) => {
       const [, decision] = args as [string, OwnerUpgradeDecisionDto, string];
       const entity = result as OwnerUpgradeResponseDto;
       return {
-        action: `owner.upgrade.${entity.status.toLowerCase()}`,
-        entityId: entity.requestId,
-        userId: args[0],
-        status: entity.status,
-        assignedRestaurantId: entity.assignedRestaurantId,
-        decision: decision.status,
+        event_type: EVENT_TYPES.STATUS_CHANGED,
+        entity_id: entity.requestId,
+        data: {
+          userId: args[0],
+          status: entity.status,
+          assignedRestaurantId: entity.assignedRestaurantId,
+          decision: decision.status,
+        },
       };
     },
   })

@@ -3,6 +3,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import {
   CreateMenuUseCase,
@@ -74,14 +75,15 @@ export class MenuService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.MENU_CREATED,
+    topic: KAFKA_TOPICS.MENUS,
     payload: ({ result, toPlain }) => {
       const entity = toPlain(result ?? {});
-      const entityId = (entity as { menuId?: string }).menuId ?? null;
+      const entityId = (entity as { menuId?: string }).menuId ?? '';
       return {
-        action: 'menu.created',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: entityId,
+        entity_subtype: 'menu',
+        data: entity,
       };
     },
   })
@@ -105,18 +107,19 @@ export class MenuService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.MENU_UPDATED,
+    topic: KAFKA_TOPICS.MENUS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateMenuDto];
       const entity = toPlain(result ?? {});
       const entityId =
         (command?.menuId as string | undefined) ||
         (entity as { menuId?: string }).menuId ||
-        null;
+        '';
       return {
-        action: 'menu.updated',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: entityId,
+        entity_subtype: 'menu',
+        data: entity,
       };
     },
   })
@@ -125,16 +128,17 @@ export class MenuService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.MENU_DELETED,
+    topic: KAFKA_TOPICS.MENUS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteMenuDto];
       const deletion = toPlain(result ?? {});
       const entityId =
-        (deletion as { menuId?: string }).menuId || command?.menuId || null;
+        (deletion as { menuId?: string }).menuId || command?.menuId || '';
       return {
-        action: 'menu.deleted',
-        entityId,
-        entity: deletion,
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: entityId,
+        entity_subtype: 'menu',
+        data: deletion,
       };
     },
   })

@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka/index';
 import type {
   CreateRestaurantCommand,
@@ -56,16 +57,18 @@ export class RestaurantsService {
   }
 
   /**
-   * Emits `mesa-ya.restaurants.created` with `{ action, entity, performedBy }` and returns the created restaurant DTO.
+   * Emits `mesa-ya.restaurants.events` with event_type='created' and returns the created restaurant DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESTAURANT_CREATED,
+    topic: KAFKA_TOPICS.RESTAURANTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [CreateRestaurantCommand];
+      const entity = toPlain(result);
       return {
-        action: 'restaurant.created',
-        entity: toPlain(result),
-        performedBy: command.ownerId,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.ownerId },
       };
     },
   })
@@ -96,16 +99,18 @@ export class RestaurantsService {
   }
 
   /**
-   * Emits `mesa-ya.restaurants.updated` with `{ action, entity, performedBy }` and returns the updated restaurant DTO.
+   * Emits `mesa-ya.restaurants.events` with event_type='updated' and returns the updated restaurant DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
+    topic: KAFKA_TOPICS.RESTAURANTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateRestaurantCommand];
+      const entity = toPlain(result);
       return {
-        action: 'restaurant.updated',
-        entity: toPlain(result),
-        performedBy: command.ownerId,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.ownerId },
       };
     },
   })
@@ -116,13 +121,15 @@ export class RestaurantsService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
+    topic: KAFKA_TOPICS.RESTAURANTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [ReassignRestaurantOwnerCommand];
+      const entity = toPlain(result);
       return {
-        action: 'restaurant.owner.reassigned',
-        entity: toPlain(result),
-        performedBy: command.ownerId,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.ownerId, action: 'owner_reassigned' },
       };
     },
   })
@@ -133,13 +140,15 @@ export class RestaurantsService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESTAURANT_UPDATED,
+    topic: KAFKA_TOPICS.RESTAURANTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateRestaurantStatusCommand];
+      const entity = toPlain(result);
       return {
-        action: 'restaurant.status.updated',
-        entity: toPlain(result),
-        performedBy: command.ownerId,
+        event_type: EVENT_TYPES.STATUS_CHANGED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.ownerId },
       };
     },
   })
@@ -150,18 +159,18 @@ export class RestaurantsService {
   }
 
   /**
-   * Emits `mesa-ya.restaurants.deleted` with `{ action, entityId, entity, performedBy }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.restaurants.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESTAURANT_DELETED,
+    topic: KAFKA_TOPICS.RESTAURANTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteRestaurantCommand];
       const { restaurant } = result as DeleteRestaurantResponseDto;
       return {
-        action: 'restaurant.deleted',
-        entityId: restaurant.id,
-        performedBy: command.ownerId,
-        entity: toPlain(restaurant),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: restaurant.id,
+        data: toPlain(restaurant),
+        metadata: { user_id: command.ownerId },
       };
     },
   })

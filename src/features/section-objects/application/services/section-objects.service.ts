@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import type {
   CreateSectionObjectCommand,
@@ -39,14 +40,18 @@ export class SectionObjectsService {
   ) {}
 
   /**
-   * Emits `mesa-ya.section-objects.created` with `{ action, entity }` and returns the created section-object DTO.
+   * Emits `mesa-ya.section-objects.events` with event_type='created'.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SECTION_OBJECT_CREATED,
-    payload: ({ result, toPlain }) => ({
-      action: 'section-object.created',
-      entity: toPlain(result),
-    }),
+    topic: KAFKA_TOPICS.SECTION_OBJECTS,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result);
+      return {
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+      };
+    },
   })
   async create(
     command: CreateSectionObjectCommand,
@@ -81,16 +86,17 @@ export class SectionObjectsService {
   }
 
   /**
-   * Emits `mesa-ya.section-objects.updated` with `{ action, entityId, entity }` and returns the updated section-object DTO.
+   * Emits `mesa-ya.section-objects.events` with event_type='updated'.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SECTION_OBJECT_UPDATED,
+    topic: KAFKA_TOPICS.SECTION_OBJECTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateSectionObjectCommand];
+      const entity = toPlain(result);
       return {
-        action: 'section-object.updated',
-        entityId: command.sectionObjectId,
-        entity: toPlain(result),
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: command.sectionObjectId,
+        data: entity,
       };
     },
   })
@@ -101,16 +107,16 @@ export class SectionObjectsService {
   }
 
   /**
-   * Emits `mesa-ya.section-objects.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.section-objects.events` with event_type='deleted'.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SECTION_OBJECT_DELETED,
+    topic: KAFKA_TOPICS.SECTION_OBJECTS,
     payload: ({ result, toPlain }) => {
       const { sectionObject } = result as DeleteSectionObjectResponseDto;
       return {
-        action: 'section-object.deleted',
-        entityId: sectionObject.id,
-        entity: toPlain(sectionObject),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: sectionObject.id,
+        data: toPlain(sectionObject),
       };
     },
   })

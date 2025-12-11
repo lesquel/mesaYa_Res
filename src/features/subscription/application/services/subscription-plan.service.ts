@@ -4,6 +4,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import {
   CreateSubscriptionPlanUseCase,
@@ -78,18 +79,19 @@ export class SubscriptionPlanService {
   }
 
   /**
-   * Emits `mesa-ya.subscription-plans.created` with `{ action, entityId, entity }` and returns the created plan DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='created' and entity_subtype='plan'.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_PLAN_CREATED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, toPlain }) => {
       const entity = toPlain(result ?? {});
       const entityId =
-        (entity as { subscriptionPlanId?: string }).subscriptionPlanId ?? null;
+        (entity as { subscriptionPlanId?: string }).subscriptionPlanId ?? '';
       return {
-        action: 'subscription-plan.created',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: entityId,
+        entity_subtype: 'plan',
+        data: entity,
       };
     },
   })
@@ -112,21 +114,22 @@ export class SubscriptionPlanService {
   }
 
   /**
-   * Emits `mesa-ya.subscription-plans.updated` with `{ action, entityId, entity }` and returns the updated plan DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='updated' and entity_subtype='plan'.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_PLAN_UPDATED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateSubscriptionPlanDto];
       const entity = toPlain(result ?? {});
       const entityId =
         (command?.subscriptionPlanId as string | undefined) ||
         (entity as { subscriptionPlanId?: string }).subscriptionPlanId ||
-        null;
+        '';
       return {
-        action: 'subscription-plan.updated',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: entityId,
+        entity_subtype: 'plan',
+        data: entity,
       };
     },
   })
@@ -137,21 +140,22 @@ export class SubscriptionPlanService {
   }
 
   /**
-   * Emits `mesa-ya.subscription-plans.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='deleted' and entity_subtype='plan'.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_PLAN_DELETED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteSubscriptionPlanDto];
       const deletion = toPlain(result ?? {});
       const entityId =
         (deletion as { subscriptionPlanId?: string }).subscriptionPlanId ||
         command?.subscriptionPlanId ||
-        null;
+        '';
       return {
-        action: 'subscription-plan.deleted',
-        entityId,
-        entity: deletion,
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: entityId,
+        entity_subtype: 'plan',
+        data: deletion,
       };
     },
   })

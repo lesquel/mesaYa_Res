@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka/index';
 import type {
   CreateImageCommand,
@@ -35,14 +36,18 @@ export class ImagesService {
   ) {}
 
   /**
-   * Emits `mesa-ya.images.created` with `{ action, entity }` and returns the created image DTO.
+   * Emits `mesa-ya.images.events` with event_type='created' and returns the created image DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.IMAGE_CREATED,
-    payload: ({ result, toPlain }) => ({
-      action: 'image.created',
-      entity: toPlain(result),
-    }),
+    topic: KAFKA_TOPICS.IMAGES,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result);
+      return {
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+      };
+    },
   })
   async create(command: CreateImageCommand): Promise<ImageResponseDto> {
     return this.createImage.execute(command);
@@ -57,16 +62,17 @@ export class ImagesService {
   }
 
   /**
-   * Emits `mesa-ya.images.updated` with `{ action, entityId, entity }` and returns the updated image DTO.
+   * Emits `mesa-ya.images.events` with event_type='updated' and returns the updated image DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.IMAGE_UPDATED,
+    topic: KAFKA_TOPICS.IMAGES,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateImageCommand];
+      const entity = toPlain(result);
       return {
-        action: 'image.updated',
-        entityId: command.imageId,
-        entity: toPlain(result),
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: command.imageId,
+        data: entity,
       };
     },
   })
@@ -75,16 +81,16 @@ export class ImagesService {
   }
 
   /**
-   * Emits `mesa-ya.images.deleted` with `{ action, entityId, entity }` and returns the deleted image snapshot.
+   * Emits `mesa-ya.images.events` with event_type='deleted' and returns the deleted image snapshot.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.IMAGE_DELETED,
+    topic: KAFKA_TOPICS.IMAGES,
     payload: ({ result, toPlain }) => {
       const { image } = result as DeleteImageResponseDto;
       return {
-        action: 'image.deleted',
-        entityId: image.id,
-        entity: toPlain(image),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: image.id,
+        data: toPlain(image),
       };
     },
   })

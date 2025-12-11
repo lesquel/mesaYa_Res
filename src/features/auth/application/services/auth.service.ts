@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import { SignUpUseCase } from '../use-cases/sign-up.use-case';
 import { LoginUseCase } from '../use-cases/login.use-case';
@@ -39,20 +40,19 @@ export class AuthService {
   ) {}
 
   /**
-   * Emits `mesa-ya.auth.user-signed-up` with `{ action, entityId, entity, token }` and returns the auth token response.
+   * Emits `mesa-ya.auth.events` with event_type='user_signed_up' and returns the auth token response.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.AUTH_USER_SIGNED_UP,
+    topic: KAFKA_TOPICS.AUTH,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [SignUpCommand];
       const authResult = result as AuthTokenResponse | undefined;
       const entity = authResult?.user ? toPlain(authResult.user) : null;
       return {
-        action: 'auth.user.signed_up',
-        entityId: (entity as { id?: string } | null)?.id ?? null,
-        email: command.email,
-        token: authResult?.token ?? null,
-        entity,
+        event_type: EVENT_TYPES.USER_SIGNED_UP,
+        entity_id: (entity as { id?: string } | null)?.id ?? '',
+        data: entity,
+        metadata: { email: command.email },
       };
     },
   })
@@ -61,20 +61,19 @@ export class AuthService {
   }
 
   /**
-   * Emits `mesa-ya.auth.user-logged-in` with `{ action, email, entityId }` and returns the auth token response.
+   * Emits `mesa-ya.auth.events` with event_type='user_logged_in' and returns the auth token response.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.AUTH_USER_LOGGED_IN,
+    topic: KAFKA_TOPICS.AUTH,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [LoginCommand];
       const authResult = result as AuthTokenResponse | undefined;
       const entity = authResult?.user ? toPlain(authResult.user) : null;
       return {
-        action: 'auth.user.logged_in',
-        email: command.email,
-        entityId: (entity as { id?: string } | null)?.id ?? null,
-        token: authResult?.token ?? null,
-        entity,
+        event_type: EVENT_TYPES.USER_LOGGED_IN,
+        entity_id: (entity as { id?: string } | null)?.id ?? '',
+        data: entity,
+        metadata: { email: command.email },
       };
     },
   })
@@ -87,18 +86,18 @@ export class AuthService {
   }
 
   /**
-   * Emits `mesa-ya.auth.user-roles-updated` with `{ action, entityId, roles }` and returns the updated user.
+   * Emits `mesa-ya.auth.events` with event_type='roles_updated' and returns the updated user.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.AUTH_USER_ROLES_UPDATED,
+    topic: KAFKA_TOPICS.AUTH,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateUserRolesCommand];
       const entity = result ? toPlain(result) : null;
       return {
-        action: 'auth.user.roles_updated',
-        entityId: command.userId,
-        roles: command.roleNames,
-        entity,
+        event_type: EVENT_TYPES.ROLES_UPDATED,
+        entity_id: command.userId,
+        data: entity,
+        metadata: { roles: command.roleNames },
       };
     },
   })
@@ -107,18 +106,18 @@ export class AuthService {
   }
 
   /**
-   * Emits `mesa-ya.auth.role-permissions-updated` with `{ action, roleName, permissions }` and returns the updated role.
+   * Emits `mesa-ya.auth.events` with event_type='permissions_updated' and returns the updated role.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.AUTH_ROLE_PERMISSIONS_UPDATED,
+    topic: KAFKA_TOPICS.AUTH,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateRolePermissionsCommand];
       const entity = result ? toPlain(result) : null;
       return {
-        action: 'auth.role.permissions_updated',
-        roleName: command.roleName,
-        permissions: command.permissionNames,
-        entity,
+        event_type: EVENT_TYPES.PERMISSIONS_UPDATED,
+        entity_id: command.roleName,
+        data: entity,
+        metadata: { permissions: command.permissionNames },
       };
     },
   })

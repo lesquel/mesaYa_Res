@@ -2,6 +2,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import type { SectionAnalyticsQuery } from '../dto/analytics/section-analytics.query';
 import type { SectionAnalyticsResponse } from '../dto/analytics/section-analytics.response';
@@ -42,14 +43,18 @@ export class SectionsService {
   ) {}
 
   /**
-   * Emits `mesa-ya.sections.created` with `{ action, entity }` and returns the created section DTO.
+   * Emits `mesa-ya.sections.events` with event_type='created' and returns the created section DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SECTION_CREATED,
-    payload: ({ result, toPlain }) => ({
-      action: 'section.created',
-      entity: toPlain(result),
-    }),
+    topic: KAFKA_TOPICS.SECTIONS,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result);
+      return {
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+      };
+    },
   })
   async create(command: CreateSectionCommand): Promise<SectionResponseDto> {
     return this.createSectionUseCase.execute(command);
@@ -157,14 +162,18 @@ export class SectionsService {
   }
 
   /**
-   * Emits `mesa-ya.sections.updated` with `{ action, entity }` and returns the updated section DTO.
+   * Emits `mesa-ya.sections.events` with event_type='updated' and returns the updated section DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SECTION_UPDATED,
-    payload: ({ result, toPlain }) => ({
-      action: 'section.updated',
-      entity: toPlain(result),
-    }),
+    topic: KAFKA_TOPICS.SECTIONS,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result);
+      return {
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+      };
+    },
   })
   async update(command: UpdateSectionCommand): Promise<SectionResponseDto> {
     return this.updateSectionUseCase.execute(command);
@@ -193,16 +202,16 @@ export class SectionsService {
   }
 
   /**
-   * Emits `mesa-ya.sections.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.sections.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SECTION_DELETED,
+    topic: KAFKA_TOPICS.SECTIONS,
     payload: ({ result, toPlain }) => {
       const { section } = result as DeleteSectionResponseDto;
       return {
-        action: 'section.deleted',
-        entityId: section.id,
-        entity: toPlain(section),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: section.id,
+        data: toPlain(section),
       };
     },
   })

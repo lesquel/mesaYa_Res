@@ -3,14 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type { SelectQueryBuilder } from 'typeorm';
 import { Repository } from 'typeorm';
 import { toNumber } from '@shared/application/utils';
-import type { AuthAnalyticsQuery } from '../../../../application/dto/queries/auth-analytics.query';
+import type { AuthAnalyticsQuery } from '@features/auth/application/dto/queries/auth-analytics.query';
 import type {
   AuthAnalyticsRepositoryResult,
   AuthAnalyticsTrendPoint,
-} from '../../../../application/dto/responses/auth-analytics.response';
-import type { AuthAnalyticsRepositoryPort } from '../../../../application/ports/auth-analytics.repository.port';
+} from '@features/auth/application/dto/responses/auth-analytics.response';
+import type { AuthAnalyticsRepositoryPort } from '@features/auth/application/ports/auth-analytics.repository.port';
 import { UserOrmEntity } from '../entities/user.orm-entity';
-import { ReservationOrmEntity } from '@features/reservation/infrastructure/orm/reservation.orm-entity';
 
 type TotalsRaw = {
   totalUsers: string | number | null;

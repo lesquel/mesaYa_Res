@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import type { TableAnalyticsQuery } from '../dto/analytics/table-analytics.query';
 import type { TableAnalyticsResponse } from '../dto/analytics/table-analytics.response';
@@ -57,14 +58,18 @@ export class TablesService {
   ) {}
 
   /**
-   * Emits `mesa-ya.tables.created` with `{ action, entity }` and returns the created table DTO.
+   * Emits `mesa-ya.tables.events` with event_type='created' and returns the created table DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.TABLE_CREATED,
-    payload: ({ result, toPlain }) => ({
-      action: 'table.created',
-      entity: toPlain(result),
-    }),
+    topic: KAFKA_TOPICS.TABLES,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result);
+      return {
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+      };
+    },
   })
   async create(command: CreateTableCommand): Promise<TableResponseDto> {
     return this.createTable.execute(command);
@@ -163,16 +168,17 @@ export class TablesService {
   }
 
   /**
-   * Emits `mesa-ya.tables.updated` with `{ action, entityId, entity }` and returns the updated table DTO.
+   * Emits `mesa-ya.tables.events` with event_type='updated' and returns the updated table DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.TABLE_UPDATED,
+    topic: KAFKA_TOPICS.TABLES,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateTableCommand];
+      const entity = toPlain(result);
       return {
-        action: 'table.updated',
-        entityId: command.tableId,
-        entity: toPlain(result),
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: command.tableId,
+        data: entity,
       };
     },
   })
@@ -200,16 +206,16 @@ export class TablesService {
   }
 
   /**
-   * Emits `mesa-ya.tables.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.tables.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.TABLE_DELETED,
+    topic: KAFKA_TOPICS.TABLES,
     payload: ({ result, toPlain }) => {
       const { table } = result as DeleteTableResponseDto;
       return {
-        action: 'table.deleted',
-        entityId: table.id,
-        entity: toPlain(table),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: table.id,
+        data: toPlain(table),
       };
     },
   })
@@ -255,28 +261,11 @@ export class TablesService {
 
   /**
    * Temporarily selects a table during the reservation process.
-   * Emits `mesa-ya.tables.selecting` to notify other clients that this table
-   * is being selected by a user, preventing race conditions.
+   * NOTE: This is an ephemeral event - it goes through WebSocket only, NOT Kafka.
+   * WebSocket topic: WEBSOCKET_ONLY_EVENTS.TABLE_SELECTING
    *
    * The selection expires after a configurable timeout (default: 5 minutes).
    */
-  @KafkaEmit({
-    topic: KAFKA_TOPICS.TABLE_SELECTING,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [SelectTableCommand];
-      return {
-        entity: 'tables',
-        action: 'selecting',
-        resourceId: command.tableId,
-        data: toPlain(result),
-        metadata: {
-          sectionId: command.sectionId,
-          restaurantId: command.restaurantId,
-          userId: command.userId,
-        },
-      };
-    },
-  })
   async selectTable(
     command: SelectTableCommand,
   ): Promise<TableSelectionResponse> {
@@ -285,6 +274,9 @@ export class TablesService {
 
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5-minute hold
+
+    // NOTE: Emit via WebSocket service instead of Kafka for real-time ephemeral events
+    // this.websocketService.emit(WEBSOCKET_ONLY_EVENTS.TABLE_SELECTING, { ... });
 
     return {
       tableId: command.tableId,
@@ -298,29 +290,15 @@ export class TablesService {
 
   /**
    * Releases a temporarily selected table.
-   * Emits `mesa-ya.tables.released` to notify other clients that the table
-   * is available again.
+   * NOTE: This is an ephemeral event - it goes through WebSocket only, NOT Kafka.
+   * WebSocket topic: WEBSOCKET_ONLY_EVENTS.TABLE_RELEASED
    */
-  @KafkaEmit({
-    topic: KAFKA_TOPICS.TABLE_RELEASED,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [ReleaseTableCommand];
-      return {
-        entity: 'tables',
-        action: 'released',
-        resourceId: command.tableId,
-        data: toPlain(result),
-        metadata: {
-          sectionId: command.sectionId,
-          restaurantId: command.restaurantId,
-          userId: command.userId,
-        },
-      };
-    },
-  })
   async releaseTable(
     command: ReleaseTableCommand,
   ): Promise<TableSelectionResponse> {
+    // NOTE: Emit via WebSocket service instead of Kafka for real-time ephemeral events
+    // this.websocketService.emit(WEBSOCKET_ONLY_EVENTS.TABLE_RELEASED, { ... });
+
     return {
       tableId: command.tableId,
       sectionId: command.sectionId,

@@ -4,6 +4,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import {
   CreateSubscriptionUseCase,
@@ -99,18 +100,19 @@ export class SubscriptionService {
   }
 
   /**
-   * Emits `mesa-ya.subscriptions.created` with `{ action, entityId, entity }` and returns the created subscription DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='created' and returns the created subscription DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_CREATED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, toPlain }) => {
       const entity = toPlain(result ?? {});
       const entityId =
-        (entity as { subscriptionId?: string }).subscriptionId ?? null;
+        (entity as { subscriptionId?: string }).subscriptionId ?? '';
       return {
-        action: 'subscription.created',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: entityId,
+        entity_subtype: 'subscription',
+        data: entity,
       };
     },
   })
@@ -175,21 +177,22 @@ export class SubscriptionService {
   }
 
   /**
-   * Emits `mesa-ya.subscriptions.updated` with `{ action, entityId, entity }` and returns the updated subscription DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='updated' and returns the updated subscription DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_UPDATED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateSubscriptionDto];
       const entity = toPlain(result ?? {});
       const entityId =
         (command?.subscriptionId as string | undefined) ||
         (entity as { subscriptionId?: string }).subscriptionId ||
-        null;
+        '';
       return {
-        action: 'subscription.updated',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: entityId,
+        entity_subtype: 'subscription',
+        data: entity,
       };
     },
   })
@@ -198,25 +201,28 @@ export class SubscriptionService {
   }
 
   /**
-   * Emits `mesa-ya.subscriptions.updated` with `{ action, entityId, state, entity }` and returns the updated subscription DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='status_changed' and returns the updated subscription DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_UPDATED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateSubscriptionStateDto];
       const entity = toPlain(result ?? {});
       const entityId =
         (command?.subscriptionId as string | undefined) ||
         (entity as { subscriptionId?: string }).subscriptionId ||
-        null;
+        '';
       return {
-        action: 'subscription.state.updated',
-        entityId,
-        state:
-          (entity as { stateSubscription?: unknown }).stateSubscription ??
-          command?.stateSubscription ??
-          null,
-        entity,
+        event_type: EVENT_TYPES.STATUS_CHANGED,
+        entity_id: entityId,
+        entity_subtype: 'subscription',
+        data: entity,
+        metadata: {
+          state:
+            (entity as { stateSubscription?: unknown }).stateSubscription ??
+            command?.stateSubscription ??
+            null,
+        },
       };
     },
   })
@@ -227,21 +233,22 @@ export class SubscriptionService {
   }
 
   /**
-   * Emits `mesa-ya.subscriptions.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.subscriptions.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.SUBSCRIPTION_DELETED,
+    topic: KAFKA_TOPICS.SUBSCRIPTIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteSubscriptionDto];
       const deletion = toPlain(result ?? {});
       const entityId =
         (deletion as { subscriptionId?: string }).subscriptionId ||
         command?.subscriptionId ||
-        null;
+        '';
       return {
-        action: 'subscription.deleted',
-        entityId,
-        entity: deletion,
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: entityId,
+        entity_subtype: 'subscription',
+        data: deletion,
       };
     },
   })

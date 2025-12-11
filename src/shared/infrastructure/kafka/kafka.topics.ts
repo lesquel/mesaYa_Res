@@ -1,52 +1,128 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * KAFKA TOPICS - Event-Driven Architecture
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * DISEÑO OPTIMIZADO:
+ * - Un tópico por dominio (agregado) en lugar de uno por acción
+ * - El tipo de evento se especifica en el payload con `event_type`
+ * - Eventos efímeros (selecting/released) movidos a WebSocket directo
+ * - Naming convention: mesa-ya.{domain}.events
+ *
+ * PAYLOAD ESPERADO:
+ * {
+ *   event_type: 'created' | 'updated' | 'deleted' | 'status_changed' | ...,
+ *   entity_id: string,
+ *   timestamp: string (ISO 8601),
+ *   data: { ... },
+ *   metadata?: { user_id, correlation_id, ... }
+ * }
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Event Types (usar en el campo `event_type` del payload)
+// ─────────────────────────────────────────────────────────────────────────────
+export const EVENT_TYPES = {
+  CREATED: 'created',
+  UPDATED: 'updated',
+  DELETED: 'deleted',
+  STATUS_CHANGED: 'status_changed',
+  // Auth-specific
+  USER_SIGNED_UP: 'user_signed_up',
+  USER_LOGGED_IN: 'user_logged_in',
+  ROLES_UPDATED: 'roles_updated',
+  PERMISSIONS_UPDATED: 'permissions_updated',
+} as const;
+
+export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Kafka Topics - Un tópico por dominio/agregado
+// ─────────────────────────────────────────────────────────────────────────────
 export const KAFKA_TOPICS = {
-  REVIEW_CREATED: 'mesa-ya.reviews.created',
-  REVIEW_UPDATED: 'mesa-ya.reviews.updated',
-  REVIEW_DELETED: 'mesa-ya.reviews.deleted',
-  RESTAURANT_CREATED: 'mesa-ya.restaurants.created',
-  RESTAURANT_UPDATED: 'mesa-ya.restaurants.updated',
-  RESTAURANT_DELETED: 'mesa-ya.restaurants.deleted',
-  SECTION_CREATED: 'mesa-ya.sections.created',
-  SECTION_UPDATED: 'mesa-ya.sections.updated',
-  SECTION_DELETED: 'mesa-ya.sections.deleted',
-  TABLE_CREATED: 'mesa-ya.tables.created',
-  TABLE_UPDATED: 'mesa-ya.tables.updated',
-  TABLE_DELETED: 'mesa-ya.tables.deleted',
-  /** Emitted when a user temporarily selects a table during reservation flow */
-  TABLE_SELECTING: 'mesa-ya.tables.selecting',
-  /** Emitted when a user releases a temporarily selected table */
-  TABLE_RELEASED: 'mesa-ya.tables.released',
-  OBJECT_CREATED: 'mesa-ya.objects.created',
-  OBJECT_UPDATED: 'mesa-ya.objects.updated',
-  OBJECT_DELETED: 'mesa-ya.objects.deleted',
-  MENU_CREATED: 'mesa-ya.menus.created',
-  MENU_UPDATED: 'mesa-ya.menus.updated',
-  MENU_DELETED: 'mesa-ya.menus.deleted',
-  DISH_CREATED: 'mesa-ya.dishes.created',
-  DISH_UPDATED: 'mesa-ya.dishes.updated',
-  DISH_DELETED: 'mesa-ya.dishes.deleted',
-  IMAGE_CREATED: 'mesa-ya.images.created',
-  IMAGE_UPDATED: 'mesa-ya.images.updated',
-  IMAGE_DELETED: 'mesa-ya.images.deleted',
-  SECTION_OBJECT_CREATED: 'mesa-ya.section-objects.created',
-  SECTION_OBJECT_UPDATED: 'mesa-ya.section-objects.updated',
-  SECTION_OBJECT_DELETED: 'mesa-ya.section-objects.deleted',
-  RESERVATION_CREATED: 'mesa-ya.reservations.created',
-  RESERVATION_UPDATED: 'mesa-ya.reservations.updated',
-  RESERVATION_DELETED: 'mesa-ya.reservations.deleted',
-  PAYMENT_CREATED: 'mesa-ya.payments.created',
-  PAYMENT_UPDATED: 'mesa-ya.payments.updated',
-  PAYMENT_DELETED: 'mesa-ya.payments.deleted',
-  SUBSCRIPTION_CREATED: 'mesa-ya.subscriptions.created',
-  SUBSCRIPTION_UPDATED: 'mesa-ya.subscriptions.updated',
-  SUBSCRIPTION_DELETED: 'mesa-ya.subscriptions.deleted',
-  SUBSCRIPTION_PLAN_CREATED: 'mesa-ya.subscription-plans.created',
-  SUBSCRIPTION_PLAN_UPDATED: 'mesa-ya.subscription-plans.updated',
-  SUBSCRIPTION_PLAN_DELETED: 'mesa-ya.subscription-plans.deleted',
-  AUTH_USER_SIGNED_UP: 'mesa-ya.auth.user-signed-up',
-  AUTH_USER_LOGGED_IN: 'mesa-ya.auth.user-logged-in',
-  AUTH_USER_ROLES_UPDATED: 'mesa-ya.auth.user-roles-updated',
-  AUTH_ROLE_PERMISSIONS_UPDATED: 'mesa-ya.auth.role-permissions-updated',
-  OWNER_UPGRADE_STATUS_CHANGED: 'mesa-ya.owner-upgrade.status-changed',
+  /**
+   * Eventos del dominio Restaurant
+   * event_type: created | updated | deleted
+   */
+  RESTAURANTS: 'mesa-ya.restaurants.events',
+
+  /**
+   * Eventos del dominio Section (áreas del restaurante)
+   * event_type: created | updated | deleted
+   */
+  SECTIONS: 'mesa-ya.sections.events',
+
+  /**
+   * Eventos del dominio Table
+   * event_type: created | updated | deleted
+   * NOTA: Eventos efímeros (selecting/released) van por WebSocket, no Kafka
+   */
+  TABLES: 'mesa-ya.tables.events',
+
+  /**
+   * Eventos del dominio Object (mobiliario/decoración)
+   * event_type: created | updated | deleted
+   */
+  OBJECTS: 'mesa-ya.objects.events',
+
+  /**
+   * Eventos del dominio SectionObject (relación section-object)
+   * event_type: created | updated | deleted
+   */
+  SECTION_OBJECTS: 'mesa-ya.section-objects.events',
+
+  /**
+   * Eventos del dominio Menu
+   * Incluye menús y platos (dishes) como sub-entidad
+   * event_type: created | updated | deleted
+   * entity_subtype: 'menu' | 'dish'
+   */
+  MENUS: 'mesa-ya.menus.events',
+
+  /**
+   * Eventos del dominio Review
+   * event_type: created | updated | deleted
+   */
+  REVIEWS: 'mesa-ya.reviews.events',
+
+  /**
+   * Eventos del dominio Image
+   * event_type: created | updated | deleted
+   */
+  IMAGES: 'mesa-ya.images.events',
+
+  /**
+   * Eventos del dominio Reservation
+   * event_type: created | updated | deleted | status_changed
+   */
+  RESERVATIONS: 'mesa-ya.reservations.events',
+
+  /**
+   * Eventos del dominio Payment
+   * event_type: created | updated | deleted | status_changed
+   */
+  PAYMENTS: 'mesa-ya.payments.events',
+
+  /**
+   * Eventos del dominio Subscription
+   * Incluye subscripciones y planes como sub-entidades
+   * event_type: created | updated | deleted | status_changed
+   * entity_subtype: 'subscription' | 'plan'
+   */
+  SUBSCRIPTIONS: 'mesa-ya.subscriptions.events',
+
+  /**
+   * Eventos del dominio Auth/Identity
+   * event_type: user_signed_up | user_logged_in | roles_updated | permissions_updated
+   */
+  AUTH: 'mesa-ya.auth.events',
+
+  /**
+   * Eventos del dominio OwnerUpgrade (solicitudes de upgrade)
+   * event_type: status_changed
+   */
+  OWNER_UPGRADE: 'mesa-ya.owner-upgrade.events',
 } as const;
 
 export type KafkaTopic = (typeof KAFKA_TOPICS)[keyof typeof KAFKA_TOPICS];

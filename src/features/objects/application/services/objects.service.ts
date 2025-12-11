@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka/index';
 import type {
   CreateGraphicObjectCommand,
@@ -35,11 +36,15 @@ export class ObjectsService {
   ) {}
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.OBJECT_CREATED,
-    payload: ({ result, toPlain }) => ({
-      action: 'object.created',
-      entity: toPlain(result),
-    }),
+    topic: KAFKA_TOPICS.OBJECTS,
+    payload: ({ result, toPlain }) => {
+      const entity = toPlain(result);
+      return {
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+      };
+    },
   })
   async create(
     command: CreateGraphicObjectCommand,
@@ -60,13 +65,14 @@ export class ObjectsService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.OBJECT_UPDATED,
+    topic: KAFKA_TOPICS.OBJECTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateGraphicObjectCommand];
+      const entity = toPlain(result);
       return {
-        action: 'object.updated',
-        entityId: command.objectId,
-        entity: toPlain(result),
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: command.objectId,
+        data: entity,
       };
     },
   })
@@ -77,13 +83,13 @@ export class ObjectsService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.OBJECT_DELETED,
+    topic: KAFKA_TOPICS.OBJECTS,
     payload: ({ result, toPlain }) => {
       const { graphicObject } = result as DeleteGraphicObjectResponseDto;
       return {
-        action: 'object.deleted',
-        entityId: graphicObject.id,
-        entity: toPlain(graphicObject),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: graphicObject.id,
+        data: toPlain(graphicObject),
       };
     },
   })

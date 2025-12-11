@@ -3,6 +3,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import {
   CreateDishUseCase,
@@ -74,16 +75,17 @@ export class DishService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.DISH_CREATED,
+    topic: KAFKA_TOPICS.MENUS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [CreateDishDto];
       const entity = toPlain(result ?? {});
-      const entityId = (entity as { dishId?: string }).dishId ?? null;
+      const entityId = (entity as { dishId?: string }).dishId ?? '';
       return {
-        action: 'dish.created',
-        entityId,
-        restaurantId: command?.restaurantId ?? null,
-        entity,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: entityId,
+        entity_subtype: 'dish',
+        data: entity,
+        metadata: { restaurant_id: command?.restaurantId ?? null },
       };
     },
   })
@@ -120,18 +122,19 @@ export class DishService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.DISH_UPDATED,
+    topic: KAFKA_TOPICS.MENUS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateDishDto];
       const entity = toPlain(result ?? {});
       const entityId =
         (command?.dishId as string | undefined) ||
         (entity as { dishId?: string }).dishId ||
-        null;
+        '';
       return {
-        action: 'dish.updated',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: entityId,
+        entity_subtype: 'dish',
+        data: entity,
       };
     },
   })
@@ -140,16 +143,17 @@ export class DishService {
   }
 
   @KafkaEmit({
-    topic: KAFKA_TOPICS.DISH_DELETED,
+    topic: KAFKA_TOPICS.MENUS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteDishDto];
       const deletion = toPlain(result ?? {});
       const entityId =
-        (deletion as { dishId?: string }).dishId || command?.dishId || null;
+        (deletion as { dishId?: string }).dishId || command?.dishId || '';
       return {
-        action: 'dish.deleted',
-        entityId,
-        entity: deletion,
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: entityId,
+        entity_subtype: 'dish',
+        data: deletion,
       };
     },
   })

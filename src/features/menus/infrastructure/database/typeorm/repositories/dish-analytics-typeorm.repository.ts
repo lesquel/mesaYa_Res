@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 import { toNumber } from '@shared/application/utils';
-import type { DishAnalyticsQuery } from '../../../../application/dtos/analytics/dish-analytics.query';
+import type { DishAnalyticsQuery } from '@features/menus/application/dtos/analytics/dish-analytics.query';
 import type {
   DishAnalyticsRepositoryResult,
   DishAnalyticsRepositoryTotals,
-} from '../../../../application/dtos/analytics/dish-analytics.response';
-import type { DishAnalyticsRepositoryPort } from '../../../../application/ports/dish-analytics.repository.port';
+} from '@features/menus/application/dtos/analytics/dish-analytics.response';
+import type { DishAnalyticsRepositoryPort } from '@features/menus/application/ports/dish-analytics.repository.port';
 import { DishOrmEntity } from '../orm/index';
 
 interface DishTotalsRaw {

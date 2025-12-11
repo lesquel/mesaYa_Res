@@ -4,6 +4,7 @@ import {
   KafkaEmit,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import {
   CreatePaymentUseCase,
@@ -92,17 +93,17 @@ export class PaymentService {
   }
 
   /**
-   * Emits `mesa-ya.payments.created` with `{ action, entityId, entity }` and returns the created payment DTO.
+   * Emits `mesa-ya.payments.events` with event_type='created' and returns the created payment DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.PAYMENT_CREATED,
+    topic: KAFKA_TOPICS.PAYMENTS,
     payload: ({ result, toPlain }) => {
       const entity = toPlain(result ?? {});
-      const entityId = (entity as { paymentId?: string }).paymentId ?? null;
+      const entityId = (entity as { paymentId?: string }).paymentId ?? '';
       return {
-        action: 'payment.created',
-        entityId,
-        entity,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: entityId,
+        data: entity,
       };
     },
   })
@@ -153,25 +154,27 @@ export class PaymentService {
   }
 
   /**
-   * Emits `mesa-ya.payments.updated` with `{ action, entityId, status, entity }` and returns the updated payment DTO.
+   * Emits `mesa-ya.payments.events` with event_type='status_changed' and returns the updated payment DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.PAYMENT_UPDATED,
+    topic: KAFKA_TOPICS.PAYMENTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdatePaymentStatusDto];
       const entity = toPlain(result ?? {});
       const entityId =
         (command?.paymentId as string | undefined) ||
         (entity as { paymentId?: string }).paymentId ||
-        null;
+        '';
       return {
-        action: 'payment.updated',
-        entityId,
-        status:
-          (entity as { paymentStatus?: unknown }).paymentStatus ??
-          command?.status ??
-          null,
-        entity,
+        event_type: EVENT_TYPES.STATUS_CHANGED,
+        entity_id: entityId,
+        data: entity,
+        metadata: {
+          status:
+            (entity as { paymentStatus?: unknown }).paymentStatus ??
+            command?.status ??
+            null,
+        },
       };
     },
   })
@@ -182,21 +185,21 @@ export class PaymentService {
   }
 
   /**
-   * Emits `mesa-ya.payments.deleted` with `{ action, entityId, entity }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.payments.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.PAYMENT_DELETED,
+    topic: KAFKA_TOPICS.PAYMENTS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeletePaymentDto];
       const deletion = toPlain(result ?? {});
       const entityId =
         (deletion as { paymentId?: string }).paymentId ||
         command?.paymentId ||
-        null;
+        '';
       return {
-        action: 'payment.deleted',
-        entityId,
-        entity: deletion,
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: entityId,
+        data: deletion,
       };
     },
   })

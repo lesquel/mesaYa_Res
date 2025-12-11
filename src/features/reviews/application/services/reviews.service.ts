@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import type {
   CreateReviewCommand,
@@ -41,16 +42,18 @@ export class ReviewsService {
   ) {}
 
   /**
-   * Emits `mesa-ya.reviews.created` with `{ action, entity, performedBy }` and returns the created review DTO.
+   * Emits `mesa-ya.reviews.events` with event_type='created' and returns the created review DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.REVIEW_CREATED,
+    topic: KAFKA_TOPICS.REVIEWS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [CreateReviewCommand];
+      const entity = toPlain(result);
       return {
-        action: 'review.created',
-        entity: toPlain(result),
-        performedBy: command.userId,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.userId },
       };
     },
   })
@@ -73,16 +76,18 @@ export class ReviewsService {
   }
 
   /**
-   * Emits `mesa-ya.reviews.updated` with `{ action, entity, performedBy }` and returns the updated review DTO.
+   * Emits `mesa-ya.reviews.events` with event_type='updated' and returns the updated review DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.REVIEW_UPDATED,
+    topic: KAFKA_TOPICS.REVIEWS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateReviewCommand];
+      const entity = toPlain(result);
       return {
-        action: 'review.updated',
-        entity: toPlain(result),
-        performedBy: command.userId,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.userId },
       };
     },
   })
@@ -91,17 +96,18 @@ export class ReviewsService {
   }
 
   /**
-   * Emits `mesa-ya.reviews.updated` with `{ action, entityId, entity, moderated: true }` and returns the moderated review DTO.
+   * Emits `mesa-ya.reviews.events` with event_type='updated' for moderation.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.REVIEW_UPDATED,
+    topic: KAFKA_TOPICS.REVIEWS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [ModerateReviewCommand];
+      const entity = toPlain(result);
       return {
-        action: 'review.moderated',
-        entityId: command.reviewId,
-        moderated: true,
-        entity: toPlain(result),
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: command.reviewId,
+        data: entity,
+        metadata: { action: 'moderated' },
       };
     },
   })
@@ -110,18 +116,18 @@ export class ReviewsService {
   }
 
   /**
-   * Emits `mesa-ya.reviews.deleted` with `{ action, entityId, entity, performedBy }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.reviews.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.REVIEW_DELETED,
+    topic: KAFKA_TOPICS.REVIEWS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteReviewCommand];
       const { review } = result as DeleteReviewResponseDto;
       return {
-        action: 'review.deleted',
-        entityId: review.id,
-        performedBy: command.userId,
-        entity: toPlain(review),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: review.id,
+        data: toPlain(review),
+        metadata: { user_id: command.userId },
       };
     },
   })

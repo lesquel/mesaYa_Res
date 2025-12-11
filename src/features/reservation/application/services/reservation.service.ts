@@ -4,6 +4,7 @@ import {
   KafkaProducer,
   KafkaService,
   KAFKA_TOPICS,
+  EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
 import type {
   CreateReservationCommand,
@@ -38,16 +39,18 @@ export class ReservationService {
   ) {}
 
   /**
-   * Emits `mesa-ya.reservations.created` with `{ action, entity, performedBy }` and returns the created reservation DTO.
+   * Emits `mesa-ya.reservations.events` with event_type='created' and returns the created reservation DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESERVATION_CREATED,
+    topic: KAFKA_TOPICS.RESERVATIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [CreateReservationCommand];
+      const entity = toPlain(result);
       return {
-        action: 'reservation.created',
-        entity: toPlain(result),
-        performedBy: command.userId,
+        event_type: EVENT_TYPES.CREATED,
+        entity_id: (entity as { id?: string }).id ?? '',
+        data: entity,
+        metadata: { user_id: command.userId },
       };
     },
   })
@@ -74,17 +77,18 @@ export class ReservationService {
   }
 
   /**
-   * Emits `mesa-ya.reservations.updated` with `{ action, entityId, entity, performedBy }` and returns the updated reservation DTO.
+   * Emits `mesa-ya.reservations.events` with event_type='updated' and returns the updated reservation DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESERVATION_UPDATED,
+    topic: KAFKA_TOPICS.RESERVATIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [UpdateReservationCommand];
+      const entity = toPlain(result);
       return {
-        action: 'reservation.updated',
-        entityId: command.reservationId,
-        entity: toPlain(result),
-        performedBy: command.userId,
+        event_type: EVENT_TYPES.UPDATED,
+        entity_id: command.reservationId,
+        data: entity,
+        metadata: { user_id: command.userId },
       };
     },
   })
@@ -95,18 +99,18 @@ export class ReservationService {
   }
 
   /**
-   * Emits `mesa-ya.reservations.deleted` with `{ action, entityId, entity, performedBy }` and returns the deletion snapshot DTO.
+   * Emits `mesa-ya.reservations.events` with event_type='deleted' and returns the deletion snapshot DTO.
    */
   @KafkaEmit({
-    topic: KAFKA_TOPICS.RESERVATION_DELETED,
+    topic: KAFKA_TOPICS.RESERVATIONS,
     payload: ({ result, args, toPlain }) => {
       const [command] = args as [DeleteReservationCommand];
       const { reservation } = result as DeleteReservationResponseDto;
       return {
-        action: 'reservation.deleted',
-        entityId: reservation.id,
-        performedBy: command.userId,
-        entity: toPlain(reservation),
+        event_type: EVENT_TYPES.DELETED,
+        entity_id: reservation.id,
+        data: toPlain(reservation),
+        metadata: { user_id: command.userId },
       };
     },
   })
