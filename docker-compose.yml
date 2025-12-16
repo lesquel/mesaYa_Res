@@ -1,56 +1,18 @@
+# =============================================================================
+# MesaYA Backend (NestJS) - Docker Compose
+# =============================================================================
+# IMPORTANTE: Ejecutar primero el docker-compose.yml de la raíz del proyecto
+# para levantar Kafka antes de este servicio.
+#
+# Uso:
+#   cd ../ && docker compose up -d   # Levantar Kafka primero
+#   docker compose up -d             # Luego levantar este servicio
+# =============================================================================
+
 services:
-  kafka:
-    image: apache/kafka:3.9.0
-    hostname: kafka
-    container_name: kafka
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-    ports:
-      - '9092:9092'
-      - '29092:29092'
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'bash',
-          '-c',
-          '/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:29092 --list >/dev/null 2>&1',
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 10
-
-  kafka-init:
-    image: apache/kafka:3.9.0
-    depends_on:
-      kafka:
-        condition: service_healthy
-    volumes:
-      - ./scripts/kafka:/opt/kafka-init:ro
-    entrypoint: ['/bin/bash', '/opt/kafka-init/create-topics.sh']
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    restart: 'no'
-
   app:
     build: .
-    depends_on:
-      kafka:
-        condition: service_healthy
-      kafka-init:
-        condition: service_completed_successfully
+    container_name: mesaya-backend
     env_file:
       - .env
     environment:
@@ -59,6 +21,14 @@ services:
       KAFKA_GROUP_ID: mesa-ya-group
       NODE_ENV: production
     ports:
-      - '3000:3000'
-    command: ['npm', 'run', 'start:prod']
+      - "3000:3000"
+    command: ["npm", "run", "start:prod"]
+    networks:
+      - mesaya-network
     restart: unless-stopped
+
+# Conectar a la red compartida de infraestructura
+networks:
+  mesaya-network:
+    external: true
+    name: mesaya-network
