@@ -1,0 +1,122 @@
+/**
+ * Chatbot DTOs - Request and Response data transfer objects
+ */
+
+import {
+  IsIn,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  IsOptional,
+  IsArray,
+  ValidateNested,
+  ArrayMaxSize,
+} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+/**
+ * Supported languages for chatbot responses
+ */
+export type ChatLanguage = 'es' | 'en';
+
+/**
+ * Message in conversation history
+ */
+export class ChatHistoryMessageDto {
+  @ApiProperty({
+    description: 'Message sender',
+    enum: ['user', 'assistant'],
+    example: 'user',
+  })
+  @IsIn(['user', 'assistant'], {
+    message: 'Role must be either "user" or "assistant"',
+  })
+  @IsNotEmpty()
+  role: 'user' | 'assistant';
+
+  @ApiProperty({
+    description: 'Message content',
+    example: 'How do I make a reservation?',
+  })
+  @IsString()
+  @IsNotEmpty()
+  content: string;
+}
+
+/**
+ * Chat request DTO - Matches the Python chatbot service contract
+ */
+export class ChatRequestDto {
+  @ApiProperty({
+    description: 'User role in the platform',
+    enum: ['client', 'restaurant'],
+    example: 'client',
+  })
+  @IsIn(['client', 'restaurant'], {
+    message: 'Role must be either "client" or "restaurant"',
+  })
+  @IsNotEmpty()
+  role: 'client' | 'restaurant';
+
+  @ApiProperty({
+    description: 'User message or question',
+    example: 'How do I make a reservation?',
+    maxLength: 1000,
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'Message cannot be empty' })
+  @MaxLength(1000, { message: 'Message cannot exceed 1000 characters' })
+  message: string;
+
+  @ApiPropertyOptional({
+    description: 'Response language (es for Spanish, en for English)',
+    enum: ['es', 'en'],
+    default: 'es',
+    example: 'es',
+  })
+  @IsOptional()
+  @IsIn(['es', 'en'], { message: 'Language must be either "es" or "en"' })
+  language?: ChatLanguage = 'es';
+
+  @ApiPropertyOptional({
+    description: 'Conversation history for context (max 20 messages)',
+    type: [ChatHistoryMessageDto],
+    default: [],
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20, { message: 'History cannot exceed 20 messages' })
+  @ValidateNested({ each: true })
+  @Type(() => ChatHistoryMessageDto)
+  history?: ChatHistoryMessageDto[] = [];
+}
+
+/**
+ * Chat response DTO - Matches the Python chatbot service response
+ */
+export class ChatResponseDto {
+  @ApiProperty({
+    description: 'AI-generated response from the chatbot',
+    example:
+      'Para hacer una reserva:\n1. Busca el restaurante deseado\n2. Selecciona fecha y hora\n3. Confirma tu reservación',
+  })
+  response: string;
+}
+
+/**
+ * Chatbot error response DTO
+ */
+export class ChatbotErrorDto {
+  @ApiProperty({
+    description: 'Error message',
+    example: 'Chatbot service is temporarily unavailable',
+  })
+  message: string;
+
+  @ApiProperty({
+    description: 'Error code',
+    example: 'CHATBOT_UNAVAILABLE',
+  })
+  code: string;
+}
