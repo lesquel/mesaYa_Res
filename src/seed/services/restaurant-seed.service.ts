@@ -5,7 +5,7 @@ import type { SectionRepositoryPort } from '@features/sections/application/ports
 import { SECTION_REPOSITORY } from '@features/sections/application/ports/section-repository.port';
 import type { TableRepositoryPort } from '@features/tables/application/ports/table-repository.port';
 import { TABLE_REPOSITORY } from '@features/tables/application/ports/table-repository.port';
-import { AuthProxyService } from '@features/auth/infrastructure/messaging/auth-proxy.service';
+import { AUTH_PROVIDER, type IAuthProvider } from '@features/auth';
 import { RestaurantEntity } from '@features/restaurants/domain/entities/restaurant.entity';
 import type { RestaurantDay } from '@features/restaurants/domain/entities/values/restaurant-day';
 import { Section } from '@features/sections/domain/entities/section.entity';
@@ -24,7 +24,7 @@ export class RestaurantSeedService {
   constructor(
     @Inject(RESTAURANT_REPOSITORY)
     private readonly restaurantRepository: RestaurantRepositoryPort,
-    private readonly authProxy: AuthProxyService,
+    @Inject(AUTH_PROVIDER) private readonly authProvider: IAuthProvider,
     @Inject(SECTION_REPOSITORY)
     private readonly sectionRepository: SectionRepositoryPort,
     @Inject(TABLE_REPOSITORY)
@@ -44,18 +44,18 @@ export class RestaurantSeedService {
     }
 
     for (const restaurantSeed of restaurantsSeed) {
-      const ownerResponse = await this.authProxy.findUserByEmail(
+      const owner = await this.authProvider.findUserByEmail(
         restaurantSeed.ownerEmail,
       );
 
-      if (!ownerResponse.success || !ownerResponse.data) {
+      if (!owner) {
         this.logger.warn(
           `Skipping restaurant ${restaurantSeed.name}: owner not found in Auth MS`,
         );
         continue;
       }
 
-      const ownerId = ownerResponse.data.id;
+      const ownerId = owner.id;
 
       const restaurantId = randomUUID();
       const restaurant = RestaurantEntity.create(

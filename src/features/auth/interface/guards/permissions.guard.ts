@@ -1,9 +1,23 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
+import { CurrentUserVo } from '../../domain/value-objects/current-user.value-object';
 
+/**
+ * Guard que valida permisos del usuario.
+ *
+ * Lee permisos requeridos de metadatos (@Permissions decorator).
+ * Usa método hasPermission() del value object.
+ */
 @Injectable()
 export class PermissionsGuard implements CanActivate {
+  private readonly logger = new Logger(PermissionsGuard.name);
+
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -17,20 +31,23 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user as
-      | { roles?: Array<{ permissions?: Array<{ name: string }> }> }
-      | undefined;
+    const user = request.user as CurrentUserVo | undefined;
 
-    if (!user?.roles) {
+    if (!user || !(user instanceof CurrentUserVo)) {
+      this.logger.warn('User is not a CurrentUserVo');
       return false;
     }
 
-    const userPermissions = user.roles.flatMap(
-      (role) => role.permissions?.map((permission) => permission.name) ?? [],
+    const hasAllPermissions = requiredPermissions.every((permission) =>
+      user.hasPermission(permission),
     );
 
-    return requiredPermissions.every((permission) =>
-      userPermissions.includes(permission),
-    );
+    if (!hasAllPermissions) {
+      this.logger.warn(
+        `User ${user.userId} lacks required permissions: ${requiredPermissions.join(', ')}`,
+      );
+    }
+
+    return hasAllPermissions;
   }
 }

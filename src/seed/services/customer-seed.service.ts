@@ -3,7 +3,7 @@ import type { ReservationRepositoryPort } from '@features/reservation/applicatio
 import { RESERVATION_REPOSITORY } from '@features/reservation/application/ports/reservation-repository.port';
 import type { ReviewRepositoryPort } from '@features/reviews/application/ports/review-repository.port';
 import { REVIEW_REPOSITORY } from '@features/reviews/application/ports/review-repository.port';
-import { AuthProxyService } from '@features/auth/infrastructure/messaging/auth-proxy.service';
+import { AUTH_PROVIDER, type IAuthProvider } from '@features/auth';
 import { ReservationEntity } from '@features/reservation/domain/entities/reservation.entity';
 import { Review } from '@features/reviews/domain/entities/review.entity';
 import { reservationsSeed, reviewsSeed } from '../data';
@@ -14,7 +14,7 @@ import { RestaurantSeedService } from './restaurant-seed.service';
  * Customer Seed Service.
  *
  * Seeds reservations and reviews using user IDs from Auth MS.
- * Uses AuthProxyService to look up users by email.
+ * Uses IAuthProvider to look up users by email.
  */
 @Injectable()
 export class CustomerSeedService {
@@ -27,7 +27,7 @@ export class CustomerSeedService {
     private readonly reservationRepository: ReservationRepositoryPort,
     @Inject(REVIEW_REPOSITORY)
     private readonly reviewRepository: ReviewRepositoryPort,
-    private readonly authProxy: AuthProxyService,
+    @Inject(AUTH_PROVIDER) private readonly authProvider: IAuthProvider,
     private readonly restaurantSeedService: RestaurantSeedService,
   ) {}
 
@@ -49,18 +49,18 @@ export class CustomerSeedService {
 
     for (const reservationSeed of reservationsSeed) {
       // Get user from Auth MS
-      const userResponse = await this.authProxy.findUserByEmail(
+      const user = await this.authProvider.findUserByEmail(
         reservationSeed.userEmail,
       );
 
-      if (!userResponse.success || !userResponse.data) {
+      if (!user) {
         this.logger.warn(
           `Skipping reservation: user ${reservationSeed.userEmail} not found in Auth MS`,
         );
         continue;
       }
 
-      const userId = userResponse.data.id;
+      const userId = user.id;
 
       const restaurantId = this.restaurantSeedService.getRestaurantId(
         reservationSeed.restaurantIndex,
@@ -118,18 +118,18 @@ export class CustomerSeedService {
 
     for (const reviewSeed of reviewsSeed) {
       // Get user from Auth MS
-      const userResponse = await this.authProxy.findUserByEmail(
+      const user = await this.authProvider.findUserByEmail(
         reviewSeed.userEmail,
       );
 
-      if (!userResponse.success || !userResponse.data) {
+      if (!user) {
         this.logger.warn(
           `Skipping review: user ${reviewSeed.userEmail} not found in Auth MS`,
         );
         continue;
       }
 
-      const userId = userResponse.data.id;
+      const userId = user.id;
 
       const restaurantId = this.restaurantSeedService.getRestaurantId(
         reviewSeed.restaurantIndex,

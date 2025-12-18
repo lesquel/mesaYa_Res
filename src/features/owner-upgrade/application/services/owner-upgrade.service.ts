@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   KafkaEmit,
   KafkaProducer,
@@ -6,11 +6,12 @@ import {
   KAFKA_TOPICS,
   EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
-import { AuthRoleName } from '@features/auth/domain/enums';
 import {
-  AuthProxyService,
-  type AuthUserData,
-} from '@features/auth/infrastructure/messaging/auth-proxy.service';
+  AuthRoleName,
+  AUTH_PROVIDER,
+  type IAuthProvider,
+  type ProviderUserInfo,
+} from '@features/auth';
 import type { OwnerUpgradeRequestRepositoryPort } from '../ports/owner-upgrade-request.repository.port';
 import { OwnerUpgradeRequestEntity } from '../../domain/owner-upgrade-request.entity';
 import { OwnerUpgradeRequestStatus } from '../../domain/owner-upgrade-request-status.enum';
@@ -36,13 +37,13 @@ import { NotFoundException } from '@nestjs/common';
 /**
  * Owner Upgrade Service.
  *
- * Now uses AuthProxyService to communicate with Auth MS for user operations.
+ * Uses IAuthProvider to communicate with Auth MS for user operations.
  * No local user repository - users live in Auth MS only.
  */
 @Injectable()
 export class OwnerUpgradeService {
   constructor(
-    private readonly authProxy: AuthProxyService,
+    @Inject(AUTH_PROVIDER) private readonly authProvider: IAuthProvider,
     @Inject(RESTAURANT_REPOSITORY)
     private readonly restaurantRepository: RestaurantRepositoryPort,
     @Inject(OWNER_UPGRADE_REQUEST_REPOSITORY)
@@ -174,18 +175,18 @@ export class OwnerUpgradeService {
   /**
    * Get user info from Auth MS.
    */
-  private async getUserFromAuthMs(userId: string): Promise<AuthUserData> {
-    const response = await this.authProxy.findUserById(userId);
-    if (!response.success || !response.data) {
+  private async getUserFromAuthMs(userId: string): Promise<ProviderUserInfo> {
+    const user = await this.authProvider.findUserById(userId);
+    if (!user) {
       throw new NotFoundException(`User ${userId} not found`);
     }
-    return response.data;
+    return user;
   }
 
   /**
    * Check if user already has OWNER role.
    */
-  private userAlreadyOwner(user: AuthUserData): boolean {
+  private userAlreadyOwner(user: ProviderUserInfo): boolean {
     return user.roles.some((role) => role === AuthRoleName.OWNER);
   }
 }
