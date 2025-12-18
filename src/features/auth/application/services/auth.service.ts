@@ -1,142 +1,108 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
-import {
-  AuthProxyService,
-  AuthTokenData,
-} from '../../infrastructure/messaging/auth-proxy.service';
-import { SignUpCommand } from '../dto/commands/sign-up.command';
-import { LoginCommand } from '../dto/commands/login.command';
-import type { AuthTokenResponse } from '../dto/responses/auth-token.response';
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { IAuthProvider, AUTH_PROVIDER } from '../ports/auth-provider.port';
+import { SignUpInput } from '../dto/inputs/sign-up.input';
+import { LoginInput } from '../dto/inputs/login.input';
+import { AuthTokenOutput } from '../dto/outputs/auth-token.output';
+import { AuthUserOutput } from '../dto/outputs/auth-user.output';
+import { AuthErrorMapper } from './auth-error.mapper';
+import { AuthDomainError } from '../../domain/errors';
 
 /**
- * Simplified AuthService that delegates ALL authentication operations to Auth MS.
+ * Application Service para autenticación.
  *
- * This service acts as a pure proxy - no local user storage or management.
- * Users live exclusively in Auth MS.
+ * Responsabilidades:
+ * - Orquestar flujos de signup/login/logout
+ * - Usar puerto IAuthProvider (agnóstico de transporte)
+ * - Mapear DTOs de entrada/salida
+ * - Manejar errores de dominio
+ *
+ * NO depende de:
+ * - Kafka, HTTP, o detalles de infraestructura
+ * - AuthProxyService directamente
  */
 @Injectable()
 export class AuthService {
-  constructor(private readonly authProxy: AuthProxyService) {}
+  private readonly logger = new Logger(AuthService.name);
+
+  constructor(
+    @Inject(AUTH_PROVIDER) private readonly authProvider: IAuthProvider,
+  ) {}
 
   /**
-   * Delegates signup to Auth MS via Kafka.
+   * Registra un nuevo usuario.
+   * @throws AuthDomainError
    */
-  async signup(command: SignUpCommand): Promise<AuthTokenResponse> {
-    const [firstName, ...lastNameParts] = (command.name || '').split(' ');
-    const lastName = lastNameParts.join(' ') || '';
+  async signup(input: SignUpInput): Promise<AuthTokenOutput> {
+    try {
+      const providerData = await this.authProvider.signUp({
+        email: input.email,
+        password: input.password,
+        firstName: input.getFirstName(),
+        lastName: input.getLastName(),
+        phone: input.phone,
+      });
 
-    const response = await this.authProxy.signUp({
-      email: command.email,
-      password: command.password,
-      firstName: firstName || '',
-      lastName: lastName,
-      phone: command.phone,
-    });
-
-    if (!response.success || !response.data) {
-      throw this.mapProxyError(response.error);
+      return AuthTokenOutput.fromProvider(providerData);
+    } catch (error) {
+      throw AuthErrorMapper.fromException(error);
     }
-
-    return this.mapTokenDataToResponse(response.data);
   }
 
   /**
-   * Delegates login to Auth MS via Kafka.
+   * Autentica un usuario.
+   * @throws AuthDomainError
    */
-  async login(command: LoginCommand): Promise<AuthTokenResponse> {
-    const response = await this.authProxy.login({
-      email: command.email,
-      password: command.password,
-    });
+  async login(input: LoginInput): Promise<AuthTokenOutput> {
+    try {
+      const providerData = await this.authProvider.login({
+        email: input.email,
+        password: input.password,
+      });
 
-    if (!response.success || !response.data) {
-      throw this.mapProxyError(response.error);
+      return AuthTokenOutput.fromProvider(providerData);
+    } catch (error) {
+      throw AuthErrorMapper.fromException(error);
     }
-
-    return this.mapTokenDataToResponse(response.data);
   }
 
   /**
-   * Gets current user info from Auth MS.
+   * Obtiene usuario autenticado por ID.
+   * @returns null si usuario no existe, nunca lanza.
    */
-  async getCurrentUser(
-    userId: string,
-  ): Promise<AuthTokenResponse['user'] | null> {
-    const response = await this.authProxy.findUserById(userId);
-
-    if (!response.success || !response.data) {
-      return null;
-    }
-
-    return {
-      id: response.data.id,
-      email: response.data.email,
-      name: `${response.data.firstName} ${response.data.lastName}`.trim(),
-      roles: response.data.roles.map((roleName) => ({
-        name: roleName,
-        permissions: [],
-      })),
-    };
+  async getCurrentUser(userId: string): Promise<AuthUserOutput | null> {
+    const userData = await this.authProvider.findUserById(userId);
+    return userData ? AuthUserOutput.fromProvider(userData) : null;
   }
 
   /**
-   * Refreshes access token via Auth MS.
+   * Renueva access token.
+   * @throws AuthDomainError
    */
-  async refreshToken(refreshToken: string): Promise<AuthTokenResponse> {
-    const response = await this.authProxy.refreshToken({ refreshToken });
-
-    if (!response.success || !response.data) {
-      throw this.mapProxyError(response.error);
+  async refreshToken(refreshToken: string): Promise<AuthTokenOutput> {
+    try {
+      const providerData = await this.authProvider.refreshToken({
+        refreshToken,
+      });
+      return AuthTokenOutput.fromProvider(providerData);
+    } catch (error) {
+      throw AuthErrorMapper.fromException(error);
     }
-
-    return this.mapTokenDataToResponse(response.data);
   }
 
   /**
-   * Logs out user via Auth MS.
+   * Cierra sesión del usuario.
    */
   async logout(userId: string, revokeAll = false): Promise<void> {
-    await this.authProxy.logout({ userId, revokeAll });
-  }
-
-  private mapTokenDataToResponse(data: AuthTokenData): AuthTokenResponse {
-    return {
-      user: {
-        id: data.user.id,
-        email: data.user.email,
-        name: `${data.user.firstName} ${data.user.lastName}`.trim(),
-        roles: data.user.roles.map((roleName) => ({
-          name: roleName,
-          permissions: [],
-        })),
-      },
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-    };
-  }
-
-  private mapProxyError(error?: {
-    code: string;
-    message: string;
-  }): UnauthorizedException | BadRequestException {
-    if (!error) {
-      return new BadRequestException('Unknown authentication error');
-    }
-
-    switch (error.code) {
-      case 'INVALID_CREDENTIALS':
-        return new UnauthorizedException('Invalid email or password');
-      case 'EMAIL_ALREADY_IN_USE':
-        return new BadRequestException('Email is already registered');
-      case 'USER_NOT_FOUND':
-        return new UnauthorizedException('User not found');
-      case 'AUTH_MS_UNREACHABLE':
-        return new BadRequestException(error.message);
-      default:
-        return new BadRequestException(error.message);
+    try {
+      await this.authProvider.logout({ userId, revokeAll });
+    } catch (error) {
+      // Logout no debe fallar por error de conexión
+      // Solo loguear si falla
+      if (error instanceof AuthDomainError) {
+        this.logger.warn(`Logout failed for user ${userId}: ${error.message}`);
+      } else {
+        this.logger.warn(`Logout failed for user ${userId}:`, error);
+      }
     }
   }
 }
