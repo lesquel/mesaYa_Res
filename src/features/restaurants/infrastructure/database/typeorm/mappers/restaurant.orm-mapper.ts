@@ -99,8 +99,9 @@ export class RestaurantOrmMapper {
     entity.id = snapshot.id;
     entity.name = snapshot.name;
     entity.description = snapshot.description ?? null;
-    entity.location = snapshot.location.label || snapshot.location.address;
-    entity.locationPayload = {
+    
+    // Build locationPayload first as the source of truth
+    const locationPayload = {
       label: snapshot.location.label,
       address: snapshot.location.address,
       city: snapshot.location.city,
@@ -110,8 +111,13 @@ export class RestaurantOrmMapper {
       longitude: snapshot.location.longitude ?? null,
       placeId: snapshot.location.placeId ?? null,
     } satisfies RestaurantLocationSnapshot;
-    entity.locationLatitude = snapshot.location.latitude ?? null;
-    entity.locationLongitude = snapshot.location.longitude ?? null;
+    
+    entity.locationPayload = locationPayload;
+    // Sync all location fields from the single source of truth
+    entity.location = locationPayload.label || locationPayload.address;
+    entity.locationLatitude = locationPayload.latitude;
+    entity.locationLongitude = locationPayload.longitude;
+    
     entity.openTime = snapshot.openTime;
     entity.closeTime = snapshot.closeTime;
     entity.daysOpen = snapshot.daysOpen;

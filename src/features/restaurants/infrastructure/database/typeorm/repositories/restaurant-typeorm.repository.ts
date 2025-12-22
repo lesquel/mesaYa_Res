@@ -289,7 +289,7 @@ export class RestaurantTypeOrmRepository
 
     if (query.city) {
       qb.andWhere(
-        `unaccent(LOWER(${alias}.location)) LIKE unaccent(LOWER(:filterCity))`,
+        `unaccent(LOWER(${alias}.location_payload->>'city')) LIKE unaccent(LOWER(:filterCity))`,
         {
           filterCity: `%${query.city}%`,
         },
