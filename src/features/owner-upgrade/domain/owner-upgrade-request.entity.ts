@@ -1,22 +1,12 @@
 import { randomUUID } from 'crypto';
-import { OwnerUpgradeRequestStatus } from './owner-upgrade-request-status.enum';
+import { OwnerUpgradeRequestStatus } from './enums';
+import type {
+  CreateOwnerUpgradeRequestProps,
+  OwnerUpgradeRequestProps,
+} from './types';
 
-export interface OwnerUpgradeRequestProps {
-  id?: string | null;
-  userId: string;
-  restaurantName: string;
-  restaurantLocation: string;
-  restaurantDescription?: string | null;
-  preferredSubscriptionPlanId?: string | null;
-  status?: OwnerUpgradeRequestStatus;
-  userNote?: string | null;
-  adminNote?: string | null;
-  assignedRestaurantId?: string | null;
-  processedBy?: string | null;
-  processedAt?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// Re-export for backward compatibility
+export type { OwnerUpgradeRequestProps } from './types';
 
 export class OwnerUpgradeRequestEntity {
   private readonly idValue: string;
@@ -52,14 +42,9 @@ export class OwnerUpgradeRequestEntity {
     this.updatedAtValue = props.updatedAt ?? new Date();
   }
 
-  static create(props: {
-    userId: string;
-    restaurantName: string;
-    restaurantLocation: string;
-    restaurantDescription?: string | null;
-    preferredSubscriptionPlanId?: string | null;
-    userNote?: string | null;
-  }): OwnerUpgradeRequestEntity {
+  static create(
+    props: CreateOwnerUpgradeRequestProps,
+  ): OwnerUpgradeRequestEntity {
     return new OwnerUpgradeRequestEntity({
       ...props,
       status: OwnerUpgradeRequestStatus.PENDING,

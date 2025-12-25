@@ -1,10 +1,6 @@
 import { AuthPermission } from './auth-permission.entity';
 
-export enum AuthRoleName {
-  USER = 'USER',
-  OWNER = 'OWNER',
-  ADMIN = 'ADMIN',
-}
+export { AuthRoleName } from '../enums';
 
 export interface AuthRoleProps {
   id?: string | null;

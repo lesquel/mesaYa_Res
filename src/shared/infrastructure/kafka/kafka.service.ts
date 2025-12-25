@@ -12,7 +12,7 @@ import { Kafka, Partitioners, logLevel } from 'kafkajs';
 import { firstValueFrom } from 'rxjs';
 import type { Observable } from 'rxjs';
 import type { KafkaConsumerMetadata } from './kafka.constants';
-import { KAFKA_TOPICS } from './kafka.topics';
+import { KAFKA_TOPICS } from './kafka-topics.constant';
 
 interface KafkaConsumerDefinition extends KafkaConsumerMetadata {
   handler: KafkaConsumerHandler;

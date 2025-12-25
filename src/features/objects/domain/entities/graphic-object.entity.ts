@@ -1,26 +1,12 @@
-export type GraphicObjectProps = {
-  posX: number;
-  posY: number;
-  width: number;
-  height: number;
-  imageId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
+import type { GraphicObjectProps, GraphicObjectSnapshot } from '../types';
+import { InvalidGraphicObjectDataError } from '../errors';
 
-export class InvalidGraphicObjectDataError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'InvalidGraphicObjectDataError';
-  }
-}
-
-export class GraphicObjectNotFoundError extends Error {
-  constructor(id: string) {
-    super(`GraphicObject not found: ${id}`);
-    this.name = 'GraphicObjectNotFoundError';
-  }
-}
+// Re-export for backward compatibility
+export type { GraphicObjectProps, GraphicObjectSnapshot } from '../types';
+export {
+  GraphicObjectNotFoundError,
+  InvalidGraphicObjectDataError,
+} from '../errors';
 
 export class GraphicObject {
   private constructor(

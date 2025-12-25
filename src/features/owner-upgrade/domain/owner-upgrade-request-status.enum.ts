@@ -1,5 +1,2 @@
-export enum OwnerUpgradeRequestStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
+// Re-export for backward compatibility
+export { OwnerUpgradeRequestStatus } from './enums';

@@ -1,37 +1,19 @@
-export interface ImageProps {
-  url: string;
-  storagePath: string;
-  title: string;
-  description: string;
-  entityId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type {
+  CreateImageProps,
+  ImageProps,
+  ImageSnapshot,
+  UpdateImageProps,
+} from '../types';
+import { InvalidImageDataError } from '../errors';
 
-export type CreateImageProps = Omit<ImageProps, 'createdAt' | 'updatedAt'> & {
-  createdAt?: Date;
-  updatedAt?: Date;
-};
-
-export type UpdateImageProps = Partial<
-  Omit<ImageProps, 'createdAt' | 'updatedAt'>
->;
-
-export type ImageSnapshot = ImageProps & { id: string };
-
-export class InvalidImageDataError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'InvalidImageDataError';
-  }
-}
-
-export class ImageNotFoundError extends Error {
-  constructor(id: string) {
-    super(`Image not found: ${id}`);
-    this.name = 'ImageNotFoundError';
-  }
-}
+// Re-export for backward compatibility
+export type {
+  CreateImageProps,
+  ImageProps,
+  ImageSnapshot,
+  UpdateImageProps,
+} from '../types';
+export { ImageNotFoundError, InvalidImageDataError } from '../errors';
 
 export class Image {
   private constructor(

@@ -8,29 +8,13 @@ import {
 } from './values';
 import {
   type SectionCreate,
+  type SectionLayoutMetadata,
+  type SectionProps,
   type SectionSnapshot,
+  type SectionStatus,
   type SectionUpdate,
 } from '../types';
-import type {
-  SectionLayoutMetadata,
-  SectionStatus,
-} from '../types/section-layout-metadata.type';
-import type { TableSnapshot } from '@features/tables/domain/entities/table.entity';
-
-interface SectionProps {
-  restaurantId: SectionRestaurantId;
-  name: SectionName;
-  description: SectionDescription;
-  width: SectionWidth;
-  height: SectionHeight;
-  posX: number;
-  posY: number;
-  status: SectionStatus;
-  layoutMetadata: SectionLayoutMetadata;
-  tables?: TableSnapshot[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import type { TableSnapshot } from '@features/tables/domain/types';
 
 export class Section {
   private constructor(

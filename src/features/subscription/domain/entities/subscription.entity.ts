@@ -1,18 +1,8 @@
 import { SubscriptionStateVO } from './values';
+import type { SubscriptionProps, SubscriptionSnapshot } from '../types';
 
-export interface SubscriptionProps {
-  // We store only identifiers to keep the aggregate decoupled from other aggregates.
-  subscriptionPlanId: string;
-  restaurantId: string;
-  subscriptionStartDate: Date;
-  stateSubscription: SubscriptionStateVO;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface SubscriptionSnapshot extends SubscriptionProps {
-  subscriptionId: string;
-}
+// Re-export for backward compatibility
+export type { SubscriptionProps, SubscriptionSnapshot } from '../types';
 
 export class SubscriptionEntity {
   private constructor(

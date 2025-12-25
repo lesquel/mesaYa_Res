@@ -1,37 +1,14 @@
-export type SectionObjectProps = {
-  sectionId: string;
-  objectId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import type { SectionObjectProps, SectionObjectSnapshot } from '../types';
+import { InvalidSectionObjectDataError } from '../errors';
 
-export class InvalidSectionObjectDataError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'InvalidSectionObjectDataError';
-  }
-}
-
-export class SectionObjectNotFoundError extends Error {
-  constructor(id: string) {
-    super(`SectionObject not found: ${id}`);
-    this.name = 'SectionObjectNotFoundError';
-  }
-}
-
-export class SectionNotFoundForSectionObjectError extends Error {
-  constructor(sectionId: string) {
-    super(`Section not found for SectionObject: ${sectionId}`);
-    this.name = 'SectionNotFoundForSectionObjectError';
-  }
-}
-
-export class ObjectNotFoundForSectionObjectError extends Error {
-  constructor(objectId: string) {
-    super(`Object not found for SectionObject: ${objectId}`);
-    this.name = 'ObjectNotFoundForSectionObjectError';
-  }
-}
+// Re-export for backward compatibility
+export type { SectionObjectProps, SectionObjectSnapshot } from '../types';
+export {
+  InvalidSectionObjectDataError,
+  ObjectNotFoundForSectionObjectError,
+  SectionNotFoundForSectionObjectError,
+  SectionObjectNotFoundError,
+} from '../errors';
 
 export class SectionObject {
   private constructor(

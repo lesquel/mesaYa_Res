@@ -7,18 +7,10 @@ import {
 } from './values';
 import {
   type ReviewCreate,
+  type ReviewProps,
   type ReviewSnapshot,
   type ReviewUpdate,
 } from '../types';
-
-interface ReviewProps {
-  restaurantId: ReviewRestaurantId;
-  userId: ReviewUserId;
-  rating: ReviewRating;
-  comment: ReviewComment;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 export class Review {
   private constructor(

@@ -1,24 +1,9 @@
 import { MoneyVO } from '@shared/domain/entities/values';
-import { DishSnapshot } from './dish.entity';
-import type { MenuCategorySnapshot } from '../types';
+import type { DishSnapshot } from './dish.entity';
+import type { MenuCategorySnapshot, MenuProps, MenuSnapshot } from '../types';
 
-export interface MenuProps {
-  restaurantId: string;
-  name: string;
-  description: string;
-  price: MoneyVO;
-  imageId: string | null;
-  dishes?: DishSnapshot[];
-  categories?: MenuCategorySnapshot[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface MenuSnapshot extends MenuProps {
-  menuId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+// Re-export for backward compatibility
+export type { MenuProps, MenuSnapshot } from '../types';
 
 export class MenuEntity {
   private constructor(

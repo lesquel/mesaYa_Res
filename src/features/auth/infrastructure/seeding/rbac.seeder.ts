@@ -1,10 +1,8 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { AuthPermission } from '../../domain/entities/auth-permission.entity';
 import { AuthRole } from '../../domain/entities/auth-role.entity';
-import {
-  DEFAULT_PERMISSION_NAMES,
-  DEFAULT_ROLES,
-} from '../../domain/constants/rbac.constants';
+import { DEFAULT_PERMISSION_NAMES } from '../../domain/constants/default-permission-names.constant';
+import { DEFAULT_ROLES } from '../../domain/constants/default-roles.constant';
 import { type AuthPermissionRepositoryPort } from '../../application/ports/permission.repository.port';
 import { type AuthRoleRepositoryPort } from '../../application/ports/role.repository.port';
 import {

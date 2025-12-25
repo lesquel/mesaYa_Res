@@ -2,20 +2,10 @@ import { MoneyVO } from '@shared/domain/entities/values';
 import { PaymentTypeEnum } from '../enums';
 import { PaymentMustBeAssociatedError } from '../errors/payment-must-be-associated.error';
 import { PaymentStatusVO } from './values';
+import type { PaymentProps, PaymentSnapshot } from '../types';
 
-export interface PaymentProps {
-  amount: MoneyVO;
-  date: Date;
-  paymentStatus: PaymentStatusVO;
-  reservationId?: string;
-  subscriptionId?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface PaymentSnapshot extends PaymentProps {
-  paymentId: string;
-}
+// Re-export for backward compatibility
+export type { PaymentProps, PaymentSnapshot } from '../types';
 
 export class PaymentEntity {
   private constructor(

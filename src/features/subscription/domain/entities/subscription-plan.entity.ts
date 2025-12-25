@@ -1,18 +1,15 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 import { SubscriptionPlanPeriodVO, SubscriptionPlanStateVO } from './values';
+import type {
+  SubscriptionPlanProps,
+  SubscriptionPlanSnapshot,
+} from '../types';
 
-export interface SubscriptionPlanProps {
-  name: string;
-  price: MoneyVO;
-  subscriptionPeriod: SubscriptionPlanPeriodVO;
-  stateSubscriptionPlan: SubscriptionPlanStateVO;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface SubscriptionPlanSnapshot extends SubscriptionPlanProps {
-  subscriptionPlanId: string;
-}
+// Re-export for backward compatibility
+export type {
+  SubscriptionPlanProps,
+  SubscriptionPlanSnapshot,
+} from '../types';
 
 export class SubscriptionPlanEntity {
   private constructor(

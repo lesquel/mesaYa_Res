@@ -1,46 +1,20 @@
 import { InvalidTableDataError } from '../errors/invalid-table-data.error';
+import type {
+  TableStatus,
+  TableProps,
+  TableSnapshot,
+  CreateTableProps,
+  UpdateTableProps,
+} from '../types';
 
-export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'BLOCKED';
-
-export interface TableProps {
-  sectionId: string;
-  number: number;
-  capacity: number;
-  posX: number;
-  posY: number;
-  width: number;
-  height: number;
-  tableImageId: string;
-  chairImageId: string;
-  status: TableStatus;
-  isAvailable: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface TableSnapshot extends TableProps {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface CreateTableProps {
-  sectionId: string;
-  number: number;
-  capacity: number;
-  posX: number;
-  posY: number;
-  width: number;
-  height?: number;
-  status?: TableStatus;
-  isAvailable?: boolean;
-  tableImageId: string;
-  chairImageId: string;
-}
-
-export type UpdateTableProps = Partial<
-  Omit<TableProps, 'createdAt' | 'updatedAt'>
->;
+// Re-exportar para mantener compatibilidad
+export type {
+  TableStatus,
+  TableProps,
+  TableSnapshot,
+  CreateTableProps,
+  UpdateTableProps,
+};
 
 export class Table {
   private constructor(

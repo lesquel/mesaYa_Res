@@ -4,7 +4,7 @@ import {
   KAFKA_CONSUMER_METADATA,
   KafkaConsumerMetadata,
 } from './kafka.constants';
-import type { KafkaTopic } from './kafka.topics';
+import type { KafkaTopic } from './kafka-topics.constant';
 import type { KafkaService as KafkaServiceType } from './kafka.service';
 
 export const KafkaProducer = () => Inject(KafkaService);

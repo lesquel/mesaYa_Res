@@ -1,4 +1,4 @@
-import type { TableStatus } from '../entities/table.entity';
+import type { TableStatus } from './table-status.type';
 
 export interface TableCreateRequest {
   tableId: string;

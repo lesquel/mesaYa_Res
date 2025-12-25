@@ -1,34 +1,20 @@
 import { InvalidReservationDataError } from '../errors';
-import { ReservationStatus } from '../types';
-
-export interface ReservartionProps {
-  userId: string;
-  restaurantId: string;
-  tableId: string;
-  reservationTime: Date;
-  reservationDate: Date;
-  numberOfGuests: number;
-  createdAt: Date;
-  updatedAt: Date;
-  status: ReservationStatus;
-}
-
-export type CreateReservationProps = Omit<
+import type {
+  CreateReservationProps,
   ReservartionProps,
-  'createdAt' | 'updatedAt' | 'status'
->;
+  ReservationSnapshot,
+  ReservationStatus,
+  ReservationValidationOptions,
+  UpdateReservationProps,
+} from '../types';
 
-export type UpdateReservationProps = Partial<
-  Omit<ReservartionProps, 'userId' | 'restaurantId' | 'tableId' | 'createdAt'>
->;
-
-export interface ReservationSnapshot extends ReservartionProps {
-  id: string;
-}
-
-interface ReservationValidationOptions {
-  allowPastReservation?: boolean;
-}
+// Re-export for backward compatibility
+export type {
+  CreateReservationProps,
+  ReservartionProps,
+  ReservationSnapshot,
+  UpdateReservationProps,
+} from '../types';
 
 export class ReservationEntity {
   constructor(
