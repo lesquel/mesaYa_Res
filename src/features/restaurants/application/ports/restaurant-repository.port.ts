@@ -30,4 +30,6 @@ export abstract class RestaurantRepositoryPort extends IBaseRepositoryPort<
   ): Promise<
     Array<{ restaurant: RestaurantEntity; distanceKm: number | null }>
   >;
+  /** Find a restaurant by exact name (case-insensitive) */
+  abstract findByName(name: string): Promise<RestaurantEntity | null>;
 }

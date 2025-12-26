@@ -57,7 +57,11 @@ export class TableSelectionResultDto {
   @ApiProperty({ description: 'Table identifier', format: 'uuid' })
   tableId: string;
 
-  @ApiProperty({ description: 'User who selected the table', format: 'uuid', required: false })
+  @ApiProperty({
+    description: 'User who selected the table',
+    format: 'uuid',
+    required: false,
+  })
   selectedBy?: string;
 
   @ApiProperty({ description: 'When the selection expires', required: false })

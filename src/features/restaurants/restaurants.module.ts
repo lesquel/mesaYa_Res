@@ -27,6 +27,7 @@ import {
   ListRestaurantOwnersUseCase,
   ReassignRestaurantOwnerUseCase,
   FindRestaurantUseCase,
+  FindRestaurantByNameUseCase,
   UpdateRestaurantUseCase,
   UpdateRestaurantStatusUseCase,
   DeleteRestaurantUseCase,
@@ -129,6 +130,12 @@ import type {
       provide: FindRestaurantUseCase,
       useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
         new FindRestaurantUseCase(restaurantRepository),
+      inject: [RESTAURANT_REPOSITORY],
+    },
+    {
+      provide: FindRestaurantByNameUseCase,
+      useFactory: (restaurantRepository: RestaurantRepositoryPort) =>
+        new FindRestaurantByNameUseCase(restaurantRepository),
       inject: [RESTAURANT_REPOSITORY],
     },
     {

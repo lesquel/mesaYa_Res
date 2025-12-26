@@ -54,6 +54,16 @@ export class AuthUserTypeOrmRepository implements AuthUserRepositoryPort {
       qb.andWhere('user.active = :active', { active: query.active });
     }
 
+    if (query.email) {
+      qb.andWhere('LOWER(user.email) = LOWER(:email)', { email: query.email });
+    }
+
+    if (query.name) {
+      qb.andWhere('LOWER(user.name) LIKE LOWER(:name)', {
+        name: `%${query.name}%`,
+      });
+    }
+
     if (query.restaurantId) {
       qb.innerJoin(
         ReservationOrmEntity,

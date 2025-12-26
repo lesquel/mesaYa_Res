@@ -191,7 +191,8 @@ export class TableDomainService {
     if (width < 20) width *= 80;
     if (height < 20) height *= 80;
 
-    const { width: sectionWidth, height: sectionHeight } = this.getEffectiveSectionDimensions(section);
+    const { width: sectionWidth, height: sectionHeight } =
+      this.getEffectiveSectionDimensions(section);
 
     const fitsHorizontally = posX >= 0 && posX + width <= sectionWidth;
     const fitsVertically = posY >= 0 && posY + height <= sectionHeight;
@@ -260,7 +261,8 @@ export class TableDomainService {
     const height = candidate.height;
 
     // Use section dimensions or defaults if missing/small
-    const { width: sectionWidth, height: sectionHeight } = this.getEffectiveSectionDimensions(section);
+    const { width: sectionWidth, height: sectionHeight } =
+      this.getEffectiveSectionDimensions(section);
 
     const spacePerTable = width + GAP;
     const columns = Math.max(

@@ -5,6 +5,10 @@ export interface ListUsersQuery extends PaginatedQueryParams {
   active?: boolean;
   /** Optional: scope users that have reservations in this restaurant */
   restaurantId?: string;
+  /** Filter by exact email address */
+  email?: string;
+  /** Filter by name (partial match) */
+  name?: string;
 }
 
 export type { ListUsersQuery as ListUsersQueryType };

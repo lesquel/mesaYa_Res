@@ -141,9 +141,14 @@ export class ReservationTypeOrmRepository
     return this.executePagination(qb, query);
   }
 
-  async paginateByOwner(
-    query: ListOwnerReservationsQuery,
-  ): Promise<PaginatedResult<ReservationEntity> & { userSnapshots?: Map<string, { name?: string; email?: string; phone?: string }> }> {
+  async paginateByOwner(query: ListOwnerReservationsQuery): Promise<
+    PaginatedResult<ReservationEntity> & {
+      userSnapshots?: Map<
+        string,
+        { name?: string; email?: string; phone?: string }
+      >;
+    }
+  > {
     const qb = this.buildBaseQuery().where('restaurant.ownerId = :ownerId', {
       ownerId: query.ownerId,
     });
@@ -245,7 +250,14 @@ export class ReservationTypeOrmRepository
   private async executePaginationWithUserSnapshots(
     qb: SelectQueryBuilder<ReservationOrmEntity>,
     query: ListReservationsQuery,
-  ): Promise<PaginatedResult<ReservationEntity> & { userSnapshots?: Map<string, { name?: string; email?: string; phone?: string }> }> {
+  ): Promise<
+    PaginatedResult<ReservationEntity> & {
+      userSnapshots?: Map<
+        string,
+        { name?: string; email?: string; phone?: string }
+      >;
+    }
+  > {
     const alias = qb.alias;
     // Apply optional filters (status, restaurantId, date)
     if ((query as any).status) {
@@ -308,7 +320,10 @@ export class ReservationTypeOrmRepository
     });
 
     // Build user snapshots map from ORM entities before converting to domain
-    const userSnapshots = new Map<string, { name?: string; email?: string; phone?: string }>();
+    const userSnapshots = new Map<
+      string,
+      { name?: string; email?: string; phone?: string }
+    >();
     for (const entity of paginationResult.results) {
       if (entity.user) {
         userSnapshots.set(entity.id, {

@@ -49,7 +49,10 @@ export class TablesAccessService {
     ownerId: string,
   ): Promise<void> {
     try {
-      await this.restaurantOwnership.assertRestaurantOwnership(restaurantId, ownerId);
+      await this.restaurantOwnership.assertRestaurantOwnership(
+        restaurantId,
+        ownerId,
+      );
     } catch (error) {
       if (error instanceof NotFoundError) {
         throw new TableRestaurantNotFoundError(restaurantId);

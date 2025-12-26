@@ -16,15 +16,13 @@ const customerUsers = Array.from({ length: 10 }, (_, index) => ({
   active: true,
 }));
 
-export const usersSeed = [
-  {
-    email: 'admin@mesaya.com',
-    name: 'Admin User',
-    phone: '+593987654321',
-    password: 'Admin123!@#',
-    roles: ['ADMIN'],
-    active: true,
-  },
-  ...ownerUsers,
-  ...customerUsers,
-];
+const adminUser = {
+  email: 'admin@mesaya.com',
+  name: 'Admin User',
+  phone: '+593987654321',
+  password: 'Admin123!@#',
+  roles: ['ADMIN'],
+  active: true,
+};
+
+export const usersSeed = [adminUser, ...ownerUsers, ...customerUsers];

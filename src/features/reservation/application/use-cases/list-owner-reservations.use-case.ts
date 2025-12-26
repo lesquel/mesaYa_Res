@@ -32,7 +32,9 @@ export class ListOwnerReservationsUseCase
     }
 
     const result = await this.reservationRepository.paginateByOwner(query);
-    const userSnapshots = (result as any).userSnapshots as Map<string, { name?: string; email?: string; phone?: string }> | undefined;
+    const userSnapshots = (result as any).userSnapshots as
+      | Map<string, { name?: string; email?: string; phone?: string }>
+      | undefined;
 
     return {
       ...result,

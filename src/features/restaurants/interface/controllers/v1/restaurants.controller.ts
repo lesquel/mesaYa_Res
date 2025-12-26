@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -35,6 +36,7 @@ import {
   UpdateRestaurantDto,
   RestaurantsService,
   GetRestaurantAnalyticsUseCase,
+  FindRestaurantByNameUseCase,
 } from '@features/restaurants/application';
 import { ListRestaurantReservationsUseCase } from '@features/reservation/application/use-cases/list-restaurant-reservation.use-case';
 import {
@@ -51,6 +53,7 @@ import type {
 import { NearbyRestaurantsQueryDto } from '@features/restaurants/application';
 import { RestaurantResponseSwaggerDto } from '@features/restaurants/interface/dto';
 import { UpdateRestaurantStatusRequestDto } from '@features/restaurants/interface/dto';
+import { ListRestaurantsQueryDto } from '@features/restaurants/interface/dto/list-restaurants.query.dto';
 import { RestaurantAnalyticsRequestDto } from '@features/restaurants/interface/dto/restaurant-analytics.request.dto';
 import { ScheduleSlotResponseDto } from '@features/restaurants/interface/dto';
 import { RestaurantScheduleSlotRepository } from '@features/restaurants/infrastructure/database/typeorm/repositories/restaurant-schedule-slot.repository';
@@ -64,13 +67,14 @@ export class RestaurantsController {
   constructor(
     private readonly restaurantsService: RestaurantsService,
     private readonly getRestaurantAnalytics: GetRestaurantAnalyticsUseCase,
+    private readonly findRestaurantByName: FindRestaurantByNameUseCase,
     private readonly listRestaurantReservations: ListRestaurantReservationsUseCase,
     private readonly scheduleSlotRepository: RestaurantScheduleSlotRepository,
   ) {}
 
   @Get()
   @ThrottleRead()
-  @ApiOperation({ summary: 'List restaurants' })
+  @ApiOperation({ summary: 'List restaurants with filters' })
   @PaginatedEndpoint()
   @ApiPaginatedResponse({
     model: RestaurantResponseSwaggerDto,
@@ -79,8 +83,15 @@ export class RestaurantsController {
   async findAll(
     @PaginationParams({ defaultRoute: '/restaurants', allowExtraParams: true })
     pagination: PaginatedQueryParams,
+    @Query() filters: ListRestaurantsQueryDto,
   ): Promise<PaginatedRestaurantResponse> {
-    const query: ListRestaurantsQuery = { ...pagination };
+    const query: ListRestaurantsQuery = {
+      ...pagination,
+      name: filters.name,
+      city: filters.city,
+      cuisineType: filters.cuisineType,
+      isActive: filters.isActive,
+    };
     return this.restaurantsService.list(query);
   }
 
@@ -119,6 +130,22 @@ export class RestaurantsController {
       ownerId: user.userId,
     };
     return this.restaurantsService.listByOwner(query);
+  }
+
+  @Get('by-name/:name')
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Get restaurant by name' })
+  @ApiParam({ name: 'name', description: 'Restaurant name (case-insensitive)' })
+  @ApiOkResponse({
+    description: 'Restaurant details found by name',
+    type: RestaurantResponseSwaggerDto,
+  })
+  async findByName(@Param('name') name: string): Promise<RestaurantResponseDto> {
+    const restaurant = await this.findRestaurantByName.execute({ name });
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with name "${name}" not found`);
+    }
+    return restaurant;
   }
 
   @Get(':id')

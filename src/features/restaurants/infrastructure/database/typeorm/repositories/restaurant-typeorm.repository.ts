@@ -100,6 +100,19 @@ export class RestaurantTypeOrmRepository
     return entities.map((entity) => RestaurantOrmMapper.toDomain(entity));
   }
 
+  async findByName(name: string): Promise<RestaurantEntity | null> {
+    const entity = await this.restaurantRepository.findOne({
+      where: { name },
+      relations: ['owner', 'sections', 'sections.tables'],
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return RestaurantOrmMapper.toDomain(entity);
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.restaurantRepository.delete({ id });
     if (!result.affected) {
@@ -232,6 +245,34 @@ export class RestaurantTypeOrmRepository
     query: ListRestaurantsQuery,
   ): Promise<PaginatedResult<RestaurantEntity>> {
     const alias = qb.alias;
+
+    // Apply specific filters
+    if (query.name) {
+      qb.andWhere(`LOWER(${alias}.name) LIKE LOWER(:filterName)`, {
+        filterName: `%${query.name}%`,
+      });
+    }
+
+    if (query.city) {
+      qb.andWhere(`LOWER(${alias}.location) LIKE LOWER(:filterCity)`, {
+        filterCity: `%${query.city}%`,
+      });
+    }
+
+    if (query.cuisineType) {
+      qb.andWhere(`LOWER(${alias}.description) LIKE LOWER(:cuisineType)`, {
+        cuisineType: `%${query.cuisineType}%`,
+      });
+    }
+
+    if (typeof query.isActive === 'boolean') {
+      qb.andWhere(`${alias}.isActive = :isActive`, { isActive: query.isActive });
+    }
+
+    if (query.ownerId) {
+      qb.andWhere('owner.id = :filterOwnerId', { filterOwnerId: query.ownerId });
+    }
+
     const sortMap: Record<string, string> = {
       name: `${alias}.name`,
       location: `${alias}.location`,

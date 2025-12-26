@@ -1,15 +1,9 @@
 import { MoneyVO } from '@shared/domain/entities/values';
 import { SubscriptionPlanPeriodVO, SubscriptionPlanStateVO } from './values';
-import type {
-  SubscriptionPlanProps,
-  SubscriptionPlanSnapshot,
-} from '../types';
+import type { SubscriptionPlanProps, SubscriptionPlanSnapshot } from '../types';
 
 // Re-export for backward compatibility
-export type {
-  SubscriptionPlanProps,
-  SubscriptionPlanSnapshot,
-} from '../types';
+export type { SubscriptionPlanProps, SubscriptionPlanSnapshot } from '../types';
 
 export class SubscriptionPlanEntity {
   private constructor(

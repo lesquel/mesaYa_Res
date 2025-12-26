@@ -24,8 +24,10 @@ import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoi
 import type { PaginatedQueryParams } from '@shared/application/types/pagination';
 import { GetAuthAnalyticsUseCase } from '@features/auth/application/use-cases/get-auth-analytics.use-case';
 import { FindUserByIdUseCase } from '@features/auth/application/use-cases/find-user-by-id.use-case';
+import { FindUserByEmailUseCase } from '@features/auth/application/use-cases/find-user-by-email.use-case';
 import { ListUsersUseCase } from '@features/auth/application/use-cases/list-users.use-case';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
+import { ListUsersQueryDto } from '../../dto/list-users.query.dto';
 import { PublicAuthAnalyticsResponseDto } from '../../dto/public-auth-analytics.response.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
@@ -39,12 +41,13 @@ export class UsersController {
   constructor(
     private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
+    private readonly findUserByEmailUseCase: FindUserByEmailUseCase,
     private readonly listUsersUseCase: ListUsersUseCase,
   ) {}
 
   @Get()
   @ThrottleRead()
-  @ApiOperation({ summary: 'List public users (paginated)' })
+  @ApiOperation({ summary: 'List public users (paginated with filters)' })
   @PaginatedEndpoint()
   @ApiPaginatedResponse({
     model: AuthUserResponseDto,
@@ -53,8 +56,19 @@ export class UsersController {
   async list(
     @PaginationParams({ defaultRoute: '/users', allowExtraParams: true })
     params: PaginatedQueryParams,
+    @Query() filters: ListUsersQueryDto,
   ) {
-    const query = { pagination: params, route: '/users' } as any;
+    const query = {
+      pagination: params.pagination,
+      route: '/users',
+      sortBy: params.sortBy,
+      sortOrder: params.sortOrder,
+      search: params.search,
+      role: filters.role,
+      active: filters.active,
+      email: filters.email,
+      name: filters.name,
+    };
     const paginated = await this.listUsersUseCase.execute(query);
     return {
       ...paginated,
@@ -109,6 +123,22 @@ export class UsersController {
   })
   getReservations() {
     throw new NotFoundException('Resource not found');
+  }
+
+  @Get('by-email/:email')
+  @ThrottleRead()
+  @ApiOperation({ summary: 'Get user by email address' })
+  @ApiParam({ name: 'email', description: 'Email address of the user' })
+  @ApiOkResponse({
+    description: 'User profile found by email',
+    type: AuthUserResponseDto,
+  })
+  async findByEmail(@Param('email') email: string) {
+    const user = await this.findUserByEmailUseCase.execute(email);
+    if (!user) {
+      throw new NotFoundException(`User with email "${email}" not found`);
+    }
+    return AuthUserResponseDto.fromDomain(user);
   }
 
   @Get(':id')

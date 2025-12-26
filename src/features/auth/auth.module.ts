@@ -28,6 +28,7 @@ import { UpdateRolePermissionsUseCase } from './application/use-cases/update-rol
 import { ListRolesUseCase } from './application/use-cases/list-roles.use-case';
 import { ListPermissionsUseCase } from './application/use-cases/list-permissions.use-case';
 import { FindUserByIdUseCase } from './application/use-cases/find-user-by-id.use-case';
+import { FindUserByEmailUseCase } from './application/use-cases/find-user-by-email.use-case';
 import { GetAuthAnalyticsUseCase } from './application/use-cases/get-auth-analytics.use-case';
 import { ListUsersUseCase } from './application/use-cases/list-users.use-case';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
@@ -91,6 +92,7 @@ import { AuthService } from './application/services/auth.service';
     ListRolesUseCase,
     ListPermissionsUseCase,
     FindUserByIdUseCase,
+    FindUserByEmailUseCase,
     GetAuthAnalyticsUseCase,
     ListUsersUseCase,
     AuthService,

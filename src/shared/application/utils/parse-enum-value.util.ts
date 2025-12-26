@@ -20,7 +20,7 @@ export function parseEnumValue<T extends Record<string, string>>(
   }
 
   const normalized = value.trim().toUpperCase();
-  const enumValues = Object.values(enumObject) as string[];
+  const enumValues = Object.values(enumObject);
 
   return enumValues.includes(normalized)
     ? (normalized as T[keyof T])
