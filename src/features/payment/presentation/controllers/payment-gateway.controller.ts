@@ -24,6 +24,8 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -36,13 +38,15 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { PaymentMsClientService } from '../../infrastructure/adapters/payment-ms';
+import { PAYMENT_TARGET_PORT } from '../../payment.tokens';
+import type { IPaymentTargetPort } from '../../domain/ports/payment-target.port';
 import {
   CreateReservationPaymentDto,
   PaymentCreatedResponseDto,
   PaymentDetailsResponseDto,
   PaymentVerificationResponseDto,
   CancelPaymentDto,
-} from '../dtos/payment-gateway.dto';
+} from '../dto/payment-gateway.dto';
 import type { Request } from 'express';
 
 interface AuthenticatedRequest extends Request {
@@ -58,6 +62,8 @@ interface AuthenticatedRequest extends Request {
 export class PaymentGatewayController {
   constructor(
     @Inject(LOGGER) private readonly logger: ILoggerPort,
+    @Inject(PAYMENT_TARGET_PORT)
+    private readonly targetPort: IPaymentTargetPort,
     private readonly paymentMsClient: PaymentMsClientService,
   ) {}
 
@@ -92,11 +98,20 @@ export class PaymentGatewayController {
       'PaymentGateway.createCheckout',
     );
 
-    // TODO: Validate that the reservation exists and belongs to the user
-    // const reservation = await this.reservationService.findById(dto.reservationId);
-    // if (!reservation || reservation.userId !== userId) {
-    //   throw new ForbiddenException('Invalid reservation');
-    // }
+    // Validate that the reservation exists and belongs to the user
+    const reservation = await this.targetPort.getReservationOwnership(
+      dto.reservationId,
+    );
+    if (!reservation) {
+      throw new NotFoundException(
+        `Reservation ${dto.reservationId} not found`,
+      );
+    }
+    if (reservation.userId !== userId) {
+      throw new ForbiddenException(
+        'Reservation does not belong to authenticated user',
+      );
+    }
 
     // Build success/cancel URLs
     const baseUrl =
@@ -198,10 +213,9 @@ export class PaymentGatewayController {
 
     const result = await this.paymentMsClient.verifyPayment(paymentId);
 
-    // TODO: If payment is verified, update reservation status
-    // if (result.verified) {
-    //   await this.reservationService.markAsPaid(result.metadata?.reservation_id);
-    // }
+    // Note: Reservation status update should be handled by the Reservation module
+    // listening to payment events via Kafka (mesa-ya.payments.events topic).
+    // This controller should not directly modify reservation state.
 
     return {
       paymentId: result.payment_id,
@@ -240,11 +254,13 @@ export class PaymentGatewayController {
       'PaymentGateway.cancelPayment',
     );
 
-    // TODO: Validate that the payment belongs to the user
-    // const payment = await this.paymentMsClient.getPayment(paymentId);
-    // if (payment.metadata?.user_id !== userId) {
-    //   throw new ForbiddenException('Cannot cancel this payment');
-    // }
+    // Validate that the payment belongs to the user
+    const payment = await this.paymentMsClient.getPayment(paymentId);
+    if (payment.metadata?.user_id && payment.metadata.user_id !== userId) {
+      throw new ForbiddenException(
+        'Payment does not belong to authenticated user',
+      );
+    }
 
     return await this.paymentMsClient.cancelPayment(paymentId, dto.reason);
   }

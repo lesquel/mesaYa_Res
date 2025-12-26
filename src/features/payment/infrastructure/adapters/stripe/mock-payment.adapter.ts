@@ -21,7 +21,7 @@ import {
   RefundParams,
   RefundResult,
   WebhookValidationResult,
-} from '../../../application/ports/payment-gateway.port';
+} from '../../../domain/ports/payment-gateway.port';
 
 @Injectable()
 export class MockPaymentAdapter extends IPaymentGatewayPort {

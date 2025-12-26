@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   IPaymentRepositoryPort,
   PaymentEntity,
@@ -18,6 +19,7 @@ import {
 import { PaymentStatusEnum } from '../enums';
 import { PaymentStatusVO } from '../entities/values';
 
+@Injectable()
 export class PaymentDomainService {
   constructor(private readonly paymentRepository: IPaymentRepositoryPort) {}
 
