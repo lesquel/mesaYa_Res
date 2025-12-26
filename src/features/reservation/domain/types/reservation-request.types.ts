@@ -1,41 +1,9 @@
-import type { ReservationStatus } from './reservation-status.type';
-
-export interface ReservationScheduleRequest {
-  reservationId: string;
-  userId: string;
-  restaurantId: string;
-  tableId: string;
-  reservationDate: Date;
-  reservationTime: Date;
-  numberOfGuests: number;
-  durationMinutes?: number;
-}
-
-export interface ReservationUpdateRequest {
-  reservationId: string;
-  userId: string;
-  reservationDate?: Date;
-  reservationTime?: Date;
-  numberOfGuests?: number;
-  durationMinutes?: number;
-  enforceOwnership?: boolean;
-}
-
-export interface ReservationCancellationRequest {
-  reservationId: string;
-  userId: string;
-  enforceOwnership?: boolean;
-}
-
-export interface ReservationStatusChangeRequest {
-  reservationId: string;
-  status: ReservationStatus;
-}
-
-export interface ReservationWindowQuery {
-  startAt: Date;
-  endAt: Date;
-  tableId?: string;
-  userId?: string;
-  excludeReservationId?: string;
-}
+/**
+ * Re-export module for reservation request types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { ReservationScheduleRequest } from './reservation-schedule-request.interface';
+export { ReservationUpdateRequest } from './reservation-update-request.interface';
+export { ReservationCancellationRequest } from './reservation-cancellation-request.interface';
+export { ReservationStatusChangeRequest } from './reservation-status-change-request.interface';
+export { ReservationWindowQuery } from './reservation-window-query.interface';

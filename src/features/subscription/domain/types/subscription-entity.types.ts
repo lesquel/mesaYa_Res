@@ -1,15 +1,6 @@
-import type { SubscriptionStateVO } from '../entities/values';
-
-export interface SubscriptionProps {
-  // We store only identifiers to keep the aggregate decoupled from other aggregates.
-  subscriptionPlanId: string;
-  restaurantId: string;
-  subscriptionStartDate: Date;
-  stateSubscription: SubscriptionStateVO;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface SubscriptionSnapshot extends SubscriptionProps {
-  subscriptionId: string;
-}
+/**
+ * Re-export module for subscription entity types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { SubscriptionProps } from './subscription-props.interface';
+export { SubscriptionSnapshot } from './subscription-snapshot.interface';

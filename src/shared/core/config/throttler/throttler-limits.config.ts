@@ -1,15 +1,10 @@
 /**
- * Límites de rate limiting por tipo de operación
+ * Throttler limits constant.
  *
- * Cada límite define:
- * - ttl: Tiempo de vida en milisegundos
- * - limit: Número máximo de peticiones permitidas en ese tiempo
+ * Límites de rate limiting por tipo de operación.
  */
 
-export interface ThrottlerLimit {
-  ttl: number;
-  limit: number;
-}
+import { ThrottlerLimit } from './throttler-limit.interface';
 
 /**
  * Límites personalizados para diferentes tipos de endpoints

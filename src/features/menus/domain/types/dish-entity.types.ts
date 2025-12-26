@@ -1,22 +1,6 @@
-import type { MoneyVO } from '@shared/domain/entities/values';
-
-export interface DishProps {
-  restaurantId: string;
-  name: string;
-  description: string;
-  price: MoneyVO;
-  imageId?: string;
-  menuId?: string;
-  categoryId?: string;
-  categoryName?: string;
-  categoryDescription?: string | null;
-  categoryOrder?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface DishSnapshot extends DishProps {
-  dishId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+/**
+ * Re-export module for dish entity types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { DishProps } from './dish-props.interface';
+export { DishSnapshot } from './dish-snapshot.interface';

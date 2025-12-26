@@ -1,44 +1,10 @@
-import type { DishSnapshot } from '../entities/dish.entity';
-
-export interface MenuCategorySnapshot {
-  categoryId: string;
-  menuId: string;
-  name: string;
-  description?: string | null;
-  order: number;
-  dishes: DishSnapshot[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface MenuCategoryProps {
-  restaurantId: string;
-  name: string;
-  description?: string | null;
-  icon?: string | null;
-  position?: number | null;
-  isActive?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface MenuCategoryCreate extends MenuCategoryProps {}
-
-export interface MenuCategoryUpdate {
-  categoryId: string;
-  name?: string;
-  description?: string | null;
-  icon?: string | null;
-  position?: number | null;
-  isActive?: boolean;
-}
-
-export interface MenuCategoryRecord extends MenuCategoryProps {
-  categoryId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface MenuCategoryQuery {
-  restaurantId?: string;
-}
+/**
+ * Re-export module for menu category types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { MenuCategorySnapshot } from './menu-category-snapshot.interface';
+export { MenuCategoryProps } from './menu-category-props.interface';
+export { MenuCategoryCreate } from './menu-category-create.interface';
+export { MenuCategoryUpdate } from './menu-category-update.interface';
+export { MenuCategoryRecord } from './menu-category-record.interface';
+export { MenuCategoryQuery } from './menu-category-query.interface';

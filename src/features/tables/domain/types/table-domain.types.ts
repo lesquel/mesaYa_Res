@@ -1,35 +1,7 @@
-import type { TableStatus } from './table-status.type';
-
-export interface TableCreateRequest {
-  tableId: string;
-  sectionId: string;
-  number: number;
-  capacity: number;
-  posX: number;
-  posY: number;
-  width: number;
-  height?: number;
-  status?: TableStatus;
-  isAvailable?: boolean;
-  tableImageId: string;
-  chairImageId: string;
-}
-
-export interface TableUpdateRequest {
-  tableId: string;
-  sectionId?: string;
-  number?: number;
-  capacity?: number;
-  posX?: number;
-  posY?: number;
-  width?: number;
-  height?: number;
-  status?: TableStatus;
-  isAvailable?: boolean;
-  tableImageId?: string;
-  chairImageId?: string;
-}
-
-export interface TableDeleteRequest {
-  tableId: string;
-}
+/**
+ * Re-export module for table domain types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { TableCreateRequest } from './table-create-request.interface';
+export { TableUpdateRequest } from './table-update-request.interface';
+export { TableDeleteRequest } from './table-delete-request.interface';

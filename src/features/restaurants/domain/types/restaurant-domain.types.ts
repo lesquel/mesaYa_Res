@@ -1,55 +1,9 @@
-import type { RestaurantDay } from '../entities/values/restaurant-day';
-import type { RestaurantLocationInput } from '../entities/values/restaurant-location';
-
-export interface RestaurantCreateRequest {
-  ownerId: string;
-  name: string;
-  description?: string | null;
-  location: RestaurantLocationInput;
-  openTime: string;
-  closeTime: string;
-  status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
-  adminNote?: string | null;
-  daysOpen: RestaurantDay[];
-  totalCapacity: number;
-  subscriptionId: string;
-  imageId?: string | null;
-  active?: boolean;
-}
-
-export interface RestaurantUpdateRequest {
-  restaurantId: string;
-  ownerId: string;
-  enforceOwnership?: boolean;
-  name?: string;
-  description?: string | null;
-  location?: RestaurantLocationInput;
-  openTime?: string;
-  status?: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
-  adminNote?: string | null;
-  closeTime?: string;
-  daysOpen?: RestaurantDay[];
-  totalCapacity?: number;
-  subscriptionId?: string;
-  imageId?: string | null;
-}
-
-export interface RestaurantOwnerAssignmentRequest {
-  restaurantId: string;
-  ownerId: string;
-  enforceOwnership?: boolean;
-}
-
-export interface RestaurantStatusUpdateRequest {
-  restaurantId: string;
-  ownerId: string;
-  enforceOwnership?: boolean;
-  status: 'ACTIVE' | 'SUSPENDED' | 'ARCHIVED';
-  adminNote?: string | null;
-}
-
-export interface RestaurantDeleteRequest {
-  restaurantId: string;
-  ownerId: string;
-  enforceOwnership?: boolean;
-}
+/**
+ * Re-export module for restaurant domain types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { RestaurantCreateRequest } from './restaurant-create-request.interface';
+export { RestaurantUpdateRequest } from './restaurant-update-request.interface';
+export { RestaurantOwnerAssignmentRequest } from './restaurant-owner-assignment-request.interface';
+export { RestaurantStatusUpdateRequest } from './restaurant-status-update-request.interface';
+export { RestaurantDeleteRequest } from './restaurant-delete-request.interface';

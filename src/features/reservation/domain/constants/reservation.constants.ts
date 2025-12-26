@@ -1,2 +1,6 @@
-export const RESERVATION_SLOT_DURATION_MINUTES = 90;
-export const RESERVATION_MAX_FUTURE_MONTHS = 6;
+/**
+ * Reservation constants module - Re-exports for backward compatibility.
+ */
+
+export { RESERVATION_MAX_FUTURE_MONTHS } from './reservation-max-future-months.constant';
+export { RESERVATION_SLOT_DURATION_MINUTES } from './reservation-slot-duration.constant';

@@ -1,21 +1,6 @@
-import type { MoneyVO } from '@shared/domain/entities/values';
-import type { DishSnapshot } from '../entities/dish.entity';
-import type { MenuCategorySnapshot } from './menu-category.types';
-
-export interface MenuProps {
-  restaurantId: string;
-  name: string;
-  description: string;
-  price: MoneyVO;
-  imageId: string | null;
-  dishes?: DishSnapshot[];
-  categories?: MenuCategorySnapshot[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface MenuSnapshot extends MenuProps {
-  menuId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+/**
+ * Re-export module for menu entity types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { MenuProps } from './menu-props.interface';
+export { MenuSnapshot } from './menu-snapshot.interface';

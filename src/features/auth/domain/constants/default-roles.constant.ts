@@ -1,15 +1,14 @@
+/**
+ * Default roles constant.
+ *
+ * Configuración de roles por defecto del sistema.
+ */
+
 import { AuthRoleName } from '../entities/auth-role.entity';
 import { ADMIN_PERMISSIONS } from './admin-permissions.constant';
+import { DefaultRoleDefinition } from './default-role-definition.interface';
 import { OWNER_PERMISSIONS } from './owner-permissions.constant';
 import { USER_PERMISSIONS } from './user-permissions.constant';
-
-/**
- * Interfaz que define la estructura de un rol por defecto.
- */
-export interface DefaultRoleDefinition {
-  name: AuthRoleName;
-  permNames: readonly string[];
-}
 
 /**
  * Configuración de roles por defecto del sistema.

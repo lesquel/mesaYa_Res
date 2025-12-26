@@ -1,25 +1,8 @@
-import { PaginatedQueryParams } from '@shared/application/types/pagination';
-import { MoneyVO } from '@shared/domain/entities/values';
-import { DishCreate, DishUpdate } from './dish.types';
-
-export interface MenuCreate {
-  restaurantId: string;
-  name: string;
-  description: string;
-  price: MoneyVO;
-  imageId: string | null;
-  dishes?: DishCreate[];
-}
-
-export interface MenuUpdate {
-  menuId: string;
-  name?: string;
-  description?: string;
-  price?: MoneyVO;
-  imageId?: string | null;
-  dishes?: DishUpdate[];
-}
-
-export interface MenuPaginatedQuery extends PaginatedQueryParams {
-  restaurantId?: string;
-}
+/**
+ * Re-export module for menu types
+ * Each type is defined in its own file following Single Responsibility Principle
+ */
+export { MenuCreate } from './menu-create.interface';
+export { MenuUpdate } from './menu-update.interface';
+export { MenuPaginatedQuery } from './menu-paginated-query.interface';
+export { DishCreate, DishUpdate } from './dish.types';
