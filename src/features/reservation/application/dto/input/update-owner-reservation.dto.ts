@@ -1,4 +1,4 @@
-﻿import { PartialType, PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { CreateReservationDto } from './create-reservation.dto';
 
 export class UpdateOwnerReservationDto extends PartialType(

@@ -13,8 +13,8 @@ import {
 import { PaymentOrmMapperPort } from '@features/payment/application';
 import { PAYMENT_ORM_MAPPER } from '@features/payment/payment.tokens';
 import { PaymentOrmEntity } from '../orm/payment.type-orm.entity';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListPaymentsQuery } from '@features/payment/application/dtos/input/list-payments.query';
 
 @Injectable()

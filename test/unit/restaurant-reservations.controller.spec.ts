@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { RestaurantReservationsController } from '@features/reservation/interface/controllers/v1/restaurant-reservations.controller';
 import { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import type { PaginatedQueryParams } from '@shared/application/types';
 
 describe('RestaurantReservationsController (unit)', () => {
   it('rejects an invalid restaurantId filter before calling the use case', async () => {

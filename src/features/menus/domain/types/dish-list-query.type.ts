@@ -1,4 +1,4 @@
-import { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { PaginatedQueryParams } from '@shared/application/types';
 
 export interface DishListQuery extends PaginatedQueryParams {
   restaurantId?: string;

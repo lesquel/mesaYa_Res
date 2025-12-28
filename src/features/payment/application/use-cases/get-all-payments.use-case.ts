@@ -1,6 +1,6 @@
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
-import type { PaginatedResult } from '@shared/application/types/pagination';
+import type { PaginatedQueryParams } from '@shared/application/types';
+import type { PaginatedResult } from '@shared/application/types';
 import {
   parseOptionalNumber,
   normalizeOptionalString,

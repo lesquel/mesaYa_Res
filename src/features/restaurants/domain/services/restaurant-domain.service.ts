@@ -7,13 +7,11 @@ import {
 import { normalizeId } from '@shared/application/utils';
 import { IRestaurantDomainRepositoryPort } from '../repositories/restaurant-domain-repository.port';
 import { IRestaurantOwnerPort } from '../ports/restaurant-owner.port';
-import {
-  type RestaurantCreateRequest,
-  type RestaurantDeleteRequest,
-  type RestaurantOwnerAssignmentRequest,
-  type RestaurantUpdateRequest,
-  type RestaurantStatusUpdateRequest,
-} from '../types/restaurant-domain.types';
+import type { RestaurantCreateRequest } from '../types/restaurant-create-request.interface';
+import type { RestaurantDeleteRequest } from '../types/restaurant-delete-request.interface';
+import type { RestaurantOwnerAssignmentRequest } from '../types/restaurant-owner-assignment-request.interface';
+import type { RestaurantUpdateRequest } from '../types/restaurant-update-request.interface';
+import type { RestaurantStatusUpdateRequest } from '../types/restaurant-status-update-request.interface';
 import type { RestaurantUpdate } from '../types/restaurant-update.type';
 
 export class RestaurantDomainService {

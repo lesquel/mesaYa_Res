@@ -14,8 +14,8 @@ import {
   ListRestaurantSectionsQuery,
   ListSectionsQuery,
 } from '../../../../application/dto';
-import { PaginatedResult } from '@shared/application/types/pagination';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import { type SectionRepositoryPort } from '../../../../application/ports';
 
 // Repositorio TypeORM que implementa los puertos del dominio para Sections.

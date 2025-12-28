@@ -5,7 +5,7 @@ import { UserOrmEntity } from '../entities/user.orm-entity';
 import { AuthUserOrmMapper } from '../mappers/auth-user.orm-mapper';
 import { AuthUser } from '../../../../domain/entities/auth-user.entity';
 import { type AuthUserRepositoryPort } from '../../../../application/ports/user.repository.port';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import type { ListUsersQuery } from '../../../../application/dto/input/list-users.query';
 import { SelectQueryBuilder } from 'typeorm';
 import { ReservationOrmEntity } from '@features/reservation/infrastructure/orm/reservation.orm-entity';

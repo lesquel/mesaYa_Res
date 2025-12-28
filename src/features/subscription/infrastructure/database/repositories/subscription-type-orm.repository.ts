@@ -21,8 +21,8 @@ import {
   SUBSCRIPTION_ORM_MAPPER,
   SubscriptionOrmMapperPort,
 } from '@features/subscription/application';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListSubscriptionsQuery } from '@features/subscription/application/dtos/input/list-subscriptions.query';
 
 @Injectable()

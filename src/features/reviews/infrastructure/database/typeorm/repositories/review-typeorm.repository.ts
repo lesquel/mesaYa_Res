@@ -12,8 +12,8 @@ import {
   ListReviewsQuery,
   ListRestaurantReviewsQuery,
 } from '../../../../application/dto';
-import { PaginatedResult } from '@shared/application/types/pagination';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import { type ReviewRepositoryPort } from '../../../../application/ports';
 import { IReviewDomainRepositoryPort } from '../../../../domain/repositories';
 import { ReviewOrmEntity } from '../orm';

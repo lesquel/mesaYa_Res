@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { IMenuRepositoryPort } from '../repositories/menu-repository.port';
 import { MenuEntity } from '../entities/menu.entity';
 import { MenuCreate, MenuUpdate, MenuPaginatedQuery } from '../types';

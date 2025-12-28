@@ -10,8 +10,8 @@ import {
 } from '@features/menus/domain';
 import { MenuOrmEntity, DishOrmEntity } from '../orm';
 import { MenuOrmMapper, DishOrmMapper } from '../mappers';
-import { PaginatedResult } from '@shared/application/types/pagination';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 
 // Nota: Este repositorio coordina la persistencia de Menus y Dishes.
 // Usa mappers (MenuOrmMapper, DishOrmMapper) para convertir entre capas.

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import type { ListUsersQuery } from '../dto/input/list-users.query';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { AuthUser } from '../../domain/entities/auth-user.entity';
 import type { AuthUserRepositoryPort } from '../ports/user.repository.port';
 import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';

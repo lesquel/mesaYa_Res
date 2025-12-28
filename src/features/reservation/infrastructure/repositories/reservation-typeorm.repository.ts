@@ -13,8 +13,8 @@ import {
   ListRestaurantReservationsQuery,
   ListOwnerReservationsQuery,
 } from '../../application/dto';
-import { PaginatedResult } from '@shared/application/types/pagination';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { PaginatedResult } from '@shared/application/types';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import { type ReservationRepositoryPort } from '../../application/ports';
 import { IReservationRepositoryPort } from '../../domain/repositories';
 import type { ReservationWindowQuery } from '../../domain/types';

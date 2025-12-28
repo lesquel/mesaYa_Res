@@ -7,8 +7,8 @@ import {
 } from '../../../../domain';
 import { SectionObjectOrmEntity } from '../orm';
 import { SectionObjectOrmMapper } from '../mappers';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListSectionObjectsQuery } from '../../../../application/dto';
 import { type SectionObjectRepositoryPort } from '../../../../application/ports';
 

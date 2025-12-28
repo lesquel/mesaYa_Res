@@ -4,8 +4,8 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import type {
   PaginatedQueryParams,
   PaginatedResult,
-} from '@shared/application/types/pagination';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+} from '@shared/application/types';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import {
   IDishRepositoryPort,
   DishEntity,

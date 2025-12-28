@@ -2,7 +2,7 @@ import type {
   SectionLayoutMetadata,
   SectionStatus,
 } from '@features/sections/domain/types';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import type { TableResponseDto } from '@features/tables/application/dto/output/table.response.dto';
 
 export interface SectionResponseDto {

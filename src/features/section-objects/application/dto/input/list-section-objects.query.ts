@@ -1,3 +1,3 @@
-import { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { PaginatedQueryParams } from '@shared/application/types';
 
 export type ListSectionObjectsQuery = PaginatedQueryParams;

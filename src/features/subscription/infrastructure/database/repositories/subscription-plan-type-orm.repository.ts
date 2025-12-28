@@ -13,8 +13,8 @@ import {
   SubscriptionPlanOrmMapperPort,
   SUBSCRIPTION_PLAN_ORM_MAPPER,
 } from '@features/subscription/application';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListSubscriptionPlansQuery } from '@features/subscription/application/dtos/input/list-subscription-plans.query';
 
 @Injectable()

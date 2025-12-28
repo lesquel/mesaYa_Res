@@ -2,7 +2,7 @@ import { IBaseRepositoryPort } from '@shared/application/ports/base-repo-port';
 import type {
   PaginatedQueryParams,
   PaginatedResult,
-} from '@shared/application/types/pagination';
+} from '@shared/application/types';
 
 import { DishEntity } from '../entities/dish.entity';
 import { DishCreate, DishUpdate } from '../types';

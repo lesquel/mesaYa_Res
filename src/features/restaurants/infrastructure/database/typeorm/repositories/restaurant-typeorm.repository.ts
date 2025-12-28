@@ -11,12 +11,12 @@ import {
   ListRestaurantsQuery,
   RestaurantOwnerOptionDto,
 } from '../../../../application/dto';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { RestaurantRepositoryPort } from '../../../../application/ports';
 import { RestaurantOrmEntity } from '../orm/restaurant.orm-entity';
 import { RestaurantOrmMapper } from '../mappers';
 import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import { IRestaurantDomainRepositoryPort } from '../../../../domain/repositories/restaurant-domain-repository.port';
 import type {
   RestaurantCreate,

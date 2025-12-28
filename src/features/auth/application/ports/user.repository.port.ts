@@ -7,6 +7,6 @@ export interface AuthUserRepositoryPort {
   paginate(
     query: import('../dto/input/list-users.query').ListUsersQuery,
   ): Promise<
-    import('@shared/application/types/pagination').PaginatedResult<AuthUser>
+    import('@shared/application/types').PaginatedResult<AuthUser>
   >;
 }

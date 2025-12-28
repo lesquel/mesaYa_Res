@@ -1,5 +1,5 @@
 import { Section } from '../../domain';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListRestaurantSectionsQuery, ListSectionsQuery } from '../dto';
 
 export const SECTION_REPOSITORY = Symbol('SECTION_REPOSITORY');

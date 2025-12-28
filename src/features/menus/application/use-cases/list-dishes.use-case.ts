@@ -4,7 +4,7 @@ import { DishDomainService } from '@features/menus/domain';
 import { DishMapper } from '../mappers';
 import type { DishListResponseDto } from '../dtos/output/dish-list-response.dto';
 import type { ListDishesQuery } from '../dtos/input';
-import type { PaginatedResult } from '@shared/application/types/pagination';
+import type { PaginatedResult } from '@shared/application/types';
 
 export class ListDishesUseCase
   implements UseCase<ListDishesQuery, DishListResponseDto>

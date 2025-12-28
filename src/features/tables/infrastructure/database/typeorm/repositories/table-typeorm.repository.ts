@@ -8,8 +8,8 @@ import {
 } from '../../../../domain';
 import { TableOrmEntity } from '../orm/table.orm-entity';
 import { TableOrmMapper } from '../mappers';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import {
   ListTablesQuery,
   ListSectionTablesQuery,

@@ -1,4 +1,4 @@
-import { PaginationQuery } from '@shared/application/types/pagination';
+import { PaginationQuery } from '@shared/application/types';
 
 export interface ListSubscriptionPlansQuery {
   pagination: PaginationQuery;

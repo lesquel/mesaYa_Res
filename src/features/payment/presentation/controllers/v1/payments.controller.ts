@@ -39,7 +39,7 @@ import type {
   PaymentListResponseDto,
   DeletePaymentResponseDto,
 } from '@features/payment/application';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import type { PaginatedQueryParams } from '@shared/application/types';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';

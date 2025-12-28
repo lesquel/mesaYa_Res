@@ -5,7 +5,7 @@ import {
   PaymentEntity,
   PaymentUpdate,
 } from '@features/payment/domain';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListPaymentsQuery } from '@features/payment/application/dtos/input/list-payments.query';
 
 export abstract class IPaymentRepositoryPort extends IBaseRepositoryPort<

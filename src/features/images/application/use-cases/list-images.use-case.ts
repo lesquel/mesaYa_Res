@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { Image } from '../../domain/index';
 import { ImageMapper } from '../mappers/index';
 import { IMAGE_REPOSITORY, type ImageRepositoryPort } from '../ports/index';

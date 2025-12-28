@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import type { SectionResponseDto } from '@features/sections/application/dto/output';
 import type { TableResponseDto } from '@features/tables/application/dto/output';
 

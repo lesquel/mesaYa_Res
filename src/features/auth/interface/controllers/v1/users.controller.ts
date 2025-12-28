@@ -21,7 +21,7 @@ import {
 } from '@shared/infrastructure/decorators';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import type { PaginatedQueryParams } from '@shared/application/types';
 import { GetAuthAnalyticsUseCase } from '@features/auth/application/use-cases/get-auth-analytics.use-case';
 import { FindUserByIdUseCase } from '@features/auth/application/use-cases/find-user-by-id.use-case';
 import { FindUserByEmailUseCase } from '@features/auth/application/use-cases/find-user-by-email.use-case';

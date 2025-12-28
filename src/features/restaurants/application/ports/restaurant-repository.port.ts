@@ -1,7 +1,7 @@
 import { IBaseRepositoryPort } from '@shared/application/ports/base-repo-port';
 import { RestaurantEntity } from '../../domain';
 import { ListNearbyRestaurantsQuery, ListRestaurantsQuery } from '../dto';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import type { RestaurantCreate, RestaurantUpdate } from '../../domain/types';
 import type { RestaurantOwnerOptionDto } from '../dto';
 

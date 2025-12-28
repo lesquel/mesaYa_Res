@@ -32,7 +32,7 @@ import {
 import {
   RESERVATION_MAX_FUTURE_MONTHS,
   RESERVATION_SLOT_DURATION_MINUTES,
-} from '../constants/reservation.constants';
+} from '../constants';
 import type { RestaurantDay } from '@features/restaurants/domain/entities/values/restaurant-day';
 
 const ACTIVE_RESERVATION_STATUSES: Array<ReservationEntity['status']> = [

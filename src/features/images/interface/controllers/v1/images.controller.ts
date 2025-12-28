@@ -41,7 +41,7 @@ import {
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
 import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
-import type { PaginatedQueryParams } from '@shared/application/types/pagination';
+import type { PaginatedQueryParams } from '@shared/application/types';
 import {
   ImagesService,
   CreateImageDto,

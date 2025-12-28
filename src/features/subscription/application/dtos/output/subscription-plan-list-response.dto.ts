@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { SubscriptionPlanDto } from './subscription-plan.dto';
 
 export type SubscriptionPlanListResponseDto =

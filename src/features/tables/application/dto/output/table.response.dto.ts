@@ -1,5 +1,5 @@
 import type { TableStatus } from '@features/tables/domain/entities/table.entity';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 
 export interface TableResponseDto {
   id: string;

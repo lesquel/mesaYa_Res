@@ -5,8 +5,8 @@ import { OwnerUpgradeRequestEntity } from '../../../../domain/owner-upgrade-requ
 import { OwnerUpgradeRequestRepositoryPort } from '../../../../application/ports/owner-upgrade-request.repository.port';
 import { OwnerUpgradeRequestOrmEntity } from '../orm/owner-upgrade-request.orm-entity';
 import { OwnerUpgradeRequestStatus } from '../../../../domain/owner-upgrade-request-status.enum';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import type { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import type { PaginatedResult } from '@shared/application/types';
 import type { ListOwnerUpgradeRequestsQuery } from '../../../../application/dto';
 
 @Injectable()

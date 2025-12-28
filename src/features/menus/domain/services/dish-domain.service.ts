@@ -8,7 +8,7 @@ import {
   DishDeletionFailedError,
 } from '../errors';
 import type { DishListQuery } from '../types';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 
 export class DishDomainService {
   constructor(private readonly dishRepository: IDishRepositoryPort) {}

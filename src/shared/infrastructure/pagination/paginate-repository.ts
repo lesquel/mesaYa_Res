@@ -4,7 +4,7 @@
  * Paginates results from a TypeORM Repository.
  */
 
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import {
   FindManyOptions,
   FindOptionsOrder,

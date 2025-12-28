@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 
 export interface ReviewResponseDto {
   id: string;

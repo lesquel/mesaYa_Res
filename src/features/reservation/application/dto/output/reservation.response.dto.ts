@@ -1,4 +1,4 @@
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import type { ReservationStatus } from '../../../domain/types/reservation-status.type';
 
 export interface ReservationResponseDto {

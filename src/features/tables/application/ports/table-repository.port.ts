@@ -1,7 +1,7 @@
 import { Table } from '../../domain/entities/table.entity';
 import { ListTablesQuery } from '../dto/input/list-tables.query';
 import { ListSectionTablesQuery } from '../dto/input/list-section-tables.query';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 
 export const TABLE_REPOSITORY = Symbol('TABLE_REPOSITORY');
 

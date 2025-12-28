@@ -4,7 +4,7 @@
  * Paginates results from a TypeORM SelectQueryBuilder.
  */
 
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 
 import { buildLink } from './build-link';

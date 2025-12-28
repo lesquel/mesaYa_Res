@@ -4,8 +4,8 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Image } from '../../../../domain/index';
 import { ImageOrmEntity } from '../orm/index';
 import { ImageOrmMapper } from '../mappers/index';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListImagesQuery } from '../../../../application/dto/index';
 import { type ImageRepositoryPort } from '../../../../application/ports/index';
 

@@ -5,8 +5,8 @@ import { GraphicObject } from '../../../../domain/index';
 import { IGraphicObjectDomainRepositoryPort } from '../../../../domain/repositories/index';
 import { GraphicObjectOrmEntity } from '../orm/index';
 import { GraphicObjectOrmMapper } from '../mappers/index';
-import { paginateQueryBuilder } from '@shared/infrastructure/pagination/paginate';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { ListGraphicObjectsQuery } from '../../../../application/dto/index';
 import { type GraphicObjectRepositoryPort } from '../../../../application/ports/index';
 

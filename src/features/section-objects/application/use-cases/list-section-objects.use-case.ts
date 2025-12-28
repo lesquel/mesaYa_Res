@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from '@shared/application/ports/use-case.port';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 import { SectionObject } from '../../domain';
 import { SectionObjectMapper } from '../mappers';
 import { ListSectionObjectsQuery, SectionObjectResponseDto } from '../dto';

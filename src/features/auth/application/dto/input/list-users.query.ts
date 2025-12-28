@@ -1,4 +1,4 @@
-import { PaginatedQueryParams } from '@shared/application/types/pagination';
+import { PaginatedQueryParams } from '@shared/application/types';
 
 export interface ListUsersQuery extends PaginatedQueryParams {
   role?: string;

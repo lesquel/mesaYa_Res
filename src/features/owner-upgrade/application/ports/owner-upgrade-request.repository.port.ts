@@ -1,6 +1,6 @@
 import { OwnerUpgradeRequestEntity } from '../../domain/owner-upgrade-request.entity';
 import { OwnerUpgradeRequestStatus } from '../../domain/owner-upgrade-request-status.enum';
-import type { PaginatedResult } from '@shared/application/types/pagination';
+import type { PaginatedResult } from '@shared/application/types';
 import type { ListOwnerUpgradeRequestsQuery } from '../dto';
 
 export interface OwnerUpgradeRequestRepositoryPort {

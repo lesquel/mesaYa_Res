@@ -1,4 +1,4 @@
-﻿export interface DeleteOwnerReservationCommand {
+export interface DeleteOwnerReservationCommand {
   reservationId: string;
   ownerId: string;
 }

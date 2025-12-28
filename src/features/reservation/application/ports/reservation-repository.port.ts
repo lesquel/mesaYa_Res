@@ -4,7 +4,7 @@ import {
   ListRestaurantReservationsQuery,
   ListOwnerReservationsQuery,
 } from '../dto';
-import { PaginatedResult } from '@shared/application/types/pagination';
+import { PaginatedResult } from '@shared/application/types';
 
 export const RESERVATION_REPOSITORY = Symbol('RESERVATION_REPOSITORY');
 
