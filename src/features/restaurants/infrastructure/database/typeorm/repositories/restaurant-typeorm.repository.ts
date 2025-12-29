@@ -266,7 +266,7 @@ export class RestaurantTypeOrmRepository
     }
 
     if (typeof query.isActive === 'boolean') {
-      qb.andWhere(`${alias}.isActive = :isActive`, { isActive: query.isActive });
+      qb.andWhere(`${alias}.active = :isActive`, { isActive: query.isActive });
     }
 
     if (query.ownerId) {
