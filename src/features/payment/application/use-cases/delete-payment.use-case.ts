@@ -1,11 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
-
-import { DeletePaymentDto } from '../dtos/input/delete-payment.dto';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaymentDomainService } from '@features/payment/domain';
-import { DeletePaymentResponseDto } from '../dtos/output/delete-payment-response.dto';
+import { DeletePaymentDto, DeletePaymentResponseDto } from '../dtos';
 
 @Injectable()
 export class DeletePaymentUseCase

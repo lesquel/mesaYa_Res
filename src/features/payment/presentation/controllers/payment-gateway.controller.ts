@@ -37,16 +37,16 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
-import { PaymentMsClientService } from '../../infrastructure/adapters/payment-ms';
-import { PAYMENT_TARGET_PORT } from '../../payment.tokens';
-import type { IPaymentTargetPort } from '../../domain/ports/payment-target.port';
+import { PaymentMsClientService } from '@features/payment/infrastructure';
+import { PAYMENT_TARGET_PORT } from '@features/payment/payment.tokens';
+import type { IPaymentTargetPort } from '@features/payment/domain';
 import {
   CreateReservationPaymentDto,
   PaymentCreatedResponseDto,
   PaymentDetailsResponseDto,
   PaymentVerificationResponseDto,
   CancelPaymentDto,
-} from '../dto/payment-gateway.dto';
+} from '../dto';
 import type { Request } from 'express';
 
 interface AuthenticatedRequest extends Request {

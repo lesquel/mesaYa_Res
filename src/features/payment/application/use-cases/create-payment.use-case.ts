@@ -3,9 +3,8 @@ import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaymentDomainService } from '@features/payment/domain';
-import { CreatePaymentDto } from '../dtos/input/create-payment.dto';
+import { CreatePaymentDto, PaymentDto } from '../dtos';
 import { PaymentEntityDTOMapper } from '../mappers';
-import { PaymentDto } from '../dtos/output/payment.dto';
 
 @Injectable()
 export class CreatePaymentUseCase

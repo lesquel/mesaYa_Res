@@ -54,7 +54,7 @@ import {
 import {
   PaymentStatusEnum,
   PaymentTypeEnum,
-} from '@features/payment/domain/enums';
+} from '@features/payment/domain';
 
 @ApiTags('Payments')
 @Controller({ path: 'payments', version: '1' })
