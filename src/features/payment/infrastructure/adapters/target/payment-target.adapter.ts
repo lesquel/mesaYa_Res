@@ -12,14 +12,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ReservationOrmEntity } from '@features/reservation/infrastructure/orm/reservation.orm-entity';
-import { SubscriptionOrmEntity } from '@features/subscription/infrastructure/database/orm/subscription.type-orm.entity';
-import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
+import { ReservationOrmEntity } from '@features/reservation';
+import { SubscriptionOrmEntity } from '@features/subscription';
+import { RestaurantOrmEntity } from '@features/restaurants';
 import {
   IPaymentTargetPort,
   ReservationOwnership,
   SubscriptionOwnership,
-} from '@features/payment/domain/ports/payment-target.port';
+} from '@features/payment/domain';
 
 @Injectable()
 export class PaymentTargetAdapter extends IPaymentTargetPort {
