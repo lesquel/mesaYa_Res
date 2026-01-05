@@ -4,6 +4,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import {
   PaymentsController,
+  PaymentsAdminController,
+  PaymentsUserController,
+  PaymentsRestaurantController,
   PaymentWebhookController,
   PaymentGatewayController,
 } from './presentation';
@@ -55,7 +58,13 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     LoggerModule,
   ],
   controllers: [
+    // Modular controllers by role
+    PaymentsAdminController,
+    PaymentsUserController,
+    PaymentsRestaurantController,
+    // Legacy controller - kept for backward compatibility
     PaymentsController,
+    // Other controllers
     PaymentWebhookController,
     PaymentGatewayController,
   ],

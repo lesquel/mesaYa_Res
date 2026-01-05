@@ -1,3 +1,10 @@
+/**
+ * Payments Admin Controller
+ *
+ * Admin-only endpoints for payment management.
+ * Requires 'payment:read', 'payment:update', 'payment:delete' permissions.
+ */
+
 import {
   Body,
   Controller,
@@ -5,14 +12,12 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBody,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -23,9 +28,7 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import {
-  ThrottleCreate,
   ThrottleRead,
   ThrottleModify,
   ThrottleSearch,
@@ -49,33 +52,18 @@ import {
   UpdatePaymentStatusRequestDto,
   PaymentAnalyticsRequestDto,
   PaymentAnalyticsResponseDto,
-  CreatePaymentRequestDto,
 } from '@features/payment/presentation/dto';
-import {
-  PaymentStatusEnum,
-  PaymentTypeEnum,
-} from '@features/payment/domain';
+import { PaymentStatusEnum, PaymentTypeEnum } from '@features/payment/domain';
 
-/**
- * @deprecated Use the modular controllers instead:
- * - PaymentsAdminController (./payments-admin.controller.ts)
- * - PaymentsUserController (./payments-user.controller.ts)
- * - PaymentsRestaurantController (./payments-restaurant.controller.ts)
- *
- * This controller is kept for backward compatibility during migration.
- * All endpoints are duplicated in the new modular controllers.
- */
-@ApiTags('Payments (Legacy)')
+@ApiTags('Payments - Admin')
 @Controller({ path: 'payments', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()
-export class PaymentsController {
+export class PaymentsAdminController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly getPaymentAnalyticsUseCase: GetPaymentAnalyticsUseCase,
   ) {}
-
-  // --- Admin Endpoints ---
 
   @Get()
   @ThrottleRead()
@@ -196,103 +184,5 @@ export class PaymentsController {
     @Param('paymentId', UUIDPipe) paymentId: string,
   ): Promise<DeletePaymentResponseDto> {
     return this.paymentService.deletePayment({ paymentId });
-  }
-
-  // --- User Endpoints ---
-
-  @Post('user')
-  @ThrottleCreate()
-  @ApiOperation({ summary: 'Create a payment for reservation (user)' })
-  @ApiBody({ type: CreatePaymentRequestDto })
-  @ApiCreatedResponse({
-    description: 'Payment successfully created',
-    type: PaymentResponseSwaggerDto,
-  })
-  async createPayment(
-    @Body() dto: CreatePaymentRequestDto,
-    @CurrentUser() user: { userId: string },
-  ): Promise<PaymentResponseDto> {
-    return this.paymentService.createReservationPaymentForUser(
-      dto,
-      user.userId,
-    );
-  }
-
-  @Get('user/:paymentId')
-  @ThrottleRead()
-  @ApiOperation({ summary: 'Get my payment by ID (user)' })
-  @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
-  @ApiOkResponse({
-    description: 'Payment details',
-    type: PaymentResponseSwaggerDto,
-  })
-  async getUserPaymentById(
-    @Param('paymentId', UUIDPipe) paymentId: string,
-    @CurrentUser() user: { userId: string },
-  ): Promise<PaymentResponseDto> {
-    return this.paymentService.getUserPaymentById(paymentId, user.userId);
-  }
-
-  // --- Restaurant Endpoints ---
-
-  @Post('restaurant')
-  @ThrottleCreate()
-  @Permissions('payment:create')
-  @ApiOperation({
-    summary: 'Create payment for subscription (restaurant owner)',
-  })
-  @ApiBody({ type: CreatePaymentRequestDto })
-  @ApiCreatedResponse({
-    description: 'Payment for subscription successfully created',
-    type: PaymentResponseSwaggerDto,
-  })
-  async createSubscriptionPayment(
-    @Body() dto: CreatePaymentRequestDto,
-    @CurrentUser() user: { userId: string },
-  ): Promise<PaymentResponseDto> {
-    return this.paymentService.createSubscriptionPaymentForOwner(
-      dto,
-      user.userId,
-    );
-  }
-
-  @Get('restaurant/by-restaurant/:restaurantId')
-  @ThrottleRead()
-  @Permissions('payment:read')
-  @ApiOperation({
-    summary: 'Get payments of my restaurant (restaurant owner)',
-  })
-  @ApiParam({ name: 'restaurantId', type: 'string', format: 'uuid' })
-  @ApiOkResponse({
-    description: 'List of restaurant payments',
-    type: PaymentResponseSwaggerDto,
-    isArray: true,
-  })
-  async getRestaurantPayments(
-    @Param('restaurantId', UUIDPipe) restaurantId: string,
-    @CurrentUser() user: { userId: string },
-  ): Promise<PaymentResponseDto[]> {
-    return this.paymentService.getPaymentsByRestaurantForOwner(
-      restaurantId,
-      user.userId,
-    );
-  }
-
-  @Get('restaurant/:paymentId')
-  @ThrottleRead()
-  @Permissions('payment:read')
-  @ApiOperation({
-    summary: 'Get my restaurant payment by ID (restaurant owner)',
-  })
-  @ApiParam({ name: 'paymentId', type: 'string', format: 'uuid' })
-  @ApiOkResponse({
-    description: 'Payment details',
-    type: PaymentResponseSwaggerDto,
-  })
-  async getRestaurantPaymentById(
-    @Param('paymentId', UUIDPipe) paymentId: string,
-    @CurrentUser() user: { userId: string },
-  ): Promise<PaymentResponseDto> {
-    return this.paymentService.getOwnerPaymentById(paymentId, user.userId);
   }
 }
