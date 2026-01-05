@@ -38,7 +38,7 @@ export class ChatbotService {
    */
   async sendMessage(request: ChatRequestDto): Promise<ChatResponseDto> {
     this.logger.debug(
-      `Sending message to chatbot: role=${request.role}, lang=${request.language}, message="${request.message.substring(0, 50)}..."`,
+      `Sending message to chatbot: access_level=${request.access_level}, lang=${request.language}, message="${request.message.substring(0, 50)}..."`,
     );
 
     const controller = new AbortController();
@@ -51,10 +51,13 @@ export class ChatbotService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          role: request.role,
+          access_level: request.access_level ?? 'guest',
+          role: request.role, // Legacy field for backwards compatibility
           message: request.message,
           language: request.language ?? 'es',
           history: request.history ?? [],
+          user_id: request.user_id,
+          restaurant_id: request.restaurant_id,
         }),
         signal: controller.signal,
       });

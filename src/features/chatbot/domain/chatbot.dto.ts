@@ -21,6 +21,12 @@ import { Type } from 'class-transformer';
 export type ChatLanguage = 'es' | 'en';
 
 /**
+ * Access levels for chatbot features
+ * Determines what capabilities and information the chatbot can provide.
+ */
+export type ChatAccessLevel = 'guest' | 'user' | 'owner' | 'admin';
+
+/**
  * Message in conversation history
  */
 export class ChatHistoryMessageDto {
@@ -49,15 +55,27 @@ export class ChatHistoryMessageDto {
  */
 export class ChatRequestDto {
   @ApiProperty({
-    description: 'User role in the platform',
+    description: 'User access level for feature control',
+    enum: ['guest', 'user', 'owner', 'admin'],
+    example: 'guest',
+    default: 'guest',
+  })
+  @IsOptional()
+  @IsIn(['guest', 'user', 'owner', 'admin'], {
+    message: 'Access level must be guest, user, owner, or admin',
+  })
+  access_level?: ChatAccessLevel = 'guest';
+
+  @ApiPropertyOptional({
+    description: 'Legacy user role in the platform (deprecated, use access_level)',
     enum: ['client', 'restaurant'],
     example: 'client',
   })
+  @IsOptional()
   @IsIn(['client', 'restaurant'], {
     message: 'Role must be either "client" or "restaurant"',
   })
-  @IsNotEmpty()
-  role: 'client' | 'restaurant';
+  role?: 'client' | 'restaurant';
 
   @ApiProperty({
     description: 'User message or question',
@@ -90,6 +108,22 @@ export class ChatRequestDto {
   @ValidateNested({ each: true })
   @Type(() => ChatHistoryMessageDto)
   history?: ChatHistoryMessageDto[] = [];
+
+  @ApiPropertyOptional({
+    description: 'User ID for personalized responses (authenticated users)',
+    example: 'user-123',
+  })
+  @IsOptional()
+  @IsString()
+  user_id?: string;
+
+  @ApiPropertyOptional({
+    description: 'Restaurant ID for owner context (owners only)',
+    example: 'rest-456',
+  })
+  @IsOptional()
+  @IsString()
+  restaurant_id?: string;
 }
 
 /**
