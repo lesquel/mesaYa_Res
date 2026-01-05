@@ -1,6 +1,8 @@
 import { PaginatedQueryParams } from '@shared/application/types';
 
 export interface ListRestaurantsQuery extends PaginatedQueryParams {
+  /** General search term (searches in name and description) */
+  q?: string;
   /** Filter by restaurant name (partial match) */
   name?: string;
   /** Filter by city/location */

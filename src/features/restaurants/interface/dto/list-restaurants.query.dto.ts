@@ -8,6 +8,15 @@ import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator';
  */
 export class ListRestaurantsQueryDto {
   @ApiPropertyOptional({
+    description: 'General search term (searches in name and description)',
+    example: 'parrilla',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  q?: string;
+
+  @ApiPropertyOptional({
     description: 'Filter by restaurant name (partial match)',
     example: 'Pizza Palace',
   })

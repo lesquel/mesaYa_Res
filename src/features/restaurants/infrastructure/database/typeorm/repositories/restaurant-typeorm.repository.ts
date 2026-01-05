@@ -246,21 +246,39 @@ export class RestaurantTypeOrmRepository
   ): Promise<PaginatedResult<RestaurantEntity>> {
     const alias = qb.alias;
 
-    // Apply specific filters
+    // Apply general search term (searches in name, description, and location)
+    // Split query into words and match ALL of them
+    // Uses unaccent() for accent-insensitive search (e.g., "mediterranea" matches "mediterránea")
+    if (query.q) {
+      const searchWords = query.q
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length >= 2); // Ignore short words like "en", "de"
+
+      searchWords.forEach((word, index) => {
+        const paramName = `searchQ${index}`;
+        qb.andWhere(
+          `(unaccent(LOWER(${alias}.name)) LIKE unaccent(LOWER(:${paramName})) OR unaccent(LOWER(${alias}.description)) LIKE unaccent(LOWER(:${paramName})) OR unaccent(LOWER(${alias}.location)) LIKE unaccent(LOWER(:${paramName})))`,
+          { [paramName]: `%${word}%` },
+        );
+      });
+    }
+
+    // Apply specific filters with accent-insensitive search
     if (query.name) {
-      qb.andWhere(`LOWER(${alias}.name) LIKE LOWER(:filterName)`, {
+      qb.andWhere(`unaccent(LOWER(${alias}.name)) LIKE unaccent(LOWER(:filterName))`, {
         filterName: `%${query.name}%`,
       });
     }
 
     if (query.city) {
-      qb.andWhere(`LOWER(${alias}.location) LIKE LOWER(:filterCity)`, {
+      qb.andWhere(`unaccent(LOWER(${alias}.location)) LIKE unaccent(LOWER(:filterCity))`, {
         filterCity: `%${query.city}%`,
       });
     }
 
     if (query.cuisineType) {
-      qb.andWhere(`LOWER(${alias}.description) LIKE LOWER(:cuisineType)`, {
+      qb.andWhere(`unaccent(LOWER(${alias}.description)) LIKE unaccent(LOWER(:cuisineType))`, {
         cuisineType: `%${query.cuisineType}%`,
       });
     }

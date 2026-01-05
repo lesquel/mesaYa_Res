@@ -87,6 +87,7 @@ export class RestaurantsController {
   ): Promise<PaginatedRestaurantResponse> {
     const query: ListRestaurantsQuery = {
       ...pagination,
+      q: filters.q,
       name: filters.name,
       city: filters.city,
       cuisineType: filters.cuisineType,
