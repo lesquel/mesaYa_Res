@@ -11,47 +11,12 @@ import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
-
-/** Response from creating a payment */
-export interface CreatePaymentMsResponse {
-  payment_id: string;
-  status: string;
-  amount: number;
-  currency: string;
-  checkout_url: string;
-  created_at: string;
-}
-
-/** Response from getting a payment */
-export interface GetPaymentMsResponse {
-  id: string;
-  status: string;
-  amount: number;
-  currency: string;
-  description?: string;
-  metadata?: Record<string, string>;
-  created_at: string;
-  updated_at?: string;
-}
-
-/** Response from verifying a payment */
-export interface VerifyPaymentMsResponse {
-  payment_id: string;
-  status: string;
-  verified: boolean;
-  amount?: number;
-  currency?: string;
-}
-
-/** Request to create a payment */
-export interface CreatePaymentMsRequest {
-  amount: number;
-  currency: string;
-  description?: string;
-  metadata?: Record<string, string>;
-  success_url?: string;
-  cancel_url?: string;
-}
+import type {
+  CreatePaymentMsRequest,
+  CreatePaymentMsResponse,
+  GetPaymentMsResponse,
+  VerifyPaymentMsResponse,
+} from './payment-ms.types';
 
 @Injectable()
 export class PaymentMsClientService {
