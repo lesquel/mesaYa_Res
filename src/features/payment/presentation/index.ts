@@ -12,3 +12,6 @@ export * from './controllers/payment-gateway.controller';
 
 // DTOs
 export * from './dto';
+
+// Types
+export * from './types';

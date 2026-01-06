@@ -47,15 +47,7 @@ import {
   PaymentVerificationResponseDto,
   CancelPaymentDto,
 } from '../dto';
-import type { Request } from 'express';
-
-interface AuthenticatedRequest extends Request {
-  user?: {
-    sub: string;
-    email: string;
-    role?: string;
-  };
-}
+import type { AuthenticatedRequest } from '../types';
 
 @ApiTags('Payment Gateway')
 @Controller('payment-gateway')
