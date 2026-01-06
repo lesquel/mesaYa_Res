@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import {
   KafkaEmit,
   KafkaProducer,
@@ -6,13 +6,10 @@ import {
   KAFKA_TOPICS,
   EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
-import { SignUpUseCase } from '../use-cases/sign-up.use-case';
-import { LoginUseCase } from '../use-cases/login.use-case';
 import { UpdateUserRolesUseCase } from '../use-cases/update-user-roles.use-case';
 import { UpdateRolePermissionsUseCase } from '../use-cases/update-role-permissions.use-case';
 import { ListRolesUseCase } from '../use-cases/list-roles.use-case';
 import { ListPermissionsUseCase } from '../use-cases/list-permissions.use-case';
-import { FindUserByIdUseCase } from '../use-cases/find-user-by-id.use-case';
 import { GetAuthAnalyticsUseCase } from '../use-cases/get-auth-analytics.use-case';
 import { SignUpCommand } from '../dto/commands/sign-up.command';
 import { LoginCommand } from '../dto/commands/login.command';
@@ -24,69 +21,95 @@ import type { AuthRole } from '../../domain/entities/auth-role.entity';
 import type { AuthPermission } from '../../domain/entities/auth-permission.entity';
 import type { AuthAnalyticsQuery } from '../dto/queries/auth-analytics.query';
 import type { AuthAnalyticsResponse } from '../dto/responses/auth-analytics.response';
+import {
+  AuthProxyService,
+  AuthTokenData,
+} from '../../infrastructure/messaging/auth-proxy.service';
 
+/**
+ * AuthService now delegates authentication operations to the Auth Microservice
+ * via Kafka, while keeping role/permission management local to the Gateway.
+ */
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly signUpUseCase: SignUpUseCase,
-    private readonly loginUseCase: LoginUseCase,
+    private readonly authProxy: AuthProxyService,
     private readonly updateUserRolesUseCase: UpdateUserRolesUseCase,
     private readonly updateRolePermissionsUseCase: UpdateRolePermissionsUseCase,
     private readonly listRolesUseCase: ListRolesUseCase,
     private readonly listPermissionsUseCase: ListPermissionsUseCase,
-    private readonly findUserByIdUseCase: FindUserByIdUseCase,
     private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
     @KafkaProducer() private readonly kafkaService: KafkaService,
   ) {}
 
   /**
-   * Emits `mesa-ya.auth.events` with event_type='user_signed_up' and returns the auth token response.
+   * Delegates signup to Auth MS via Kafka.
+   * The Auth MS will emit user.signed-up event which UserSyncConsumer will process.
    */
-  @KafkaEmit({
-    topic: KAFKA_TOPICS.AUTH,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [SignUpCommand];
-      const authResult = result as AuthTokenResponse | undefined;
-      const entity = authResult?.user ? toPlain(authResult.user) : null;
-      return {
-        event_type: EVENT_TYPES.USER_SIGNED_UP,
-        entity_id: (entity as { id?: string } | null)?.id ?? '',
-        data: entity,
-        metadata: { email: command.email },
-      };
-    },
-  })
   async signup(command: SignUpCommand): Promise<AuthTokenResponse> {
-    return this.signUpUseCase.execute(command);
+    const [firstName, ...lastNameParts] = (command.name || '').split(' ');
+    const lastName = lastNameParts.join(' ') || '';
+
+    const response = await this.authProxy.signUp({
+      email: command.email,
+      password: command.password,
+      firstName: firstName || '',
+      lastName: lastName,
+      phone: command.phone,
+    });
+
+    if (!response.success || !response.data) {
+      throw this.mapProxyError(response.error);
+    }
+
+    return this.mapTokenDataToResponse(response.data);
   }
 
   /**
-   * Emits `mesa-ya.auth.events` with event_type='user_logged_in' and returns the auth token response.
+   * Delegates login to Auth MS via Kafka.
    */
-  @KafkaEmit({
-    topic: KAFKA_TOPICS.AUTH,
-    payload: ({ result, args, toPlain }) => {
-      const [command] = args as [LoginCommand];
-      const authResult = result as AuthTokenResponse | undefined;
-      const entity = authResult?.user ? toPlain(authResult.user) : null;
-      return {
-        event_type: EVENT_TYPES.USER_LOGGED_IN,
-        entity_id: (entity as { id?: string } | null)?.id ?? '',
-        data: entity,
-        metadata: { email: command.email },
-      };
-    },
-  })
   async login(command: LoginCommand): Promise<AuthTokenResponse> {
-    return this.loginUseCase.execute(command);
+    const response = await this.authProxy.login({
+      email: command.email,
+      password: command.password,
+    });
+
+    if (!response.success || !response.data) {
+      throw this.mapProxyError(response.error);
+    }
+
+    return this.mapTokenDataToResponse(response.data);
   }
 
+  /**
+   * Gets current user info from Auth MS.
+   */
   async getCurrentUser(userId: string): Promise<AuthUser | null> {
-    return this.findUserByIdUseCase.execute(userId);
+    const response = await this.authProxy.findUserById(userId);
+
+    if (!response.success) {
+      return null;
+    }
+
+    if (!response.data) {
+      return null;
+    }
+
+    // Map proxy response to domain entity format
+    return {
+      id: response.data.id,
+      email: response.data.email,
+      name: `${response.data.firstName} ${response.data.lastName}`.trim(),
+      roles: response.data.roles.map((roleName) => ({
+        name: roleName,
+        permissions: [],
+      })),
+    } as unknown as AuthUser;
   }
 
   /**
    * Emits `mesa-ya.auth.events` with event_type='roles_updated' and returns the updated user.
+   * Role management is local to the Gateway.
    */
   @KafkaEmit({
     topic: KAFKA_TOPICS.AUTH,
@@ -139,5 +162,42 @@ export class AuthService {
     query: AuthAnalyticsQuery,
   ): Promise<AuthAnalyticsResponse> {
     return this.getAuthAnalyticsUseCase.execute(query);
+  }
+
+  private mapTokenDataToResponse(data: AuthTokenData): AuthTokenResponse {
+    return {
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        name: `${data.user.firstName} ${data.user.lastName}`.trim(),
+        roles: data.user.roles.map((roleName) => ({
+          name: roleName,
+          permissions: [],
+        })),
+      } as unknown as AuthUser,
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    };
+  }
+
+  private mapProxyError(
+    error?: { code: string; message: string },
+  ): UnauthorizedException | BadRequestException {
+    if (!error) {
+      return new BadRequestException('Unknown authentication error');
+    }
+
+    switch (error.code) {
+      case 'INVALID_CREDENTIALS':
+        return new UnauthorizedException('Invalid email or password');
+      case 'EMAIL_ALREADY_IN_USE':
+        return new BadRequestException('Email is already registered');
+      case 'USER_NOT_FOUND':
+        return new UnauthorizedException('User not found');
+      case 'AUTH_MS_UNREACHABLE':
+        return new BadRequestException(error.message);
+      default:
+        return new BadRequestException(error.message);
+    }
   }
 }

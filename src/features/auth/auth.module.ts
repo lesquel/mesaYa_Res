@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthController } from './interface/controllers/v1/auth.controller';
 import { UsersController } from './interface/controllers/v1/users.controller';
 import { UserOrmEntity } from './infrastructure/database/typeorm/entities/user.orm-entity';
@@ -21,14 +22,10 @@ import {
 } from './auth.tokens';
 import { BcryptPasswordHasherAdapter } from './infrastructure/security/bcrypt-password-hasher.adapter';
 import { JwtTokenServiceAdapter } from './infrastructure/security/jwt-token-service.adapter';
-import { SignUpUseCase } from './application/use-cases/sign-up.use-case';
-import { LoginUseCase } from './application/use-cases/login.use-case';
 import { UpdateUserRolesUseCase } from './application/use-cases/update-user-roles.use-case';
 import { UpdateRolePermissionsUseCase } from './application/use-cases/update-role-permissions.use-case';
 import { ListRolesUseCase } from './application/use-cases/list-roles.use-case';
 import { ListPermissionsUseCase } from './application/use-cases/list-permissions.use-case';
-import { FindUserByIdUseCase } from './application/use-cases/find-user-by-id.use-case';
-import { FindUserByEmailUseCase } from './application/use-cases/find-user-by-email.use-case';
 import { GetAuthAnalyticsUseCase } from './application/use-cases/get-auth-analytics.use-case';
 import { ListUsersUseCase } from './application/use-cases/list-users.use-case';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
@@ -38,6 +35,11 @@ import { PermissionsGuard } from './interface/guards/permissions.guard';
 import { JwtAuthGuard } from './interface/guards/jwt-auth.guard';
 import { AuthAnalyticsTypeOrmRepository } from './infrastructure/database/typeorm/repositories/auth-analytics-typeorm.repository';
 import { AuthService } from './application/services/auth.service';
+import {
+  AuthProxyService,
+  AUTH_KAFKA_CLIENT,
+} from './infrastructure/messaging/auth-proxy.service';
+import { UserSyncConsumer } from './infrastructure/messaging/user-sync.consumer';
 
 @Module({
   imports: [
@@ -48,18 +50,40 @@ import { AuthService } from './application/services/auth.service';
       PermissionOrmEntity,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    // JWT Module now uses RS256 with public key for validation only
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: config.get<string>('JWT_EXPIRES_IN') ?? '1d',
+        publicKey: config.get<string>('JWT_PUBLIC_KEY')?.replace(/\\n/g, '\n'),
+        verifyOptions: {
+          algorithms: ['RS256'],
+          issuer: 'mesaYA-auth',
         },
       }),
     }),
+    // Kafka client for communicating with Auth MS
+    ClientsModule.registerAsync([
+      {
+        name: AUTH_KAFKA_CLIENT,
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.KAFKA,
+          options: {
+            client: {
+              clientId: 'mesaya-gateway',
+              brokers: (config.get<string>('KAFKA_BROKERS') || 'localhost:9092').split(','),
+            },
+            consumer: {
+              groupId: 'mesaya-gateway-auth-group',
+            },
+          },
+        }),
+      },
+    ]),
   ],
-  controllers: [AuthController, UsersController],
+  controllers: [AuthController, UsersController, UserSyncConsumer],
   providers: [
     {
       provide: AUTH_USER_REPOSITORY,
@@ -85,14 +109,13 @@ import { AuthService } from './application/services/auth.service';
       provide: AUTH_ANALYTICS_REPOSITORY,
       useClass: AuthAnalyticsTypeOrmRepository,
     },
-    SignUpUseCase,
-    LoginUseCase,
+    // Auth proxy for communication with Auth MS
+    AuthProxyService,
+    // Use cases (only local ones remain)
     UpdateUserRolesUseCase,
     UpdateRolePermissionsUseCase,
     ListRolesUseCase,
     ListPermissionsUseCase,
-    FindUserByIdUseCase,
-    FindUserByEmailUseCase,
     GetAuthAnalyticsUseCase,
     ListUsersUseCase,
     AuthService,
@@ -114,6 +137,7 @@ import { AuthService } from './application/services/auth.service';
     AUTH_PERMISSION_REPOSITORY,
     AUTH_PASSWORD_HASHER,
     AuthService,
+    AuthProxyService,
   ],
 })
 export class AuthModule {}
