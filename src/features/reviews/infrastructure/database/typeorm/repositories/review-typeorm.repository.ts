@@ -1,12 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
   Review as ReviewEntity,
   ReviewNotFoundError,
   ReviewRestaurantNotFoundError,
-  ReviewUserNotFoundError,
 } from '../../../../domain';
 import {
   ListReviewsQuery,
@@ -20,6 +18,12 @@ import { ReviewOrmEntity } from '../orm';
 import { ReviewOrmMapper } from '../mappers';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 
+/**
+ * Review repository implementation.
+ *
+ * Note: user_id is stored as a UUID reference to Auth MS.
+ * We do NOT validate that the user exists - we trust the JWT token.
+ */
 @Injectable()
 export class ReviewTypeOrmRepository
   implements ReviewRepositoryPort, IReviewDomainRepositoryPort
@@ -29,8 +33,6 @@ export class ReviewTypeOrmRepository
     private readonly reviews: Repository<ReviewOrmEntity>,
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
-    @InjectRepository(UserOrmEntity)
-    private readonly users: Repository<UserOrmEntity>,
   ) {}
 
   async save(review: ReviewEntity): Promise<ReviewEntity> {
@@ -38,34 +40,26 @@ export class ReviewTypeOrmRepository
 
     const existing = await this.reviews.findOne({
       where: { id: snapshot.id },
-      relations: ['restaurant', 'user'],
+      relations: ['restaurant'],
     });
 
     let restaurant = existing?.restaurant;
-    let user = existing?.user;
 
     if (!existing) {
-      const [foundRestaurant, foundUser] = await Promise.all([
-        this.restaurants.findOne({ where: { id: snapshot.restaurantId } }),
-        this.users.findOne({ where: { id: snapshot.userId } }),
-      ]);
+      const foundRestaurant = await this.restaurants.findOne({
+        where: { id: snapshot.restaurantId },
+      });
 
       restaurant = foundRestaurant ?? undefined;
-      user = foundUser ?? undefined;
 
       if (!restaurant) {
         throw new ReviewRestaurantNotFoundError(snapshot.restaurantId);
-      }
-
-      if (!user) {
-        throw new ReviewUserNotFoundError(snapshot.userId);
       }
     }
 
     const entity = ReviewOrmMapper.toOrmEntity(review, {
       existing: existing ?? undefined,
       restaurant,
-      user,
     });
 
     const saved = await this.reviews.save(entity);
@@ -75,7 +69,7 @@ export class ReviewTypeOrmRepository
   async findById(id: string): Promise<ReviewEntity | null> {
     const entity = await this.reviews.findOne({
       where: { id },
-      relations: ['restaurant', 'user'],
+      relations: ['restaurant'],
     });
 
     return entity ? ReviewOrmMapper.toDomain(entity) : null;
@@ -87,10 +81,10 @@ export class ReviewTypeOrmRepository
   ): Promise<ReviewEntity | null> {
     const entity = await this.reviews.findOne({
       where: {
-        user: { id: userId },
+        userId,
         restaurant: { id: restaurantId },
       },
-      relations: ['restaurant', 'user'],
+      relations: ['restaurant'],
     });
 
     return entity ? ReviewOrmMapper.toDomain(entity) : null;
@@ -123,7 +117,6 @@ export class ReviewTypeOrmRepository
     const alias = 'review';
     return this.reviews
       .createQueryBuilder(alias)
-      .leftJoinAndSelect(`${alias}.user`, 'user')
       .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant');
   }
 
@@ -137,7 +130,6 @@ export class ReviewTypeOrmRepository
       createdAt: `${alias}.createdAt`,
       rating: `${alias}.rating`,
       restaurant: `restaurant.name`,
-      user: `user.name`,
     };
 
     const sortByColumn =
@@ -150,12 +142,7 @@ export class ReviewTypeOrmRepository
       sortOrder: query.sortOrder,
       q: query.search,
       allowedSorts: Object.values(sortMap),
-      searchable: [
-        `${alias}.comment`,
-        `restaurant.name`,
-        `user.name`,
-        `user.email`,
-      ],
+      searchable: [`${alias}.comment`, `restaurant.name`],
     });
 
     return {

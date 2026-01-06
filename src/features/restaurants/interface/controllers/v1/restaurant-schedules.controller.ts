@@ -22,7 +22,7 @@ import {
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
+import { AuthRoleName } from '@features/auth/domain/enums';
 import {
   CurrentUser,
   type CurrentUserPayload,

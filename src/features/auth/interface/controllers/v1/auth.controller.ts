@@ -2,25 +2,16 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
-  Param,
-  Patch,
   Post,
-  Query,
-  UnauthorizedException,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { UUIDPipe } from '@shared/interface/pipes/uuid.pipe';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
-  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -31,33 +22,25 @@ import { AuthService } from '../../../application/services/auth.service';
 import { SignUpRequestDto } from '../../dto/sign-up.request.dto';
 import { AuthTokenResponseDto } from '../../dto/auth-token.response.dto';
 import { LoginRequestDto } from '../../dto/login.request.dto';
-import { UpdateUserRolesRequestDto } from '../../dto/update-user-roles.request.dto';
-import { UpdateRolePermissionsRequestDto } from '../../dto/update-role-permissions.request.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
-import { RoleResponseDto } from '../../dto/role.response.dto';
-import { PermissionResponseDto } from '../../dto/permission.response.dto';
 import { SignUpCommand } from '@features/auth/application/dto/commands/sign-up.command';
 import { LoginCommand } from '@features/auth/application/dto/commands/login.command';
-import { UpdateUserRolesCommand } from '@features/auth/application/dto/commands/update-user-roles.command';
-import { UpdateRolePermissionsCommand } from '@features/auth/application/dto/commands/update-role-permissions.command';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
-import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
-import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto';
+import { AuthRoleName } from '@features/auth/domain/enums';
 import { ThrottleAuth, ThrottleRead } from '@shared/infrastructure/decorators';
-import { ListUsersUseCase } from '@features/auth/application/use-cases/list-users.use-case';
-import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
-import { ApiPaginatedResponse } from '@shared/interface/swagger/decorators/api-paginated-response.decorator';
-import { PaginationParams } from '@shared/interface/decorators/pagination-params.decorator';
-import type { PaginatedQueryParams } from '@shared/application/types';
-import { AdminAuthUserResponseDto } from '../../dto/admin-auth-user.response.dto';
 
+/**
+ * Simplified Auth Controller.
+ *
+ * Handles only core authentication endpoints.
+ * All operations delegate to Auth MS via AuthService/AuthProxyService.
+ *
+ * User management (list, update roles, etc.) should be done directly
+ * via Auth MS or moved to a separate admin service.
+ */
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly listUsersUseCase: ListUsersUseCase,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
   @ThrottleAuth()
@@ -102,17 +85,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Perfil del usuario autenticado' })
   @ApiBearerAuth()
   @ApiOkResponse({
-    description: 'Usuario autenticado',
+    description: 'Datos del usuario desde el token JWT',
     type: AuthUserResponseDto,
   })
-  async me(
-    @CurrentUser() currentUser: { userId: string },
-  ): Promise<AuthUserResponseDto> {
-    const user = await this.authService.getCurrentUser(currentUser.userId);
-    if (!user) {
-      throw new UnauthorizedException('Authenticated user not found');
-    }
-    return AuthUserResponseDto.fromDomain(user);
+  me(
+    @CurrentUser() currentUser: { userId: string; email: string; roles: any[] },
+  ): AuthUserResponseDto {
+    // Return user info directly from JWT claims - no DB lookup needed
+    return AuthUserResponseDto.fromJwtClaims(currentUser);
   }
 
   @Get('check')
@@ -125,195 +105,15 @@ export class AuthController {
     return { ok: true };
   }
 
-  @Get('analytics')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Indicadores analíticos de usuarios (ADMIN)' })
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Cerrar sesión' })
   @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Datos agregados para dashboards de autenticación',
-    type: AuthAnalyticsResponseDto,
-  })
-  @ApiQuery({
-    name: 'startDate',
-    required: false,
-    type: String,
-    description: 'Fecha inicial (ISO 8601)',
-  })
-  @ApiQuery({
-    name: 'endDate',
-    required: false,
-    type: String,
-    description: 'Fecha final (ISO 8601)',
-  })
-  @ApiQuery({
-    name: 'role',
-    required: false,
-    type: String,
-    description: 'Filtra por nombre de rol',
-  })
-  @ApiQuery({
-    name: 'active',
-    required: false,
-    type: Boolean,
-    description: 'Filtra por estado del usuario (true/false)',
-  })
-  async getAnalytics(
-    @Query(new ValidationPipe({ transform: true, whitelist: true }))
-    query: AuthAnalyticsRequestDto,
-  ): Promise<AuthAnalyticsResponseDto> {
-    const analytics = await this.authService.getAnalytics(query.toQuery());
-    return AuthAnalyticsResponseDto.fromApplication(analytics);
-  }
-
-  @Get('users')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Listar usuarios (ADMIN) — incluye roles y estado' })
-  @ApiBearerAuth()
-  @PaginatedEndpoint()
-  @ApiPaginatedResponse({
-    model: AdminAuthUserResponseDto,
-    description: 'Listado paginado de usuarios (admin view)',
-  })
-  @ApiQuery({ name: 'role', required: false, type: String })
-  @ApiQuery({
-    name: 'status',
-    required: false,
-    type: String,
-    description:
-      'active|invited|suspended (mapped to active boolean where possible)',
-  })
-  @ApiQuery({ name: 'restaurantId', required: false, type: String })
-  async listUsersAdmin(
-    @PaginationParams({
-      defaultRoute: '/auth/users',
-      allowExtraParams: true,
-    })
-    params: PaginatedQueryParams,
-    @Query() raw: Record<string, any>,
-  ) {
-    // Map incoming query params to ListUsersQuery. The repository accepts `role`, `active` (boolean) and `restaurantId`.
-    const query: any = { ...params };
-    if (raw.role) query.role = raw.role;
-    if (raw.restaurantId) query.restaurantId = raw.restaurantId;
-    // Accept status synonyms and map to `active` where possible. If status is not mappable, omit and let repo return all.
-    const status = raw.status ?? raw.state ?? undefined;
-    if (typeof status === 'string') {
-      const s = status.toLowerCase();
-      if (s === 'active' || s === 'enabled') query.active = true;
-      else if (['invited', 'pending', 'suspended', 'disabled'].includes(s))
-        query.active = false;
-    }
-
-    // Also accept explicit active=true/false in query
-    if (raw.active !== undefined) {
-      if (raw.active === 'true' || raw.active === true) query.active = true;
-      else if (raw.active === 'false' || raw.active === false)
-        query.active = false;
-    }
-
-    const paginated = await this.listUsersUseCase.execute(query);
-    return {
-      ...paginated,
-      results: paginated.results.map((u) =>
-        AdminAuthUserResponseDto.fromDomain(u),
-      ),
-    };
-  }
-
-  @Get('users/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Detalle de usuario (ADMIN)' })
-  @ApiBearerAuth()
-  @ApiParam({ name: 'id', description: 'UUID del usuario' })
-  @ApiOkResponse({ type: AdminAuthUserResponseDto })
-  async getUserAdmin(
-    @Param('id', UUIDPipe) id: string,
-  ): Promise<AdminAuthUserResponseDto> {
-    const user = await this.authService.getCurrentUser(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return AdminAuthUserResponseDto.fromDomain(user);
-  }
-
-  @Patch('users/:id/roles')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Cambiar roles de un usuario (ADMIN)' })
-  @ApiBearerAuth()
-  @ApiParam({ name: 'id', description: 'UUID del usuario' })
-  @ApiBody({ type: UpdateUserRolesRequestDto })
-  @ApiOkResponse({
-    description: 'Roles del usuario actualizados',
-    type: AuthUserResponseDto,
-  })
-  @ApiForbiddenResponse({ description: 'Requiere rol ADMIN' })
-  async updateUserRoles(
-    @Param('id', UUIDPipe) id: string,
-    @Body(new ValidationPipe({ whitelist: true }))
-    dto: UpdateUserRolesRequestDto,
-  ): Promise<AuthUserResponseDto> {
-    const user = await this.authService.updateUserRoles(
-      new UpdateUserRolesCommand(id, dto.roles),
-    );
-
-    return AuthUserResponseDto.fromDomain(user);
-  }
-
-  @Patch('roles/:name/permissions')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Cambiar permisos de un rol (ADMIN)' })
-  @ApiBearerAuth()
-  @ApiParam({ name: 'name', description: 'Nombre del rol' })
-  @ApiBody({ type: UpdateRolePermissionsRequestDto })
-  @ApiOkResponse({
-    description: 'Permisos del rol actualizados',
-    type: RoleResponseDto,
-  })
-  @ApiForbiddenResponse({ description: 'Requiere rol ADMIN' })
-  async updateRolePermissions(
-    @Param('name') name: string,
-    @Body(new ValidationPipe({ whitelist: true }))
-    dto: UpdateRolePermissionsRequestDto,
-  ): Promise<RoleResponseDto> {
-    const role = await this.authService.updateRolePermissions(
-      new UpdateRolePermissionsCommand(name, dto.permissions),
-    );
-
-    return RoleResponseDto.fromDomain(role);
-  }
-
-  @Get('roles')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Listar roles (ADMIN)' })
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Listado de roles con permisos',
-    type: [RoleResponseDto],
-  })
-  async listRoles(): Promise<RoleResponseDto[]> {
-    const roles = await this.authService.listRoles();
-    return roles.map((role) => RoleResponseDto.fromDomain(role));
-  }
-
-  @Get('permissions')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(AuthRoleName.ADMIN)
-  @ApiOperation({ summary: 'Listar permisos (ADMIN)' })
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    description: 'Listado de permisos',
-    type: [PermissionResponseDto],
-  })
-  async listPermissions(): Promise<PermissionResponseDto[]> {
-    const permissions = await this.authService.listPermissions();
-    return permissions.map((permission) =>
-      PermissionResponseDto.fromDomain(permission),
-    );
+  @ApiOkResponse({ description: 'Sesión cerrada correctamente' })
+  async logout(
+    @CurrentUser() currentUser: { userId: string },
+  ): Promise<{ message: string }> {
+    await this.authService.logout(currentUser.userId);
+    return { message: 'Logged out successfully' };
   }
 }

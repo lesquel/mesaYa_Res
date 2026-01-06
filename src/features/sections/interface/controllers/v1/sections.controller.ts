@@ -23,7 +23,7 @@ import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { PermissionsGuard } from '@features/auth/interface/guards/permissions.guard';
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
+import { AuthRoleName } from '@features/auth/domain/enums';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
 import {

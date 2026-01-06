@@ -59,7 +59,7 @@ import { ScheduleSlotResponseDto } from '@features/restaurants/interface/dto';
 import { RestaurantScheduleSlotRepository } from '@features/restaurants/infrastructure/database/typeorm/repositories/restaurant-schedule-slot.repository';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { Roles } from '@features/auth/interface/decorators/roles.decorator';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
+import { AuthRoleName } from '@features/auth/domain/enums';
 
 @ApiTags('Restaurants')
 @Controller({ path: 'restaurants', version: '1' })
@@ -141,7 +141,9 @@ export class RestaurantsController {
     description: 'Restaurant details found by name',
     type: RestaurantResponseSwaggerDto,
   })
-  async findByName(@Param('name') name: string): Promise<RestaurantResponseDto> {
+  async findByName(
+    @Param('name') name: string,
+  ): Promise<RestaurantResponseDto> {
     const restaurant = await this.findRestaurantByName.execute({ name });
     if (!restaurant) {
       throw new NotFoundException(`Restaurant with name "${name}" not found`);

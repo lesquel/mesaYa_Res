@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthUser } from '../../domain/entities/auth-user.entity';
+import type { AuthUserInfo } from '../../application/dto/responses/auth-token.response';
 
 /** User data returned from Auth MS via Kafka */
 interface AuthProxyUserData {
@@ -8,6 +8,13 @@ interface AuthProxyUserData {
   firstName: string;
   lastName: string;
   roles: string[];
+}
+
+/** JWT claims structure from validated token */
+interface JwtUserClaims {
+  userId: string;
+  email: string;
+  roles: Array<{ name: string; permissions?: Array<{ name: string }> }>;
 }
 
 export class AuthUserResponseDto {
@@ -26,12 +33,13 @@ export class AuthUserResponseDto {
   @ApiProperty({ type: [String] })
   roles: string[];
 
-  static fromDomain(user: AuthUser): AuthUserResponseDto {
+  /** Create DTO from AuthUserInfo (from AuthService) */
+  static fromDomain(user: AuthUserInfo): AuthUserResponseDto {
     const dto = new AuthUserResponseDto();
     dto.id = user.id ?? '';
     dto.email = user.email;
     dto.name = user.name;
-    dto.phone = user.phone;
+    dto.phone = ''; // Phone not included in basic user info
     dto.roles = user.roles.map((role) => role.name);
     return dto;
   }
@@ -44,6 +52,17 @@ export class AuthUserResponseDto {
     dto.name = `${data.firstName} ${data.lastName}`.trim();
     dto.phone = ''; // Phone not returned from Auth MS in user queries
     dto.roles = data.roles;
+    return dto;
+  }
+
+  /** Create DTO directly from JWT claims - no DB lookup needed */
+  static fromJwtClaims(claims: JwtUserClaims): AuthUserResponseDto {
+    const dto = new AuthUserResponseDto();
+    dto.id = claims.userId;
+    dto.email = claims.email;
+    dto.name = ''; // Name not in JWT claims, frontend can fetch if needed
+    dto.phone = '';
+    dto.roles = claims.roles.map((role) => role.name);
     return dto;
   }
 }

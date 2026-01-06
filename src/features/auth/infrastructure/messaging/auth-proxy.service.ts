@@ -88,11 +88,15 @@ export class AuthProxyService implements OnModuleInit {
     this.logger.log('Connected to Auth MS via Kafka');
   }
 
-  async signUp(payload: SignUpPayload): Promise<AuthProxyResponse<AuthTokenData>> {
+  async signUp(
+    payload: SignUpPayload,
+  ): Promise<AuthProxyResponse<AuthTokenData>> {
     return this.send<AuthTokenData>(AUTH_PATTERNS.SIGN_UP, payload);
   }
 
-  async login(payload: LoginPayload): Promise<AuthProxyResponse<AuthTokenData>> {
+  async login(
+    payload: LoginPayload,
+  ): Promise<AuthProxyResponse<AuthTokenData>> {
     return this.send<AuthTokenData>(AUTH_PATTERNS.LOGIN, payload);
   }
 
@@ -128,9 +132,9 @@ export class AuthProxyService implements OnModuleInit {
   ): Promise<AuthProxyResponse<T>> {
     try {
       const response = await lastValueFrom(
-        this.authClient.send<AuthProxyResponse<T>>(pattern, payload).pipe(
-          timeout(this.DEFAULT_TIMEOUT),
-        ),
+        this.authClient
+          .send<AuthProxyResponse<T>>(pattern, payload)
+          .pipe(timeout(this.DEFAULT_TIMEOUT)),
       );
       return response;
     } catch (error) {

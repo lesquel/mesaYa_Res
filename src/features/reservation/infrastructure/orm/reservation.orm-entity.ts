@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 import { TableOrmEntity } from '@features/tables/infrastructure/database/typeorm/orm/table.orm-entity';
 import type { ReservationStatus } from '../../domain/types/reservation-status.type';
@@ -17,9 +16,12 @@ export class ReservationOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'reservation_id' })
   id: string;
 
-  @ManyToOne(() => UserOrmEntity, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: UserOrmEntity;
+  /**
+   * Reference to user in Auth MS - no FK constraint.
+   * The user_id comes from JWT token (sub claim).
+   */
+  @Column({ type: 'uuid', name: 'user_id', nullable: false })
+  userId: string;
 
   @ManyToOne(() => RestaurantOrmEntity, {
     nullable: false,
@@ -30,9 +32,6 @@ export class ReservationOrmEntity {
 
   @Column({ type: 'uuid', name: 'restaurant_id', nullable: false })
   restaurantId: string;
-
-  @Column({ type: 'uuid', name: 'user_id', nullable: false })
-  userId: string;
 
   @ManyToOne(() => TableOrmEntity, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'table_id', referencedColumnName: 'id' })

@@ -7,19 +7,15 @@ import { SeedService } from './seed.service';
 export class SeedController {
   constructor(private readonly seedService: SeedService) {}
 
-  @Get('auth-only')
-  @ApiOperation({
-    summary: 'Ejecutar seeding solo de autenticación (roles y permisos)',
-  })
-  async executeAuthOnly(): Promise<{ message: string; success: boolean }> {
-    return await this.seedService.seedAuthOnly();
-  }
+  // Note: Auth seeding (auth-only endpoint) has been removed.
+  // Auth data (users, roles, permissions) is now seeded by Auth MS on startup.
 
   @Get()
   @ApiOperation({
     summary: 'Ejecutar seeding de la base de datos',
     description:
-      'Popula la base de datos con datos iniciales incluyendo permisos, roles, usuarios, planes de suscripción, imágenes y objetos gráficos.',
+      'Popula la base de datos con datos de negocio (suscripciones, restaurantes, menús, etc.). ' +
+      'Nota: Los datos de autenticación (usuarios, roles, permisos) son sembrados por el Auth MS.',
   })
   @ApiResponse({
     status: 200,

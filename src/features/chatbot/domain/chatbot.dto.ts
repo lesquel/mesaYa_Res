@@ -67,7 +67,8 @@ export class ChatRequestDto {
   access_level?: ChatAccessLevel = 'guest';
 
   @ApiPropertyOptional({
-    description: 'Legacy user role in the platform (deprecated, use access_level)',
+    description:
+      'Legacy user role in the platform (deprecated, use access_level)',
     enum: ['client', 'restaurant'],
     example: 'client',
   })

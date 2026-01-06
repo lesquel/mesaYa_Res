@@ -18,7 +18,7 @@ import {
   ApiParam,
   ApiCreatedResponse,
 } from '@nestjs/swagger';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
+import { AuthRoleName } from '@features/auth/domain/enums';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { RolesGuard } from '@features/auth/interface/guards/roles.guard';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';

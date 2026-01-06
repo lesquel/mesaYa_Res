@@ -28,7 +28,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
 
   constructor(configService: ConfigService) {
-    const publicKey = configService.get<string>('JWT_PUBLIC_KEY')?.replace(/\\n/g, '\n');
+    const publicKey = configService
+      .get<string>('JWT_PUBLIC_KEY')
+      ?.replace(/\\n/g, '\n');
 
     if (!publicKey) {
       throw new Error('JWT_PUBLIC_KEY is not configured');

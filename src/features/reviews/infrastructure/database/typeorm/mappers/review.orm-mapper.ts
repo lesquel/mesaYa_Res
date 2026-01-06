@@ -1,12 +1,17 @@
 import { Review } from '../../../../domain';
 import { ReviewOrmEntity } from '../orm';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
+/**
+ * Mapper for Review ORM entities.
+ *
+ * Note: userId is stored as a plain UUID reference to Auth MS.
+ * We don't join with any user table - the user data comes from JWT.
+ */
 export class ReviewOrmMapper {
   static toDomain(entity: ReviewOrmEntity): Review {
     const restaurantId = entity.restaurantId ?? entity.restaurant?.id;
-    const userId = entity.userId ?? entity.user?.id;
+    const userId = entity.userId;
 
     if (!restaurantId || !userId) {
       throw new Error('Review entity is missing relation identifiers');
@@ -27,7 +32,6 @@ export class ReviewOrmMapper {
     review: Review,
     relations: {
       restaurant?: RestaurantOrmEntity;
-      user?: UserOrmEntity;
       existing?: ReviewOrmEntity;
     } = {},
   ): ReviewOrmEntity {
@@ -35,6 +39,7 @@ export class ReviewOrmMapper {
     const entity = relations.existing ?? new ReviewOrmEntity();
 
     entity.id = snapshot.id;
+    entity.userId = snapshot.userId;
     entity.rating = snapshot.rating;
     entity.comment = snapshot.comment ?? null;
     entity.createdAt = snapshot.createdAt;
@@ -42,10 +47,6 @@ export class ReviewOrmMapper {
 
     if (relations.restaurant) {
       entity.restaurant = relations.restaurant;
-    }
-
-    if (relations.user) {
-      entity.user = relations.user;
     }
 
     return entity;

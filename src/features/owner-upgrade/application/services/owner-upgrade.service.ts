@@ -6,11 +6,11 @@ import {
   KAFKA_TOPICS,
   EVENT_TYPES,
 } from '@shared/infrastructure/kafka';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
-import { AuthService } from '@features/auth/application/services/auth.service';
-import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
-import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';
-import { UpdateUserRolesCommand } from '@features/auth/application/dto/commands/update-user-roles.command';
+import { AuthRoleName } from '@features/auth/domain/enums';
+import {
+  AuthProxyService,
+  type AuthUserData,
+} from '@features/auth/infrastructure/messaging/auth-proxy.service';
 import type { OwnerUpgradeRequestRepositoryPort } from '../ports/owner-upgrade-request.repository.port';
 import { OwnerUpgradeRequestEntity } from '../../domain/owner-upgrade-request.entity';
 import { OwnerUpgradeRequestStatus } from '../../domain/owner-upgrade-request-status.enum';
@@ -24,22 +24,25 @@ import {
   OwnerUpgradeNotFoundError,
   OwnerUpgradeRequestNotFoundError,
 } from '../../domain/errors';
-import type { AuthUser } from '@features/auth/domain/entities/auth-user.entity';
 import { RESTAURANT_REPOSITORY } from '@features/restaurants/application/ports/restaurant-repository.port';
 import type { RestaurantRepositoryPort } from '@features/restaurants/application/ports/restaurant-repository.port';
-import { UserNotFoundError } from '@features/auth/domain/errors/user-not-found.error';
 import { OWNER_UPGRADE_REQUEST_REPOSITORY } from '../../owner-upgrade.tokens';
 import type {
   ListOwnerUpgradeRequestsQuery,
   PaginatedOwnerUpgradeResponse,
 } from '../dto';
+import { NotFoundException } from '@nestjs/common';
 
+/**
+ * Owner Upgrade Service.
+ *
+ * Now uses AuthProxyService to communicate with Auth MS for user operations.
+ * No local user repository - users live in Auth MS only.
+ */
 @Injectable()
 export class OwnerUpgradeService {
   constructor(
-    private readonly authService: AuthService,
-    @Inject(AUTH_USER_REPOSITORY)
-    private readonly users: AuthUserRepositoryPort,
+    private readonly authProxy: AuthProxyService,
     @Inject(RESTAURANT_REPOSITORY)
     private readonly restaurantRepository: RestaurantRepositoryPort,
     @Inject(OWNER_UPGRADE_REQUEST_REPOSITORY)
@@ -82,10 +85,7 @@ export class OwnerUpgradeService {
     dto: OwnerUpgradeRequestDto,
     userId: string,
   ): Promise<OwnerUpgradeResponseDto> {
-    const user = await this.users.findById(userId);
-    if (!user) {
-      throw new UserNotFoundError(userId);
-    }
+    const user = await this.getUserFromAuthMs(userId);
 
     if (this.userAlreadyOwner(user)) {
       throw new OwnerUpgradeForbiddenError('owner.upgrade.errors.alreadyOwner');
@@ -147,7 +147,9 @@ export class OwnerUpgradeService {
         targetUserId,
       );
 
-      await this.grantOwnerRole(targetUserId);
+      // TODO: When Auth MS supports role updates via Kafka, emit event here
+      // For now, the role update should be done directly in Auth MS admin panel
+      // await this.grantOwnerRole(targetUserId);
 
       request.approve({
         restaurantId: decision.restaurantId,
@@ -169,21 +171,21 @@ export class OwnerUpgradeService {
     return OwnerUpgradeResponseDto.fromEntity(updated);
   }
 
-  private async grantOwnerRole(userId: string): Promise<void> {
-    const user = await this.users.findById(userId);
-    if (!user) {
-      throw new UserNotFoundError(userId);
+  /**
+   * Get user info from Auth MS.
+   */
+  private async getUserFromAuthMs(userId: string): Promise<AuthUserData> {
+    const response = await this.authProxy.findUserById(userId);
+    if (!response.success || !response.data) {
+      throw new NotFoundException(`User ${userId} not found`);
     }
-
-    const roleNames = new Set(user.roles.map((role) => role.name));
-    roleNames.add(AuthRoleName.OWNER);
-
-    const command = new UpdateUserRolesCommand(userId, Array.from(roleNames));
-
-    await this.authService.updateUserRoles(command);
+    return response.data;
   }
 
-  private userAlreadyOwner(user: AuthUser): boolean {
-    return user.roles.some((role) => role.name === AuthRoleName.OWNER);
+  /**
+   * Check if user already has OWNER role.
+   */
+  private userAlreadyOwner(user: AuthUserData): boolean {
+    return user.roles.some((role) => role === AuthRoleName.OWNER);
   }
 }

@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import {
   RestaurantEntity,
@@ -15,14 +15,22 @@ import { PaginatedResult } from '@shared/application/types';
 import { RestaurantRepositoryPort } from '../../../../application/ports';
 import { RestaurantOrmEntity } from '../orm/restaurant.orm-entity';
 import { RestaurantOrmMapper } from '../mappers';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { paginateQueryBuilder } from '@shared/infrastructure/pagination';
 import { IRestaurantDomainRepositoryPort } from '../../../../domain/repositories/restaurant-domain-repository.port';
 import type {
   RestaurantCreate,
   RestaurantUpdate,
 } from '../../../../domain/types';
+import { IRestaurantOwnerPort } from '../../../../domain/ports/restaurant-owner.port';
 
+/**
+ * Restaurant TypeORM Repository.
+ *
+ * ARCHITECTURE NOTE: Users live in Auth MS only.
+ * We store `ownerId` as a UUID reference without FK constraint.
+ * We trust that if a JWT is valid, the user exists in Auth MS.
+ * For owner name/email display, the frontend should call Auth MS or we can add a sync mechanism.
+ */
 @Injectable()
 export class RestaurantTypeOrmRepository
   extends RestaurantRepositoryPort
@@ -31,8 +39,8 @@ export class RestaurantTypeOrmRepository
   constructor(
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurantRepository: Repository<RestaurantOrmEntity>,
-    @InjectRepository(UserOrmEntity)
-    private readonly userRepository: Repository<UserOrmEntity>,
+    @Inject('IRestaurantOwnerPort')
+    private readonly ownerPort: IRestaurantOwnerPort,
   ) {
     super();
   }
@@ -41,26 +49,23 @@ export class RestaurantTypeOrmRepository
     if (!restaurant.ownerId) {
       throw new RestaurantOwnerNotFoundError(null);
     }
-    const owner = await this.userRepository.findOne({
-      where: { id: restaurant.ownerId },
-    });
 
-    if (!owner) {
+    // Trust the JWT - if we have an ownerId, the owner exists in Auth MS
+    const ownerExists = await this.ownerPort.exists(restaurant.ownerId);
+    if (!ownerExists) {
       throw new RestaurantOwnerNotFoundError(restaurant.ownerId);
     }
 
-    const entity = RestaurantOrmMapper.toOrmEntity(restaurant, owner);
+    const entity = RestaurantOrmMapper.toOrmEntity(restaurant);
     const saved = await this.restaurantRepository.save(entity);
 
     return RestaurantOrmMapper.toDomain(saved);
   }
 
   async create(data: RestaurantCreate): Promise<RestaurantEntity> {
-    const owner = await this.userRepository.findOne({
-      where: { id: data.ownerId },
-    });
-
-    if (!owner) {
+    // Trust the JWT - if we have an ownerId, the owner exists in Auth MS
+    const ownerExists = await this.ownerPort.exists(data.ownerId);
+    if (!ownerExists) {
       throw new RestaurantOwnerNotFoundError(data.ownerId);
     }
 
@@ -82,7 +87,7 @@ export class RestaurantTypeOrmRepository
   async findById(id: string): Promise<RestaurantEntity | null> {
     const entity = await this.restaurantRepository.findOne({
       where: { id },
-      relations: ['owner', 'sections', 'sections.tables'],
+      relations: ['sections', 'sections.tables'],
     });
 
     if (!entity) {
@@ -94,7 +99,7 @@ export class RestaurantTypeOrmRepository
 
   async findAll(): Promise<RestaurantEntity[]> {
     const entities = await this.restaurantRepository.find({
-      relations: ['owner', 'sections', 'sections.tables'],
+      relations: ['sections', 'sections.tables'],
     });
 
     return entities.map((entity) => RestaurantOrmMapper.toDomain(entity));
@@ -103,7 +108,7 @@ export class RestaurantTypeOrmRepository
   async findByName(name: string): Promise<RestaurantEntity | null> {
     const entity = await this.restaurantRepository.findOne({
       where: { name },
-      relations: ['owner', 'sections', 'sections.tables'],
+      relations: ['sections', 'sections.tables'],
     });
 
     if (!entity) {
@@ -132,25 +137,37 @@ export class RestaurantTypeOrmRepository
     ownerId: string,
     query: ListRestaurantsQuery,
   ): Promise<PaginatedResult<RestaurantEntity>> {
-    const qb = this.buildBaseQuery().where('owner.id = :ownerId', { ownerId });
+    const qb = this.buildBaseQuery().where('restaurant.ownerId = :ownerId', {
+      ownerId,
+    });
     return this.execPagination(qb, query);
   }
 
+  /**
+   * List unique restaurant owners.
+   *
+   * NOTE: This method returns only the ownerId. Owner name/email should be
+   * fetched from Auth MS by the calling service or frontend.
+   * This is intentional - users live in Auth MS only.
+   */
   async listOwners(): Promise<RestaurantOwnerOptionDto[]> {
     const alias = 'restaurant';
     const rows = await this.restaurantRepository
       .createQueryBuilder(alias)
-      .innerJoin(`${alias}.owner`, 'owner')
-      .select('owner.id', 'ownerId')
-      .addSelect('owner.name', 'name')
-      .addSelect('owner.email', 'email')
-      .groupBy('owner.id')
-      .addGroupBy('owner.name')
-      .addGroupBy('owner.email')
-      .orderBy('owner.name', 'ASC')
-      .getRawMany<{ ownerId: string; name: string; email: string }>();
+      .select(`${alias}.ownerId`, 'ownerId')
+      .distinct(true)
+      .where(`${alias}.ownerId IS NOT NULL`)
+      .orderBy(`${alias}.ownerId`, 'ASC')
+      .getRawMany<{ ownerId: string }>();
 
-    return RestaurantOwnerOptionDto.fromArray(rows);
+    // Return owner IDs only - name/email should be fetched from Auth MS
+    return rows.map((row) =>
+      RestaurantOwnerOptionDto.fromRaw({
+        ownerId: row.ownerId,
+        name: 'Owner', // Placeholder - fetch from Auth MS
+        email: '', // Placeholder - fetch from Auth MS
+      }),
+    );
   }
 
   async assignOwner(
@@ -165,15 +182,12 @@ export class RestaurantTypeOrmRepository
       throw new RestaurantNotFoundError(restaurantId);
     }
 
-    const owner = await this.userRepository.findOne({
-      where: { id: ownerId },
-    });
-
-    if (!owner) {
+    // Trust the JWT - if we have an ownerId, the owner exists in Auth MS
+    const ownerExists = await this.ownerPort.exists(ownerId);
+    if (!ownerExists) {
       throw new RestaurantOwnerNotFoundError(ownerId);
     }
 
-    restaurant.owner = owner;
     restaurant.ownerId = ownerId;
 
     const saved = await this.restaurantRepository.save(restaurant);
@@ -225,7 +239,6 @@ export class RestaurantTypeOrmRepository
     const alias = 'restaurant';
     return this.restaurantRepository
       .createQueryBuilder(alias)
-      .leftJoinAndSelect(`${alias}.owner`, 'owner')
       .leftJoinAndSelect(`${alias}.sections`, 'section')
       .leftJoinAndSelect('section.tables', 'table');
   }
@@ -266,21 +279,30 @@ export class RestaurantTypeOrmRepository
 
     // Apply specific filters with accent-insensitive search
     if (query.name) {
-      qb.andWhere(`unaccent(LOWER(${alias}.name)) LIKE unaccent(LOWER(:filterName))`, {
-        filterName: `%${query.name}%`,
-      });
+      qb.andWhere(
+        `unaccent(LOWER(${alias}.name)) LIKE unaccent(LOWER(:filterName))`,
+        {
+          filterName: `%${query.name}%`,
+        },
+      );
     }
 
     if (query.city) {
-      qb.andWhere(`unaccent(LOWER(${alias}.location)) LIKE unaccent(LOWER(:filterCity))`, {
-        filterCity: `%${query.city}%`,
-      });
+      qb.andWhere(
+        `unaccent(LOWER(${alias}.location)) LIKE unaccent(LOWER(:filterCity))`,
+        {
+          filterCity: `%${query.city}%`,
+        },
+      );
     }
 
     if (query.cuisineType) {
-      qb.andWhere(`unaccent(LOWER(${alias}.description)) LIKE unaccent(LOWER(:cuisineType))`, {
-        cuisineType: `%${query.cuisineType}%`,
-      });
+      qb.andWhere(
+        `unaccent(LOWER(${alias}.description)) LIKE unaccent(LOWER(:cuisineType))`,
+        {
+          cuisineType: `%${query.cuisineType}%`,
+        },
+      );
     }
 
     if (typeof query.isActive === 'boolean') {
@@ -288,7 +310,9 @@ export class RestaurantTypeOrmRepository
     }
 
     if (query.ownerId) {
-      qb.andWhere('owner.id = :filterOwnerId', { filterOwnerId: query.ownerId });
+      qb.andWhere('restaurant.ownerId = :filterOwnerId', {
+        filterOwnerId: query.ownerId,
+      });
     }
 
     const sortMap: Record<string, string> = {

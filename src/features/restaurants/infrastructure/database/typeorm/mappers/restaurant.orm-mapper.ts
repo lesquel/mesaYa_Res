@@ -1,8 +1,13 @@
 import { RestaurantEntity, type RestaurantDay } from '../../../../domain';
 import { RestaurantOrmEntity } from '../orm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import type { RestaurantLocationSnapshot } from '../../../../domain/entities/values/restaurant-location';
 
+/**
+ * Restaurant ORM Mapper.
+ *
+ * ARCHITECTURE NOTE: Users live in Auth MS only.
+ * We do NOT map owner relations here - only the ownerId UUID reference.
+ */
 export class RestaurantOrmMapper {
   static toDomain(entity: RestaurantOrmEntity): RestaurantEntity {
     const normalizeTime = (value: string | null | undefined): string => {
@@ -40,7 +45,7 @@ export class RestaurantOrmMapper {
         | 'SUSPENDED'
         | 'ARCHIVED',
       adminNote: entity.adminNote ?? null,
-      ownerId: entity.ownerId ?? entity.owner?.id ?? null,
+      ownerId: entity.ownerId ?? null,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       sections: (entity.sections ?? []).map((section) => ({
@@ -81,10 +86,13 @@ export class RestaurantOrmMapper {
     });
   }
 
-  static toOrmEntity(
-    restaurant: RestaurantEntity,
-    owner?: UserOrmEntity,
-  ): RestaurantOrmEntity {
+  /**
+   * Convert domain entity to ORM entity.
+   *
+   * NOTE: We no longer accept an owner parameter.
+   * Users live in Auth MS - we only store the ownerId reference.
+   */
+  static toOrmEntity(restaurant: RestaurantEntity): RestaurantOrmEntity {
     const snapshot = restaurant.snapshot();
     const entity = new RestaurantOrmEntity();
 
@@ -114,7 +122,7 @@ export class RestaurantOrmMapper {
     entity.status = snapshot.status;
     entity.adminNote = snapshot.adminNote ?? null;
     entity.ownerId = snapshot.ownerId ?? null;
-    entity.owner = owner ?? null;
+    // Note: We do NOT set entity.owner - users live in Auth MS only
     entity.createdAt = snapshot.createdAt;
     entity.updatedAt = snapshot.updatedAt;
 

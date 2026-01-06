@@ -26,7 +26,7 @@ import { PermissionsGuard } from '@features/auth/interface/guards/permissions.gu
 import { Permissions } from '@features/auth/interface/decorators/permissions.decorator';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
 import type { CurrentUserPayload } from '@features/auth/interface/decorators/current-user.decorator';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
+import { AuthRoleName } from '@features/auth/domain/enums';
 import {
   ThrottleCreate,
   ThrottleModify,

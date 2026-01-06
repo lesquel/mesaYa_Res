@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { ReviewsController } from './interface';
 import {
   ReviewOrmEntity,
@@ -39,13 +38,15 @@ import { REVIEW_USER_PORT } from './domain/ports/review-user.port';
 import { KafkaService } from '@shared/infrastructure/kafka';
 import { RestaurantOrmEntity } from '../restaurants';
 
+/**
+ * Reviews module.
+ *
+ * Note: UserOrmEntity is NOT imported here because users live in Auth MS.
+ * The userId is stored as a plain UUID reference and we trust the JWT token.
+ */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ReviewOrmEntity,
-      RestaurantOrmEntity,
-      UserOrmEntity,
-    ]),
+    TypeOrmModule.forFeature([ReviewOrmEntity, RestaurantOrmEntity]),
     AuthModule,
   ],
   controllers: [ReviewsController],

@@ -3,14 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { SectionOrmEntity } from '@features/sections/infrastructure/database/typeorm/orm/section.orm-entity';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
 @Entity({ name: 'restaurant' })
 export class RestaurantOrmEntity {
@@ -86,12 +83,12 @@ export class RestaurantOrmEntity {
   @Column({ type: 'varchar', length: 500, name: 'admin_note', nullable: true })
   adminNote?: string | null;
 
+  /**
+   * Reference to owner user in Auth MS - no FK constraint.
+   * The owner_id comes from JWT token when restaurant is created.
+   */
   @Column({ type: 'uuid', name: 'owner_id', nullable: true })
   ownerId: string | null;
-
-  @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'owner_id', referencedColumnName: 'id' })
-  owner: UserOrmEntity | null;
 
   @OneToMany(() => SectionOrmEntity, (section) => section.restaurant)
   sections: SectionOrmEntity[];

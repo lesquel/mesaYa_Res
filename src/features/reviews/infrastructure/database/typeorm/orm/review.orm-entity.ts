@@ -8,7 +8,6 @@ import {
   RelationId,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { RestaurantOrmEntity } from '../../../../../restaurants/infrastructure';
 
 @Entity({ name: 'review' })
@@ -16,9 +15,12 @@ export class ReviewOrmEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'review_id' })
   id: string;
 
-  @ManyToOne(() => UserOrmEntity, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: UserOrmEntity;
+  /**
+   * Reference to user in Auth MS - no FK constraint.
+   * The user_id comes from JWT token (sub claim).
+   */
+  @Column({ type: 'uuid', name: 'user_id', nullable: false })
+  userId: string;
 
   @ManyToOne(() => RestaurantOrmEntity, {
     nullable: false,
@@ -29,9 +31,6 @@ export class ReviewOrmEntity {
 
   @RelationId((review: ReviewOrmEntity) => review.restaurant)
   restaurantId: string;
-
-  @RelationId((review: ReviewOrmEntity) => review.user)
-  userId: string;
 
   @Column({ type: 'int', name: 'rating', nullable: false })
   rating: number;

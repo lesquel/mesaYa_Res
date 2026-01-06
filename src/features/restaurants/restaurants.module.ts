@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
 import { ReservationModule } from '@features/reservation/reservation.module';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
   AdminRestaurantsController,
   RestaurantsController,
@@ -46,11 +45,16 @@ import type {
   RestaurantAnalyticsRepositoryPort,
 } from './application/index';
 
+/**
+ * Restaurants module.
+ *
+ * Note: UserOrmEntity is NOT imported here because users live in Auth MS.
+ * The ownerId is stored as a plain UUID reference and we trust the JWT token.
+ */
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       RestaurantOrmEntity,
-      UserOrmEntity,
       RestaurantScheduleExceptionOrmEntity,
       RestaurantScheduleSlotOrmEntity,
     ]),

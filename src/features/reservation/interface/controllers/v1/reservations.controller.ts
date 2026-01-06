@@ -55,7 +55,7 @@ import {
 } from '@features/reservation/application';
 import { ReservationResponseSwaggerDto } from '../../dto';
 import { ReservationAnalyticsRequestDto } from '@features/reservation/interface/dto';
-import { AuthRoleName } from '@features/auth/domain/entities/auth-role.entity';
+import { AuthRoleName } from '@features/auth/domain/enums';
 
 @ApiTags('Reservations')
 @Controller({ path: 'reservations', version: '1' })

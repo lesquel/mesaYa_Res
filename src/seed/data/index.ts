@@ -1,6 +1,3 @@
-export * from './permissions.seed';
-export * from './roles.seed';
-export * from './users.seed';
 export * from './subscription-plans.seed';
 export * from './subscriptions.seed';
 export * from './images.seed';

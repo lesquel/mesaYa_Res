@@ -1,12 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, Logger } from '@nestjs/common';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import {
   ReservationEntity,
   ReservationNotFoundError,
   ReservationRestaurantNotFoundError,
-  ReservationUserNotFoundError,
 } from '../../domain';
 import {
   ListReservationsQuery,
@@ -22,6 +20,13 @@ import { ReservationOrmEntity } from '../orm/reservation.orm-entity';
 import { ReservationOrmMapper } from '../mappers';
 import { RestaurantOrmEntity } from '@features/restaurants/infrastructure/database/typeorm/orm/restaurant.orm-entity';
 
+/**
+ * Reservation repository implementation.
+ *
+ * Note: user_id is stored as a UUID reference to Auth MS.
+ * We do NOT validate that the user exists - we trust the JWT token.
+ * User info (name, email) is NOT available locally - use Auth MS API if needed.
+ */
 @Injectable()
 export class ReservationTypeOrmRepository
   implements ReservationRepositoryPort, IReservationRepositoryPort
@@ -33,8 +38,6 @@ export class ReservationTypeOrmRepository
     private readonly reservations: Repository<ReservationOrmEntity>,
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurants: Repository<RestaurantOrmEntity>,
-    @InjectRepository(UserOrmEntity)
-    private readonly users: Repository<UserOrmEntity>,
   ) {}
 
   async save(reservation: ReservationEntity): Promise<ReservationEntity> {
@@ -42,34 +45,29 @@ export class ReservationTypeOrmRepository
 
     const existing = await this.reservations.findOne({
       where: { id: snapshot.id },
-      relations: ['restaurant', 'user'],
+      relations: ['restaurant'],
     });
 
     let restaurant = existing?.restaurant;
-    let user = existing?.user;
 
     if (!existing) {
-      const [foundRestaurant, foundUser] = await Promise.all([
-        this.restaurants.findOne({ where: { id: snapshot.restaurantId } }),
-        this.users.findOne({ where: { id: snapshot.userId } }),
-      ]);
+      const foundRestaurant = await this.restaurants.findOne({
+        where: { id: snapshot.restaurantId },
+      });
 
       restaurant = foundRestaurant ?? undefined;
-      user = foundUser ?? undefined;
 
       if (!restaurant) {
         throw new ReservationRestaurantNotFoundError(snapshot.restaurantId);
       }
 
-      if (!user) {
-        throw new ReservationUserNotFoundError(snapshot.userId);
-      }
+      // Note: We trust the userId from the JWT token.
+      // We don't validate that the user exists in any local table.
     }
 
     const entity = ReservationOrmMapper.toOrmEntity(reservation, {
       existing: existing ?? undefined,
       restaurant,
-      user,
     });
 
     const saved = await this.reservations.save(entity);
@@ -79,7 +77,7 @@ export class ReservationTypeOrmRepository
   async findById(id: string): Promise<ReservationEntity | null> {
     const entity = await this.reservations.findOne({
       where: { id },
-      relations: ['restaurant', 'user'],
+      relations: ['restaurant'],
     });
 
     return entity ? ReservationOrmMapper.toDomain(entity) : null;
@@ -97,7 +95,6 @@ export class ReservationTypeOrmRepository
   ): Promise<ReservationEntity[]> {
     const qb = this.reservations
       .createQueryBuilder('reservation')
-      .leftJoinAndSelect('reservation.user', 'user')
       .leftJoinAndSelect('reservation.restaurant', 'restaurant')
       .where('reservation.reservationTime BETWEEN :startAt AND :endAt', {
         startAt: query.startAt,
@@ -141,14 +138,9 @@ export class ReservationTypeOrmRepository
     return this.executePagination(qb, query);
   }
 
-  async paginateByOwner(query: ListOwnerReservationsQuery): Promise<
-    PaginatedResult<ReservationEntity> & {
-      userSnapshots?: Map<
-        string,
-        { name?: string; email?: string; phone?: string }
-      >;
-    }
-  > {
+  async paginateByOwner(
+    query: ListOwnerReservationsQuery,
+  ): Promise<PaginatedResult<ReservationEntity>> {
     const qb = this.buildBaseQuery().where('restaurant.ownerId = :ownerId', {
       ownerId: query.ownerId,
     });
@@ -159,14 +151,13 @@ export class ReservationTypeOrmRepository
       });
     }
 
-    return this.executePaginationWithUserSnapshots(qb, query);
+    return this.executePagination(qb, query);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<ReservationOrmEntity> {
     const alias = 'reservation';
     return this.reservations
       .createQueryBuilder(alias)
-      .leftJoinAndSelect(`${alias}.user`, 'user')
       .leftJoinAndSelect(`${alias}.restaurant`, 'restaurant');
   }
 
@@ -175,9 +166,9 @@ export class ReservationTypeOrmRepository
     query: ListReservationsQuery,
   ): Promise<PaginatedResult<ReservationEntity>> {
     const alias = qb.alias;
+
     // Apply optional filters (status, restaurantId, date)
     if ((query as any).status) {
-      // Normalize status to uppercase for case-insensitive comparison
       const normalizedStatus = String((query as any).status).toUpperCase();
       qb.andWhere(`${alias}.status = :status`, {
         status: normalizedStatus,
@@ -191,7 +182,6 @@ export class ReservationTypeOrmRepository
     }
 
     if ((query as any).date) {
-      // filter reservations whose reservationDate falls within the given date
       try {
         const date = new Date((query as any).date);
         if (!isNaN(date.getTime())) {
@@ -216,7 +206,6 @@ export class ReservationTypeOrmRepository
       createdAt: `${alias}.createdAt`,
       reservationDate: `${alias}.reservationDate`,
       restaurant: `restaurant.name`,
-      user: `user.name`,
     };
 
     const sortByColumn =
@@ -229,12 +218,7 @@ export class ReservationTypeOrmRepository
       sortOrder: query.sortOrder,
       q: query.search,
       allowedSorts: Object.values(sortMap),
-      searchable: [
-        `${alias}.status`,
-        `restaurant.name`,
-        `user.name`,
-        `user.email`,
-      ],
+      searchable: [`${alias}.status`, `restaurant.name`],
     });
 
     const mappedResults = paginationResult.results
@@ -244,104 +228,6 @@ export class ReservationTypeOrmRepository
     return {
       ...paginationResult,
       results: mappedResults,
-    };
-  }
-
-  private async executePaginationWithUserSnapshots(
-    qb: SelectQueryBuilder<ReservationOrmEntity>,
-    query: ListReservationsQuery,
-  ): Promise<
-    PaginatedResult<ReservationEntity> & {
-      userSnapshots?: Map<
-        string,
-        { name?: string; email?: string; phone?: string }
-      >;
-    }
-  > {
-    const alias = qb.alias;
-    // Apply optional filters (status, restaurantId, date)
-    if ((query as any).status) {
-      const normalizedStatus = String((query as any).status).toUpperCase();
-      qb.andWhere(`${alias}.status = :status`, {
-        status: normalizedStatus,
-      });
-    }
-
-    if ((query as any).restaurantId) {
-      qb.andWhere('restaurant.id = :restaurantId', {
-        restaurantId: (query as any).restaurantId,
-      });
-    }
-
-    if ((query as any).date) {
-      try {
-        const date = new Date((query as any).date);
-        if (!isNaN(date.getTime())) {
-          const start = new Date(date);
-          start.setHours(0, 0, 0, 0);
-          const end = new Date(start);
-          end.setDate(start.getDate() + 1);
-          qb.andWhere(
-            `${alias}.reservationDate BETWEEN :startDate AND :endDate`,
-            {
-              startDate: start.toISOString(),
-              endDate: end.toISOString(),
-            },
-          );
-        }
-      } catch (e) {
-        // ignore invalid dates
-      }
-    }
-
-    const sortMap: Record<string, string> = {
-      createdAt: `${alias}.createdAt`,
-      reservationDate: `${alias}.reservationDate`,
-      restaurant: `restaurant.name`,
-      user: `user.name`,
-    };
-
-    const sortByColumn =
-      query.sortBy && sortMap[query.sortBy] ? sortMap[query.sortBy] : undefined;
-
-    const paginationResult = await paginateQueryBuilder(qb, {
-      ...query.pagination,
-      route: query.route,
-      sortBy: sortByColumn,
-      sortOrder: query.sortOrder,
-      q: query.search,
-      allowedSorts: Object.values(sortMap),
-      searchable: [
-        `${alias}.status`,
-        `restaurant.name`,
-        `user.name`,
-        `user.email`,
-      ],
-    });
-
-    // Build user snapshots map from ORM entities before converting to domain
-    const userSnapshots = new Map<
-      string,
-      { name?: string; email?: string; phone?: string }
-    >();
-    for (const entity of paginationResult.results) {
-      if (entity.user) {
-        userSnapshots.set(entity.id, {
-          name: entity.user.name,
-          email: entity.user.email,
-          phone: entity.user.phone,
-        });
-      }
-    }
-
-    const mappedResults = paginationResult.results
-      .map((entity) => this.safeToDomain(entity))
-      .filter((entity): entity is ReservationEntity => Boolean(entity));
-
-    return {
-      ...paginationResult,
-      results: mappedResults,
-      userSnapshots,
     };
   }
 

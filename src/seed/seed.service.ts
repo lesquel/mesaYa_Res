@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  AuthSeedService,
-  UserSeedService,
   SubscriptionSeedService,
   MediaSeedService,
   RestaurantSeedService,
@@ -20,14 +18,15 @@ import {
  * una interfaz simple para ejecutar todos los seeds del sistema.
  * Delega la lógica específica a servicios especializados siguiendo el
  * Principio de Responsabilidad Única (SRP).
+ *
+ * NOTE: Auth seeding (users, roles, permissions) is now handled by Auth MS.
+ * This service only seeds business data that depends on users already existing.
  */
 @Injectable()
 export class SeedService {
   private readonly logger = new Logger(SeedService.name);
 
   constructor(
-    private readonly authSeedService: AuthSeedService,
-    private readonly userSeedService: UserSeedService,
     private readonly subscriptionSeedService: SubscriptionSeedService,
     private readonly mediaSeedService: MediaSeedService,
     private readonly restaurantSeedService: RestaurantSeedService,
@@ -49,36 +48,37 @@ export class SeedService {
    * const result = await seedService.execute();
    * console.log(result); // { message: 'Database seeded successfully', success: true }
    * ```
+   *
+   * @note Auth seeding (users, roles, permissions) is handled by Auth MS on startup.
+   *       Make sure Auth MS has started before running this seed.
    */
   async execute(): Promise<{ message: string; success: boolean }> {
     try {
       this.logger.log('🌱 Starting database seeding...');
+      this.logger.log(
+        '📝 Note: Auth data (users, roles, permissions) is seeded by Auth MS',
+      );
 
-      // Fase 1: Autenticación y autorización
-      await this.authSeedService.seedPermissions();
-      await this.authSeedService.seedRoles();
-      await this.userSeedService.seedUsers();
-
-      // Fase 2: Configuración del sistema
+      // Fase 1: Configuración del sistema
       await this.subscriptionSeedService.seedSubscriptionPlans();
       await this.mediaSeedService.seedImages();
       await this.mediaSeedService.seedGraphicObjects();
 
-      // Fase 3: Datos del negocio
+      // Fase 2: Datos del negocio
       await this.restaurantSeedService.seedRestaurants();
       await this.subscriptionSeedService.seedSubscriptions();
       await this.restaurantSeedService.seedSections();
       await this.restaurantSeedService.seedTables();
 
-      // Fase 4: Contenido
+      // Fase 3: Contenido
       await this.menuSeedService.seedMenus();
       await this.menuSeedService.seedDishes();
 
-      // Fase 5: Interacciones del cliente
+      // Fase 4: Interacciones del cliente
       await this.customerSeedService.seedReservations();
       await this.customerSeedService.seedReviews();
 
-      // Fase 6: Pagos
+      // Fase 5: Pagos
       await this.paymentSeedService.seedPayments();
 
       this.logger.log('✅ Database seeding completed successfully!');
@@ -89,36 +89,6 @@ export class SeedService {
       };
     } catch (error) {
       this.logger.error('❌ Error seeding database:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Ejecuta solo el proceso de seeding de autenticación.
-   *
-   * @returns {Promise<{ message: string; success: boolean }>}
-   * Objeto con el mensaje de éxito y estado de la operación
-   *
-   * @throws {Error} Si ocurre algún error durante el seeding
-   *
-   * @example
-   * ```typescript
-   * const result = await seedService.seedAuthOnly();
-   * console.log(result); // { message: 'Auth seeded successfully', success: true }
-   * ```
-   */
-  async seedAuthOnly(): Promise<{ message: string; success: boolean }> {
-    try {
-      this.logger.log('🌱 Starting auth seeding only...');
-      await this.authSeedService.seedPermissions();
-      await this.authSeedService.seedRoles();
-      this.logger.log('✅ Auth seeding completed successfully!');
-      return {
-        message: 'Auth seeded successfully',
-        success: true,
-      };
-    } catch (error) {
-      this.logger.error('❌ Error seeding auth:', error);
       throw error;
     }
   }

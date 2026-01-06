@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@features/auth/auth.module';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 import { ReservationsController } from './interface';
 import {
   ReservationOrmEntity,
@@ -43,12 +42,17 @@ import {
 import { TableOrmEntity } from '../tables/infrastructure/database/typeorm/orm/table.orm-entity';
 import { SectionOrmEntity } from '../sections/infrastructure/database/typeorm/orm/section.orm-entity';
 
+/**
+ * Reservation module.
+ *
+ * Note: UserOrmEntity is NOT imported here because users live in Auth MS.
+ * The userId is stored as a plain UUID reference and we trust the JWT token.
+ */
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ReservationOrmEntity,
       RestaurantOrmEntity,
-      UserOrmEntity,
       TableOrmEntity,
       SectionOrmEntity,
     ]),

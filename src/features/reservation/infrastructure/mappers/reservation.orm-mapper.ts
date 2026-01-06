@@ -1,12 +1,17 @@
 import { ReservationEntity } from '../../domain';
 import { ReservationOrmEntity } from '../orm';
 import { RestaurantOrmEntity } from '../../../restaurants';
-import { UserOrmEntity } from '@features/auth/infrastructure/database/typeorm/entities/user.orm-entity';
 
+/**
+ * Mapper for Reservation ORM entities.
+ *
+ * Note: userId is stored as a plain UUID reference to Auth MS.
+ * We don't join with any user table - the user data comes from JWT.
+ */
 export class ReservationOrmMapper {
   static toDomain(entity: ReservationOrmEntity): ReservationEntity {
     const restaurantId = entity.restaurantId ?? entity.restaurant?.id;
-    const userId = entity.userId ?? entity.user?.id;
+    const userId = entity.userId;
 
     if (!restaurantId || !userId) {
       throw new Error('Reservation entity is missing relation identifiers');
@@ -30,7 +35,6 @@ export class ReservationOrmMapper {
     reservation: ReservationEntity,
     relations: {
       restaurant?: RestaurantOrmEntity;
-      user?: UserOrmEntity;
       existing?: ReservationOrmEntity;
     } = {},
   ): ReservationOrmEntity {
@@ -38,6 +42,7 @@ export class ReservationOrmMapper {
     const entity = relations.existing ?? new ReservationOrmEntity();
 
     entity.id = snapshot.id;
+    entity.userId = snapshot.userId;
     entity.tableId = snapshot.tableId;
     entity.reservationTime = snapshot.reservationTime;
     entity.reservationDate = snapshot.reservationDate;
@@ -46,14 +51,9 @@ export class ReservationOrmMapper {
     entity.createdAt = snapshot.createdAt;
     entity.updatedAt = snapshot.updatedAt;
     entity.restaurantId = snapshot.restaurantId;
-    entity.userId = snapshot.userId;
 
     if (relations.restaurant) {
       entity.restaurant = relations.restaurant;
-    }
-
-    if (relations.user) {
-      entity.user = relations.user;
     }
 
     return entity;

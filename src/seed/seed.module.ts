@@ -3,9 +3,8 @@ import { SeedService } from './seed.service';
 import { SeedController } from './seed.controller';
 
 // Seed Services
+// Note: Auth seeding (users, roles, permissions) is now handled by Auth MS
 import {
-  AuthSeedService,
-  UserSeedService,
   SubscriptionSeedService,
   MediaSeedService,
   RestaurantSeedService,
@@ -31,6 +30,7 @@ import { PaymentModule } from '@features/payment/payment.module';
   imports: [
     // Import feature modules instead of TypeOrmModule
     // Each module provides its own abstract repository ports
+    // Note: AuthModule is still needed for user sync (read-only copy)
     AuthModule,
     RestaurantsModule,
     SectionsModule,
@@ -46,8 +46,7 @@ import { PaymentModule } from '@features/payment/payment.module';
   controllers: [SeedController],
   providers: [
     SeedService,
-    AuthSeedService,
-    UserSeedService,
+    // Auth seeding (users, roles, permissions) is now handled by Auth MS
     SubscriptionSeedService,
     MediaSeedService,
     RestaurantSeedService,

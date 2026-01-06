@@ -1,12 +1,11 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import type { RestaurantRepositoryPort } from '@features/restaurants/application/ports/restaurant-repository.port';
 import { RESTAURANT_REPOSITORY } from '@features/restaurants/application/ports/restaurant-repository.port';
 import type { SectionRepositoryPort } from '@features/sections/application/ports/section-repository.port';
 import { SECTION_REPOSITORY } from '@features/sections/application/ports/section-repository.port';
 import type { TableRepositoryPort } from '@features/tables/application/ports/table-repository.port';
 import { TABLE_REPOSITORY } from '@features/tables/application/ports/table-repository.port';
-import type { AuthUserRepositoryPort } from '@features/auth/application/ports/user.repository.port';
-import { AUTH_USER_REPOSITORY } from '@features/auth/auth.tokens';
+import { AuthProxyService } from '@features/auth/infrastructure/messaging/auth-proxy.service';
 import { RestaurantEntity } from '@features/restaurants/domain/entities/restaurant.entity';
 import type { RestaurantDay } from '@features/restaurants/domain/entities/values/restaurant-day';
 import { Section } from '@features/sections/domain/entities/section.entity';
@@ -25,8 +24,7 @@ export class RestaurantSeedService {
   constructor(
     @Inject(RESTAURANT_REPOSITORY)
     private readonly restaurantRepository: RestaurantRepositoryPort,
-    @Inject(AUTH_USER_REPOSITORY)
-    private readonly userRepository: AuthUserRepositoryPort,
+    private readonly authProxy: AuthProxyService,
     @Inject(SECTION_REPOSITORY)
     private readonly sectionRepository: SectionRepositoryPort,
     @Inject(TABLE_REPOSITORY)
@@ -46,16 +44,18 @@ export class RestaurantSeedService {
     }
 
     for (const restaurantSeed of restaurantsSeed) {
-      const owner = await this.userRepository.findByEmail(
+      const ownerResponse = await this.authProxy.findUserByEmail(
         restaurantSeed.ownerEmail,
       );
 
-      if (!owner || !owner.id) {
+      if (!ownerResponse.success || !ownerResponse.data) {
         this.logger.warn(
-          `Skipping restaurant ${restaurantSeed.name}: owner not found`,
+          `Skipping restaurant ${restaurantSeed.name}: owner not found in Auth MS`,
         );
         continue;
       }
+
+      const ownerId = ownerResponse.data.id;
 
       const restaurantId = randomUUID();
       const restaurant = RestaurantEntity.create(
@@ -68,7 +68,7 @@ export class RestaurantSeedService {
           daysOpen: restaurantSeed.daysOpen as RestaurantDay[],
           totalCapacity: restaurantSeed.totalCapacity,
           subscriptionId: '00000000-0000-0000-0000-000000000000', // Placeholder UUID - will be updated after subscriptions
-          ownerId: owner.id,
+          ownerId,
           active: restaurantSeed.active,
         },
         restaurantId,
