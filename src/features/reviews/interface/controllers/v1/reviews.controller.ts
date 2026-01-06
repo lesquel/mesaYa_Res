@@ -136,11 +136,13 @@ export class ReviewsController {
   @ApiBody({ type: CreateReviewDto })
   async create(
     @Body() dto: CreateReviewDto,
-    @CurrentUser() user: { userId: string },
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<ReviewResponseDto> {
     const command: CreateReviewCommand = {
       ...dto,
       userId: user.userId,
+      firstName: user.firstName ?? null,
+      lastName: user.lastName ?? null,
     };
     return this.reviewsService.create(command);
   }

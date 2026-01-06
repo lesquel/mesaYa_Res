@@ -4,6 +4,7 @@ export interface ReviewResponseDto {
   id: string;
   restaurantId: string;
   userId: string;
+  userName: string | null;
   rating: number;
   comment: string | null;
   createdAt: Date;

@@ -45,6 +45,8 @@ export class ReviewDomainService {
     const review = Review.create({
       restaurantId,
       userId,
+      firstName: request.firstName ?? null,
+      lastName: request.lastName ?? null,
       rating: request.rating,
       comment: request.comment ?? null,
     });

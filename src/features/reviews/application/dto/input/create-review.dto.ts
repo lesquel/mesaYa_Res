@@ -24,4 +24,6 @@ export class CreateReviewDto {
 
 export type CreateReviewCommand = CreateReviewDto & {
   userId: string;
+  firstName?: string | null;
+  lastName?: string | null;
 };

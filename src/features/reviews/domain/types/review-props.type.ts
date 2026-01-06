@@ -8,6 +8,8 @@ import type {
 export interface ReviewProps {
   restaurantId: ReviewRestaurantId;
   userId: ReviewUserId;
+  firstName?: string | null;
+  lastName?: string | null;
   rating: ReviewRating;
   comment: ReviewComment;
   createdAt: Date;

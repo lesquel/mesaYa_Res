@@ -11,6 +11,8 @@ export class CreateReviewUseCase
     const review = await this.reviewDomainService.createReview({
       restaurantId: command.restaurantId,
       userId: command.userId,
+      firstName: command.firstName ?? null,
+      lastName: command.lastName ?? null,
       rating: command.rating,
       comment: command.comment,
     });

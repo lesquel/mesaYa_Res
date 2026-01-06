@@ -22,6 +22,20 @@ export class ReviewOrmEntity {
   @Column({ type: 'uuid', name: 'user_id', nullable: false })
   userId: string;
 
+  /**
+   * Denormalized user first name for display purposes.
+   * Stored at review creation time from JWT claims.
+   */
+  @Column({ type: 'varchar', name: 'first_name', length: 100, nullable: true })
+  firstName?: string | null;
+
+  /**
+   * Denormalized user last name for display purposes.
+   * Stored at review creation time from JWT claims.
+   */
+  @Column({ type: 'varchar', name: 'last_name', length: 100, nullable: true })
+  lastName?: string | null;
+
   @ManyToOne(() => RestaurantOrmEntity, {
     nullable: false,
     onDelete: 'CASCADE',

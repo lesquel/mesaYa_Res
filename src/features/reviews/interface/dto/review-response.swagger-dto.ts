@@ -10,6 +10,9 @@ export class ReviewResponseSwaggerDto {
   @ApiProperty({ format: 'uuid' })
   userId!: string;
 
+  @ApiProperty({ nullable: true, required: false, description: 'Full name of the reviewer' })
+  userName!: string | null;
+
   @ApiProperty()
   rating!: number;
 

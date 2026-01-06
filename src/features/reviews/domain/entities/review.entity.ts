@@ -24,6 +24,8 @@ export class Review {
     const aggregated: ReviewProps = {
       restaurantId: new ReviewRestaurantId(props.restaurantId),
       userId: new ReviewUserId(props.userId),
+      firstName: props.firstName ?? null,
+      lastName: props.lastName ?? null,
       rating: new ReviewRating(props.rating),
       comment: ReviewComment.create(props.comment ?? null),
       createdAt: props.createdAt ?? now,
@@ -37,6 +39,8 @@ export class Review {
     const aggregated: ReviewProps = {
       restaurantId: new ReviewRestaurantId(snapshot.restaurantId),
       userId: new ReviewUserId(snapshot.userId),
+      firstName: snapshot.firstName ?? null,
+      lastName: snapshot.lastName ?? null,
       rating: new ReviewRating(snapshot.rating),
       comment: ReviewComment.create(snapshot.comment),
       createdAt: snapshot.createdAt,
@@ -56,6 +60,14 @@ export class Review {
 
   get userId(): string {
     return this.props.userId.value;
+  }
+
+  get firstName(): string | null {
+    return this.props.firstName ?? null;
+  }
+
+  get lastName(): string | null {
+    return this.props.lastName ?? null;
   }
 
   get rating(): number {
@@ -96,6 +108,8 @@ export class Review {
       id: this.internalId,
       restaurantId: this.props.restaurantId.value,
       userId: this.props.userId.value,
+      firstName: this.props.firstName ?? null,
+      lastName: this.props.lastName ?? null,
       rating: this.props.rating.value,
       comment: this.props.comment.value,
       createdAt: this.props.createdAt,

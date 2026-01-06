@@ -21,6 +21,8 @@ export class ReviewOrmMapper {
       id: entity.id,
       restaurantId,
       userId,
+      firstName: entity.firstName ?? null,
+      lastName: entity.lastName ?? null,
       rating: entity.rating,
       comment: entity.comment ?? null,
       createdAt: entity.createdAt,
@@ -40,6 +42,8 @@ export class ReviewOrmMapper {
 
     entity.id = snapshot.id;
     entity.userId = snapshot.userId;
+    entity.firstName = snapshot.firstName ?? null;
+    entity.lastName = snapshot.lastName ?? null;
     entity.rating = snapshot.rating;
     entity.comment = snapshot.comment ?? null;
     entity.createdAt = snapshot.createdAt;
