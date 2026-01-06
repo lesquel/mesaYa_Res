@@ -36,6 +36,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new Error('JWT_PUBLIC_KEY is not configured');
     }
 
+    // Log for debugging
+    console.log('[JwtStrategy] Public key configured:', publicKey?.substring(0, 50) + '...');
+    console.log('[JwtStrategy] Issuer:', 'mesaYA-auth');
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -52,6 +56,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * we trust the claims in the token. No DB lookup needed.
    */
   async validate(payload: JwtPayload) {
+    this.logger.log(`JWT validated for user: ${payload.sub}, email: ${payload.email}`);
+    this.logger.debug(`JWT payload: ${JSON.stringify(payload)}`);
+
     // Transform JWT payload to the format expected by guards/decorators
     return {
       userId: payload.sub,

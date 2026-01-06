@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Partitioners } from 'kafkajs';
 
 import { AuthController } from './interface/controllers/v1/auth.controller';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
@@ -55,11 +56,14 @@ import {
             client: {
               clientId: 'mesaya-gateway',
               brokers: (
-                config.get<string>('KAFKA_BROKERS') || 'localhost:9092'
+                config.get<string>('KAFKA_BROKER') || 'localhost:29092'
               ).split(','),
             },
             consumer: {
               groupId: 'mesaya-gateway-auth-group',
+            },
+            producer: {
+              createPartitioner: Partitioners.LegacyPartitioner,
             },
           },
         }),

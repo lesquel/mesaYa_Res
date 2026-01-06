@@ -39,7 +39,7 @@ export class RestaurantTypeOrmRepository
   constructor(
     @InjectRepository(RestaurantOrmEntity)
     private readonly restaurantRepository: Repository<RestaurantOrmEntity>,
-    @Inject('IRestaurantOwnerPort')
+    @Inject(IRestaurantOwnerPort)
     private readonly ownerPort: IRestaurantOwnerPort,
   ) {
     super();
