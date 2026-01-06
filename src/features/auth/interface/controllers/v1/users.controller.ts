@@ -23,9 +23,8 @@ import { PaginationParams } from '@shared/interface/decorators/pagination-params
 import { PaginatedEndpoint } from '@shared/interface/decorators/paginated-endpoint.decorator';
 import type { PaginatedQueryParams } from '@shared/application/types';
 import { GetAuthAnalyticsUseCase } from '@features/auth/application/use-cases/get-auth-analytics.use-case';
-import { FindUserByIdUseCase } from '@features/auth/application/use-cases/find-user-by-id.use-case';
-import { FindUserByEmailUseCase } from '@features/auth/application/use-cases/find-user-by-email.use-case';
 import { ListUsersUseCase } from '@features/auth/application/use-cases/list-users.use-case';
+import { AuthProxyService } from '@features/auth/infrastructure/messaging/auth-proxy.service';
 import { AuthAnalyticsRequestDto } from '../../dto/auth-analytics.request.dto';
 import { ListUsersQueryDto } from '../../dto/list-users.query.dto';
 import { PublicAuthAnalyticsResponseDto } from '../../dto/public-auth-analytics.response.dto';
@@ -40,9 +39,8 @@ import { AuthAnalyticsResponseDto } from '../../dto/auth-analytics.response.dto'
 export class UsersController {
   constructor(
     private readonly getAuthAnalyticsUseCase: GetAuthAnalyticsUseCase,
-    private readonly findUserByIdUseCase: FindUserByIdUseCase,
-    private readonly findUserByEmailUseCase: FindUserByEmailUseCase,
     private readonly listUsersUseCase: ListUsersUseCase,
+    private readonly authProxy: AuthProxyService,
   ) {}
 
   @Get()
@@ -134,11 +132,11 @@ export class UsersController {
     type: AuthUserResponseDto,
   })
   async findByEmail(@Param('email') email: string) {
-    const user = await this.findUserByEmailUseCase.execute(email);
-    if (!user) {
+    const response = await this.authProxy.findUserByEmail(email);
+    if (!response.success || !response.data) {
       throw new NotFoundException(`User with email "${email}" not found`);
     }
-    return AuthUserResponseDto.fromDomain(user);
+    return AuthUserResponseDto.fromProxyData(response.data);
   }
 
   @Get(':id')
@@ -150,7 +148,10 @@ export class UsersController {
     type: AuthUserResponseDto,
   })
   async findOne(@Param('id', UUIDPipe) id: string) {
-    const user = await this.findUserByIdUseCase.execute(id);
-    return user ? AuthUserResponseDto.fromDomain(user) : null;
+    const response = await this.authProxy.findUserById(id);
+    if (!response.success || !response.data) {
+      return null;
+    }
+    return AuthUserResponseDto.fromProxyData(response.data);
   }
 }

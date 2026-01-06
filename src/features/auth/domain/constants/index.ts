@@ -1,6 +1,3 @@
-export * from './admin-permissions.constant';
-export * from './default-permission-names.constant';
-export * from './default-role-definition.interface';
-export * from './default-roles.constant';
-export * from './owner-permissions.constant';
-export * from './user-permissions.constant';
+// RBAC constants have been moved to mesaYA_auth_ms
+// This file is kept for backwards compatibility but exports nothing
+// If you need permission/role constants, get them from Auth MS via Kafka

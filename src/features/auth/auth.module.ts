@@ -29,7 +29,6 @@ import { ListPermissionsUseCase } from './application/use-cases/list-permissions
 import { GetAuthAnalyticsUseCase } from './application/use-cases/get-auth-analytics.use-case';
 import { ListUsersUseCase } from './application/use-cases/list-users.use-case';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
-import { RbacSeeder } from './infrastructure/seeding/rbac.seeder';
 import { RolesGuard } from './interface/guards/roles.guard';
 import { PermissionsGuard } from './interface/guards/permissions.guard';
 import { JwtAuthGuard } from './interface/guards/jwt-auth.guard';
@@ -120,7 +119,7 @@ import { UserSyncConsumer } from './infrastructure/messaging/user-sync.consumer'
     ListUsersUseCase,
     AuthService,
     JwtStrategy,
-    RbacSeeder,
+    // RbacSeeder removed - RBAC seeding now handled by Auth MS
     RolesGuard,
     PermissionsGuard,
     JwtAuthGuard,
