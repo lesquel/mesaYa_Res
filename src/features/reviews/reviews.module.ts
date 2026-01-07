@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { AuthModule } from '@features/auth/auth.module';
 import { ReviewsController } from './interface';
 import {
@@ -8,6 +9,7 @@ import {
   RestaurantTypeOrmReviewProvider,
   UserTypeOrmReviewProvider,
   ReviewAnalyticsTypeOrmRepository,
+  SentimentAnalysisService,
 } from './infrastructure';
 import {
   CreateReviewUseCase,
@@ -26,6 +28,8 @@ import {
   type ReviewRepositoryPort,
   type ReviewAnalyticsRepositoryPort,
   ReviewsAccessService,
+  UpdateReviewSentimentUseCase,
+  ReviewSentimentHandler,
 } from './application';
 import {
   ReviewDomainService,
@@ -145,37 +149,37 @@ import { RestaurantOrmEntity } from '../restaurants';
         new GetReviewAnalyticsUseCase(analyticsRepository),
       inject: [REVIEW_ANALYTICS_REPOSITORY],
     },
+    // ReviewsService uses @Injectable() decorator with direct constructor injection
+    ReviewsService,
+    // Sentiment Analysis providers
     {
-      provide: ReviewsService,
+      provide: SentimentAnalysisService,
+      useFactory: (configService: ConfigService) =>
+        new SentimentAnalysisService(configService),
+      inject: [ConfigService],
+    },
+    {
+      provide: UpdateReviewSentimentUseCase,
+      useFactory: (reviewDomainService: ReviewDomainService) =>
+        new UpdateReviewSentimentUseCase(reviewDomainService),
+      inject: [ReviewDomainService],
+    },
+    {
+      provide: ReviewSentimentHandler,
       useFactory: (
-        createReviewUseCase: CreateReviewUseCase,
-        listReviewsUseCase: ListReviewsUseCase,
-        listRestaurantReviewsUseCase: ListRestaurantReviewsUseCase,
-        findReviewUseCase: FindReviewUseCase,
-        updateReviewUseCase: UpdateReviewUseCase,
-        deleteReviewUseCase: DeleteReviewUseCase,
-        moderateReviewUseCase: ModerateReviewUseCase,
         kafkaService: KafkaService,
+        sentimentAnalysisService: SentimentAnalysisService,
+        updateReviewSentimentUseCase: UpdateReviewSentimentUseCase,
       ) =>
-        new ReviewsService(
-          createReviewUseCase,
-          listReviewsUseCase,
-          listRestaurantReviewsUseCase,
-          findReviewUseCase,
-          updateReviewUseCase,
-          deleteReviewUseCase,
-          moderateReviewUseCase,
+        new ReviewSentimentHandler(
           kafkaService,
+          sentimentAnalysisService,
+          updateReviewSentimentUseCase,
         ),
       inject: [
-        CreateReviewUseCase,
-        ListReviewsUseCase,
-        ListRestaurantReviewsUseCase,
-        FindReviewUseCase,
-        UpdateReviewUseCase,
-        DeleteReviewUseCase,
-        ModerateReviewUseCase,
         KafkaService,
+        SentimentAnalysisService,
+        UpdateReviewSentimentUseCase,
       ],
     },
   ],
@@ -191,6 +195,7 @@ import { RestaurantOrmEntity } from '../restaurants';
     GetReviewAnalyticsUseCase,
     REVIEW_REPOSITORY,
     ReviewsAccessService,
+    UpdateReviewSentimentUseCase,
   ],
 })
 export class ReviewsModule {}

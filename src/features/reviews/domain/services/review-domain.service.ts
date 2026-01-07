@@ -91,6 +91,23 @@ export class ReviewDomainService {
     return this.reviewRepository.save(review);
   }
 
+  /**
+   * Find a review by ID
+   * Returns null if not found
+   */
+  async findById(reviewId: string): Promise<Review | null> {
+    const normalizedId = normalizeId(reviewId);
+    return this.reviewRepository.findById(normalizedId);
+  }
+
+  /**
+   * Save a review entity
+   * Used for updating sentiment analysis results
+   */
+  async save(review: Review): Promise<Review> {
+    return this.reviewRepository.save(review);
+  }
+
   private async ensureReview(reviewId: string): Promise<Review> {
     const normalizedId = normalizeId(reviewId);
     const review = await this.reviewRepository.findById(normalizedId);

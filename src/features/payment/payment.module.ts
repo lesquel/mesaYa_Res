@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { PaymentsController } from './presentation';
+import { PaymentsController, PaymentWebhookController } from './presentation';
 import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
   PaymentOrmMapper,
   PaymentAnalyticsTypeOrmRepository,
+  StripeAdapter,
+  MockPaymentAdapter,
 } from './infrastructure';
 import {
   PaymentService,
@@ -20,6 +23,7 @@ import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import {
   PAYMENT_ORM_MAPPER,
   PAYMENT_ANALYTICS_REPOSITORY,
+  PAYMENT_GATEWAY,
 } from './payment.tokens';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { KafkaService } from '@shared/infrastructure/kafka';
@@ -29,6 +33,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
 
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forFeature([
       PaymentOrmEntity,
       ReservationOrmEntity,
@@ -37,7 +42,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     ]),
     LoggerModule,
   ],
-  controllers: [PaymentsController],
+  controllers: [PaymentsController, PaymentWebhookController],
   providers: [
     {
       provide: PaymentEntityDTOMapper,
@@ -54,6 +59,24 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     {
       provide: PAYMENT_ANALYTICS_REPOSITORY,
       useClass: PaymentAnalyticsTypeOrmRepository,
+    },
+    // Payment Gateway Adapter (Stripe in production, Mock in development)
+    {
+      provide: PAYMENT_GATEWAY,
+      useFactory: (configService: ConfigService) => {
+        const nodeEnv = configService.get<string>('NODE_ENV', 'development');
+        const useRealStripe = configService.get<string>(
+          'USE_REAL_STRIPE',
+          'false',
+        );
+
+        // Use MockPaymentAdapter in development unless explicitly configured
+        if (nodeEnv === 'development' && useRealStripe !== 'true') {
+          return new MockPaymentAdapter();
+        }
+        return new StripeAdapter(configService);
+      },
+      inject: [ConfigService],
     },
     PaymentAccessService,
     {
@@ -82,6 +105,11 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     },
     GetPaymentAnalyticsUseCase,
   ],
-  exports: [PaymentService, GetPaymentAnalyticsUseCase, IPaymentRepositoryPort],
+  exports: [
+    PaymentService,
+    GetPaymentAnalyticsUseCase,
+    IPaymentRepositoryPort,
+    PAYMENT_GATEWAY,
+  ],
 })
 export class PaymentModule {}

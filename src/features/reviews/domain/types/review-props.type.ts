@@ -3,6 +3,7 @@ import type {
   ReviewRating,
   ReviewRestaurantId,
   ReviewUserId,
+  ReviewSentiment,
 } from '../entities/values';
 
 export interface ReviewProps {
@@ -12,6 +13,7 @@ export interface ReviewProps {
   lastName?: string | null;
   rating: ReviewRating;
   comment: ReviewComment;
+  sentiment?: ReviewSentiment | null;
   createdAt: Date;
   updatedAt: Date;
 }

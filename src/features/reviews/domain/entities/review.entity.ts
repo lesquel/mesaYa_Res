@@ -4,7 +4,9 @@ import {
   ReviewRating,
   ReviewRestaurantId,
   ReviewUserId,
+  ReviewSentiment,
 } from './values';
+import { SentimentType } from '../enums';
 import {
   type ReviewCreate,
   type ReviewProps,
@@ -43,6 +45,9 @@ export class Review {
       lastName: snapshot.lastName ?? null,
       rating: new ReviewRating(snapshot.rating),
       comment: ReviewComment.create(snapshot.comment),
+      sentiment: snapshot.sentiment
+        ? ReviewSentiment.rehydrate(snapshot.sentiment)
+        : null,
       createdAt: snapshot.createdAt,
       updatedAt: snapshot.updatedAt,
     };
@@ -86,6 +91,40 @@ export class Review {
     return this.props.updatedAt;
   }
 
+  get sentiment(): ReviewSentiment | null {
+    return this.props.sentiment ?? null;
+  }
+
+  get sentimentType(): SentimentType | null {
+    return this.props.sentiment?.type ?? null;
+  }
+
+  get sentimentKeywords(): string[] {
+    return this.props.sentiment?.keywords ?? [];
+  }
+
+  get isAnalyzed(): boolean {
+    return this.props.sentiment?.isAnalyzed ?? false;
+  }
+
+  /**
+   * Update the sentiment analysis result
+   * Called asynchronously after review creation
+   */
+  updateSentiment(
+    type: SentimentType,
+    confidence: number,
+    keywords: string[],
+  ): void {
+    this.props.sentiment = ReviewSentiment.create(
+      type,
+      confidence,
+      keywords,
+      new Date(),
+    );
+    this.props.updatedAt = new Date();
+  }
+
   update(data: ReviewUpdate): void {
     const nextProps: ReviewProps = {
       ...this.props,
@@ -112,6 +151,7 @@ export class Review {
       lastName: this.props.lastName ?? null,
       rating: this.props.rating.value,
       comment: this.props.comment.value,
+      sentiment: this.props.sentiment?.toData() ?? null,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };
