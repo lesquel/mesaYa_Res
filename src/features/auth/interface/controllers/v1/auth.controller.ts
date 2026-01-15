@@ -22,6 +22,7 @@ import { AuthService } from '../../../application/services/auth.service';
 import { SignUpRequestDto } from '../../dto/sign-up.request.dto';
 import { AuthTokenResponseDto } from '../../dto/auth-token.response.dto';
 import { LoginRequestDto } from '../../dto/login.request.dto';
+import { RefreshTokenRequestDto } from '../../dto/refresh-token.request.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
 import { SignUpCommand } from '@features/auth/application/dto/commands/sign-up.command';
 import { LoginCommand } from '@features/auth/application/dto/commands/login.command';
@@ -76,6 +77,22 @@ export class AuthController {
     const response = await this.authService.login(
       new LoginCommand(dto.email, dto.password),
     );
+    return AuthTokenResponseDto.fromApplication(response);
+  }
+
+  @Post('refresh')
+  @ThrottleAuth()
+  @ApiOperation({ summary: 'Renovar access token usando refresh token' })
+  @ApiBody({ type: RefreshTokenRequestDto })
+  @ApiOkResponse({
+    description: 'Tokens renovados correctamente',
+    type: AuthTokenResponseDto,
+  })
+  async refresh(
+    @Body(new ValidationPipe({ whitelist: true, transform: true }))
+    dto: RefreshTokenRequestDto,
+  ): Promise<AuthTokenResponseDto> {
+    const response = await this.authService.refreshToken(dto.refreshToken);
     return AuthTokenResponseDto.fromApplication(response);
   }
 
