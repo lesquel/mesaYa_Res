@@ -13,6 +13,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { ImagesModule } from './images/images.module';
 import { OwnerUpgradeModule } from './owner-upgrade/owner-upgrade.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
+import { PartnerModule } from './partner/partner.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     OwnerUpgradeModule,
     RestaurantsModule,
     ChatbotModule,
+    PartnerModule,
   ],
   exports: [
     AuthModule,
@@ -46,6 +48,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     OwnerUpgradeModule,
     RestaurantsModule,
     ChatbotModule,
+    PartnerModule,
   ],
 })
 export class FeaturesModule {}
