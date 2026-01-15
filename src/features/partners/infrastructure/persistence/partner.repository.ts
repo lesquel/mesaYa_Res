@@ -9,7 +9,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PartnerOrmEntity, PartnerStatusORM } from './partner.orm-entity';
-import { PartnerEntity, PartnerStatus, PartnerSnapshot } from '../../domain/entities/partner.entity';
+import {
+  PartnerEntity,
+  PartnerStatus,
+  PartnerSnapshot,
+} from '../../domain/entities/partner.entity';
 
 export interface CreatePartnerDto {
   name: string;
@@ -96,15 +100,16 @@ export class PartnerRepository {
    */
   async findByEventSubscription(eventType: string): Promise<PartnerEntity[]> {
     const activePartners = await this.findAllActive();
-    return activePartners.filter(
-      (p) => p.subscribesToEvent(eventType),
-    );
+    return activePartners.filter((p) => p.subscribesToEvent(eventType));
   }
 
   /**
    * Update partner
    */
-  async update(id: string, dto: UpdatePartnerDto): Promise<PartnerEntity | null> {
+  async update(
+    id: string,
+    dto: UpdatePartnerDto,
+  ): Promise<PartnerEntity | null> {
     const existing = await this.repository.findOne({ where: { id } });
     if (!existing) return null;
 
@@ -112,8 +117,10 @@ export class PartnerRepository {
     if (dto.webhookUrl !== undefined) existing.webhookUrl = dto.webhookUrl;
     if (dto.events !== undefined) existing.events = dto.events;
     if (dto.description !== undefined) existing.description = dto.description;
-    if (dto.contactEmail !== undefined) existing.contactEmail = dto.contactEmail;
-    if (dto.status !== undefined) existing.status = this.toOrmStatus(dto.status);
+    if (dto.contactEmail !== undefined)
+      existing.contactEmail = dto.contactEmail;
+    if (dto.status !== undefined)
+      existing.status = this.toOrmStatus(dto.status);
 
     const saved = await this.repository.save(existing);
     return this.toDomainEntity(saved);
@@ -122,7 +129,9 @@ export class PartnerRepository {
   /**
    * Regenerate partner secret
    */
-  async regenerateSecret(id: string): Promise<{ partner: PartnerEntity; newSecret: string } | null> {
+  async regenerateSecret(
+    id: string,
+  ): Promise<{ partner: PartnerEntity; newSecret: string } | null> {
     const existing = await this.repository.findOne({ where: { id } });
     if (!existing) return null;
 
@@ -213,9 +222,9 @@ export class PartnerRepository {
 
   private toOrmStatus(status: PartnerStatus): PartnerStatusORM {
     const map: Record<PartnerStatus, PartnerStatusORM> = {
-      'ACTIVE': PartnerStatusORM.ACTIVE,
-      'INACTIVE': PartnerStatusORM.INACTIVE,
-      'SUSPENDED': PartnerStatusORM.SUSPENDED,
+      ACTIVE: PartnerStatusORM.ACTIVE,
+      INACTIVE: PartnerStatusORM.INACTIVE,
+      SUSPENDED: PartnerStatusORM.SUSPENDED,
     };
     return map[status];
   }

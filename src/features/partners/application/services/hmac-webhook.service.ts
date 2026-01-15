@@ -32,13 +32,13 @@ export interface VerificationResult {
 @Injectable()
 export class HmacWebhookService {
   private readonly logger = new Logger(HmacWebhookService.name);
-  
+
   /** Signature validity window in seconds (5 minutes) */
   private readonly SIGNATURE_VALIDITY_SECONDS = 5 * 60;
 
   /**
    * Generate HMAC-SHA256 signature for a webhook payload
-   * 
+   *
    * @param payload - The JSON payload to sign
    * @param secret - Partner's webhook secret
    * @returns Signature and timestamp
@@ -46,7 +46,7 @@ export class HmacWebhookService {
   generateSignature(payload: string, secret: string): WebhookSignature {
     const timestamp = Math.floor(Date.now() / 1000);
     const signaturePayload = `${timestamp}.${payload}`;
-    
+
     const signature = createHmac('sha256', secret)
       .update(signaturePayload)
       .digest('hex');
@@ -59,13 +59,17 @@ export class HmacWebhookService {
 
   /**
    * Verify HMAC-SHA256 signature from incoming webhook
-   * 
+   *
    * @param signature - Signature header value
    * @param payload - Raw request body
    * @param secret - Partner's webhook secret
    * @returns VerificationResult with valid flag and optional error
    */
-  verifySignature(signature: string, payload: string, secret: string): VerificationResult {
+  verifySignature(
+    signature: string,
+    payload: string,
+    secret: string,
+  ): VerificationResult {
     try {
       // Parse signature header: "t=timestamp,v1=signature"
       const parts = signature.split(',');

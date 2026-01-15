@@ -18,8 +18,12 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 // Using string literals to match domain PartnerStatus type
-export const PARTNER_STATUS_VALUES = ['ACTIVE', 'INACTIVE', 'SUSPENDED'] as const;
-export type PartnerStatusDto = typeof PARTNER_STATUS_VALUES[number];
+export const PARTNER_STATUS_VALUES = [
+  'ACTIVE',
+  'INACTIVE',
+  'SUSPENDED',
+] as const;
+export type PartnerStatusDto = (typeof PARTNER_STATUS_VALUES)[number];
 
 export class RegisterPartnerDto {
   @ApiProperty({
@@ -40,7 +44,11 @@ export class RegisterPartnerDto {
 
   @ApiProperty({
     description: 'Events to subscribe to. Use "*" for all events.',
-    example: ['reservation.created', 'reservation.updated', 'payment.completed'],
+    example: [
+      'reservation.created',
+      'reservation.updated',
+      'payment.completed',
+    ],
   })
   @IsArray()
   @IsString({ each: true })
@@ -148,14 +156,17 @@ export class PartnerResponseDto {
 
 export class PartnerRegisteredResponseDto extends PartnerResponseDto {
   @ApiProperty({
-    description: 'HMAC secret for webhook signature verification. Store securely - shown only once!',
+    description:
+      'HMAC secret for webhook signature verification. Store securely - shown only once!',
     example: 'whsec_abc123xyz789...',
   })
   secret: string;
 }
 
 export class RegenerateSecretResponseDto {
-  @ApiProperty({ description: 'New HMAC secret. Store securely - shown only once!' })
+  @ApiProperty({
+    description: 'New HMAC secret. Store securely - shown only once!',
+  })
   secret: string;
 
   @ApiProperty({ description: 'Partner details' })
@@ -179,7 +190,11 @@ export class WebhookEventDto {
 
   @ApiProperty({
     description: 'Event payload data',
-    example: { reservationId: 'uuid', restaurantId: 'uuid', status: 'confirmed' },
+    example: {
+      reservationId: 'uuid',
+      restaurantId: 'uuid',
+      status: 'confirmed',
+    },
   })
   data: Record<string, unknown>;
 }

@@ -37,7 +37,10 @@ export class PartnerEntity {
     private props: PartnerProps,
   ) {}
 
-  static create(props: CreatePartnerProps, id: string = randomUUID()): PartnerEntity {
+  static create(
+    props: CreatePartnerProps,
+    id: string = randomUUID(),
+  ): PartnerEntity {
     const secret = PartnerEntity.generateSecret();
     const now = new Date();
 
@@ -115,7 +118,9 @@ export class PartnerEntity {
   }
 
   subscribesToEvent(eventType: string): boolean {
-    return this.props.events.includes(eventType) || this.props.events.includes('*');
+    return (
+      this.props.events.includes(eventType) || this.props.events.includes('*')
+    );
   }
 
   updateWebhookUrl(url: string): void {

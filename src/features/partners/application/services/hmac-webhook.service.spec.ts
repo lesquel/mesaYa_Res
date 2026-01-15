@@ -83,11 +83,7 @@ describe('HmacWebhookService', () => {
     });
 
     it('should reject signature without timestamp', () => {
-      const result = service.verifySignature(
-        'v1=abc123',
-        '{}',
-        testSecret,
-      );
+      const result = service.verifySignature('v1=abc123', '{}', testSecret);
 
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Invalid signature format');
@@ -113,10 +109,17 @@ describe('HmacWebhookService', () => {
 
     it('should reject tampered payload', () => {
       const originalPayload = '{"event": "reservation.created"}';
-      const { signature } = service.generateSignature(originalPayload, testSecret);
+      const { signature } = service.generateSignature(
+        originalPayload,
+        testSecret,
+      );
 
       const tamperedPayload = '{"event": "reservation.cancelled"}';
-      const result = service.verifySignature(signature, tamperedPayload, testSecret);
+      const result = service.verifySignature(
+        signature,
+        tamperedPayload,
+        testSecret,
+      );
 
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Signature mismatch');

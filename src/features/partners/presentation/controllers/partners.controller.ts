@@ -48,7 +48,10 @@ import {
   VerifyWebhookDto,
   PartnerStatusDto,
 } from '../dto/partner.dto';
-import { PartnerEntity, PartnerStatus } from '../../domain/entities/partner.entity';
+import {
+  PartnerEntity,
+  PartnerStatus,
+} from '../../domain/entities/partner.entity';
 
 @ApiTags('Partners - B2B Webhooks')
 @ApiBearerAuth()
@@ -67,7 +70,8 @@ export class PartnersController {
   @Post('register')
   @ApiOperation({
     summary: 'Register new partner',
-    description: 'Register a B2B partner to receive webhook events. Returns HMAC secret - store securely!',
+    description:
+      'Register a B2B partner to receive webhook events. Returns HMAC secret - store securely!',
   })
   @ApiResponse({
     status: 201,
@@ -81,7 +85,9 @@ export class PartnersController {
     // Check for duplicate name
     const exists = await this.partnerRepository.existsByName(dto.name);
     if (exists) {
-      throw new ConflictException(`Partner with name '${dto.name}' already exists`);
+      throw new ConflictException(
+        `Partner with name '${dto.name}' already exists`,
+      );
     }
 
     const partner = await this.partnerRepository.create({
@@ -145,7 +151,9 @@ export class PartnersController {
     if (dto.name) {
       const existing = await this.partnerRepository.findByName(dto.name);
       if (existing && existing.id !== id) {
-        throw new ConflictException(`Partner with name '${dto.name}' already exists`);
+        throw new ConflictException(
+          `Partner with name '${dto.name}' already exists`,
+        );
       }
     }
 
@@ -184,7 +192,8 @@ export class PartnersController {
   @Post(':id/regenerate-secret')
   @ApiOperation({
     summary: 'Regenerate HMAC secret',
-    description: 'Generate new webhook signing secret. Old secret is invalidated immediately.',
+    description:
+      'Generate new webhook signing secret. Old secret is invalidated immediately.',
   })
   @ApiParam({ name: 'id', description: 'Partner UUID' })
   @ApiResponse({ status: 200, type: RegenerateSecretResponseDto })
@@ -213,7 +222,8 @@ export class PartnersController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Verify webhook signature',
-    description: 'Test endpoint for partners to verify their signature verification implementation',
+    description:
+      'Test endpoint for partners to verify their signature verification implementation',
   })
   @ApiParam({ name: 'id', description: 'Partner UUID' })
   @ApiResponse({ status: 200, description: 'Signature verification result' })
@@ -250,11 +260,26 @@ export class PartnersController {
   getAvailableEvents(): { events: string[]; description: string }[] {
     return [
       // Reservation events
-      { events: ['reservation.created'], description: 'New reservation created' },
-      { events: ['reservation.confirmed'], description: 'Reservation confirmed by restaurant' },
-      { events: ['reservation.cancelled'], description: 'Reservation cancelled' },
-      { events: ['reservation.completed'], description: 'Reservation completed (checked out)' },
-      { events: ['reservation.no_show'], description: 'Customer did not show up' },
+      {
+        events: ['reservation.created'],
+        description: 'New reservation created',
+      },
+      {
+        events: ['reservation.confirmed'],
+        description: 'Reservation confirmed by restaurant',
+      },
+      {
+        events: ['reservation.cancelled'],
+        description: 'Reservation cancelled',
+      },
+      {
+        events: ['reservation.completed'],
+        description: 'Reservation completed (checked out)',
+      },
+      {
+        events: ['reservation.no_show'],
+        description: 'Customer did not show up',
+      },
       { events: ['reservation.*'], description: 'All reservation events' },
       // Payment events
       { events: ['payment.initiated'], description: 'Payment process started' },
@@ -263,8 +288,14 @@ export class PartnersController {
       { events: ['payment.refunded'], description: 'Payment refunded' },
       { events: ['payment.*'], description: 'All payment events' },
       // Restaurant events
-      { events: ['restaurant.updated'], description: 'Restaurant details updated' },
-      { events: ['table.availability_changed'], description: 'Table availability changed' },
+      {
+        events: ['restaurant.updated'],
+        description: 'Restaurant details updated',
+      },
+      {
+        events: ['table.availability_changed'],
+        description: 'Table availability changed',
+      },
       // Universal
       { events: ['*'], description: 'All events (wildcard)' },
     ];

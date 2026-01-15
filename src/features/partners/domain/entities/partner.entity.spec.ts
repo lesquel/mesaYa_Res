@@ -19,7 +19,10 @@ describe('Partner Entity', () => {
       expect(partner.secret).toBeDefined();
       expect(partner.secret.length).toBeGreaterThan(0);
       expect(partner.status).toBe('ACTIVE');
-      expect(partner.events).toEqual(['reservation.created', 'payment.completed']);
+      expect(partner.events).toEqual([
+        'reservation.created',
+        'payment.completed',
+      ]);
     });
   });
 
@@ -81,10 +84,10 @@ describe('Partner Entity', () => {
         webhookUrl: 'https://example.com',
         events: ['*'],
       });
-      
+
       partner.deactivate();
       expect(partner.status).toBe('INACTIVE');
-      
+
       partner.activate();
       expect(partner.status).toBe('ACTIVE');
     });

@@ -28,10 +28,7 @@ import { PartnersController } from './presentation/controllers/partners.controll
 import { KafkaModule } from '@shared/infrastructure/kafka';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([PartnerOrmEntity]),
-    KafkaModule,
-  ],
+  imports: [TypeOrmModule.forFeature([PartnerOrmEntity]), KafkaModule],
   controllers: [PartnersController],
   providers: [
     // Repository
@@ -42,10 +39,6 @@ import { KafkaModule } from '@shared/infrastructure/kafka';
     // Consumers
     WebhookEventConsumer,
   ],
-  exports: [
-    PartnerRepository,
-    HmacWebhookService,
-    PartnerWebhookDispatcher,
-  ],
+  exports: [PartnerRepository, HmacWebhookService, PartnerWebhookDispatcher],
 })
 export class PartnersModule {}

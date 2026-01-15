@@ -164,9 +164,7 @@ export class PartnerWebhookDispatcher {
    * Check if partner subscribes to event type
    */
   private isSubscribed(partner: PartnerInfo, eventType: string): boolean {
-    return (
-      partner.events.includes('*') || partner.events.includes(eventType)
-    );
+    return partner.events.includes('*') || partner.events.includes(eventType);
   }
 
   /**

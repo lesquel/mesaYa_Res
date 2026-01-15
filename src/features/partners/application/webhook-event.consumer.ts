@@ -8,7 +8,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { KafkaConsumer } from '@shared/infrastructure/kafka';
 import { PartnerRepository } from '../infrastructure/persistence/partner.repository';
-import { PartnerWebhookDispatcher, WebhookEvent, PartnerInfo } from './services/partner-webhook-dispatcher.service';
+import {
+  PartnerWebhookDispatcher,
+  WebhookEvent,
+  PartnerInfo,
+} from './services/partner-webhook-dispatcher.service';
 
 @Injectable()
 export class WebhookEventConsumer {
@@ -23,7 +27,9 @@ export class WebhookEventConsumer {
    * Handle reservation events
    */
   @KafkaConsumer('mesa-ya.reservations', 'webhook-dispatcher')
-  async handleReservationEvent(message: Record<string, unknown>): Promise<void> {
+  async handleReservationEvent(
+    message: Record<string, unknown>,
+  ): Promise<void> {
     await this.handleEvent('mesa-ya.reservations', message);
   }
 
@@ -49,7 +55,9 @@ export class WebhookEventConsumer {
       if (!event) return;
 
       // Find partners subscribed to this event type
-      const partners = await this.partnerRepository.findByEventSubscription(event.type);
+      const partners = await this.partnerRepository.findByEventSubscription(
+        event.type,
+      );
       if (partners.length === 0) {
         this.logger.debug(`No partners subscribed to ${event.type}`);
         return;
