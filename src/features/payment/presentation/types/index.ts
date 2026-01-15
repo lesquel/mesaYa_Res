@@ -5,3 +5,4 @@
  */
 
 export * from './authenticated-request.type';
+export * from './payment-webhook.types';

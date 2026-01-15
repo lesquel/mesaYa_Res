@@ -34,28 +34,13 @@ import type { Request } from 'express';
 import { IPaymentGatewayPort } from '@features/payment/application/ports/payment-gateway.port';
 import { PAYMENT_GATEWAY } from '@features/payment/payment.tokens';
 import { KafkaService } from '@shared/infrastructure/kafka';
-
-/** Kafka topic for payment events */
-const PAYMENTS_EVENTS_TOPIC = 'mesa-ya.payments.events';
-
-/** Stripe webhook event types we care about */
-type StripeEventType =
-  | 'payment_intent.succeeded'
-  | 'payment_intent.payment_failed'
-  | 'payment_intent.canceled'
-  | 'charge.refunded'
-  | 'charge.dispute.created';
-
-interface PaymentWebhookPayload {
-  event_type: StripeEventType;
-  payment_intent_id: string;
-  timestamp: string;
-  data: Record<string, unknown>;
-  metadata: {
-    source: 'stripe';
-    webhook_id: string;
-  };
-}
+import { PAYMENTS_EVENTS_TOPIC } from '../../constants';
+import type {
+  StripeEventType,
+  PaymentWebhookPayload,
+  CreatePaymentIntentRequestBody,
+  CreatePaymentIntentResponse,
+} from '../../types';
 
 @ApiTags('Payments - Webhooks')
 @Controller({ path: 'payments/webhook', version: '1' })
@@ -162,19 +147,10 @@ export class PaymentWebhookController {
     description:
       'Creates a Stripe PaymentIntent and returns client secret for frontend',
   })
-  async createPaymentIntent(@Req() req: Request): Promise<{
-    clientSecret: string;
-    paymentIntentId: string;
-    publicKey: string;
-  }> {
-    // Parse amount from body (expects { amount: number, currency?: string, metadata?: object })
-    const body = req.body as {
-      amount: number;
-      currency?: string;
-      metadata?: Record<string, string>;
-      description?: string;
-      customerEmail?: string;
-    };
+  async createPaymentIntent(
+    @Req() req: Request,
+  ): Promise<CreatePaymentIntentResponse> {
+    const body = req.body as CreatePaymentIntentRequestBody;
 
     if (!body.amount || typeof body.amount !== 'number') {
       throw new BadRequestException('Amount is required and must be a number');
