@@ -13,7 +13,7 @@ import {
 } from '../../domain';
 import { HmacService } from './hmac.service';
 
-export interface RegisterPartnerDto {
+export interface IRegisterPartnerData {
   name: string;
   webhookUrl: string;
   subscribedEvents: PartnerEventType[];
@@ -21,7 +21,7 @@ export interface RegisterPartnerDto {
   contactEmail?: string;
 }
 
-export interface UpdatePartnerDto {
+export interface IUpdatePartnerData {
   webhookUrl?: string;
   subscribedEvents?: PartnerEventType[];
   description?: string;
@@ -49,7 +49,7 @@ export class PartnerService {
    * The secret is only returned once and should be stored securely by the partner.
    */
   async registerPartner(
-    dto: RegisterPartnerDto,
+    dto: IRegisterPartnerData,
   ): Promise<PartnerRegistrationResult> {
     this.logger.log(`Registering new partner: ${dto.name}`);
 
@@ -116,7 +116,7 @@ export class PartnerService {
   /**
    * Update partner details
    */
-  async updatePartner(id: string, dto: UpdatePartnerDto): Promise<Partner> {
+  async updatePartner(id: string, dto: IUpdatePartnerData): Promise<Partner> {
     const partner = await this.partnerRepository.findById(id);
 
     if (!partner) {

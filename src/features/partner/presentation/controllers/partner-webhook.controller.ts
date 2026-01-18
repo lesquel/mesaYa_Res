@@ -15,13 +15,13 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
-  RawBodyRequest,
   Req,
   UnauthorizedException,
   BadRequestException,
   Logger,
   ParseUUIDPipe,
 } from '@nestjs/common';
+import type { RawBodyRequest } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
