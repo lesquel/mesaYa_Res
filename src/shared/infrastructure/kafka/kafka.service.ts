@@ -133,7 +133,15 @@ export class KafkaService implements OnModuleDestroy {
     const options: KafkaOptions = {
       transport: Transport.KAFKA,
       options: {
-        client: { clientId, brokers },
+        client: {
+          clientId,
+          brokers,
+          connectionTimeout: 10000,
+          retry: {
+            initialRetryTime: 1000,
+            retries: 10,
+          },
+        },
         producer: {
           allowAutoTopicCreation: true,
           createPartitioner: Partitioners.LegacyPartitioner,
@@ -251,10 +259,19 @@ export class KafkaService implements OnModuleDestroy {
       client: {
         clientId: `${clientId}-consumer-${groupId}`,
         brokers,
+        connectionTimeout: 10000,
+        retry: {
+          initialRetryTime: 1000,
+          retries: 10,
+        },
       },
       consumer: {
         groupId,
         allowAutoTopicCreation: true,
+        retry: {
+          initialRetryTime: 1000,
+          retries: 10,
+        },
       },
       run: {
         autoCommit: true,
@@ -324,6 +341,11 @@ export class KafkaService implements OnModuleDestroy {
           clientId: `${clientId}-admin`,
           brokers,
           logLevel: logLevel.ERROR,
+          connectionTimeout: 10000,
+          retry: {
+            initialRetryTime: 1000,
+            retries: 5,
+          },
         });
         const admin = kafka.admin();
         try {
