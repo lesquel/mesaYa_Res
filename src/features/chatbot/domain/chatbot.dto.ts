@@ -137,6 +137,21 @@ export class ChatResponseDto {
       'Para hacer una reserva:\n1. Busca el restaurante deseado\n2. Selecciona fecha y hora\n3. Confirma tu reservación',
   })
   response: string;
+
+  @ApiPropertyOptional({
+    description: 'Sentiment analysis of the user message',
+    example: { label: 'positive', score: 0.85 },
+  })
+  sentiment?: {
+    label: 'positive' | 'neutral' | 'negative';
+    score: number;
+  };
+
+  @ApiPropertyOptional({
+    description: 'List of MCP tools used to generate the response',
+    example: ['search_restaurants', 'get_menu'],
+  })
+  tools_used?: string[];
 }
 
 /**

@@ -3,3 +3,4 @@ export * from './adapters/database/type-orm/repositories/payment-type-orm.reposi
 export * from './adapters/database/type-orm/repositories/payment-analytics-type-orm.repository';
 export * from './adapters/database/type-orm/mappers/payment.orm-mapper';
 export * from './adapters/stripe';
+export * from './adapters/payment-ms';

@@ -1,0 +1,352 @@
+/**
+ * Payment Microservice Client
+ *
+ * HTTP client that communicates with the Payment Microservice.
+ * Acts as part of the API Gateway pattern, allowing the main backend
+ * to proxy requests to the Payment MS while adding authentication,
+ * validation, and business logic.
+ */
+
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
+import type { ILoggerPort } from '@shared/application/ports/logger.port';
+
+/** Response from creating a payment */
+export interface CreatePaymentMsResponse {
+  payment_id: string;
+  status: string;
+  amount: number;
+  currency: string;
+  checkout_url: string;
+  created_at: string;
+}
+
+/** Response from getting a payment */
+export interface GetPaymentMsResponse {
+  id: string;
+  status: string;
+  amount: number;
+  currency: string;
+  description?: string;
+  metadata?: Record<string, string>;
+  created_at: string;
+  updated_at?: string;
+}
+
+/** Response from verifying a payment */
+export interface VerifyPaymentMsResponse {
+  payment_id: string;
+  status: string;
+  verified: boolean;
+  amount?: number;
+  currency?: string;
+}
+
+/** Request to create a payment */
+export interface CreatePaymentMsRequest {
+  amount: number;
+  currency: string;
+  description?: string;
+  metadata?: Record<string, string>;
+  success_url?: string;
+  cancel_url?: string;
+}
+
+@Injectable()
+export class PaymentMsClientService {
+  private readonly baseUrl: string;
+  private readonly timeout: number;
+
+  constructor(
+    @Inject(LOGGER) private readonly logger: ILoggerPort,
+    private readonly configService: ConfigService,
+  ) {
+    this.baseUrl = this.configService.get<string>(
+      'PAYMENT_MS_URL',
+      'http://localhost:8003',
+    );
+    this.timeout = this.configService.get<number>('PAYMENT_MS_TIMEOUT', 30000);
+
+    this.logger.log(
+      `PaymentMsClientService initialized with baseUrl: ${this.baseUrl}`,
+      'PaymentMsClient',
+    );
+  }
+
+  /**
+   * Create a new payment in the Payment Microservice.
+   */
+  async createPayment(
+    request: CreatePaymentMsRequest,
+  ): Promise<CreatePaymentMsResponse> {
+    const url = `${this.baseUrl}/api/v1/payments`;
+
+    this.logger.log(
+      `Creating payment: ${request.amount} ${request.currency}`,
+      'PaymentMsClient.createPayment',
+    );
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        this.logger.error(
+          `Payment MS returned error: ${response.status}`,
+          JSON.stringify(errorBody),
+          'PaymentMsClient.createPayment',
+        );
+        throw new HttpException(
+          errorBody.detail || 'Payment creation failed',
+          response.status,
+        );
+      }
+
+      const data = (await response.json()) as CreatePaymentMsResponse;
+
+      this.logger.log(
+        `Payment created successfully: ${data.payment_id}`,
+        'PaymentMsClient.createPayment',
+      );
+
+      return data;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        this.logger.error(
+          'Payment MS request timed out',
+          '',
+          'PaymentMsClient.createPayment',
+        );
+        throw new HttpException(
+          'Payment service is not responding',
+          HttpStatus.GATEWAY_TIMEOUT,
+        );
+      }
+
+      this.logger.error(
+        'Failed to connect to Payment MS',
+        error instanceof Error ? error.message : 'Unknown error',
+        'PaymentMsClient.createPayment',
+      );
+      throw new HttpException(
+        'Payment service is unavailable',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  /**
+   * Get payment details from the Payment Microservice.
+   */
+  async getPayment(paymentId: string): Promise<GetPaymentMsResponse> {
+    const url = `${this.baseUrl}/api/v1/payments/${paymentId}`;
+
+    this.logger.log(
+      `Getting payment: ${paymentId}`,
+      'PaymentMsClient.getPayment',
+    );
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new HttpException('Payment not found', HttpStatus.NOT_FOUND);
+        }
+        const errorBody = await response.json().catch(() => ({}));
+        throw new HttpException(
+          errorBody.detail || 'Failed to get payment',
+          response.status,
+        );
+      }
+
+      return (await response.json()) as GetPaymentMsResponse;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Failed to get payment: ${paymentId}`,
+        error instanceof Error ? error.message : 'Unknown error',
+        'PaymentMsClient.getPayment',
+      );
+      throw new HttpException(
+        'Payment service is unavailable',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  /**
+   * Verify a payment in the Payment Microservice.
+   */
+  async verifyPayment(paymentId: string): Promise<VerifyPaymentMsResponse> {
+    const url = `${this.baseUrl}/api/v1/payments/${paymentId}/verify`;
+
+    this.logger.log(
+      `Verifying payment: ${paymentId}`,
+      'PaymentMsClient.verifyPayment',
+    );
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new HttpException('Payment not found', HttpStatus.NOT_FOUND);
+        }
+        const errorBody = await response.json().catch(() => ({}));
+        throw new HttpException(
+          errorBody.detail || 'Failed to verify payment',
+          response.status,
+        );
+      }
+
+      return (await response.json()) as VerifyPaymentMsResponse;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Failed to verify payment: ${paymentId}`,
+        error instanceof Error ? error.message : 'Unknown error',
+        'PaymentMsClient.verifyPayment',
+      );
+      throw new HttpException(
+        'Payment service is unavailable',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  /**
+   * Cancel a payment in the Payment Microservice.
+   */
+  async cancelPayment(
+    paymentId: string,
+    reason?: string,
+  ): Promise<{ success: boolean; message: string }> {
+    const url = `${this.baseUrl}/api/v1/payments/${paymentId}/cancel`;
+
+    this.logger.log(
+      `Cancelling payment: ${paymentId}, reason: ${reason || 'N/A'}`,
+      'PaymentMsClient.cancelPayment',
+    );
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reason }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new HttpException('Payment not found', HttpStatus.NOT_FOUND);
+        }
+        const errorBody = await response.json().catch(() => ({}));
+        throw new HttpException(
+          errorBody.detail || 'Failed to cancel payment',
+          response.status,
+        );
+      }
+
+      return { success: true, message: 'Payment cancelled successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Failed to cancel payment: ${paymentId}`,
+        error instanceof Error ? error.message : 'Unknown error',
+        'PaymentMsClient.cancelPayment',
+      );
+      throw new HttpException(
+        'Payment service is unavailable',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  /**
+   * Health check for the Payment Microservice.
+   */
+  async healthCheck(): Promise<{ healthy: boolean; latencyMs: number }> {
+    const url = `${this.baseUrl}/health`;
+    const startTime = Date.now();
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      const latencyMs = Date.now() - startTime;
+
+      return {
+        healthy: response.ok,
+        latencyMs,
+      };
+    } catch {
+      return {
+        healthy: false,
+        latencyMs: Date.now() - startTime,
+      };
+    }
+  }
+}
