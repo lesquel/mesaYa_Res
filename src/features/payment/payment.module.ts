@@ -47,7 +47,11 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     ]),
     LoggerModule,
   ],
-  controllers: [PaymentsController, PaymentWebhookController, PaymentGatewayController],
+  controllers: [
+    PaymentsController,
+    PaymentWebhookController,
+    PaymentGatewayController,
+  ],
   providers: [
     // Payment Microservice Client (API Gateway pattern)
     PaymentMsClientService,
