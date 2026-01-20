@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { PaymentsController, PaymentWebhookController } from './presentation';
+import {
+  PaymentsController,
+  PaymentWebhookController,
+  PaymentGatewayController,
+} from './presentation';
 import {
   PaymentTypeOrmRepository,
   PaymentOrmEntity,
@@ -10,6 +14,7 @@ import {
   PaymentAnalyticsTypeOrmRepository,
   StripeAdapter,
   MockPaymentAdapter,
+  PaymentMsClientService,
 } from './infrastructure';
 import {
   PaymentService,
@@ -42,8 +47,14 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     ]),
     LoggerModule,
   ],
-  controllers: [PaymentsController, PaymentWebhookController],
+  controllers: [
+    PaymentsController,
+    PaymentWebhookController,
+    PaymentGatewayController,
+  ],
   providers: [
+    // Payment Microservice Client (API Gateway pattern)
+    PaymentMsClientService,
     {
       provide: PaymentEntityDTOMapper,
       useFactory: () => new PaymentEntityDTOMapper(),
@@ -110,6 +121,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     GetPaymentAnalyticsUseCase,
     IPaymentRepositoryPort,
     PAYMENT_GATEWAY,
+    PaymentMsClientService,
   ],
 })
 export class PaymentModule {}

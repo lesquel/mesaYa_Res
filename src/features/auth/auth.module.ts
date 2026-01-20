@@ -58,12 +58,22 @@ import {
               brokers: (
                 config.get<string>('KAFKA_BROKER') || 'localhost:29092'
               ).split(','),
+              connectionTimeout: 10000,
+              retry: {
+                initialRetryTime: 1000,
+                retries: 10,
+              },
             },
             consumer: {
               groupId: 'mesaya-gateway-auth-group',
+              retry: {
+                initialRetryTime: 1000,
+                retries: 10,
+              },
             },
             producer: {
               createPartitioner: Partitioners.LegacyPartitioner,
+              allowAutoTopicCreation: true,
             },
           },
         }),
