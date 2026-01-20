@@ -11,7 +11,7 @@ const UNAUTHORIZED_KEYWORDS = [
 ];
 const FORBIDDEN_KEYWORDS = ['Ownership', 'Permission', 'Forbidden'];
 const CONFLICT_KEYWORDS = ['Already', 'Exists', 'Conflict'];
-const BAD_REQUEST_KEYWORDS = ['Invalid', 'Validation', 'Must'];
+const BAD_REQUEST_KEYWORDS = ['Invalid', 'Validation', 'Must', 'Outside'];
 const NOT_FOUND_KEYWORDS = ['NotFound', 'Missing'];
 
 @Catch()
