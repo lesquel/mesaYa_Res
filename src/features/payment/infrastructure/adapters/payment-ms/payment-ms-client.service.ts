@@ -45,7 +45,7 @@ export class PaymentMsClientService {
   async createPayment(
     request: CreatePaymentMsRequest,
   ): Promise<CreatePaymentMsResponse> {
-    const url = `${this.baseUrl}/api/v1/payments`;
+    const url = `${this.baseUrl}/api/payments`;
 
     this.logger.log(
       `Creating payment: ${request.amount} ${request.currency}`,
@@ -75,12 +75,15 @@ export class PaymentMsClientService {
           'PaymentMsClient.createPayment',
         );
         throw new HttpException(
-          errorBody.detail || 'Payment creation failed',
+          errorBody.detail || errorBody.message || 'Payment creation failed',
           response.status,
         );
       }
 
-      const data = (await response.json()) as CreatePaymentMsResponse;
+      // Payment MS wraps responses in APIResponse { success, message, data }
+      const responseBody = await response.json();
+      const data = (responseBody.data ||
+        responseBody) as CreatePaymentMsResponse;
 
       this.logger.log(
         `Payment created successfully: ${data.payment_id}`,
@@ -121,7 +124,7 @@ export class PaymentMsClientService {
    * Get payment details from the Payment Microservice.
    */
   async getPayment(paymentId: string): Promise<GetPaymentMsResponse> {
-    const url = `${this.baseUrl}/api/v1/payments/${paymentId}`;
+    const url = `${this.baseUrl}/api/payments/${paymentId}`;
 
     this.logger.log(
       `Getting payment: ${paymentId}`,
@@ -148,12 +151,14 @@ export class PaymentMsClientService {
         }
         const errorBody = await response.json().catch(() => ({}));
         throw new HttpException(
-          errorBody.detail || 'Failed to get payment',
+          errorBody.detail || errorBody.message || 'Failed to get payment',
           response.status,
         );
       }
 
-      return (await response.json()) as GetPaymentMsResponse;
+      // Payment MS wraps responses in APIResponse { success, message, data }
+      const responseBody = await response.json();
+      return (responseBody.data || responseBody) as GetPaymentMsResponse;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -175,7 +180,7 @@ export class PaymentMsClientService {
    * Verify a payment in the Payment Microservice.
    */
   async verifyPayment(paymentId: string): Promise<VerifyPaymentMsResponse> {
-    const url = `${this.baseUrl}/api/v1/payments/${paymentId}/verify`;
+    const url = `${this.baseUrl}/api/payments/${paymentId}/verify`;
 
     this.logger.log(
       `Verifying payment: ${paymentId}`,
@@ -203,12 +208,14 @@ export class PaymentMsClientService {
         }
         const errorBody = await response.json().catch(() => ({}));
         throw new HttpException(
-          errorBody.detail || 'Failed to verify payment',
+          errorBody.detail || errorBody.message || 'Failed to verify payment',
           response.status,
         );
       }
 
-      return (await response.json()) as VerifyPaymentMsResponse;
+      // Payment MS wraps responses in APIResponse { success, message, data }
+      const responseBody = await response.json();
+      return (responseBody.data || responseBody) as VerifyPaymentMsResponse;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -233,7 +240,7 @@ export class PaymentMsClientService {
     paymentId: string,
     reason?: string,
   ): Promise<{ success: boolean; message: string }> {
-    const url = `${this.baseUrl}/api/v1/payments/${paymentId}/cancel`;
+    const url = `${this.baseUrl}/api/payments/${paymentId}/cancel`;
 
     this.logger.log(
       `Cancelling payment: ${paymentId}, reason: ${reason || 'N/A'}`,
@@ -261,12 +268,18 @@ export class PaymentMsClientService {
         }
         const errorBody = await response.json().catch(() => ({}));
         throw new HttpException(
-          errorBody.detail || 'Failed to cancel payment',
+          errorBody.detail || errorBody.message || 'Failed to cancel payment',
           response.status,
         );
       }
 
-      return { success: true, message: 'Payment cancelled successfully' };
+      // Payment MS wraps responses in APIResponse { success, message, data }
+      const responseBody = await response.json();
+      const data = responseBody.data || responseBody;
+      return {
+        success: data.canceled ?? true,
+        message: 'Payment cancelled successfully',
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

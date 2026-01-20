@@ -95,9 +95,7 @@ export class PaymentGatewayController {
       dto.reservationId,
     );
     if (!reservation) {
-      throw new NotFoundException(
-        `Reservation ${dto.reservationId} not found`,
-      );
+      throw new NotFoundException(`Reservation ${dto.reservationId} not found`);
     }
     if (reservation.userId !== userId) {
       throw new ForbiddenException(
@@ -133,10 +131,10 @@ export class PaymentGatewayController {
     return {
       paymentId: result.payment_id,
       status: result.status,
-      amount: result.amount,
-      currency: result.currency,
-      checkoutUrl: result.checkout_url,
-      createdAt: result.created_at,
+      amount: result.amount ?? dto.amount,
+      currency: result.currency ?? (dto.currency || 'USD'),
+      checkoutUrl: result.checkout_url || '',
+      createdAt: result.created_at ?? new Date().toISOString(),
     };
   }
 

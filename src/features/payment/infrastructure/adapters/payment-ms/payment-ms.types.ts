@@ -4,14 +4,17 @@
  * Type definitions for communication with the Payment Microservice.
  */
 
-/** Response from creating a payment */
+/** Response from creating a payment (from PaymentIntentResponse in Payment MS) */
 export interface CreatePaymentMsResponse {
   payment_id: string;
   status: string;
-  amount: number;
-  currency: string;
-  checkout_url: string;
-  created_at: string;
+  provider: string;
+  checkout_url: string | null;
+  client_secret?: string | null;
+  // These may be returned by some endpoints but not all
+  amount?: number;
+  currency?: string;
+  created_at?: string;
 }
 
 /** Response from getting a payment */
