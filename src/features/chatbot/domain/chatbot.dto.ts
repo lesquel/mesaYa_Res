@@ -119,12 +119,28 @@ export class ChatRequestDto {
   user_id?: string;
 
   @ApiPropertyOptional({
+    description: 'User email for reservation lookups (authenticated users)',
+    example: 'user@example.com',
+  })
+  @IsOptional()
+  @IsString()
+  user_email?: string;
+
+  @ApiPropertyOptional({
     description: 'Restaurant ID for owner context (owners only)',
     example: 'rest-456',
   })
   @IsOptional()
   @IsString()
   restaurant_id?: string;
+
+  @ApiPropertyOptional({
+    description: 'Image URL for multimodal analysis (optional)',
+    example: 'https://storage.example.com/images/photo.jpg',
+  })
+  @IsOptional()
+  @IsString()
+  image_url?: string;
 }
 
 /**

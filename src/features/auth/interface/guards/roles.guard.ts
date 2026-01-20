@@ -1,10 +1,25 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { AuthRoleName } from '../../domain/enums';
+import { CurrentUserVo } from '../../domain/value-objects/current-user.value-object';
 
+/**
+ * Guard que valida roles del usuario.
+ *
+ * Lee roles requeridos de metadatos (@Roles decorator).
+ * Extrae CurrentUserVo del request.user (validado por JwtAuthGuard).
+ * Usa método hasRole() del value object.
+ */
 @Injectable()
 export class RolesGuard implements CanActivate {
+  private readonly logger = new Logger(RolesGuard.name);
+
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -18,17 +33,21 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user as
-      | { roles?: Array<AuthRoleName | { name?: AuthRoleName }> }
-      | undefined;
-    if (!user?.roles) {
+    const user = request.user as CurrentUserVo | undefined;
+
+    if (!user || !(user instanceof CurrentUserVo)) {
+      this.logger.warn('User is not a CurrentUserVo');
       return false;
     }
 
-    const roleNames = user.roles
-      .map((role) => (typeof role === 'string' ? role : role?.name))
-      .filter((role): role is AuthRoleName => Boolean(role));
+    const hasRequiredRole = requiredRoles.some((role) => user.hasRole(role));
 
-    return requiredRoles.some((role) => roleNames.includes(role));
+    if (!hasRequiredRole) {
+      this.logger.warn(
+        `User ${user.userId} lacks required roles: ${requiredRoles.join(', ')}`,
+      );
+    }
+
+    return hasRequiredRole;
   }
 }

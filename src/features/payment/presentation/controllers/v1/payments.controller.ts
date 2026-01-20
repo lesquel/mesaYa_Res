@@ -54,9 +54,18 @@ import {
 import {
   PaymentStatusEnum,
   PaymentTypeEnum,
-} from '@features/payment/domain/enums';
+} from '@features/payment/domain';
 
-@ApiTags('Payments')
+/**
+ * @deprecated Use the modular controllers instead:
+ * - PaymentsAdminController (./payments-admin.controller.ts)
+ * - PaymentsUserController (./payments-user.controller.ts)
+ * - PaymentsRestaurantController (./payments-restaurant.controller.ts)
+ *
+ * This controller is kept for backward compatibility during migration.
+ * All endpoints are duplicated in the new modular controllers.
+ */
+@ApiTags('Payments (Legacy)')
 @Controller({ path: 'payments', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @ApiBearerAuth()

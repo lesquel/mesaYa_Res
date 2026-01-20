@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { AuthUserInfo } from '../../application/dto/responses/auth-token.response';
+import { CurrentUserVo } from '../../domain/value-objects/current-user.value-object';
+import { AuthUserOutput } from '../../application/dto/outputs/auth-user.output';
 
 /** User data returned from Auth MS via Kafka */
 interface AuthProxyUserData {
@@ -10,7 +11,9 @@ interface AuthProxyUserData {
   roles: string[];
 }
 
-/** JWT claims structure from validated token */
+/**
+ * @deprecated Use CurrentUserVo instead
+ */
 interface JwtUserClaims {
   userId: string;
   email: string;
@@ -33,13 +36,24 @@ export class AuthUserResponseDto {
   @ApiProperty({ type: [String] })
   roles: string[];
 
-  /** Create DTO from AuthUserInfo (from AuthService) */
-  static fromDomain(user: AuthUserInfo): AuthUserResponseDto {
+  /** Create DTO from AuthUserOutput (from AuthService) */
+  static fromApplication(output: AuthUserOutput): AuthUserResponseDto {
     const dto = new AuthUserResponseDto();
-    dto.id = user.id ?? '';
+    dto.id = output.id;
+    dto.email = output.email;
+    dto.name = output.name;
+    dto.phone = '';
+    dto.roles = output.roles.map((role) => role.name);
+    return dto;
+  }
+
+  /** Create DTO from CurrentUserVo - extracted from JWT */
+  static fromCurrentUser(user: CurrentUserVo): AuthUserResponseDto {
+    const dto = new AuthUserResponseDto();
+    dto.id = user.userId;
     dto.email = user.email;
-    dto.name = user.name;
-    dto.phone = ''; // Phone not included in basic user info
+    dto.name = user.fullName;
+    dto.phone = '';
     dto.roles = user.roles.map((role) => role.name);
     return dto;
   }
@@ -50,19 +64,39 @@ export class AuthUserResponseDto {
     dto.id = data.id;
     dto.email = data.email;
     dto.name = `${data.firstName} ${data.lastName}`.trim();
-    dto.phone = ''; // Phone not returned from Auth MS in user queries
+    dto.phone = '';
     dto.roles = data.roles;
     return dto;
   }
 
-  /** Create DTO directly from JWT claims - no DB lookup needed */
+  /**
+   * @deprecated Use fromCurrentUser(user: CurrentUserVo) instead
+   */
   static fromJwtClaims(claims: JwtUserClaims): AuthUserResponseDto {
     const dto = new AuthUserResponseDto();
     dto.id = claims.userId;
     dto.email = claims.email;
-    dto.name = ''; // Name not in JWT claims, frontend can fetch if needed
+    dto.name = '';
     dto.phone = '';
     dto.roles = claims.roles.map((role) => role.name);
+    return dto;
+  }
+
+  /**
+   * @deprecated Use fromApplication instead
+   */
+  static fromDomain(user: {
+    id?: string;
+    email: string;
+    name: string;
+    roles: Array<{ name: string }>;
+  }): AuthUserResponseDto {
+    const dto = new AuthUserResponseDto();
+    dto.id = user.id ?? '';
+    dto.email = user.email;
+    dto.name = user.name;
+    dto.phone = '';
+    dto.roles = user.roles.map((role) => role.name);
     return dto;
   }
 }

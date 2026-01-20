@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   Min,
   IsUUID,
@@ -117,14 +118,18 @@ export class CreateRestaurantDto {
   @ApiProperty({ example: '09:00', description: 'Formato HH:mm' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(100)
+  @Matches(/^([0-1]\d|2[0-3]):([0-5]\d)$/, {
+    message: 'openTime must be in HH:mm format (e.g., 09:00)',
+  })
   @trim()
   openTime: string;
 
   @ApiProperty({ example: '18:00', description: 'Formato HH:mm' })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(100)
+  @Matches(/^([0-1]\d|2[0-3]):([0-5]\d)$/, {
+    message: 'closeTime must be in HH:mm format (e.g., 18:00)',
+  })
   @trim()
   closeTime: string;
 

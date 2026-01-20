@@ -83,13 +83,21 @@ export class RestaurantLocation {
       );
     }
 
-    if (input.city && input.city.length > 120) {
+    if (!input.city) {
+      throw new InvalidRestaurantDataError('Location city is required');
+    }
+
+    if (input.city.length > 120) {
       throw new InvalidRestaurantDataError(
         'City must be at most 120 characters',
       );
     }
 
-    if (input.country && input.country.length > 120) {
+    if (!input.country) {
+      throw new InvalidRestaurantDataError('Location country is required');
+    }
+
+    if (input.country.length > 120) {
       throw new InvalidRestaurantDataError(
         'Country must be at most 120 characters',
       );

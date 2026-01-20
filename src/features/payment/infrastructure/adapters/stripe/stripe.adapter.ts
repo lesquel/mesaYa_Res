@@ -20,7 +20,7 @@ import {
   RefundParams,
   RefundResult,
   WebhookValidationResult,
-} from '../../../application/ports/payment-gateway.port';
+} from '@features/payment/domain';
 
 @Injectable()
 export class StripeAdapter extends IPaymentGatewayPort {

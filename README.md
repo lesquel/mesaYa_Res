@@ -1,109 +1,154 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🔧 MesaYA - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Microservicio principal (Backend) de la plataforma MesaYA, construido con NestJS. Maneja toda la lógica de negocio relacionada con restaurantes, reservas, menús, mesas y secciones.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Descripción
 
-## Description
+Este es el backend central de MesaYA que proporciona:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Gestión de restaurantes**: Crear, editar, listar restaurantes
+- **Sistema de reservas**: Crear, modificar, cancelar reservas
+- **Gestión de mesas**: Configurar mesas y su disponibilidad
+- **Secciones del restaurante**: Organizar el layout del local
+- **Menús digitales**: Gestión de platillos y categorías
+- **Reseñas y calificaciones**: Sistema de reviews de clientes
+- **Arquitectura limpia (Clean Architecture)** con separación de capas
+- **Comunicación event-driven** con Kafka
+- **API REST documentada** con Swagger
 
-## Project setup
+## 🏗️ Arquitectura
 
-```bash
-$ npm install
+```
+src/
+├── domain/              # Entidades y lógica de negocio
+├── application/         # Casos de uso
+├── infrastructure/      # Implementaciones (DB, Kafka, etc.)
+└── interfaces/          # Controladores y DTOs
 ```
 
-## Compile and run the project
+## 👥 Tipos de Usuarios
+
+- **Cliente**: Puede buscar restaurantes, hacer reservas y dejar reseñas
+- **Dueño de Restaurante**: Puede gestionar su restaurante, mesas, menú y ver reservas
+- **Administrador**: Acceso completo a todas las funcionalidades del sistema
+
+## 🚀 Instalación y Ejecución
+
+### Prerrequisitos
+
+- Node.js 18+
+- npm o pnpm
+- PostgreSQL
+- Kafka (debe estar corriendo)
+
+### Instalación
 
 ```bash
-# development
-$ npm run start
-el dueño del restaurante va a poder crear platillos, mapear el restaurante
-
-y el usuario administrador que se va a encargar de la administración
-
-y el usuario cliente que se va a encargar de pedir platillos y reservar mesas
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Instalar dependencias
+npm install
 ```
 
-## Run tests
+### Variables de Entorno
+
+Crear un archivo `.env` con las siguientes variables:
+
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/mesaya
+
+# Server
+PORT=3000
+
+# JWT (para validación de tokens)
+JWT_SECRET=tu_secreto_jwt
+
+# Kafka
+KAFKA_BROKERS=localhost:9092
+
+# External Services
+AUTH_SERVICE_URL=http://localhost:3001
+```
+
+### Ejecutar
 
 ```bash
-# unit tests
-$ npm run test
+# Modo desarrollo
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
+# Modo producción
+npm run build
+npm run start:prod
 
-# test coverage
-$ npm run test:cov
+# Con Docker
+docker compose up -d
 ```
 
-Nota: en Windows PowerShell usa `npm run test` desde el folder raíz del proyecto. Si tienes problemas con rutas de alias, ejecuta `npm run build` antes de testear.
+## 📡 API Endpoints
 
-## Recomendación
+La API está documentada con Swagger. Una vez iniciado el servidor, accede a:
 
-Si compartes el proyecto con otros desarrolladores, añade un pequeño `CONTRIBUTING.md` con pasos mínimos para arrancar (ej. `npm ci`, `npm run build`, `npm test`) y cómo ejecutar los tests localmente en Windows/Unix.
+```
+http://localhost:3000/api
+```
 
-## Deployment
+### Principales endpoints
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+#### Restaurantes
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- `GET /restaurants` - Listar todos los restaurantes
+- `GET /restaurants/:id` - Obtener un restaurante específico
+- `POST /restaurants` - Crear restaurante (solo dueños)
+- `PUT /restaurants/:id` - Actualizar restaurante
+- `DELETE /restaurants/:id` - Eliminar restaurante
+
+#### Reservas
+
+- `GET /reservations` - Listar reservas
+- `POST /reservations` - Crear nueva reserva
+- `PUT /reservations/:id` - Actualizar reserva
+- `DELETE /reservations/:id` - Cancelar reserva
+
+#### Mesas
+
+- `GET /tables` - Listar mesas del restaurante
+- `POST /tables` - Crear mesa
+- `PUT /tables/:id` - Actualizar mesa
+- `DELETE /tables/:id` - Eliminar mesa
+
+#### Menús
+
+- `GET /menus` - Listar menús
+- `POST /menus` - Crear menú/platillo
+- `PUT /menus/:id` - Actualizar menú
+- `DELETE /menus/:id` - Eliminar menú
+
+## 🧪 Testing
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🛠️ Tecnologías
 
-## Resources
+- **NestJS** - Framework backend
+- **TypeScript** - Lenguaje de programación
+- **TypeORM** - ORM para PostgreSQL
+- **Swagger/OpenAPI** - Documentación de API
+- **KafkaJS** - Cliente de Kafka para eventos
+- **Class Validator** - Validación de DTOs
+- **Passport** - Autenticación (integración con Auth MS)
 
-Check out a few resources that may come in handy when working with NestJS:
+## 📚 Más Información
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Para más detalles sobre la arquitectura y funcionamiento del sistema completo, consulta la [documentación principal](../docs/).
 
-## Support
+## 📄 Licencia
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Este proyecto es parte de MesaYA y está desarrollado por estudiantes de ULEAM.

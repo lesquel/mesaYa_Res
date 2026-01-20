@@ -14,40 +14,13 @@ import {
   PaymentStatusEnum,
   PaymentTypeEnum,
 } from '@features/payment/domain/enums';
-
-interface TotalsRaw {
-  totalPayments: string | number | null;
-  totalAmount: string | number | null;
-  averageAmount: string | number | null;
-  completedPayments: string | number | null;
-  pendingPayments: string | number | null;
-  cancelledPayments: string | number | null;
-  minAmount: string | number | null;
-  maxAmount: string | number | null;
-}
-
-interface StatusDistributionRaw {
-  status: PaymentStatusEnum;
-  count: string | number | null;
-}
-
-interface TypeDistributionRaw {
-  type: PaymentTypeEnum;
-  count: string | number | null;
-  amount: string | number | null;
-}
-
-interface RestaurantDistributionRaw {
-  restaurantId: string;
-  count: string | number | null;
-  amount: string | number | null;
-}
-
-interface RevenueTrendRaw {
-  date: string;
-  count: string | number | null;
-  amount: string | number | null;
-}
+import type {
+  TotalsRaw,
+  StatusDistributionRaw,
+  TypeDistributionRaw,
+  RestaurantDistributionRaw,
+  RevenueTrendRaw,
+} from '../types';
 
 @Injectable()
 export class PaymentAnalyticsTypeOrmRepository

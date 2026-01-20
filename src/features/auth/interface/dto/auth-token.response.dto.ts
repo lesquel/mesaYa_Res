@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { AuthTokenResponse } from '../../application/dto/responses/auth-token.response';
+import { AuthTokenOutput } from '../../application/dto/outputs/auth-token.output';
 import { AuthUserResponseDto } from './auth-user.response.dto';
 
 export class AuthTokenResponseDto {
@@ -16,13 +16,12 @@ export class AuthTokenResponseDto {
   @ApiPropertyOptional({ deprecated: true })
   token?: string;
 
-  static fromApplication(response: AuthTokenResponse): AuthTokenResponseDto {
+  static fromApplication(output: AuthTokenOutput): AuthTokenResponseDto {
     const dto = new AuthTokenResponseDto();
-    dto.user = AuthUserResponseDto.fromDomain(response.user);
-    // Support both old (token) and new (accessToken) formats
-    dto.accessToken = response.accessToken || response.token || '';
-    dto.refreshToken = response.refreshToken;
-    dto.token = response.token || response.accessToken;
+    dto.user = AuthUserResponseDto.fromApplication(output.user);
+    dto.accessToken = output.accessToken;
+    dto.refreshToken = output.refreshToken;
+    dto.token = output.accessToken; // Backwards compatibility
     return dto;
   }
 }

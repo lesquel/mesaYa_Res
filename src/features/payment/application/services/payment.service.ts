@@ -1,4 +1,6 @@
+import { Injectable, Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { PaginatedQueryParams } from '@shared/application/types';
 import {
   KafkaEmit,
@@ -26,55 +28,23 @@ import type {
 } from '../dtos/output';
 import { PaymentEntityDTOMapper } from '../mappers';
 import { PaymentAccessService } from './payment-access.service';
-import {
-  IPaymentRepositoryPort,
-  PaymentDomainService,
-} from '@features/payment/domain';
-export class PaymentService {
-  private createPaymentUseCase: CreatePaymentUseCase;
-  private getPaymentByIdUseCase: GetPaymentByIdUseCase;
-  private getAllPaymentsUseCase: GetAllPaymentsUseCase;
-  private updatePaymentStatusUseCase: UpdatePaymentStatusUseCase;
-  private deletePaymentUseCase: DeletePaymentUseCase;
-  private readonly paymentDomainService: PaymentDomainService;
-  private readonly paymentRepository: IPaymentRepositoryPort;
-  private readonly paymentMapper: PaymentEntityDTOMapper;
+import { IPaymentRepositoryPort } from '@features/payment/domain';
 
+@Injectable()
+export class PaymentService {
   constructor(
+    @Inject(LOGGER)
     private readonly logger: ILoggerPort,
-    paymentRepository: IPaymentRepositoryPort,
-    paymentEntityToMapper: PaymentEntityDTOMapper,
+    private readonly paymentRepository: IPaymentRepositoryPort,
+    private readonly paymentMapper: PaymentEntityDTOMapper,
     private readonly kafkaService: KafkaService,
     private readonly accessControl: PaymentAccessService,
-  ) {
-    this.paymentRepository = paymentRepository;
-    this.paymentMapper = paymentEntityToMapper;
-    this.paymentDomainService = new PaymentDomainService(paymentRepository);
-    this.createPaymentUseCase = new CreatePaymentUseCase(
-      this.logger,
-      this.paymentDomainService,
-      paymentEntityToMapper,
-    );
-    this.getPaymentByIdUseCase = new GetPaymentByIdUseCase(
-      this.logger,
-      this.paymentDomainService,
-      paymentEntityToMapper,
-    );
-    this.getAllPaymentsUseCase = new GetAllPaymentsUseCase(
-      this.logger,
-      paymentRepository,
-      paymentEntityToMapper,
-    );
-    this.updatePaymentStatusUseCase = new UpdatePaymentStatusUseCase(
-      this.logger,
-      paymentEntityToMapper,
-      this.paymentDomainService,
-    );
-    this.deletePaymentUseCase = new DeletePaymentUseCase(
-      this.logger,
-      this.paymentDomainService,
-    );
-  }
+    private readonly createPaymentUseCase: CreatePaymentUseCase,
+    private readonly getPaymentByIdUseCase: GetPaymentByIdUseCase,
+    private readonly getAllPaymentsUseCase: GetAllPaymentsUseCase,
+    private readonly updatePaymentStatusUseCase: UpdatePaymentStatusUseCase,
+    private readonly deletePaymentUseCase: DeletePaymentUseCase,
+  ) {}
 
   async createReservationPaymentForUser(
     dto: CreatePaymentDto,

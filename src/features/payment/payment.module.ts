@@ -4,6 +4,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import {
   PaymentsController,
+  PaymentsAdminController,
+  PaymentsUserController,
+  PaymentsRestaurantController,
   PaymentWebhookController,
   PaymentGatewayController,
 } from './presentation';
@@ -15,20 +18,26 @@ import {
   StripeAdapter,
   MockPaymentAdapter,
   PaymentMsClientService,
+  PaymentTargetAdapter,
 } from './infrastructure';
 import {
   PaymentService,
   PaymentEntityDTOMapper,
   GetPaymentAnalyticsUseCase,
   PaymentAccessService,
+  CreatePaymentUseCase,
+  GetPaymentByIdUseCase,
+  GetAllPaymentsUseCase,
+  UpdatePaymentStatusUseCase,
+  DeletePaymentUseCase,
 } from './application';
-import { IPaymentRepositoryPort } from './domain';
+import { IPaymentRepositoryPort, PaymentDomainService } from './domain';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
-import type { ILoggerPort } from '@shared/application/ports/logger.port';
 import {
   PAYMENT_ORM_MAPPER,
   PAYMENT_ANALYTICS_REPOSITORY,
   PAYMENT_GATEWAY,
+  PAYMENT_TARGET_PORT,
 } from './payment.tokens';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { KafkaService } from '@shared/infrastructure/kafka';
@@ -41,6 +50,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     ConfigModule,
     TypeOrmModule.forFeature([
       PaymentOrmEntity,
+      // External entities needed for PaymentTargetAdapter
       ReservationOrmEntity,
       SubscriptionOrmEntity,
       RestaurantOrmEntity,
@@ -48,7 +58,13 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     LoggerModule,
   ],
   controllers: [
+    // Modular controllers by role
+    PaymentsAdminController,
+    PaymentsUserController,
+    PaymentsRestaurantController,
+    // Legacy controller - kept for backward compatibility
     PaymentsController,
+    // Other controllers
     PaymentWebhookController,
     PaymentGatewayController,
   ],
@@ -89,32 +105,24 @@ import { RestaurantOrmEntity } from '@features/restaurants';
       },
       inject: [ConfigService],
     },
-    PaymentAccessService,
+    // Target Port Adapter (access to Reservation/Subscription ownership)
     {
-      provide: PaymentService,
-      useFactory: (
-        logger: ILoggerPort,
-        paymentRepository: IPaymentRepositoryPort,
-        mapper: PaymentEntityDTOMapper,
-        kafkaService: KafkaService,
-        accessService: PaymentAccessService,
-      ) =>
-        new PaymentService(
-          logger,
-          paymentRepository,
-          mapper,
-          kafkaService,
-          accessService,
-        ),
-      inject: [
-        LOGGER,
-        IPaymentRepositoryPort,
-        PaymentEntityDTOMapper,
-        KafkaService,
-        PaymentAccessService,
-      ],
+      provide: PAYMENT_TARGET_PORT,
+      useClass: PaymentTargetAdapter,
     },
+    // Domain Services
+    PaymentDomainService,
+    // Application Services
+    PaymentAccessService,
+    // Use Cases (now @Injectable with DI)
+    CreatePaymentUseCase,
+    GetPaymentByIdUseCase,
+    GetAllPaymentsUseCase,
+    UpdatePaymentStatusUseCase,
+    DeletePaymentUseCase,
     GetPaymentAnalyticsUseCase,
+    // Main Application Service
+    PaymentService,
   ],
   exports: [
     PaymentService,

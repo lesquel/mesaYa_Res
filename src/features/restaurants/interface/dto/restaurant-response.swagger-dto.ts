@@ -1,4 +1,30 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export class RestaurantLocationSwaggerDto {
+  @ApiProperty({ example: 'Av. Amazonas 123, Quito, Ecuador' })
+  label!: string;
+
+  @ApiProperty({ example: 'Av. Amazonas 123' })
+  address!: string;
+
+  @ApiProperty({ example: 'Quito' })
+  city!: string;
+
+  @ApiPropertyOptional({ nullable: true, example: 'Pichincha' })
+  province?: string | null;
+
+  @ApiProperty({ example: 'Ecuador' })
+  country!: string;
+
+  @ApiPropertyOptional({ nullable: true, example: -0.180653 })
+  latitude?: number | null;
+
+  @ApiPropertyOptional({ nullable: true, example: -78.467834 })
+  longitude?: number | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  placeId?: string | null;
+}
 
 export class RestaurantResponseSwaggerDto {
   @ApiProperty({ format: 'uuid' })
@@ -10,8 +36,8 @@ export class RestaurantResponseSwaggerDto {
   @ApiProperty({ required: false, nullable: true })
   description!: string | null;
 
-  @ApiProperty()
-  location!: string;
+  @ApiProperty({ type: () => RestaurantLocationSwaggerDto })
+  location!: RestaurantLocationSwaggerDto;
 
   @ApiProperty({ required: false, nullable: true })
   openTime!: string | null;

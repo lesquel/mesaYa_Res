@@ -1,15 +1,17 @@
+import { Injectable, Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
-
-import { UpdatePaymentStatusDto } from '../dtos/input/update-payment-status-dto';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import { UseCase } from '@shared/application/ports/use-case.port';
 import { PaymentDomainService } from '@features/payment/domain';
+import { UpdatePaymentStatusDto, PaymentDto } from '../dtos';
 import { PaymentEntityDTOMapper } from '../mappers';
-import { PaymentDto } from '../dtos/output/payment.dto';
 
+@Injectable()
 export class UpdatePaymentStatusUseCase
   implements UseCase<UpdatePaymentStatusDto, PaymentDto>
 {
   constructor(
+    @Inject(LOGGER)
     private readonly logger: ILoggerPort,
     private readonly paymentMapper: PaymentEntityDTOMapper,
     private readonly paymentDomainService: PaymentDomainService,

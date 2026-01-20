@@ -5,19 +5,32 @@ import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Partitioners } from 'kafkajs';
 
+// Controllers
 import { AuthController } from './interface/controllers/v1/auth.controller';
+
+// Application
+import { AuthService } from './application/services/auth.service';
+import { AUTH_PROVIDER } from './application/ports/auth-provider.port';
+
+// Infrastructure
+import {
+  KafkaAuthProvider,
+  AUTH_KAFKA_CLIENT,
+} from './infrastructure/messaging/kafka-auth.provider';
 import { JwtStrategy } from './infrastructure/security/jwt.strategy';
+
+// Interface
+import { JwtAuthGuard } from './interface/guards/jwt-auth.guard';
 import { RolesGuard } from './interface/guards/roles.guard';
 import { PermissionsGuard } from './interface/guards/permissions.guard';
-import { JwtAuthGuard } from './interface/guards/jwt-auth.guard';
-import { AuthService } from './application/services/auth.service';
-import {
-  AuthProxyService,
-  AUTH_KAFKA_CLIENT,
-} from './infrastructure/messaging/auth-proxy.service';
 
 /**
- * Simplified Auth Module.
+ * Auth Module (Refactorizado).
+ *
+ * Arquitectura:
+ * - Ports & Adapters: AuthProvider puerto, KafkaAuthProvider adapter
+ * - Hexagonal: Separación clara entre capas
+ * - DI: Tokens para inyección de dependencias
  *
  * ARCHITECTURE: Users live exclusively in Auth MS.
  * This module only handles:
@@ -27,6 +40,17 @@ import {
  *
  * NO local user storage. NO database entities.
  * All user data comes from Auth MS via Kafka or JWT claims.
+ *
+ * Exports públicos:
+ * - Guards: JwtAuthGuard, RolesGuard, PermissionsGuard
+ * - Decoradores: @CurrentUser, @Roles, @Permissions (vía index.ts)
+ * - Enums: AuthRoleName (vía index.ts)
+ * - Módulo para importación
+ *
+ * NO expone:
+ * - KafkaAuthProvider (es adapter interno)
+ * - Tipos de Kafka
+ * - Detalles de implementación
  */
 @Module({
   imports: [
@@ -82,25 +106,34 @@ import {
   ],
   controllers: [AuthController],
   providers: [
-    // Proxy for communication with Auth MS
-    AuthProxyService,
-    // Service that uses the proxy
+    // Adapter Kafka que implementa IAuthProvider
+    KafkaAuthProvider,
+    // Puerto (token) apunta a adapter
+    {
+      provide: AUTH_PROVIDER,
+      useExisting: KafkaAuthProvider,
+    },
+    // Servicio de aplicación
     AuthService,
-    // JWT strategy for token validation with public key (RS256)
+    // Estrategia JWT para validación de token con clave pública (RS256)
     JwtStrategy,
-    // Guards for protecting endpoints (read from JWT claims)
+    // Guards para proteger endpoints (leen del JWT claims)
+    JwtAuthGuard,
     RolesGuard,
     PermissionsGuard,
-    JwtAuthGuard,
   ],
   exports: [
+    // Módulos de Passport/JWT para uso en otros módulos
     PassportModule,
     JwtModule,
+    // Guards públicos
+    JwtAuthGuard,
     RolesGuard,
     PermissionsGuard,
-    JwtAuthGuard,
+    // AuthService para casos que lo necesiten
     AuthService,
-    AuthProxyService,
+    // Puerto para inyección en otros módulos
+    AUTH_PROVIDER,
   ],
 })
 export class AuthModule {}

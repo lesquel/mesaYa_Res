@@ -5,6 +5,9 @@ import {
   Post,
   UseGuards,
   ValidationPipe,
+  BadRequestException,
+  UnauthorizedException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -13,6 +16,8 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
@@ -24,19 +29,24 @@ import { AuthTokenResponseDto } from '../../dto/auth-token.response.dto';
 import { LoginRequestDto } from '../../dto/login.request.dto';
 import { RefreshTokenRequestDto } from '../../dto/refresh-token.request.dto';
 import { AuthUserResponseDto } from '../../dto/auth-user.response.dto';
-import { SignUpCommand } from '@features/auth/application/dto/commands/sign-up.command';
-import { LoginCommand } from '@features/auth/application/dto/commands/login.command';
-import { AuthRoleName } from '@features/auth/domain/enums';
+import { SignUpInput } from '../../../application/dto/inputs/sign-up.input';
+import { LoginInput } from '../../../application/dto/inputs/login.input';
+import { AuthRoleName } from '../../../domain/enums';
+import { AuthDomainError } from '../../../domain/errors';
+import { CurrentUserVo } from '../../../domain/value-objects/current-user.value-object';
 import { ThrottleAuth, ThrottleRead } from '@shared/infrastructure/decorators';
 
 /**
- * Simplified Auth Controller.
+ * Auth Controller (v1).
  *
- * Handles only core authentication endpoints.
- * All operations delegate to Auth MS via AuthService/AuthProxyService.
+ * Responsabilidades:
+ * - Validar entrada HTTP
+ * - Convertir DTOs a inputs de aplicación
+ * - Llamar a AuthService
+ * - Mapear salida a DTOs HTTP
+ * - Traducir errores de dominio a HTTP
  *
- * User management (list, update roles, etc.) should be done directly
- * via Auth MS or moved to a separate admin service.
+ * NO contiene lógica de negocio.
  */
 @ApiTags('Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -51,15 +61,18 @@ export class AuthController {
     description: 'Usuario registrado correctamente',
     type: AuthTokenResponseDto,
   })
+  @ApiBadRequestResponse({ description: 'Email ya registrado o datos inválidos' })
   async signup(
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
     dto: SignUpRequestDto,
   ): Promise<AuthTokenResponseDto> {
-    const response = await this.authService.signup(
-      new SignUpCommand(dto.email, dto.password, dto.name, dto.phone),
-    );
-
-    return AuthTokenResponseDto.fromApplication(response);
+    try {
+      const input = new SignUpInput(dto.email, dto.password, dto.name, dto.phone);
+      const output = await this.authService.signup(input);
+      return AuthTokenResponseDto.fromApplication(output);
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
   }
 
   @Post('login')
@@ -70,14 +83,18 @@ export class AuthController {
     description: 'Inicio de sesión correcto',
     type: AuthTokenResponseDto,
   })
+  @ApiUnauthorizedResponse({ description: 'Credenciales inválidas' })
   async login(
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
     dto: LoginRequestDto,
   ): Promise<AuthTokenResponseDto> {
-    const response = await this.authService.login(
-      new LoginCommand(dto.email, dto.password),
-    );
-    return AuthTokenResponseDto.fromApplication(response);
+    try {
+      const input = new LoginInput(dto.email, dto.password);
+      const output = await this.authService.login(input);
+      return AuthTokenResponseDto.fromApplication(output);
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
   }
 
   @Post('refresh')
@@ -88,12 +105,17 @@ export class AuthController {
     description: 'Tokens renovados correctamente',
     type: AuthTokenResponseDto,
   })
+  @ApiUnauthorizedResponse({ description: 'Refresh token inválido' })
   async refresh(
     @Body(new ValidationPipe({ whitelist: true, transform: true }))
     dto: RefreshTokenRequestDto,
   ): Promise<AuthTokenResponseDto> {
-    const response = await this.authService.refreshToken(dto.refreshToken);
-    return AuthTokenResponseDto.fromApplication(response);
+    try {
+      const output = await this.authService.refreshToken(dto.refreshToken);
+      return AuthTokenResponseDto.fromApplication(output);
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
   }
 
   @Get('me')
@@ -105,11 +127,8 @@ export class AuthController {
     description: 'Datos del usuario desde el token JWT',
     type: AuthUserResponseDto,
   })
-  me(
-    @CurrentUser() currentUser: { userId: string; email: string; roles: any[] },
-  ): AuthUserResponseDto {
-    // Return user info directly from JWT claims - no DB lookup needed
-    return AuthUserResponseDto.fromJwtClaims(currentUser);
+  me(@CurrentUser() user: CurrentUserVo): AuthUserResponseDto {
+    return AuthUserResponseDto.fromCurrentUser(user);
   }
 
   @Get('check')
@@ -127,10 +146,26 @@ export class AuthController {
   @ApiOperation({ summary: 'Cerrar sesión' })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'Sesión cerrada correctamente' })
-  async logout(
-    @CurrentUser() currentUser: { userId: string },
-  ): Promise<{ message: string }> {
-    await this.authService.logout(currentUser.userId);
+  async logout(@CurrentUser() user: CurrentUserVo): Promise<{ message: string }> {
+    await this.authService.logout(user.userId);
     return { message: 'Logged out successfully' };
+  }
+
+  /**
+   * Mapea errores de dominio a excepciones HTTP.
+   */
+  private handleAuthError(error: unknown): Error {
+    if (error instanceof AuthDomainError) {
+      switch (error.statusCode) {
+        case 401:
+          return new UnauthorizedException(error.message);
+        case 503:
+          return new ServiceUnavailableException(error.message);
+        default:
+          return new BadRequestException(error.message);
+      }
+    }
+
+    return new BadRequestException('Unknown authentication error');
   }
 }

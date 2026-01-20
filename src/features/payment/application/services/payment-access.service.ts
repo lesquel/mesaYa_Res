@@ -1,37 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ReservationOrmEntity } from '@features/reservation';
-import { SubscriptionOrmEntity } from '@features/subscription';
-import { RestaurantOrmEntity } from '@features/restaurants';
+import { Injectable, Inject } from '@nestjs/common';
 import {
   PaymentForbiddenError,
   PaymentTargetNotFoundError,
+  IPaymentTargetPort,
+  ReservationOwnership,
+  SubscriptionOwnership,
 } from '@features/payment/domain';
+import { PAYMENT_TARGET_PORT } from '@features/payment/payment.tokens';
 import type { CreatePaymentDto, PaymentResponseDto } from '../dtos';
-
-interface ReservationOwnershipSnapshot {
-  reservationId: string;
-  userId: string;
-  restaurantId: string;
-  restaurantOwnerId: string | null;
-}
-
-interface SubscriptionOwnershipSnapshot {
-  subscriptionId: string;
-  restaurantId: string;
-  restaurantOwnerId: string | null;
-}
 
 @Injectable()
 export class PaymentAccessService {
   constructor(
-    @InjectRepository(ReservationOrmEntity)
-    private readonly reservations: Repository<ReservationOrmEntity>,
-    @InjectRepository(SubscriptionOrmEntity)
-    private readonly subscriptions: Repository<SubscriptionOrmEntity>,
-    @InjectRepository(RestaurantOrmEntity)
-    private readonly restaurants: Repository<RestaurantOrmEntity>,
+    @Inject(PAYMENT_TARGET_PORT)
+    private readonly targetPort: IPaymentTargetPort,
   ) {}
 
   async assertUserReservationPayment(
@@ -50,7 +32,9 @@ export class PaymentAccessService {
       );
     }
 
-    const reservation = await this.loadReservationOwnership(dto.reservationId);
+    const reservation = await this.targetPort.getReservationOwnership(
+      dto.reservationId,
+    );
 
     if (!reservation) {
       throw new PaymentTargetNotFoundError('reservation', dto.reservationId);
@@ -79,7 +63,7 @@ export class PaymentAccessService {
       );
     }
 
-    const subscription = await this.loadSubscriptionOwnership(
+    const subscription = await this.targetPort.getSubscriptionOwnership(
       dto.subscriptionId,
     );
 
@@ -104,7 +88,7 @@ export class PaymentAccessService {
       );
     }
 
-    const reservation = await this.loadReservationOwnership(
+    const reservation = await this.targetPort.getReservationOwnership(
       payment.reservationId,
     );
 
@@ -127,7 +111,7 @@ export class PaymentAccessService {
     ownerId: string,
   ): Promise<void> {
     if (payment.subscriptionId) {
-      const subscription = await this.loadSubscriptionOwnership(
+      const subscription = await this.targetPort.getSubscriptionOwnership(
         payment.subscriptionId,
       );
 
@@ -148,7 +132,7 @@ export class PaymentAccessService {
     }
 
     if (payment.reservationId) {
-      const reservation = await this.loadReservationOwnership(
+      const reservation = await this.targetPort.getReservationOwnership(
         payment.reservationId,
       );
 
@@ -175,66 +159,15 @@ export class PaymentAccessService {
     restaurantId: string,
     ownerId: string,
   ): Promise<void> {
-    const restaurant = await this.restaurants.findOne({
-      where: { id: restaurantId },
-      select: { id: true, ownerId: true },
-    });
+    const isOwner = await this.targetPort.isRestaurantOwner(
+      restaurantId,
+      ownerId,
+    );
 
-    if (!restaurant) {
-      throw new PaymentTargetNotFoundError('restaurant', restaurantId);
-    }
-
-    if (restaurant.ownerId !== ownerId) {
+    if (!isOwner) {
       throw new PaymentForbiddenError(
         'Restaurant does not belong to authenticated owner',
       );
     }
-  }
-
-  private async loadReservationOwnership(
-    reservationId: string,
-  ): Promise<ReservationOwnershipSnapshot | null> {
-    if (!reservationId) {
-      return null;
-    }
-
-    const reservation = await this.reservations.findOne({
-      where: { id: reservationId },
-      relations: { restaurant: true },
-    });
-
-    if (!reservation) {
-      return null;
-    }
-
-    return {
-      reservationId: reservation.id,
-      userId: reservation.userId,
-      restaurantId: reservation.restaurantId,
-      restaurantOwnerId: reservation.restaurant?.ownerId ?? null,
-    };
-  }
-
-  private async loadSubscriptionOwnership(
-    subscriptionId: string,
-  ): Promise<SubscriptionOwnershipSnapshot | null> {
-    if (!subscriptionId) {
-      return null;
-    }
-
-    const subscription = await this.subscriptions.findOne({
-      where: { id: subscriptionId },
-      relations: { restaurant: true },
-    });
-
-    if (!subscription) {
-      return null;
-    }
-
-    return {
-      subscriptionId: subscription.id,
-      restaurantId: subscription.restaurantId,
-      restaurantOwnerId: subscription.restaurant?.ownerId ?? null,
-    };
   }
 }

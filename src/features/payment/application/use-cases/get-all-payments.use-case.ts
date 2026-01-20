@@ -1,4 +1,6 @@
+import { Injectable, Inject } from '@nestjs/common';
 import type { ILoggerPort } from '@shared/application/ports/logger.port';
+import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
 import type { PaginatedQueryParams } from '@shared/application/types';
 import type { PaginatedResult } from '@shared/application/types';
 import {
@@ -20,10 +22,12 @@ import { ListPaymentsQuery } from '../dtos/input/list-payments.query';
 
 export type PaginatedPaymentResponse = PaginatedResult<PaymentDto>;
 
+@Injectable()
 export class GetAllPaymentsUseCase
   implements UseCase<PaginatedQueryParams, PaginatedPaymentResponse>
 {
   constructor(
+    @Inject(LOGGER)
     private readonly logger: ILoggerPort,
     private readonly paymentRepository: IPaymentRepositoryPort,
     private readonly paymentMapper: PaymentEntityDTOMapper,

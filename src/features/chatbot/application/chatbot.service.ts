@@ -57,7 +57,9 @@ export class ChatbotService {
           language: request.language ?? 'es',
           history: request.history ?? [],
           user_id: request.user_id,
+          user_email: request.user_email,
           restaurant_id: request.restaurant_id,
+          image_url: request.image_url,
         }),
         signal: controller.signal,
       });

@@ -38,6 +38,12 @@ import {
   GetRestaurantAnalyticsUseCase,
   FindRestaurantByNameUseCase,
 } from '@features/restaurants/application';
+import type {
+  CreateRestaurantCommand,
+  UpdateRestaurantCommand,
+  DeleteRestaurantCommand,
+  UpdateRestaurantStatusCommand,
+} from '@features/restaurants/application';
 import { ListRestaurantReservationsUseCase } from '@features/reservation/application/use-cases/list-restaurant-reservation.use-case';
 import {
   ListRestaurantReservationsQuery,
@@ -191,10 +197,11 @@ export class RestaurantsController {
     @Body() dto: CreateRestaurantDto,
     @CurrentUser() user: CurrentUserPayload,
   ): Promise<RestaurantResponseDto> {
-    return this.restaurantsService.create({
+    const command: CreateRestaurantCommand = {
       ...dto,
       ownerId: user.userId,
-    } as any);
+    };
+    return this.restaurantsService.create(command);
   }
 
   @Patch(':id')
@@ -210,18 +217,13 @@ export class RestaurantsController {
   ): Promise<RestaurantResponseDto> {
     const isAdmin = user.roles?.some((r) => r.name === AuthRoleName.ADMIN);
 
-    if (isAdmin) {
-      return this.restaurantsService.update({
-        restaurantId: id,
-        ...dto,
-      } as any);
-    } else {
-      return this.restaurantsService.update({
-        restaurantId: id,
-        ...dto,
-        ownerId: user.userId,
-      } as any);
-    }
+    const command: UpdateRestaurantCommand = {
+      restaurantId: id,
+      ...dto,
+      ownerId: user.userId,
+      enforceOwnership: !isAdmin,
+    };
+    return this.restaurantsService.update(command);
   }
 
   @Delete(':id')
@@ -229,8 +231,16 @@ export class RestaurantsController {
   @Permissions('restaurant:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete restaurant (Admin)' })
-  async delete(@Param('id', UUIDPipe) id: string): Promise<any> {
-    return this.restaurantsService.delete({ restaurantId: id } as any);
+  async delete(
+    @Param('id', UUIDPipe) id: string,
+    @CurrentUser() user: CurrentUserPayload,
+  ): Promise<RestaurantResponseDto> {
+    const command: DeleteRestaurantCommand = {
+      restaurantId: id,
+      ownerId: user.userId,
+      enforceOwnership: false,
+    };
+    return this.restaurantsService.delete(command);
   }
 
   @Patch(':id/status')
@@ -241,11 +251,16 @@ export class RestaurantsController {
   async updateStatus(
     @Param('id', UUIDPipe) id: string,
     @Body() dto: UpdateRestaurantStatusRequestDto,
+    @CurrentUser() user: CurrentUserPayload,
   ): Promise<RestaurantResponseDto> {
-    return this.restaurantsService.updateStatus({
+    const command: UpdateRestaurantStatusCommand = {
       restaurantId: id,
-      ...dto,
-    } as any);
+      ownerId: user.userId,
+      enforceOwnership: false,
+      status: dto.status,
+      adminNote: dto.adminNote,
+    };
+    return this.restaurantsService.updateStatus(command);
   }
 
   @Get(':id/analytics')
@@ -256,11 +271,11 @@ export class RestaurantsController {
   async getAnalytics(
     @Param('id', UUIDPipe) id: string,
     @Query() query: RestaurantAnalyticsRequestDto,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return this.getRestaurantAnalytics.execute({
       restaurantId: id,
-      ...query,
-    } as any);
+      ...query.toQuery(),
+    });
   }
 
   @Get(':id/reservations')
