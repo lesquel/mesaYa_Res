@@ -1,5 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { IAuthProvider, AUTH_PROVIDER } from '../ports/auth-provider.port';
+import { AUTH_PROVIDER } from '../ports/auth-provider.port';
+import type { IAuthProvider } from '../ports/auth-provider.port';
 import { SignUpInput } from '../dto/inputs/sign-up.input';
 import { LoginInput } from '../dto/inputs/login.input';
 import { AuthTokenOutput } from '../dto/outputs/auth-token.output';

@@ -32,7 +32,6 @@ import type {
   ListOwnerUpgradeRequestsQuery,
   PaginatedOwnerUpgradeResponse,
 } from '../dto';
-import { NotFoundException } from '@nestjs/common';
 
 /**
  * Owner Upgrade Service.

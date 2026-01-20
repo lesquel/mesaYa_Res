@@ -55,6 +55,7 @@ import type {
   PaginatedRestaurantResponse,
   ListNearbyRestaurantsQuery,
   ListOwnerRestaurantsQuery,
+  DeleteRestaurantResponseDto,
 } from '@features/restaurants/application';
 import { NearbyRestaurantsQueryDto } from '@features/restaurants/application';
 import { RestaurantResponseSwaggerDto } from '@features/restaurants/interface/dto';
@@ -234,7 +235,7 @@ export class RestaurantsController {
   async delete(
     @Param('id', UUIDPipe) id: string,
     @CurrentUser() user: CurrentUserPayload,
-  ): Promise<RestaurantResponseDto> {
+  ): Promise<DeleteRestaurantResponseDto> {
     const command: DeleteRestaurantCommand = {
       restaurantId: id,
       ownerId: user.userId,

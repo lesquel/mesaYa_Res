@@ -31,7 +31,7 @@ import {
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 
-import { IPaymentGatewayPort } from '@features/payment/application/ports/payment-gateway.port';
+import { IPaymentGatewayPort } from '@features/payment/domain/ports/payment-gateway.port';
 import { PAYMENT_GATEWAY } from '@features/payment/payment.tokens';
 import { KafkaService } from '@shared/infrastructure/kafka';
 import { PAYMENTS_EVENTS_TOPIC } from '../../constants';
