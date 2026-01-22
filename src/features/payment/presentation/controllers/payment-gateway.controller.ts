@@ -83,7 +83,7 @@ export class PaymentGatewayController {
     @Body() dto: CreateReservationPaymentDto,
     @Req() req: AuthenticatedRequest,
   ): Promise<PaymentCreatedResponseDto> {
-    const userId = req.user?.sub;
+    const userId = req.user?.userId;
 
     this.logger.log(
       `Creating reservation payment checkout for user ${userId}, reservation ${dto.reservationId}`,
@@ -237,7 +237,7 @@ export class PaymentGatewayController {
     @Body() dto: CancelPaymentDto,
     @Req() req: AuthenticatedRequest,
   ): Promise<{ success: boolean; message: string }> {
-    const userId = req.user?.sub;
+    const userId = req.user?.userId;
 
     this.logger.log(
       `Cancelling payment: ${paymentId}, user: ${userId}, reason: ${dto.reason || 'N/A'}`,

@@ -6,18 +6,13 @@
  */
 
 import type { Request } from 'express';
+import type { CurrentUserVo } from '@features/auth';
 
 /**
  * Represents an Express request with authenticated user data.
  * The user object is populated by JwtAuthGuard after token validation.
+ * It contains a CurrentUserVo instance with validated user data.
  */
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    /** User ID (subject claim from JWT) */
-    sub: string;
-    /** User email */
-    email: string;
-    /** Optional user role */
-    role?: string;
-  };
+  user?: CurrentUserVo;
 }
