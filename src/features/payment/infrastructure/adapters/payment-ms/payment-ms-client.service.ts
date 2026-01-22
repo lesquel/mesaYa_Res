@@ -16,6 +16,8 @@ import type {
   CreatePaymentMsResponse,
   GetPaymentMsResponse,
   VerifyPaymentMsResponse,
+  NotifyWebhookMsRequest,
+  NotifyWebhookMsResponse,
 } from './payment-ms.types';
 
 @Injectable()
@@ -332,6 +334,80 @@ export class PaymentMsClientService {
       return {
         healthy: false,
         latencyMs: Date.now() - startTime,
+      };
+    }
+  }
+
+  /**
+   * Notify partners about a payment event via webhooks.
+   * This triggers the Payment MS to send webhook notifications to all
+   * registered partners for the specified payment and event type.
+   */
+  async notifyWebhook(
+    request: NotifyWebhookMsRequest,
+  ): Promise<NotifyWebhookMsResponse> {
+    const url = `${this.baseUrl}/api/webhooks/notify`;
+
+    this.logger.log(
+      `Notifying webhooks for payment: ${request.payment_id}, event: ${request.event_type}`,
+      'PaymentMsClient.notifyWebhook',
+    );
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        this.logger.warn(
+          `Webhook notification failed: ${response.status} - ${JSON.stringify(errorBody)}`,
+          'PaymentMsClient.notifyWebhook',
+        );
+        // Don't throw - webhook failures shouldn't break the main flow
+        return {
+          payment_id: request.payment_id,
+          event_type: request.event_type,
+          webhooks_sent: 0,
+          webhook_results: [],
+          n8n_notified: false,
+        };
+      }
+
+      // Payment MS wraps responses in APIResponse { success, message, data }
+      const responseBody = await response.json();
+      const data = (responseBody.data ||
+        responseBody) as NotifyWebhookMsResponse;
+
+      this.logger.log(
+        `Webhook notification completed: ${data.webhooks_sent} webhooks sent, n8n: ${data.n8n_notified}`,
+        'PaymentMsClient.notifyWebhook',
+      );
+
+      return data;
+    } catch (error) {
+      // Webhook failures should not break the main payment flow
+      this.logger.warn(
+        `Webhook notification error (non-blocking): ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'PaymentMsClient.notifyWebhook',
+      );
+
+      return {
+        payment_id: request.payment_id,
+        event_type: request.event_type,
+        webhooks_sent: 0,
+        webhook_results: [],
+        n8n_notified: false,
       };
     }
   }

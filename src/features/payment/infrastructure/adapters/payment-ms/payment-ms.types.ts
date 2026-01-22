@@ -36,6 +36,9 @@ export interface VerifyPaymentMsResponse {
   verified: boolean;
   amount?: number;
   currency?: string;
+  previous_status?: string;
+  current_status?: string;
+  synchronized?: boolean;
 }
 
 /** Request to create a payment */
@@ -58,4 +61,26 @@ export interface CancelPaymentMsResponse {
 export interface HealthCheckMsResponse {
   healthy: boolean;
   latencyMs: number;
+}
+
+/** Request to notify partners about a payment event */
+export interface NotifyWebhookMsRequest {
+  payment_id: string;
+  event_type: string;
+  metadata?: Record<string, unknown>;
+}
+
+/** Response from webhook notification */
+export interface NotifyWebhookMsResponse {
+  payment_id: string;
+  event_type: string;
+  webhooks_sent: number;
+  webhook_results: Array<{
+    partner_id: string;
+    partner_name: string;
+    status: string;
+    status_code?: number;
+    error?: string;
+  }>;
+  n8n_notified: boolean;
 }

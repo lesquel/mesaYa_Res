@@ -1,14 +1,16 @@
-// v1 Controllers - modular by role
-export * from './controllers/v1/payments-admin.controller';
-export * from './controllers/v1/payments-user.controller';
-export * from './controllers/v1/payments-restaurant.controller';
-export * from './controllers/v1/payment-webhook.controller';
+/**
+ * Payment Presentation Layer
+ *
+ * Exports the API Gateway controller and webhook controller.
+ * Legacy controllers have been removed - all payment operations
+ * are now handled through the Payment Microservice.
+ */
 
-// Legacy controller - deprecated, kept for backward compatibility
-export * from './controllers/v1/payments.controller';
-
-// Other controllers
+// API Gateway Controller - proxies to Payment MS
 export * from './controllers/payment-gateway.controller';
+
+// Webhook Controller - handles Stripe/provider callbacks
+export * from './controllers/v1/payment-webhook.controller';
 
 // DTOs
 export * from './dto';

@@ -24,7 +24,6 @@ export const JoiValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('development', 'test', 'production')
     .default('development'),
-  JWT_SECRET: Joi.string().min(16).required(),
   JWT_EXPIRES_IN: Joi.string().default('1d'),
   AUTH_SALT_ROUNDS: Joi.number().integer().min(4).max(20).default(10),
 
