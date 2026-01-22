@@ -79,8 +79,9 @@ import { PermissionsGuard } from './interface/guards/permissions.guard';
           options: {
             client: {
               clientId: 'mesaya-gateway',
+              // Use 127.0.0.1 instead of localhost to force IPv4 (IPv6 has issues with Docker WSL2)
               brokers: (
-                config.get<string>('KAFKA_BROKER') || 'localhost:29092'
+                config.get<string>('KAFKA_BROKER') || '127.0.0.1:29092'
               ).split(','),
               connectionTimeout: 10000,
               retry: {
