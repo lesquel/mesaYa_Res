@@ -45,10 +45,16 @@ export interface VerifyPaymentMsResponse {
 export interface CreatePaymentMsRequest {
   amount: number;
   currency: string;
+  reservationId?: string;    // Related reservation UUID
+  subscriptionId?: string;   // Related subscription UUID
+  userId?: string;           // User making the payment (from JWT)
+  paymentType?: string;      // 'reservation' | 'subscription'
+  payerEmail?: string;       // Payer email
+  payerName?: string;        // Payer full name
   description?: string;
   metadata?: Record<string, string>;
-  success_url?: string;
-  cancel_url?: string;
+  successUrl?: string;
+  cancelUrl?: string;
 }
 
 /** Response from cancelling a payment */

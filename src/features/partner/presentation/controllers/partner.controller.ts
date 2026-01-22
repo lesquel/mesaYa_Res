@@ -15,23 +15,26 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   HttpCode,
   HttpStatus,
   NotFoundException,
   ParseUUIDPipe,
+  Logger,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   PartnerService,
   WebhookDispatcherService,
 } from '../../application/services';
-import type { Partner } from '../../domain';
+import type { Partner, PartnerEventType } from '../../domain';
 import {
   RegisterPartnerDto,
   UpdatePartnerDto,
@@ -44,6 +47,8 @@ import {
 @ApiBearerAuth()
 @Controller({ path: 'partners', version: '1' })
 export class PartnerController {
+  private readonly logger = new Logger(PartnerController.name);
+
   constructor(
     private readonly partnerService: PartnerService,
     private readonly webhookDispatcher: WebhookDispatcherService,
@@ -100,19 +105,75 @@ export class PartnerController {
    * Get all partners
    *
    * GET /api/v1/partners
+   * GET /api/v1/partners?subscribedEvent=payment.created&status=active
    */
   @Get()
   @ApiOperation({
     summary: 'List all partners',
-    description: 'Returns all registered B2B partners',
+    description: 'Returns all registered B2B partners. Can filter by subscribed event and status.',
+  })
+  @ApiQuery({
+    name: 'subscribedEvent',
+    required: false,
+    description: 'Filter by subscribed event type (e.g., payment.created, payment.succeeded)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['active', 'inactive'],
+    description: 'Filter by partner status',
   })
   @ApiResponse({
     status: 200,
     description: 'List of partners',
     type: [PartnerResponseDto],
   })
-  async getAllPartners(): Promise<PartnerResponseDto[]> {
-    const partners = await this.partnerService.getAllPartners();
+  async getAllPartners(
+    @Query('subscribedEvent') subscribedEvent?: string,
+    @Query('status') status?: string,
+  ): Promise<PartnerResponseDto[]> {
+    this.logger.log(
+      `Fetching partners - subscribedEvent: ${subscribedEvent}, status: ${status}`,
+    );
+
+    let partners: Partner[];
+
+    // Valid event types for validation
+    const validEventTypes: PartnerEventType[] = [
+      'reservation.created',
+      'reservation.confirmed',
+      'reservation.cancelled',
+      'reservation.completed',
+      'payment.created',
+      'payment.succeeded',
+      'payment.failed',
+      'payment.refunded',
+    ];
+
+    // If filtering by subscribed event
+    if (subscribedEvent) {
+      // Validate event type
+      const isValidEvent = validEventTypes.includes(subscribedEvent as PartnerEventType);
+
+      if (isValidEvent) {
+        partners = await this.partnerService.getPartnersForEvent(subscribedEvent as PartnerEventType);
+      } else {
+        this.logger.warn(`Unknown event type: ${subscribedEvent}`);
+        partners = [];
+      }
+    } else if (status === 'active') {
+      partners = await this.partnerService.getActivePartners();
+    } else {
+      partners = await this.partnerService.getAllPartners();
+    }
+
+    // Additional status filter if both params provided
+    if (subscribedEvent && status === 'active') {
+      partners = partners.filter((p) => p.status === 'active');
+    }
+
+    this.logger.log(`Found ${partners.length} partners`);
+
     return partners.map((p) => this.mapToResponse(p));
   }
 

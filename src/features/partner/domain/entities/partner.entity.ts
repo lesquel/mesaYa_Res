@@ -15,6 +15,7 @@ export type PartnerEventType =
   | 'reservation.confirmed'
   | 'reservation.cancelled'
   | 'reservation.completed'
+  | 'payment.created'
   | 'payment.succeeded'
   | 'payment.failed'
   | 'payment.refunded';

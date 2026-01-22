@@ -113,14 +113,16 @@ export class PaymentGatewayController {
     const result = await this.paymentMsClient.createPayment({
       amount: dto.amount,
       currency: dto.currency || 'USD',
+      reservationId: dto.reservationId,  // Pass reservation ID directly
+      userId: userId,                     // Pass user ID from JWT token
       description: dto.description || `Reservation ${dto.reservationId}`,
       metadata: {
         reservation_id: dto.reservationId,
         user_id: userId || 'anonymous',
         type: 'reservation',
       },
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+      successUrl: successUrl,
+      cancelUrl: cancelUrl,
     });
 
     this.logger.log(

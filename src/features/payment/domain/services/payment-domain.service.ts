@@ -216,11 +216,25 @@ export class PaymentDomainService {
 
     const allowed: Record<PaymentStatusEnum, PaymentStatusEnum[]> = {
       [PaymentStatusEnum.PENDING]: [
+        PaymentStatusEnum.PROCESSING,
         PaymentStatusEnum.COMPLETED,
         PaymentStatusEnum.CANCELLED,
+        PaymentStatusEnum.FAILED,
       ],
-      [PaymentStatusEnum.COMPLETED]: [PaymentStatusEnum.CANCELLED],
+      [PaymentStatusEnum.PROCESSING]: [
+        PaymentStatusEnum.COMPLETED,
+        PaymentStatusEnum.CANCELLED,
+        PaymentStatusEnum.FAILED,
+      ],
+      [PaymentStatusEnum.COMPLETED]: [
+        PaymentStatusEnum.CANCELLED,
+        PaymentStatusEnum.REFUNDED,
+      ],
       [PaymentStatusEnum.CANCELLED]: [],
+      [PaymentStatusEnum.FAILED]: [
+        PaymentStatusEnum.PENDING,  // Can retry
+      ],
+      [PaymentStatusEnum.REFUNDED]: [],
     };
 
     if (!allowed[current].includes(next)) {

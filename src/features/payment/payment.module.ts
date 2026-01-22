@@ -21,6 +21,11 @@ import {
   PaymentEntityDTOMapper,
   GetPaymentAnalyticsUseCase,
   PaymentAccessService,
+  CreatePaymentUseCase,
+  GetPaymentByIdUseCase,
+  GetAllPaymentsUseCase,
+  UpdatePaymentStatusUseCase,
+  DeletePaymentUseCase,
 } from './application';
 import { IPaymentRepositoryPort, PaymentDomainService } from './domain';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
@@ -115,6 +120,12 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     PaymentDomainService,
     // Application Services - kept for analytics and access control
     PaymentAccessService,
+    // Use Cases - required by PaymentService (exported for other modules)
+    CreatePaymentUseCase,
+    GetPaymentByIdUseCase,
+    GetAllPaymentsUseCase,
+    UpdatePaymentStatusUseCase,
+    DeletePaymentUseCase,
     GetPaymentAnalyticsUseCase,
     // Main Application Service - kept for backward compatibility with other modules
     PaymentService,

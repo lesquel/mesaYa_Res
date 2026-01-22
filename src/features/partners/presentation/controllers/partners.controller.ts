@@ -22,6 +22,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
@@ -36,6 +37,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { PartnerRepository } from '../../infrastructure/persistence/partner.repository';
 import { HmacWebhookService } from '../../application/services/hmac-webhook.service';
@@ -55,7 +57,7 @@ import {
 
 @ApiTags('Partners - B2B Webhooks')
 @ApiBearerAuth()
-@Controller('partners')
+@Controller({ path: 'partners', version: '1' })
 export class PartnersController {
   private readonly logger = new Logger(PartnersController.name);
 
@@ -108,12 +110,51 @@ export class PartnersController {
 
   /**
    * Get all registered partners
+   * Supports filtering by subscribed event and status
    */
   @Get()
-  @ApiOperation({ summary: 'List all partners' })
+  @ApiOperation({
+    summary: 'List all partners',
+    description: 'Returns all registered B2B partners. Can filter by subscribed event and status.',
+  })
+  @ApiQuery({
+    name: 'subscribedEvent',
+    required: false,
+    description: 'Filter by subscribed event type (e.g., payment.created, payment.succeeded)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['active', 'inactive', 'suspended'],
+    description: 'Filter by partner status',
+  })
   @ApiResponse({ status: 200, type: [PartnerResponseDto] })
-  async findAll(): Promise<PartnerResponseDto[]> {
-    const partners = await this.partnerRepository.findAll();
+  async findAll(
+    @Query('subscribedEvent') subscribedEvent?: string,
+    @Query('status') status?: string,
+  ): Promise<PartnerResponseDto[]> {
+    this.logger.log(
+      `Fetching partners - subscribedEvent: ${subscribedEvent || 'any'}, status: ${status || 'any'}`,
+    );
+
+    let partners: PartnerEntity[];
+
+    // Filter by subscribed event if provided
+    if (subscribedEvent) {
+      partners = await this.partnerRepository.findByEventSubscription(subscribedEvent);
+      this.logger.log(`Found ${partners.length} partners subscribed to ${subscribedEvent}`);
+    } else if (status === 'active') {
+      partners = await this.partnerRepository.findAllActive();
+    } else {
+      partners = await this.partnerRepository.findAll();
+    }
+
+    // Additional status filter if both params provided
+    if (subscribedEvent && status === 'active') {
+      partners = partners.filter((p) => p.status === 'ACTIVE');
+    }
+
+    this.logger.log(`Returning ${partners.length} partners`);
     return partners.map((p) => this.toResponseDto(p));
   }
 
