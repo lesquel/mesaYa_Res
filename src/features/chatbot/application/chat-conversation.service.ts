@@ -60,10 +60,14 @@ export class ChatConversationService {
   async createConversation(
     dto: CreateConversationDto,
   ): Promise<ChatConversationEntity> {
-    this.logger.debug(`Creating conversation for session: ${dto.sessionId}`);
+    // Ensure sessionId is never null - generate one if missing
+    const sessionId =
+      dto.sessionId ||
+      `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    this.logger.debug(`Creating conversation for session: ${sessionId}`);
 
     const props: CreateConversationProps = {
-      sessionId: dto.sessionId,
+      sessionId,
       userId: dto.userId,
       accessLevel: dto.accessLevel ?? 'guest',
       language: dto.language ?? 'es',
@@ -81,17 +85,23 @@ export class ChatConversationService {
   async getOrCreateConversation(
     dto: CreateConversationDto,
   ): Promise<ChatConversationEntity> {
+    // Ensure sessionId is not null/undefined - generate one if missing
+    const sessionId =
+      dto.sessionId ||
+      `auto-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const safeDto = { ...dto, sessionId };
+
     // Try to find existing conversation
-    const existing = await this.repository.findBySessionId(dto.sessionId);
+    const existing = await this.repository.findBySessionId(sessionId);
     if (existing) {
       this.logger.debug(
-        `Found existing conversation for session: ${dto.sessionId}`,
+        `Found existing conversation for session: ${sessionId}`,
       );
       return existing;
     }
 
     // Create new conversation
-    return this.createConversation(dto);
+    return this.createConversation(safeDto);
   }
 
   /**
