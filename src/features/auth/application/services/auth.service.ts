@@ -106,4 +106,19 @@ export class AuthService {
       }
     }
   }
+
+  /**
+   * Genera un token de servicio (API Key) de larga duración.
+   * Solo para uso interno de servicios automatizados (n8n, cron jobs, etc).
+   * @param userId ID del usuario administrador que solicita el token
+   * @throws AuthDomainError si usuario no es admin
+   */
+  async generateServiceToken(userId: string): Promise<AuthTokenOutput> {
+    try {
+      const providerData = await this.authProvider.generateServiceToken({ userId });
+      return AuthTokenOutput.fromProvider(providerData);
+    } catch (error) {
+      throw AuthErrorMapper.fromException(error);
+    }
+  }
 }

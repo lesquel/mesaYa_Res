@@ -24,6 +24,7 @@ const AUTH_PATTERNS = {
   LOGOUT: 'auth.logout',
   FIND_USER_BY_ID: 'auth.find-user-by-id',
   FIND_USER_BY_EMAIL: 'auth.find-user-by-email',
+  GENERATE_SERVICE_TOKEN: 'auth.service-token.generate',
 } as const;
 
 export const AUTH_KAFKA_CLIENT = Symbol('AUTH_KAFKA_CLIENT');
@@ -141,6 +142,19 @@ export class KafkaAuthProvider implements IAuthProvider, OnModuleInit {
     }
 
     return this.mapUserData(response.data);
+  }
+
+  async generateServiceToken(payload: { userId: string }): Promise<ProviderTokenData> {
+    const response = await this.send<KafkaTokenData>(
+      AUTH_PATTERNS.GENERATE_SERVICE_TOKEN,
+      payload,
+    );
+
+    if (!response.success || !response.data) {
+      throw this.mapError(response.error);
+    }
+
+    return this.mapTokenData(response.data);
   }
 
   /**

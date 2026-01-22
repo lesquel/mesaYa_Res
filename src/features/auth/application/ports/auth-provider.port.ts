@@ -62,6 +62,15 @@ export interface IAuthProvider {
    * @returns null si usuario no existe, nunca lanza error.
    */
   findUserByEmail(email: string): Promise<ProviderUserInfo | null>;
+
+  /**
+   * Genera un token de larga duración para servicios internos (n8n, automation, etc).
+   * Solo accesible por administradores.
+   * @param payload.userId ID del usuario administrador que solicita el token
+   * @returns Token con expiración extendida (ej: 365 días)
+   * @throws AuthDomainError si usuario no es admin o hay error de conexión
+   */
+  generateServiceToken(payload: { userId: string }): Promise<ProviderTokenData>;
 }
 
 /**

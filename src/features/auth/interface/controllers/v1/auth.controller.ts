@@ -151,6 +151,29 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
+  @Post('service-token')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(AuthRoleName.ADMIN)
+  @ThrottleAuth()
+  @ApiOperation({
+    summary: 'Generar token de servicio (API Key)',
+    description: 'Crea un token JWT de larga duración (365 días) para servicios internos como n8n. Solo accesible por administradores.'
+  })
+  @ApiBearerAuth()
+  @ApiOkResponse({
+    description: 'Token de servicio generado correctamente',
+    type: AuthTokenResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'No autorizado o no es administrador' })
+  async generateServiceToken(@CurrentUser() user: CurrentUserVo): Promise<AuthTokenResponseDto> {
+    try {
+      const output = await this.authService.generateServiceToken(user.userId);
+      return AuthTokenResponseDto.fromApplication(output);
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
+  }
+
   /**
    * Mapea errores de dominio a excepciones HTTP.
    */
