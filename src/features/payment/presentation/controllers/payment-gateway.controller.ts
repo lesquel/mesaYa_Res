@@ -208,6 +208,29 @@ export class PaymentGatewayController {
 
     const result = await this.paymentMsClient.verifyPayment(paymentId);
 
+    // Trigger webhook notifications for successful payments
+    if (result.status === 'succeeded' || result.status === 'SUCCEEDED') {
+      // Fire and forget - don't await to not block the response
+      // The notifyWebhook method already handles errors gracefully
+      this.paymentMsClient
+        .notifyWebhook({
+          payment_id: paymentId,
+          event_type: 'payment.success',
+        })
+        .then((webhookResult) => {
+          this.logger.log(
+            `Webhook notification result for ${paymentId}: ${webhookResult.webhooks_sent} webhooks sent`,
+            'PaymentGateway.verifyPayment',
+          );
+        })
+        .catch((err) => {
+          this.logger.warn(
+            `Webhook notification failed for ${paymentId}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+            'PaymentGateway.verifyPayment',
+          );
+        });
+    }
+
     // Note: Reservation status update should be handled by the Reservation module
     // listening to payment events via Kafka (mesa-ya.payments.events topic).
     // This controller should not directly modify reservation state.

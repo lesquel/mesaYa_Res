@@ -3,10 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import {
-  PaymentsController,
-  PaymentsAdminController,
-  PaymentsUserController,
-  PaymentsRestaurantController,
   PaymentWebhookController,
   PaymentGatewayController,
 } from './presentation';
@@ -25,11 +21,6 @@ import {
   PaymentEntityDTOMapper,
   GetPaymentAnalyticsUseCase,
   PaymentAccessService,
-  CreatePaymentUseCase,
-  GetPaymentByIdUseCase,
-  GetAllPaymentsUseCase,
-  UpdatePaymentStatusUseCase,
-  DeletePaymentUseCase,
 } from './application';
 import { IPaymentRepositoryPort, PaymentDomainService } from './domain';
 import { LOGGER } from '@shared/infrastructure/adapters/logger/logger.constants';
@@ -45,6 +36,20 @@ import { ReservationOrmEntity } from '@features/reservation';
 import { SubscriptionOrmEntity } from '@features/subscription';
 import { RestaurantOrmEntity } from '@features/restaurants';
 
+/**
+ * Payment Module
+ *
+ * This module acts as an API Gateway for payment operations.
+ * All actual payment processing is handled by the Payment Microservice (mesaYA_payment_ms).
+ *
+ * The PaymentGatewayController proxies requests to the Payment MS while adding:
+ * - Authentication and authorization
+ * - Business logic validation (reservation ownership, etc.)
+ * - Webhook notifications to registered partners
+ *
+ * Legacy controllers (PaymentsController, PaymentsAdminController, etc.) have been
+ * removed as part of the refactoring to use the Payment MS as the single source of truth.
+ */
 @Module({
   imports: [
     ConfigModule,
@@ -58,15 +63,10 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     LoggerModule,
   ],
   controllers: [
-    // Modular controllers by role
-    PaymentsAdminController,
-    PaymentsUserController,
-    PaymentsRestaurantController,
-    // Legacy controller - kept for backward compatibility
-    PaymentsController,
-    // Other controllers
-    PaymentWebhookController,
+    // API Gateway controller - proxies requests to Payment MS
     PaymentGatewayController,
+    // Webhook controller for Stripe/provider callbacks
+    PaymentWebhookController,
   ],
   providers: [
     // Payment Microservice Client (API Gateway pattern)
@@ -88,6 +88,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
       useClass: PaymentAnalyticsTypeOrmRepository,
     },
     // Payment Gateway Adapter (Stripe in production, Mock in development)
+    // Note: This is used by PaymentWebhookController for Stripe webhook verification
     {
       provide: PAYMENT_GATEWAY,
       useFactory: (configService: ConfigService) => {
@@ -112,16 +113,10 @@ import { RestaurantOrmEntity } from '@features/restaurants';
     },
     // Domain Services
     PaymentDomainService,
-    // Application Services
+    // Application Services - kept for analytics and access control
     PaymentAccessService,
-    // Use Cases (now @Injectable with DI)
-    CreatePaymentUseCase,
-    GetPaymentByIdUseCase,
-    GetAllPaymentsUseCase,
-    UpdatePaymentStatusUseCase,
-    DeletePaymentUseCase,
     GetPaymentAnalyticsUseCase,
-    // Main Application Service
+    // Main Application Service - kept for backward compatibility with other modules
     PaymentService,
   ],
   exports: [
