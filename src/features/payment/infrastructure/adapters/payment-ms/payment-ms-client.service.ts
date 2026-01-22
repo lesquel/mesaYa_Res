@@ -86,9 +86,17 @@ export class PaymentMsClientService {
         responseBody) as CreatePaymentMsResponse;
 
       this.logger.log(
-        `Payment created successfully: ${data.payment_id}`,
+        `Payment created successfully: ${data.payment_id}, checkout_url: ${data.checkout_url || 'NOT_PROVIDED'}`,
         'PaymentMsClient.createPayment',
       );
+
+      // Ensure checkout_url is present
+      if (!data.checkout_url) {
+        this.logger.warn(
+          `Payment MS did not return checkout_url for payment ${data.payment_id}`,
+          'PaymentMsClient.createPayment',
+        );
+      }
 
       return data;
     } catch (error) {
