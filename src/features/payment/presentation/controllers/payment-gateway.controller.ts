@@ -128,12 +128,17 @@ export class PaymentGatewayController {
       'PaymentGateway.createCheckout',
     );
 
+    // Build fallback checkout URL if provider didn't return one
+    const checkoutUrl =
+      result.checkout_url ||
+      `${baseUrl}/payment/mock-checkout?payment_id=${result.payment_id}&amount=${dto.amount}&currency=${dto.currency || 'USD'}`;
+
     return {
       paymentId: result.payment_id,
       status: result.status,
       amount: result.amount ?? dto.amount,
       currency: result.currency ?? (dto.currency || 'USD'),
-      checkoutUrl: result.checkout_url || '',
+      checkoutUrl: checkoutUrl,
       createdAt: result.created_at ?? new Date().toISOString(),
     };
   }

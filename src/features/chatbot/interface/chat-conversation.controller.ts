@@ -16,6 +16,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -26,7 +27,14 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
+import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
+import type { Request } from 'express';
+
+/** Authenticated request with optional user */
+interface AuthenticatedRequest extends Request {
+  user?: { userId: string };
+}
 
 import {
   ChatConversationService,
@@ -107,13 +115,16 @@ export class ChatConversationController {
   constructor(private readonly conversationService: ChatConversationService) {}
 
   /**
-   * Create a new conversation
+   * Create a new conversation.
+   * Extracts userId from JWT token if authenticated.
    */
   @Post()
+  @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new chat conversation',
-    description: 'Creates a new conversation. User authentication is optional.',
+    description:
+      'Creates a new conversation. If authenticated, associates with the user.',
   })
   @ApiResponse({
     status: 201,
@@ -122,9 +133,14 @@ export class ChatConversationController {
   })
   async createConversation(
     @Body() dto: CreateConversationRequestDto,
+    @Req() req: AuthenticatedRequest,
   ): Promise<ConversationResponseDto> {
+    // Extract userId from JWT if authenticated
+    const userId = req.user?.userId;
+
     const createDto: CreateConversationDto = {
       sessionId: dto.sessionId,
+      userId, // Pass userId from JWT token
       accessLevel: dto.accessLevel,
       language: dto.language,
       restaurantId: dto.restaurantId,
@@ -138,12 +154,15 @@ export class ChatConversationController {
 
   /**
    * Get or create a conversation by session ID
+   * Extracts userId from JWT token if authenticated.
    */
   @Post('session')
+  @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get or create a conversation by session ID',
-    description: 'Returns existing conversation or creates a new one.',
+    description:
+      'Returns existing conversation or creates a new one. If authenticated, associates the conversation with the user.',
   })
   @ApiResponse({
     status: 200,
@@ -152,9 +171,14 @@ export class ChatConversationController {
   })
   async getOrCreateConversation(
     @Body() dto: CreateConversationRequestDto,
+    @Req() req: AuthenticatedRequest,
   ): Promise<ConversationResponseDto> {
+    // Extract userId from JWT if authenticated
+    const userId = req.user?.userId;
+
     const createDto: CreateConversationDto = {
       sessionId: dto.sessionId,
+      userId, // Pass userId from JWT token
       accessLevel: dto.accessLevel,
       language: dto.language,
       restaurantId: dto.restaurantId,
