@@ -130,6 +130,13 @@ export class ChatConversationEntity {
       toolsUsed?: string[];
     },
   ): void {
+    // Validate required fields - don't save empty messages
+    if (!role || !content) {
+      throw new Error(
+        `Cannot add message: role and content are required. Got role=${role}, content=${content?.substring(0, 50)}`,
+      );
+    }
+
     this.props.messages.push({
       role,
       content,

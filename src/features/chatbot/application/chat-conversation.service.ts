@@ -111,6 +111,20 @@ export class ChatConversationService {
     conversationId: string,
     dto: AddMessageDto,
   ): Promise<ChatConversationEntity> {
+    this.logger.debug(
+      `Adding message to conversation ${conversationId}: role=${dto.role}, content=${dto.content?.substring(0, 50)}...`,
+    );
+
+    // Validate DTO
+    if (!dto.role || !dto.content) {
+      this.logger.error(
+        `Invalid message DTO: role=${dto.role}, content=${dto.content}`,
+      );
+      throw new Error(
+        `Invalid message: role and content are required. Got role=${dto.role}, content=${dto.content}`,
+      );
+    }
+
     const conversation = await this.repository.findById(conversationId);
     if (!conversation) {
       throw new NotFoundException(
@@ -124,7 +138,12 @@ export class ChatConversationService {
       toolsUsed: dto.toolsUsed,
     });
 
-    return this.repository.save(conversation);
+    const saved = await this.repository.save(conversation);
+    this.logger.debug(
+      `Message saved. Conversation now has ${saved.messageCount} messages`,
+    );
+
+    return saved;
   }
 
   /**
