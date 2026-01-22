@@ -25,7 +25,19 @@ import {
   ApiQuery,
   ApiParam,
   ApiBearerAuth,
+  ApiProperty,
 } from '@nestjs/swagger';
+import {
+  IsString,
+  IsOptional,
+  IsIn,
+  IsUUID,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  IsNotEmpty,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { JwtAuthGuard } from '@features/auth/interface/guards/jwt-auth.guard';
 import { JwtOptionalAuthGuard } from '@features/auth/interface/guards/jwt-optional-auth.guard';
 import { CurrentUser } from '@features/auth/interface/decorators/current-user.decorator';
@@ -44,13 +56,47 @@ import {
 import { ChatConversationEntity } from '../domain/entities';
 
 /**
+ * DTO for sentiment in a message
+ */
+class SentimentDto {
+  @ApiProperty({ enum: ['positive', 'negative', 'neutral'] })
+  @IsIn(['positive', 'negative', 'neutral'])
+  label: 'positive' | 'negative' | 'neutral';
+
+  @ApiProperty()
+  @IsNumber()
+  score: number;
+}
+
+/**
  * DTO for creating a conversation via API
  */
 class CreateConversationRequestDto {
+  @ApiProperty({ description: 'Frontend session identifier' })
+  @IsString()
+  @IsNotEmpty()
   sessionId: string;
+
+  @ApiProperty({
+    enum: ['guest', 'user', 'owner', 'admin'],
+    required: false,
+  })
+  @IsOptional()
+  @IsIn(['guest', 'user', 'owner', 'admin'])
   accessLevel?: 'guest' | 'user' | 'owner' | 'admin';
+
+  @ApiProperty({ enum: ['es', 'en'], required: false })
+  @IsOptional()
+  @IsIn(['es', 'en'])
   language?: 'es' | 'en';
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsUUID()
   restaurantId?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   metadata?: Record<string, unknown>;
 }
 
@@ -58,13 +104,31 @@ class CreateConversationRequestDto {
  * DTO for adding a message via API
  */
 class AddMessageRequestDto {
+  @ApiProperty({ enum: ['user', 'assistant'] })
+  @IsIn(['user', 'assistant'])
+  @IsNotEmpty()
   role: 'user' | 'assistant';
+
+  @ApiProperty({ description: 'Message content' })
+  @IsString()
+  @IsNotEmpty()
   content: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   imageUrl?: string;
-  sentiment?: {
-    label: 'positive' | 'negative' | 'neutral';
-    score: number;
-  };
+
+  @ApiProperty({ required: false, type: SentimentDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => SentimentDto)
+  sentiment?: SentimentDto;
+
+  @ApiProperty({ required: false, type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   toolsUsed?: string[];
 }
 
