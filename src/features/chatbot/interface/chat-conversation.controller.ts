@@ -115,13 +115,16 @@ export class ChatConversationController {
   constructor(private readonly conversationService: ChatConversationService) {}
 
   /**
-   * Create a new conversation
+   * Create a new conversation.
+   * Extracts userId from JWT token if authenticated.
    */
   @Post()
+  @UseGuards(JwtOptionalAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create a new chat conversation',
-    description: 'Creates a new conversation. User authentication is optional.',
+    description:
+      'Creates a new conversation. If authenticated, associates with the user.',
   })
   @ApiResponse({
     status: 201,
@@ -130,9 +133,14 @@ export class ChatConversationController {
   })
   async createConversation(
     @Body() dto: CreateConversationRequestDto,
+    @Req() req: AuthenticatedRequest,
   ): Promise<ConversationResponseDto> {
+    // Extract userId from JWT if authenticated
+    const userId = req.user?.userId;
+
     const createDto: CreateConversationDto = {
       sessionId: dto.sessionId,
+      userId, // Pass userId from JWT token
       accessLevel: dto.accessLevel,
       language: dto.language,
       restaurantId: dto.restaurantId,
