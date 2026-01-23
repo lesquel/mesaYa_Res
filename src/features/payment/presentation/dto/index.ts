@@ -5,3 +5,4 @@ export * from './update-payment-status.request.dto';
 export * from './payment-analytics.request.dto';
 export * from './payment-analytics.response.dto';
 export * from './payment-gateway.dto';
+export * from './n8n-payment-status.dto';

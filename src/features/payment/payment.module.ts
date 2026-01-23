@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import {
   PaymentWebhookController,
   PaymentGatewayController,
+  N8nPaymentWebhookController,
 } from './presentation';
 import {
   PaymentTypeOrmRepository,
@@ -37,7 +38,7 @@ import {
 } from './payment.tokens';
 import { LoggerModule } from '@shared/infrastructure/adapters/logger/logger.module';
 import { KafkaService } from '@shared/infrastructure/kafka';
-import { ReservationOrmEntity } from '@features/reservation';
+import { ReservationOrmEntity, ReservationModule } from '@features/reservation';
 import { SubscriptionOrmEntity } from '@features/subscription';
 import { RestaurantOrmEntity } from '@features/restaurants';
 
@@ -66,12 +67,16 @@ import { RestaurantOrmEntity } from '@features/restaurants';
       RestaurantOrmEntity,
     ]),
     LoggerModule,
+    // Import ReservationModule for ChangeReservationStatusUseCase (used by N8n webhook)
+    forwardRef(() => ReservationModule),
   ],
   controllers: [
     // API Gateway controller - proxies requests to Payment MS
     PaymentGatewayController,
     // Webhook controller for Stripe/provider callbacks
     PaymentWebhookController,
+    // N8n webhook controller - handles n8n workflow callbacks
+    N8nPaymentWebhookController,
   ],
   providers: [
     // Payment Microservice Client (API Gateway pattern)
@@ -132,6 +137,7 @@ import { RestaurantOrmEntity } from '@features/restaurants';
   ],
   exports: [
     PaymentService,
+    CreatePaymentUseCase,
     GetPaymentAnalyticsUseCase,
     IPaymentRepositoryPort,
     PAYMENT_GATEWAY,

@@ -46,11 +46,18 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
   }
 
   async update(data: PaymentUpdate): Promise<PaymentEntity | null> {
+    console.log(`[PaymentTypeOrmRepository] Looking for payment with id: ${data.paymentId}`);
+
     const entity = await this.payments.findOne({
       where: { id: data.paymentId },
     });
 
+    console.log(`[PaymentTypeOrmRepository] Found entity:`, entity ? `yes (id=${entity.id})` : 'no');
+
     if (!entity) {
+      // Try to list all payments to debug
+      const allPayments = await this.payments.find({ take: 5 });
+      console.log(`[PaymentTypeOrmRepository] Sample payments in DB:`, allPayments.map(p => p.id));
       return null;
     }
 
@@ -60,7 +67,32 @@ export class PaymentTypeOrmRepository extends IPaymentRepositoryPort {
   }
 
   async findById(id: string): Promise<PaymentEntity | null> {
+    console.log(`[PaymentTypeOrmRepository] findById: ${id}`);
+
+    // Try standard TypeORM query
     const entity = await this.payments.findOne({ where: { id } });
+    console.log(`[PaymentTypeOrmRepository] findById result:`, entity ? 'found' : 'not found');
+
+    if (!entity) {
+      // Debug: Try raw query to check if it's a TypeORM issue
+      const rawResult = await this.payments.query(
+        `SELECT payment_id, payment_status FROM payments WHERE payment_id = $1`,
+        [id]
+      );
+      console.log(`[PaymentTypeOrmRepository] Raw SQL result for ${id}:`, rawResult);
+
+      // Also list sample payments
+      const allPayments = await this.payments.find({ take: 5 });
+      console.log(`[PaymentTypeOrmRepository] Sample payments in DB (first 5):`,
+        allPayments.length > 0
+          ? allPayments.map(p => ({ id: p.id, status: p.paymentStatus }))
+          : 'NO PAYMENTS FOUND IN TABLE'
+      );
+
+      const count = await this.payments.count();
+      console.log(`[PaymentTypeOrmRepository] Total payments count in table: ${count}`);
+    }
+
     return entity ? this.mapper.toDomain(entity) : null;
   }
 

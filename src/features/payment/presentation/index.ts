@@ -12,6 +12,9 @@ export * from './controllers/payment-gateway.controller';
 // Webhook Controller - handles Stripe/provider callbacks
 export * from './controllers/v1/payment-webhook.controller';
 
+// N8n Webhook Controller - handles n8n workflow callbacks
+export * from './controllers/v1/n8n-payment-webhook.controller';
+
 // DTOs
 export * from './dto';
 

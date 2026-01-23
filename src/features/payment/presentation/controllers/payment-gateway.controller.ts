@@ -126,9 +126,12 @@ export class PaymentGatewayController {
     });
 
     this.logger.log(
-      `Checkout session created: ${result.payment_id}`,
+      `Checkout session created in Payment MS: ${result.payment_id}`,
       'PaymentGateway.createCheckout',
     );
+
+    // Note: Payment is already saved in shared DB by Payment MS
+    // No need to sync locally - we share the same 'payments' table
 
     // Build fallback checkout URL if provider didn't return one
     const checkoutUrl =
